@@ -27,7 +27,7 @@ end $$;
 create or replace function app.purge() returns void
 language plpgsql security definer set search_path = '' as $$
 declare v_cut timestamptz := now() - (select tombstone_retention from app.sync_config); v_max bigint := 0; v bigint; t text;
-        v_started timestamptz := clock_timestamp(); v_blocked text[] := '{}'; r record;
+        v_started timestamptz := clock_timestamp(); v_blocked text[] := '{}'; v_id uuid; v_ver bigint;
 begin
   -- filhos antes dos pais (ordem inversa de push_order)
   for t in select table_name from app.sync_tables where table_name <> 'profiles' order by push_order desc loop
@@ -39,10 +39,10 @@ begin
       -- pai expurgável com filho vivo: expurga linha a linha, pula as bloqueadas, registra e segue
       -- (tech §3.7, nota da expurgação)
       v_blocked := v_blocked || t;
-      for r in execute format('select id, server_version from public.%I where deleted_at < $1', t) using v_cut loop
+      for v_id, v_ver in execute format('select id, server_version from public.%I where deleted_at < $1', t) using v_cut loop
         begin
-          execute format('delete from public.%I where id = $1', t) using r.id;
-          v_max := greatest(v_max, r.server_version);
+          execute format('delete from public.%I where id = $1', t) using v_id;
+          v_max := greatest(v_max, v_ver);
         exception when foreign_key_violation then
           null;
         end;
