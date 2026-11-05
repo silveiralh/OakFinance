@@ -11,10 +11,11 @@
 - Workflows (T-005): `deploy.yml` (backup → staging → produção → smoke; pula com aviso sem `vars.SUPABASE_PROD_REF`), `backup.yml` (dump cifrado), `keepalive.yml` (`ping` e `ops_health` em prod e staging), `nightly.yml` (E2E ×3, Stryker, gitleaks no histórico, audit, keepalive em 48 h), `preview.yml` + `preview-deploy.yml`, `dependabot.yml` e `packages/domain/stryker.config.json`.
 - Guard (T-006): `scripts/ci-guard.ts` (caminhos protegidos, testes não caem, proibições, migrações imutáveis e sem DDL destrutivo, drift de contrato via `.d.ts` do domínio, `fix:` com teste, título e `T-xxx`, PR de fork) e `scripts/coverage-ratchet.ts` (`pnpm coverage:ratchet`, só sobe). O `ci.yml` também roda em `edited`, para o guard reavaliar título e corpo.
 - **Bootstrap encerrado:** a partir de agora, mudar `.github/**`, `biome.json`, `vitest.config.*`, `playwright.config.ts`, `scripts/ci-guard.ts`, `scripts/ci-secrets.ts`, `.gitleaks.toml`, `000-setup.test.sql` ou `lefthook.yml`, ou baixar `coverage-baseline.json`, reprova o guard e exige o rótulo `needs-owner`.
-- Banco (T-008/T-009): migrações 01 (base), 02 (núcleo), 03 (integrações e push) e 04 (sync, histórico, observabilidade e RPCs `sync_push`/`sync_pull`/`get_row_history`/`map_external_account`/push/`log_events`/`ping`); `db-types.ts` gerado e checado no job `db`; pgTAP `010-core-checks` e `020-sync`. **Ainda sem RLS** (migração 05, T-010).
+- Banco (T-008/T-009): migrações 01 (base), 02 (núcleo), 03 (integrações e push) e 04 (sync, histórico, observabilidade e RPCs `sync_push`/`sync_pull`/`get_row_history`/`map_external_account`/push/`log_events`/`ping`); `db-types.ts` gerado e checado no job `db`; pgTAP `010-core-checks` e `020-sync`.
+- RLS e cadastro fechado (T-010): migrações 05 (RLS forçada em todo `public`, D-009) e 06 (perfil no cadastro e hook `before_user_created`); hook ligado no `config.toml` local e allowlist `e2e-a`/`e2e-b@example.test` no `seed.sql`; pgTAP `030-rls`.
 - Domínio base (T-012): `types`, `money`, `dates`, `ids` (namespaces v5 fixos) e `DomainError` em `packages/domain`, com testes de propriedade (fast-check, 200 execuções) e cobertura 100/97; cópia em `supabase/functions/_shared/domain` com `uuid` no import map do Deno.
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
-- Última tarefa concluída: T-009. Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Últimas tarefas concluídas: T-010 e T-012. Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
@@ -26,7 +27,8 @@
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-010 — Migrações 05–06: RLS e cadastro fechado.** O teste do item 7 da §8.3 (schema `app` fechado) deve aceitar o `select` em `app.sync_tables` (D-008).
+- **Próxima tarefa: T-011 — Migração 07 e integração do sync no banco.**
+- O guard trata qualquer "truncate" em migração como DDL destrutivo, inclusive `revoke … truncate` (falso positivo; contornado com `revoke all` + `grant` em D-009). Sugestão ao dono: afinar a regra em `scripts/ci-guard.ts` (caminho protegido).
 - pgTAP: funções auxiliares de teste vão em `pg_temp` (`create function pg_temp.x(...)`, chamadas como `pg_temp.x(...)`); para voltar a postgres no meio do teste, `reset role`.
 - Tipos do banco: `supabase gen types` não roda no ambiente da sessão. Quando a migração mudar, o `scripts/gen-db-types.sh --check` do job `db` falha e imprime o arquivo inteiro entre `----- INICIO db-types.ts -----` e `----- FIM db-types.ts -----`; baixe o log do job (`gh api repos/silveiralh/OakFinance/actions/jobs/<id>/logs`), tire o prefixo de data de cada linha e grave em `apps/web/src/data/db-types.ts`. Isso gasta uma rodada de CI.
 - Validação local das migrações: Postgres 16 + pgTAP do apt com o harness que imita `auth` (substitua as linhas `create extension pg_cron/pg_net` por comentário só localmente). F1 (banco), F2 (domínio, a partir da T-012) e F3 (design system, T-025) estão liberadas; siga a ordem de ID.
@@ -92,4 +94,5 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-007 | PR #10 | done | ruleset de main conferido (8 checks, strict, linear, sem force-push/exclusão, bypass só admin em PR); M0 |
 | 05/11/2026 | T-008 | PR #11 | done | migrações 01–02, tipos gerados, 19 asserções pgTAP (RN-01/05/07/09, US-02) |
 | 05/11/2026 | T-009 | PR #13 | done | migrações 03–04, sync e RPCs, 36 asserções pgTAP; D-008 (privilégios) |
+| 05/11/2026 | T-010 | PR #14 | done | RLS forçada, cadastro fechado, 26 asserções pgTAP; D-009 |
 | 05/11/2026 | T-012 | PR #17 | done | domínio base (dinheiro, datas, ids v5, erros); D-010 |

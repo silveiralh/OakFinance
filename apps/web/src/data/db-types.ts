@@ -1699,6 +1699,7 @@ export type Database = {
     Functions: {
       delete_push_subscription: { Args: { p_endpoint: string }; Returns: undefined };
       get_row_history: { Args: { p_row_id: string; p_table: string }; Returns: Json[] };
+      hook_before_user_created: { Args: { event: Json }; Returns: Json };
       log_events: { Args: { p_events: Json }; Returns: undefined };
       map_external_account: {
         Args: { p_account_id: string; p_card_id: string; p_id: string; p_is_ignored: boolean };
