@@ -7,20 +7,23 @@
 - Tooling da raiz (T-001): pnpm 10.34.9 (Corepack), Node 24, Biome 2.6.5, lefthook, commitlint, template de PR, `docs/DECISIONS.md` (D-001..D-007), Apêndice A na `02-tech-spec.md`, issue #2 `Setup do cliente`.
 - Workspaces (T-002): `packages/domain`, `packages/nfce-parser` e `apps/web` (Vite 8.3.6, React 19.3.1, TS 6.0.3, Tailwind 4.3.4), Vitest 5.1 com limiares de `coverage-baseline.json`, Playwright 1.64.1 (android, iphone, desktop), `scripts/mock-pluggy.ts` e `scripts/vendor-shared.ts`. `pnpm verify` verde.
 - Supabase local (T-003): `supabase/config.toml` com serviços mínimos, `seed.sql`, helpers pgTAP (`000-setup.test.sql`, API do basejump) e smoke, `supabase/functions/deno.json`, `_shared/errors.ts` e `_shared/http.ts` com testes Deno. Scripts `test:db`, `test:fn` e `typecheck:deno`.
-- Ainda não há migrações, CI nem deploy. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
-- Última tarefa concluída: T-003.
+- CI (T-004): `.github/workflows/ci.yml` com os 8 checks (`guard` em modo bootstrap, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e` agregando 3 shards, `build`), `scripts/ci-secrets.ts`, `.gitleaks.toml`, `scripts/check-build.ts`, `scripts/ci-greps.ts`, `scripts/check-fn-coverage.ts` e `pnpm ci:local`.
+- Ainda não há migrações nem deploy. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
+- Última tarefa concluída: T-004.
 
 ## 2. Estado do CI e do deploy
 
-- CI: inexistente (nasce na T-004). Até lá, o merge acontece só depois dos checks locais.
+- CI: `ci.yml` ativo desde a T-004 (PR #5), em todo PR e em push em `main`. O check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
 - Deploy, nightly e keepalive: inexistentes (nascem na T-005; o deploy só funciona de verdade na T-036).
 - Ruleset de `main`: ainda não ativo (SETUP-04, depois da T-006).
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-004 — CI com 8 jobs e varredura de segredos.**
-- A T-003 entrou sem `supabase start` real: o ambiente da sessão não baixa imagens Docker (docker.io, ghcr.io e public.ecr.aws dão 403). O pgTAP foi validado com `pg_prove` num Postgres 16 + pgTAP do apt que emula `auth.users`, `auth.uid()` e os papéis (`dockerd` precisa ser iniciado à mão). O job `db` da T-004 é a primeira execução real de `pnpm test:db`; se falhar, corrija no próprio PR da T-004.
-- O limiar de 80% de `supabase/functions/_shared` (tech §8.1) ainda não é imposto por script; o job `fn` da T-004 precisa ler o lcov de `coverage/fn` e comparar com `coverage-baseline.json`.
+- **Próxima tarefa: T-005 — Workflows de deploy, preview, nightly, keepalive e backup.**
+- `actionlint` local: `pip install actionlint-py --break-system-packages`. `gitleaks` local: `apt-get install gitleaks` (8.16; o CI usa 8.28.0).
+- `scripts/check-build.ts` tem `REQUIRE_PWA = false`; a T-030 liga (manifest, `sw.js`, `_headers`, precache).
+- `ci-secrets --all` acusa os e-mails de exemplo na `02-tech-spec.md` §9.2 (`email-1@…`), que já estavam lá; o modo de PR só lê linhas adicionadas.
+- A T-003 entrou sem `supabase start` real localmente: o ambiente da sessão não baixa imagens Docker (docker.io, ghcr.io e public.ecr.aws dão 403). O pgTAP foi validado com `pg_prove` num Postgres 16 + pgTAP do apt que emula `auth.users`, `auth.uid()` e os papéis (`dockerd` precisa ser iniciado à mão). No CI (T-004), `supabase start`, `pnpm test:db` e `db lint` passaram, e o E2E rodou verde nos 3 projetos, inclusive `iphone` (WebKit). Mudanças de banco e de E2E são validadas de verdade só no CI.
 - Supabase CLI 3.0.0 local: pacote npm `@supabase/cli-linux-x64@3.0.0` (`npm pack` + `tar`).
 - Ambiente da sessão: vem com Node 22; o Node 24 sai do pacote npm `node-linux-x64@24` (`npm pack` + `tar`), pois `nodejs.org` é bloqueado pelo proxy. O Deno sai de `npm i -g deno`. O Playwright local só tem Chromium (rev. 1243): para rodar o 1.64.1, crie um `PLAYWRIGHT_BROWSERS_PATH` próprio com links `chromium-1248` e `chromium_headless_shell-1248` apontando para os de `/opt/pw-browsers`. O projeto `iphone` (WebKit) não roda localmente; o CI cobre a partir da T-004.
 - O Biome 2.6 formata Markdown e YAML: `*.md` ficou fora do `biome.json` de propósito (docs são texto autoral).
@@ -68,3 +71,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-001 | PR #1 | done | tooling da raiz, DECISIONS (D-001..D-007), Apêndice A, issue #2 `Setup do cliente` |
 | 05/11/2026 | T-002 | PR #3 | done | workspaces, configs de teste, mock da Pluggy e vendor; E2E local só android/desktop (sem WebKit no ambiente) |
 | 05/11/2026 | T-003 | PR #4 | done | Supabase local, helpers pgTAP, base das Edge Functions; `supabase start` não roda no ambiente da sessão (imagens bloqueadas), validado com Postgres 16 + pgTAP local |
+| 05/11/2026 | T-004 | PR #5 | done | CI com 8 checks, varredura de segredos e dados pessoais, gitleaks, check-build e greps |

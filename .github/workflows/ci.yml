@@ -1,0 +1,186 @@
+# Portão de qualidade (tech §8.6). Os 8 checks são required no ruleset de main (SETUP-04).
+# Sem segredos: roda igual em PR de branch e de fork. Caminho protegido pelo guard.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  SUPABASE_CLI_VERSION: 3.0.0
+  GITLEAKS_VERSION: 8.28.0
+
+jobs:
+  guard:
+    name: guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: guard
+        env:
+          GUARD_BASE: origin/${{ github.base_ref || 'main' }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_BASE_REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: pnpm ci:guard
+
+  secrets:
+    name: secrets
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: gitleaks
+        run: |
+          set -euo pipefail
+          base="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          url="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          curl -sSfL -o "$RUNNER_TEMP/$base" "$url/$base"
+          curl -sSfL -o "$RUNNER_TEMP/checksums.txt" "$url/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          (cd "$RUNNER_TEMP" && grep " $base\$" checksums.txt | sha256sum -c -)
+          tar -xzf "$RUNNER_TEMP/$base" -C "$RUNNER_TEMP" gitleaks
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - name: base do diff
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ -n "$BASE_REF" ]; then
+            echo "SECRETS_BASE=origin/$BASE_REF" >> "$GITHUB_ENV"
+          elif [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "SECRETS_BASE=$BEFORE" >> "$GITHUB_ENV"
+          else
+            echo "SECRETS_BASE=HEAD~1" >> "$GITHUB_ENV"
+          fi
+      - name: dados pessoais, arquivos reais e gitleaks
+        run: pnpm ci:secrets
+
+  lint-types:
+    name: lint-types
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+        with:
+          deno: "true"
+      - name: lint, tipos, vendor, greps e audit
+        run: pnpm ci:lint-types
+
+  unit:
+    name: unit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: vitest com cobertura
+        run: pnpm ci:unit
+
+  db:
+    name: db
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - name: supabase start
+        run: supabase start
+      - name: pgTAP e db lint
+        run: pnpm ci:db
+
+  fn:
+    name: fn
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+        with:
+          deno: "true"
+      - name: deno test com cobertura
+        run: pnpm ci:fn
+
+  e2e-shard:
+    name: e2e-shard (${{ matrix.shard }}/3)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+        with:
+          deno: "true"
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - name: supabase start
+        run: supabase start
+      - name: navegadores do Playwright
+        run: pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit
+      - name: playwright (android, iphone, desktop)
+        env:
+          CI: "true"
+        run: pnpm --filter @oakfinance/web e2e --shard=${{ matrix.shard }}/3
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-shard-${{ matrix.shard }}
+          path: |
+            apps/web/playwright-report/
+            apps/web/test-results/
+          retention-days: 7
+
+  # Check único "e2e" exigido pelo ruleset: agrega os 3 shards.
+  e2e:
+    name: e2e
+    if: always()
+    needs: e2e-shard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: resultado dos shards
+        env:
+          RESULT: ${{ needs.e2e-shard.result }}
+        run: |
+          echo "shards: $RESULT"
+          test "$RESULT" = "success"
+
+  build:
+    name: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: build de produção e verificações de dist/
+        env:
+          VITE_APP_ENV: staging
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_STAGING_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_STAGING_PUBLISHABLE_KEY }}
+          VITE_VAPID_PUBLIC_KEY: ${{ vars.VAPID_PUBLIC_KEY_STAGING }}
+        run: pnpm ci:build
