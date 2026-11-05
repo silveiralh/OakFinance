@@ -14,6 +14,7 @@
 - Banco (T-008/T-009): migrações 01 (base), 02 (núcleo), 03 (integrações e push) e 04 (sync, histórico, observabilidade e RPCs `sync_push`/`sync_pull`/`get_row_history`/`map_external_account`/push/`log_events`/`ping`); `db-types.ts` gerado e checado no job `db`; pgTAP `010-core-checks` e `020-sync`.
 - RLS e cadastro fechado (T-010): migrações 05 (RLS forçada em todo `public`, D-009) e 06 (perfil no cadastro e hook `before_user_created`); hook ligado no `config.toml` local e allowlist `e2e-a`/`e2e-b@example.test` no `seed.sql`; pgTAP `030-rls`.
 - Domínio base (T-012): `types`, `money`, `dates`, `ids` (namespaces v5 fixos) e `DomainError` em `packages/domain`, com testes de propriedade (fast-check, 200 execuções) e cobertura 100/97; cópia em `supabase/functions/_shared/domain` com `uuid` no import map do Deno.
+- Faturas (T-013): `packages/domain/src/invoices.ts` com os 9 casos da RN-12, os 6 exemplos da §5.2, status da RN-14, saldo credor da RN-15 e recálculo da RN-17/RN-18.
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
 - Últimas tarefas concluídas: T-010 e T-012. Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
@@ -66,6 +67,8 @@
 
 ## 5. Riscos conhecidos
 
+- **Cartão com F < V e fevereiro curto** (ex.: fecha 28, vence 29): pela RN-10/RN-11 a fatura de fevereiro vence no mesmo dia em que fecha, e o check `closing_date < due_date` da tabela `invoices` recusaria a linha. Precisa de decisão do PO (ex.: vencer no 1º dia útil seguinte) antes de a UI criar faturas (T-047).
+
 - **R14 vazamento em repositório público:** qualquer segredo ou dado real commitado fica no histórico para sempre. Se acontecer, registre aqui e peça ao cliente para girar a credencial na hora.
 - **Autobloqueio do guard:** o PR do próprio guard (T-006) precisa do modo bootstrap; arquivo protegido esquecido no bootstrap vira `needs-owner`.
 - **R1 trial da Pluggy (15 dias):** só iniciar com a T-077 pronta; os dois usuários conectam BB e Nubank dentro da janela.
@@ -96,3 +99,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-009 | PR #13 | done | migrações 03–04, sync e RPCs, 36 asserções pgTAP; D-008 (privilégios) |
 | 05/11/2026 | T-010 | PR #14 | done | RLS forçada, cadastro fechado, 26 asserções pgTAP; D-009 |
 | 05/11/2026 | T-012 | PR #17 | done | domínio base (dinheiro, datas, ids v5, erros); D-010 |
+| 05/11/2026 | T-013 | PR #18 | done | faturas: RN-09..RN-18, propriedades de monotonicidade e partição |
