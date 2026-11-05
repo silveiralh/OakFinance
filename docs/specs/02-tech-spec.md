@@ -2668,3 +2668,4 @@ Uma linha por PR que mude a API pública de `packages/domain` ou as migrações 
 | Data | Tarefa | PR | Área | Mudança |
 |---|---|---|---|---|
 | 05/11/2026 | T-008 | PR #11 | migrações | `20261105000001_base.sql` e `20261105000002_core.sql` com o DDL literal da §3.2–3.3 e os índices de cursor; tipos em `apps/web/src/data/db-types.ts` gerados por `scripts/gen-db-types.sh` |
+| 05/11/2026 | T-009 | PR #13 | migrações | `20261105000003_integrations.sql` (§3.4 literal) e `20261105000004_sync.sql` (§3.5 e `sync_push`/`sync_pull` literais; helpers `app.mutation_seen`/`record_mutation`/`touch_device`/`get_horizon`, `get_row_history`, `map_external_account`, `upsert_push_subscription`/`delete_push_subscription`, `log_events` e `ping` pelas assinaturas da §4.7; privilégios em D-008) |

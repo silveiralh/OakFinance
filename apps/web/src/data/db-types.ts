@@ -90,6 +90,82 @@ export type Database = {
         };
         Relationships: [];
       };
+      bank_connections: {
+        Row: {
+          client_updated_at: string;
+          connector_id: number | null;
+          connector_name: string | null;
+          consent_expires_at: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          device_id: string | null;
+          execution_status: string | null;
+          external_item_id: string;
+          id: string;
+          institution: string | null;
+          is_active: boolean;
+          last_error: string | null;
+          last_manual_refresh_at: string | null;
+          last_success_at: string | null;
+          last_synced_at: string | null;
+          provider: string;
+          provider_updated_at: string | null;
+          server_version: number;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          client_updated_at?: string;
+          connector_id?: number | null;
+          connector_name?: string | null;
+          consent_expires_at?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          device_id?: string | null;
+          execution_status?: string | null;
+          external_item_id: string;
+          id: string;
+          institution?: string | null;
+          is_active?: boolean;
+          last_error?: string | null;
+          last_manual_refresh_at?: string | null;
+          last_success_at?: string | null;
+          last_synced_at?: string | null;
+          provider?: string;
+          provider_updated_at?: string | null;
+          server_version?: number;
+          status: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          client_updated_at?: string;
+          connector_id?: number | null;
+          connector_name?: string | null;
+          consent_expires_at?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          device_id?: string | null;
+          execution_status?: string | null;
+          external_item_id?: string;
+          id?: string;
+          institution?: string | null;
+          is_active?: boolean;
+          last_error?: string | null;
+          last_manual_refresh_at?: string | null;
+          last_success_at?: string | null;
+          last_synced_at?: string | null;
+          provider?: string;
+          provider_updated_at?: string | null;
+          server_version?: number;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       budgets: {
         Row: {
           alert_thresholds_bp: number[];
@@ -403,6 +479,110 @@ export type Database = {
             columns: ['user_id', 'category_id'];
             isOneToOne: false;
             referencedRelation: 'categories';
+            referencedColumns: ['user_id', 'id'];
+          },
+        ];
+      };
+      external_accounts: {
+        Row: {
+          account_id: string | null;
+          available_limit_cents: number | null;
+          backfill_done_at: string | null;
+          balance_cents: number | null;
+          balance_close_date: string | null;
+          balance_due_date: string | null;
+          card_id: string | null;
+          client_updated_at: string;
+          connection_id: string;
+          created_at: string;
+          credit_limit_cents: number | null;
+          deleted_at: string | null;
+          device_id: string | null;
+          external_account_id: string;
+          id: string;
+          is_ignored: boolean;
+          last_tx_date: string | null;
+          name: string | null;
+          number_masked: string | null;
+          server_version: number;
+          subtype: string;
+          type: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_id?: string | null;
+          available_limit_cents?: number | null;
+          backfill_done_at?: string | null;
+          balance_cents?: number | null;
+          balance_close_date?: string | null;
+          balance_due_date?: string | null;
+          card_id?: string | null;
+          client_updated_at?: string;
+          connection_id: string;
+          created_at?: string;
+          credit_limit_cents?: number | null;
+          deleted_at?: string | null;
+          device_id?: string | null;
+          external_account_id: string;
+          id: string;
+          is_ignored?: boolean;
+          last_tx_date?: string | null;
+          name?: string | null;
+          number_masked?: string | null;
+          server_version?: number;
+          subtype: string;
+          type: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          account_id?: string | null;
+          available_limit_cents?: number | null;
+          backfill_done_at?: string | null;
+          balance_cents?: number | null;
+          balance_close_date?: string | null;
+          balance_due_date?: string | null;
+          card_id?: string | null;
+          client_updated_at?: string;
+          connection_id?: string;
+          created_at?: string;
+          credit_limit_cents?: number | null;
+          deleted_at?: string | null;
+          device_id?: string | null;
+          external_account_id?: string;
+          id?: string;
+          is_ignored?: boolean;
+          last_tx_date?: string | null;
+          name?: string | null;
+          number_masked?: string | null;
+          server_version?: number;
+          subtype?: string;
+          type?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'external_accounts_user_id_account_id_fkey';
+            columns: ['user_id', 'account_id'];
+            isOneToOne: false;
+            referencedRelation: 'accounts';
+            referencedColumns: ['user_id', 'id'];
+          },
+          {
+            foreignKeyName: 'external_accounts_user_id_card_id_fkey';
+            columns: ['user_id', 'card_id'];
+            isOneToOne: false;
+            referencedRelation: 'cards';
+            referencedColumns: ['user_id', 'id'];
+          },
+          {
+            foreignKeyName: 'external_accounts_user_id_connection_id_fkey';
+            columns: ['user_id', 'connection_id'];
+            isOneToOne: false;
+            referencedRelation: 'bank_connections';
             referencedColumns: ['user_id', 'id'];
           },
         ];
@@ -890,6 +1070,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      notification_outbox: {
+        Row: {
+          attempts: number;
+          created_at: string;
+          dedupe_key: string;
+          error: string | null;
+          id: string;
+          kind: string;
+          payload: NonNullable<Json>;
+          scheduled_for: string;
+          sent_at: string | null;
+          status: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          created_at?: string;
+          dedupe_key: string;
+          error?: string | null;
+          id?: string;
+          kind: string;
+          payload: NonNullable<Json>;
+          scheduled_for?: string;
+          sent_at?: string | null;
+          status?: string;
+          user_id: string;
+        };
+        Update: {
+          attempts?: number;
+          created_at?: string;
+          dedupe_key?: string;
+          error?: string | null;
+          id?: string;
+          kind?: string;
+          payload?: NonNullable<Json>;
+          scheduled_for?: string;
+          sent_at?: string | null;
+          status?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           client_updated_at: string;
@@ -932,6 +1155,55 @@ export type Database = {
           settings?: NonNullable<Json>;
           timezone?: string;
           updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      push_subscriptions: {
+        Row: {
+          auth: string;
+          created_at: string;
+          device_id: string | null;
+          disabled_at: string | null;
+          endpoint: string;
+          failure_count: number;
+          id: string;
+          last_failure_at: string | null;
+          last_success_at: string | null;
+          p256dh: string;
+          platform: string;
+          user_agent: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          auth: string;
+          created_at?: string;
+          device_id?: string | null;
+          disabled_at?: string | null;
+          endpoint: string;
+          failure_count?: number;
+          id?: string;
+          last_failure_at?: string | null;
+          last_success_at?: string | null;
+          p256dh: string;
+          platform: string;
+          user_agent?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          auth?: string;
+          created_at?: string;
+          device_id?: string | null;
+          disabled_at?: string | null;
+          endpoint?: string;
+          failure_count?: number;
+          id?: string;
+          last_failure_at?: string | null;
+          last_success_at?: string | null;
+          p256dh?: string;
+          platform?: string;
+          user_agent?: string | null;
           user_id?: string;
         };
         Relationships: [];
@@ -1425,7 +1697,27 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      delete_push_subscription: { Args: { p_endpoint: string }; Returns: undefined };
+      get_row_history: { Args: { p_row_id: string; p_table: string }; Returns: Json[] };
+      log_events: { Args: { p_events: Json }; Returns: undefined };
+      map_external_account: {
+        Args: { p_account_id: string; p_card_id: string; p_id: string; p_is_ignored: boolean };
+        Returns: undefined;
+      };
+      ping: { Args: Record<PropertyKey, never>; Returns: string };
+      sync_pull: { Args: { p_limit?: number; p_since: number }; Returns: Json };
+      sync_push: { Args: { p_device_id: string; p_mutations: Json }; Returns: Json };
+      upsert_push_subscription: {
+        Args: {
+          p_auth: string;
+          p_device_id: string;
+          p_endpoint: string;
+          p_p256dh: string;
+          p_platform: string;
+          p_user_agent: string;
+        };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;
