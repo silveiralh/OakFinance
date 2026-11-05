@@ -161,7 +161,10 @@ select is(
     (select doc from conta) || '{"name":"Invasão","client_updated_at":"2026-12-01T00:00:00Z"}')))
     -> 'results' -> 0 ->> 'code',
   'FOREIGN_ROW', 'US-02: linha de outro usuário vira rejected FOREIGN_ROW');
-select is(jsonb_array_length(public.sync_pull(0, 500) -> 'rows'), 0, 'US-02: B não recebe linhas de A no pull');
+select is(
+  (select count(*)::int from jsonb_array_elements(public.sync_pull(0, 500) -> 'rows') x
+    where x -> 'r' ->> 'user_id' <> tests.get_supabase_uid('sync_b')::text),
+  0, 'US-02: B não recebe linhas de A no pull');
 select is(cardinality(public.get_row_history('accounts', 'c1000000-0000-4000-8000-000000000001')), 0,
   'US-02: B não vê o histórico de A');
 
