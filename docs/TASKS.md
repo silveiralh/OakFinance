@@ -64,7 +64,7 @@ flowchart LR
 | ID | Título | Depende de | Status |
 |---|---|---|---|
 | T-001 | Tooling da raiz e documentos base | — | done |
-| T-002 | Esqueleto dos workspaces e configs de teste | T-001 | todo |
+| T-002 | Esqueleto dos workspaces e configs de teste | T-001 | done |
 | T-003 | Supabase local, pgTAP e Edge Functions | T-002 | todo |
 | T-004 | CI com 8 jobs e varredura de segredos | T-003 | todo |
 | T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | todo |
@@ -195,7 +195,7 @@ Cria o "Apêndice A — Registro de implementação" vazio em `docs/specs/02-tec
 ### T-002 — Esqueleto dos workspaces e configs de teste
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-03 | — | T-001 | não |
+| done | S1 | M | US-03 | — | T-001 | não |
 
 **Escopo:**
 - `packages/domain` e `packages/nfce-parser`: `src/index.ts`, `vitest.config.ts` com os limiares da §8.1 e teste smoke;

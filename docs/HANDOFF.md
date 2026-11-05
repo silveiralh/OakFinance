@@ -4,11 +4,10 @@
 
 ## 1. Estado atual
 
-- Tooling da raiz em `main` (T-001): `package.json` com pnpm 10.34.9 (Corepack) e Node 24, `pnpm-workspace.yaml`, `tsconfig.base.json`, Biome 2.6.5, lefthook, commitlint, `.editorconfig`, `.gitignore`, `.env.example`, template de PR.
-- `docs/DECISIONS.md` com D-001..D-007 e Apêndice A (vazio) na `02-tech-spec.md`.
-- Issue `Setup do cliente` aberta: #2.
-- Ainda não há workspaces, CI, banco nem deploy. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
-- Última tarefa concluída: T-001.
+- Tooling da raiz (T-001): pnpm 10.34.9 (Corepack), Node 24, Biome 2.6.5, lefthook, commitlint, template de PR, `docs/DECISIONS.md` (D-001..D-007), Apêndice A na `02-tech-spec.md`, issue #2 `Setup do cliente`.
+- Workspaces (T-002): `packages/domain`, `packages/nfce-parser` e `apps/web` (Vite 8.3.6, React 19.3.1, TS 6.0.3, Tailwind 4.3.4), Vitest 5.1 com limiares de `coverage-baseline.json`, Playwright 1.64.1 (android, iphone, desktop), `scripts/mock-pluggy.ts` e `scripts/vendor-shared.ts`. `pnpm verify` verde.
+- Ainda não há banco, CI nem deploy. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
+- Última tarefa concluída: T-002.
 
 ## 2. Estado do CI e do deploy
 
@@ -18,9 +17,11 @@
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-002 — Esqueleto dos workspaces e configs de teste.**
-- O Biome 2.6 formata Markdown e YAML: `*.md` ficou fora do `biome.json` de propósito (docs são texto autoral); YAML é formatado (aspas duplas).
-- O ambiente das sessões vem com Node 22; o Node 24 pode ser obtido pelo pacote npm `node-linux-x64@24` (`npm pack` + `tar`), já que `nodejs.org` é bloqueado pelo proxy.
+- **Próxima tarefa: T-003 — Supabase local, pgTAP e Edge Functions.**
+- Ambiente da sessão: vem com Node 22; o Node 24 sai do pacote npm `node-linux-x64@24` (`npm pack` + `tar`), pois `nodejs.org` é bloqueado pelo proxy. O Deno sai de `npm i -g deno`. O Playwright local só tem Chromium (rev. 1243): para rodar o 1.64.1, crie um `PLAYWRIGHT_BROWSERS_PATH` próprio com links `chromium-1248` e `chromium_headless_shell-1248` apontando para os de `/opt/pw-browsers`. O projeto `iphone` (WebKit) não roda localmente; o CI cobre a partir da T-004.
+- O Biome 2.6 formata Markdown e YAML: `*.md` ficou fora do `biome.json` de propósito (docs são texto autoral).
+- MSW 3: a opção é `onUnhandledFrame` (não mais `onUnhandledRequest`).
+- O proxy não deixa apagar branches remotas (`git push --delete` e `DELETE /git/refs` dão 403). Branches de tarefa mergeadas ficam até o cliente ligar "Automatically delete head branches" (SETUP-02) ou apagá-las.
 - T-001 a T-006 formam o bootstrap. Todos os arquivos protegidos pelo guard (workflows, `biome.json`, `vitest.config.*`, `playwright.config.ts`, `coverage-baseline.json`, `.gitleaks.toml`, `000-setup.test.sql`, `lefthook.yml`, scripts do guard e de segredos) precisam nascer nessas tarefas. Depois da T-006, mexer neles exige `needs-owner`.
 - Depois da T-006, peça ao cliente o SETUP-04 (ruleset). A T-007 confere; até lá a cadeia para.
 
@@ -61,3 +62,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 |---|---|---|---|---|
 | 05/11/2026 | — | — | plano criado | specs, CLAUDE.md, TASKS, HANDOFF e SETUP no repositório |
 | 05/11/2026 | T-001 | PR #1 | done | tooling da raiz, DECISIONS (D-001..D-007), Apêndice A, issue #2 `Setup do cliente` |
+| 05/11/2026 | T-002 | PR #3 | done | workspaces, configs de teste, mock da Pluggy e vendor; E2E local só android/desktop (sem WebKit no ambiente) |

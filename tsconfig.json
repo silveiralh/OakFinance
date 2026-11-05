@@ -1,7 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "types": []
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
   },
-  "include": ["commitlint.config.ts"]
+  "include": ["commitlint.config.ts", "vitest.config.ts", "scripts/**/*.ts"],
+  "exclude": ["scripts/mock-pluggy.ts"]
 }
