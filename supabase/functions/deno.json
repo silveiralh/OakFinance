@@ -5,7 +5,9 @@
     "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true
   },
-  "imports": {},
+  "imports": {
+    "uuid": "npm:uuid@14.0.3"
+  },
   "lint": {
     "rules": {
       "tags": ["recommended"]
