@@ -1,0 +1,22 @@
+name: setup
+description: Node 24 + pnpm (Corepack) com cache e dependências instaladas; Deno opcional.
+inputs:
+  deno:
+    description: Instala o Deno 2
+    required: false
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v5
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+    - name: pnpm install
+      shell: bash
+      run: pnpm install --frozen-lockfile
+    - if: inputs.deno == 'true'
+      uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.x

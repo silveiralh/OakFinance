@@ -1,0 +1,59 @@
+# Regras do gitleaks para o repositório público (tech §8.6, job `secrets`; ADR-18).
+# Padrão do gitleaks + segredos específicos do OakFinance.
+# Caminho protegido pelo guard: mudanças só com o rótulo needs-owner.
+# Sem allowlist por commit. Allowlist por caminho só para fixture sintética revisada.
+
+title = "oakfinance"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "supabase-secret-key"
+description = "Chave secreta do Supabase (sb_secret_)"
+regex = '''sb_secret_[A-Za-z0-9_-]{16,}'''
+keywords = ["sb_secret_"]
+
+[[rules]]
+id = "supabase-publishable-key-fora-do-exemplo"
+description = "Chave publishable do Supabase versionada (vai só nas GitHub variables)"
+regex = '''sb_publishable_[A-Za-z0-9_-]{16,}'''
+keywords = ["sb_publishable_"]
+[rules.allowlist]
+paths = ['''^\.env\.example$''']
+
+[[rules]]
+id = "jwt"
+description = "JSON Web Token (inclui as chaves legadas anon/service_role do Supabase)"
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'''
+keywords = ["eyJ"]
+
+[[rules]]
+id = "vapid-private-key"
+description = "Chave privada VAPID (32 bytes em base64url)"
+regex = '''(?i)vapid_?private_?key["'\s]*[:=]\s*["']?[A-Za-z0-9_-]{43}\b'''
+keywords = ["vapid"]
+
+[[rules]]
+id = "pluggy-client-secret"
+description = "Segredo do cliente da Pluggy"
+regex = '''(?i)pluggy_client_secret["'\s]*[:=]\s*["']?[A-Za-z0-9_-]{8,}'''
+keywords = ["pluggy_client_secret"]
+
+[[rules]]
+id = "pluggy-webhook-token"
+description = "Token do webhook da Pluggy (hex 64)"
+regex = '''(?i)pluggy_webhook_token["'\s]*[:=]\s*["']?[a-f0-9]{64}\b'''
+keywords = ["pluggy_webhook_token"]
+
+[[rules]]
+id = "cloudflare-api-token"
+description = "Token da API da Cloudflare"
+regex = '''(?i)(?:cloudflare|cf)_api_token["'\s]*[:=]\s*["']?[A-Za-z0-9_-]{40}\b'''
+keywords = ["cloudflare_api_token", "cf_api_token"]
+
+[[rules]]
+id = "backup-passphrase"
+description = "Senha dos backups"
+regex = '''(?i)backup_passphrase["'\s]*[:=]\s*["']?[^\s"'$]{8,}'''
+keywords = ["backup_passphrase"]
