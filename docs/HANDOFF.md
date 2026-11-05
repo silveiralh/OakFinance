@@ -11,8 +11,9 @@
 - Workflows (T-005): `deploy.yml` (backup → staging → produção → smoke; pula com aviso sem `vars.SUPABASE_PROD_REF`), `backup.yml` (dump cifrado), `keepalive.yml` (`ping` e `ops_health` em prod e staging), `nightly.yml` (E2E ×3, Stryker, gitleaks no histórico, audit, keepalive em 48 h), `preview.yml` + `preview-deploy.yml`, `dependabot.yml` e `packages/domain/stryker.config.json`.
 - Guard (T-006): `scripts/ci-guard.ts` (caminhos protegidos, testes não caem, proibições, migrações imutáveis e sem DDL destrutivo, drift de contrato via `.d.ts` do domínio, `fix:` com teste, título e `T-xxx`, PR de fork) e `scripts/coverage-ratchet.ts` (`pnpm coverage:ratchet`, só sobe). O `ci.yml` também roda em `edited`, para o guard reavaliar título e corpo.
 - **Bootstrap encerrado:** a partir de agora, mudar `.github/**`, `biome.json`, `vitest.config.*`, `playwright.config.ts`, `scripts/ci-guard.ts`, `scripts/ci-secrets.ts`, `.gitleaks.toml`, `000-setup.test.sql` ou `lefthook.yml`, ou baixar `coverage-baseline.json`, reprova o guard e exige o rótulo `needs-owner`.
-- Ainda não há migrações nem deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
-- Última tarefa concluída: T-007. **Marco M0 atingido: portão ativo.** Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Banco (T-008): migrações 01 (base) e 02 (núcleo) com o DDL literal da §3.2–3.3, `db-types.ts` gerado e checado no job `db`, pgTAP `010-core-checks`.
+- Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
+- Última tarefa concluída: T-008. Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
@@ -24,7 +25,9 @@
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-008 — Migrações 01–02 e tipos gerados.** F1 (banco), F2 (domínio, a partir da T-012) e F3 (design system, T-025) estão liberadas; siga a ordem de ID.
+- **Próxima tarefa: T-009 — Migrações 03–04: integrações, sync e RPCs.**
+- Tipos do banco: `supabase gen types` não roda no ambiente da sessão. Quando a migração mudar, o `scripts/gen-db-types.sh --check` do job `db` falha e imprime o arquivo inteiro entre `----- INICIO db-types.ts -----` e `----- FIM db-types.ts -----`; baixe o log do job (`gh api repos/silveiralh/OakFinance/actions/jobs/<id>/logs`), tire o prefixo de data de cada linha e grave em `apps/web/src/data/db-types.ts`. Isso gasta uma rodada de CI.
+- Validação local das migrações: Postgres 16 + pgTAP do apt com o harness que imita `auth` (substitua as linhas `create extension pg_cron/pg_net` por comentário só localmente). F1 (banco), F2 (domínio, a partir da T-012) e F3 (design system, T-025) estão liberadas; siga a ordem de ID.
 - Com o ruleset, o merge só passa com a branch atualizada: se o PUT de merge recusar, `git rebase origin/main` no branch da tarefa e `push --force-with-lease`. Conferir com `gh api repos/silveiralh/OakFinance/rules/branches/main`: PR obrigatório, os 8 checks (`guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build`), branch atualizada, histórico linear, bloqueio de force-push e de exclusão. Sem o ruleset, a T-007 fica `blocked` e nenhuma outra tarefa anda (toda a cadeia depende dela).
 - Antes de abrir PR, remova o `[WIP]` do título antes do último push (ou edite o título: o `ci.yml` roda em `edited`). O guard reprova título fora do Conventional Commits.
 - Dependabot: os PRs `chore(deps)` não têm `T-xxx` no corpo e os de actions mexem em `.github/**`, então o guard os reprova. Eles ficam para o dono (rótulo `needs-owner` + bypass), ou uma sessão refaz a atualização num PR de tarefa.
@@ -85,3 +88,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-006 | PR #8 | done | guard do portão (modo bootstrap neste PR) e catraca de cobertura; pede SETUP-04 |
 | 05/11/2026 | T-007 | PR #9 | blocked | aguarda SETUP-04 (ruleset de main); cadeia parada |
 | 05/11/2026 | T-007 | PR #10 | done | ruleset de main conferido (8 checks, strict, linear, sem force-push/exclusão, bypass só admin em PR); M0 |
+| 05/11/2026 | T-008 | PR #11 | done | migrações 01–02, tipos gerados, 19 asserções pgTAP (RN-01/05/07/09, US-02) |

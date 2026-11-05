@@ -2667,3 +2667,4 @@ Uma linha por PR que mude a API pública de `packages/domain` ou as migrações 
 
 | Data | Tarefa | PR | Área | Mudança |
 |---|---|---|---|---|
+| 05/11/2026 | T-008 | PR #11 | migrações | `20261105000001_base.sql` e `20261105000002_core.sql` com o DDL literal da §3.2–3.3 e os índices de cursor; tipos em `apps/web/src/data/db-types.ts` gerados por `scripts/gen-db-types.sh` |

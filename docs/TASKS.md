@@ -70,7 +70,7 @@ flowchart LR
 | T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | done |
 | T-006 | Guard do portão e catraca de cobertura | T-005 | done |
 | T-007 | Portão: ruleset de main ativo | T-006 | done |
-| T-008 | Migrações 01–02 e tipos gerados | T-007 | todo |
+| T-008 | Migrações 01–02 e tipos gerados | T-007 | done |
 | T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | todo |
 | T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | todo |
 | T-011 | Migração 07 e integração do sync no banco | T-010 | todo |
@@ -296,7 +296,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-008 — Migrações 01–02 e tipos gerados
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-02 | RN-01, RN-05, RN-07, RN-09 | T-007 | não |
+| done | S1 | M | US-02 | RN-01, RN-05, RN-07, RN-09 | T-007 | não |
 
 **Escopo:** `supabase/migrations/20261105000001_base.sql` e `…02_core.sql` (DDL literal da §3.2–3.3, com os índices de cursor), `scripts/gen-db-types.sh`, `apps/web/src/data/db-types.ts`, `supabase/tests/database/010-core-checks.test.sql` (§8.3 item 9), Apêndice A.
 
