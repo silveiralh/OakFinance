@@ -81,7 +81,7 @@ flowchart LR
 | T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | todo |
 | T-017 | Domínio: Disponível para gastar | T-016 | todo |
 | T-018 | Domínio: reserva | T-016 | todo |
-| T-019 | Domínio: categorização e seeds | T-012 | todo |
+| T-019 | Domínio: categorização e seeds | T-012 | done |
 | T-020 | Domínio: conciliação I | T-013, T-015 | todo |
 | T-021 | Domínio: conciliação II | T-020, T-014 | todo |
 | T-022 | Domínio: importação OFX/CSV | T-020 | todo |
@@ -461,7 +461,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-019 — Domínio: categorização e seeds
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-01, US-27, US-28 | RN-40, RN-41, RN-57..RN-64 | T-012 | não |
+| done | S1 | M | US-01, US-27, US-28 | RN-40, RN-41, RN-57..RN-64 | T-012 | não |
 
 **Escopo:** `categorization.ts`, `defaults.ts` (lista da §3.8 idêntica à RN-40/RN-64, lembretes e orçamento padrão), mapa Pluggy→slug.
 
