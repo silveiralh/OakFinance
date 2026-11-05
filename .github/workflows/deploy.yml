@@ -1,0 +1,137 @@
+# Deploy (tech §8.7): backup → staging → produção → smoke, a cada push em main.
+# Termina com aviso e sucesso enquanto vars.SUPABASE_PROD_REF estiver vazio (SETUP-05/09).
+# Segredos só nos Environments staging/production, restritos a main. Nunca roda em pull_request.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  SUPABASE_CLI_VERSION: 3.0.0
+  WRANGLER_VERSION: 4.158.0
+
+jobs:
+  check:
+    name: configuração
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      configured: ${{ steps.vars.outputs.configured }}
+    steps:
+      - id: vars
+        env:
+          PROD_REF: ${{ vars.SUPABASE_PROD_REF }}
+          STAGING_REF: ${{ vars.SUPABASE_STAGING_REF }}
+        run: |
+          if [ -z "$PROD_REF" ] || [ -z "$STAGING_REF" ]; then
+            echo "::warning::Deploy pulado: vars.SUPABASE_PROD_REF/SUPABASE_STAGING_REF vazias (SETUP-05 e SETUP-09)."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  backup:
+    needs: check
+    if: needs.check.outputs.configured == 'true'
+    uses: ./.github/workflows/backup.yml
+    secrets: inherit
+
+  staging:
+    name: staging
+    needs: backup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: staging
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - name: migrações e funções
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+          PROJECT_REF: ${{ vars.SUPABASE_STAGING_REF }}
+        run: scripts/deploy-supabase.sh "$PROJECT_REF"
+      - name: smoke (ping)
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_STAGING_URL }}
+          SUPABASE_KEY: ${{ vars.SUPABASE_STAGING_PUBLISHABLE_KEY }}
+        run: node scripts/ops-check.ts ping
+
+  production:
+    name: produção
+    needs: staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - name: migrações e funções
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
+          PROJECT_REF: ${{ vars.SUPABASE_PROD_REF }}
+        run: scripts/deploy-supabase.sh "$PROJECT_REF"
+      - name: build de produção
+        env:
+          VITE_APP_ENV: production
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_PROD_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PROD_PUBLISHABLE_KEY }}
+          VITE_VAPID_PUBLIC_KEY: ${{ vars.VAPID_PUBLIC_KEY_PROD }}
+        run: pnpm ci:build
+      - name: Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ vars.CF_PAGES_PROJECT }}
+        run: >-
+          pnpm dlx "wrangler@${WRANGLER_VERSION}" pages deploy apps/web/dist
+          --project-name="$CF_PAGES_PROJECT" --branch=main --commit-dirty=true
+
+  smoke:
+    name: smoke
+    needs: production
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: ping de produção
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_PROD_URL }}
+          SUPABASE_KEY: ${{ vars.SUPABASE_PROD_PUBLISHABLE_KEY }}
+        run: node scripts/ops-check.ts ping
+      - name: smoke do app publicado
+        run: pnpm smoke:remote
+
+  regression:
+    name: abre issue de regressão
+    needs: [backup, staging, production, smoke]
+    if: failure()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: issue de regressão do deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          scripts/open-regression-issue.sh "regressão: deploy" "$RUN_URL"
