@@ -73,7 +73,7 @@ flowchart LR
 | T-008 | Migrações 01–02 e tipos gerados | T-007 | done |
 | T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | done |
 | T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | done |
-| T-011 | Migração 07 e integração do sync no banco | T-010 | todo |
+| T-011 | Migração 07 e integração do sync no banco | T-010 | done |
 | T-012 | Domínio base | T-007 | done |
 | T-013 | Domínio: faturas | T-012 | done |
 | T-014 | Domínio: parcelas | T-013 | todo |
@@ -340,7 +340,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-011 — Migração 07 e integração do sync no banco
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-04, US-05 | RN-96..RN-99 | T-010 | não |
+| done | S1 | M | US-04, US-05 | RN-96..RN-99 | T-010 | não |
 
 **Escopo:**
 - migração 07 (§3.7): `invoke_function`, `enqueue_pluggy_sync`, `purge` (capturando `foreign_key_violation` por tabela e registrando em `job_runs`), `cron.schedule` e `ops_health()` (só `service_role`, §7.3);
