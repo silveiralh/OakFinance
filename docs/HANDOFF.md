@@ -11,8 +11,8 @@
 - Workflows (T-005): `deploy.yml` (backup → staging → produção → smoke; pula com aviso sem `vars.SUPABASE_PROD_REF`), `backup.yml` (dump cifrado), `keepalive.yml` (`ping` e `ops_health` em prod e staging), `nightly.yml` (E2E ×3, Stryker, gitleaks no histórico, audit, keepalive em 48 h), `preview.yml` + `preview-deploy.yml`, `dependabot.yml` e `packages/domain/stryker.config.json`.
 - Guard (T-006): `scripts/ci-guard.ts` (caminhos protegidos, testes não caem, proibições, migrações imutáveis e sem DDL destrutivo, drift de contrato via `.d.ts` do domínio, `fix:` com teste, título e `T-xxx`, PR de fork) e `scripts/coverage-ratchet.ts` (`pnpm coverage:ratchet`, só sobe). O `ci.yml` também roda em `edited`, para o guard reavaliar título e corpo.
 - **Bootstrap encerrado:** a partir de agora, mudar `.github/**`, `biome.json`, `vitest.config.*`, `playwright.config.ts`, `scripts/ci-guard.ts`, `scripts/ci-secrets.ts`, `.gitleaks.toml`, `000-setup.test.sql` ou `lefthook.yml`, ou baixar `coverage-baseline.json`, reprova o guard e exige o rótulo `needs-owner`.
-- Ainda não há migrações nem deploy real. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
-- Última tarefa concluída: T-006. A T-007 está `blocked: aguarda cliente — SETUP-04` (conferido em 05/11 às 20:08 UTC: `rules/branches/main` vazio e nenhum item marcado na issue #2).
+- Ainda não há migrações nem deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
+- Última tarefa concluída: T-007. **Marco M0 atingido: portão ativo.** Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
@@ -20,11 +20,12 @@
 - Deploy: `deploy.yml` roda em cada push em `main` e termina com aviso e sucesso enquanto as variáveis do Supabase estão vazias (SETUP-05/09). Backup, keepalive e preview também pulam com aviso. O deploy real começa na T-036.
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Ainda não rodou.
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
-- Ruleset de `main`: **não existe. O cliente precisa fazer o SETUP-04 agora** (os 8 checks já rodaram e aparecem para seleção).
+- Ruleset de `main`: ativo desde 05/11 (SETUP-04). Todo merge exige os 8 checks verdes e a branch atualizada.
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-007 — Portão: ruleset de main ativo**, hoje `blocked: aguarda cliente — SETUP-04`. Quando o cliente marcar o SETUP-04 na issue #2, a sessão volta a T-007 para `todo` e confere. Conferir com `gh api repos/silveiralh/OakFinance/rules/branches/main`: PR obrigatório, os 8 checks (`guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build`), branch atualizada, histórico linear, bloqueio de force-push e de exclusão. Sem o ruleset, a T-007 fica `blocked` e nenhuma outra tarefa anda (toda a cadeia depende dela).
+- **Próxima tarefa: T-008 — Migrações 01–02 e tipos gerados.** F1 (banco), F2 (domínio, a partir da T-012) e F3 (design system, T-025) estão liberadas; siga a ordem de ID.
+- Com o ruleset, o merge só passa com a branch atualizada: se o PUT de merge recusar, `git rebase origin/main` no branch da tarefa e `push --force-with-lease`. Conferir com `gh api repos/silveiralh/OakFinance/rules/branches/main`: PR obrigatório, os 8 checks (`guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build`), branch atualizada, histórico linear, bloqueio de force-push e de exclusão. Sem o ruleset, a T-007 fica `blocked` e nenhuma outra tarefa anda (toda a cadeia depende dela).
 - Antes de abrir PR, remova o `[WIP]` do título antes do último push (ou edite o título: o `ci.yml` roda em `edited`). O guard reprova título fora do Conventional Commits.
 - Dependabot: os PRs `chore(deps)` não têm `T-xxx` no corpo e os de actions mexem em `.github/**`, então o guard os reprova. Eles ficam para o dono (rótulo `needs-owner` + bypass), ou uma sessão refaz a atualização num PR de tarefa.
 - Mensagens de commit: o commitlint recusa linhas de rodapé com mais de 100 caracteres.
@@ -45,7 +46,7 @@
 | Item | Quando é necessário | Desbloqueia |
 |---|---|---|
 | SETUP-01 a SETUP-03 (repositório público, opções, credencial sem admin) | agora | operação segura das sessões |
-| **SETUP-04 ruleset** | **agora** (a T-006 entrou) | T-007 e toda a cadeia (hoje bloqueada) |
+| SETUP-04 ruleset | feito em 05/11 | T-007 (done) |
 | SETUP-05 a SETUP-09, SETUP-12 (Supabase, Google, Cloudflare, Environments, backup) | até a T-036 (~dia 6) | T-036 |
 | SETUP-10 allowlist, Vault, hook, secrets das funções | depois da T-036 | M1 (login real) |
 | SETUP-11 VAPID | depois da T-064 | M2 (push real) |
@@ -54,7 +55,7 @@
 | SETUP-15 licença; SETUP-16 decisões pendentes | antes da T-099 | T-099 |
 
 - Conferido pela API em 05/11: o repositório já é público (SETUP-01), mas as opções do SETUP-02 ainda não foram aplicadas (merge commit e rebase permitidos, auto-merge e exclusão automática de branch desligados). Nenhum item marcado na issue #2 ainda.
-- **T-007 `blocked: aguarda cliente — SETUP-04`.** Como toda tarefa depende da T-007, a cadeia está parada até o ruleset existir.
+- Nenhuma tarefa bloqueada. SETUP-02 ainda incompleto (auto-merge e exclusão automática de branches desligados).
 
 ## 5. Riscos conhecidos
 
@@ -83,3 +84,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-005 | PR #6 | done | deploy, backup, keepalive, nightly, preview (build sem segredo + deploy por workflow_run), dependabot e Stryker |
 | 05/11/2026 | T-006 | PR #8 | done | guard do portão (modo bootstrap neste PR) e catraca de cobertura; pede SETUP-04 |
 | 05/11/2026 | T-007 | PR #9 | blocked | aguarda SETUP-04 (ruleset de main); cadeia parada |
+| 05/11/2026 | T-007 | PR #10 | done | ruleset de main conferido (8 checks, strict, linear, sem force-push/exclusão, bypass só admin em PR); M0 |
