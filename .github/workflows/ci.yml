@@ -4,6 +4,8 @@ name: ci
 
 on:
   pull_request:
+    # edited: o guard volta a rodar quando o título ou o corpo do PR mudam (ex.: saída do [WIP]).
+    types: [opened, synchronize, reopened, edited]
   push:
     branches: [main]
 
