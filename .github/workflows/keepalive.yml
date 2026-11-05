@@ -27,10 +27,10 @@ jobs:
     env:
       SUPABASE_URL: ${{ vars[format('SUPABASE_{0}_URL', matrix.prefix)] }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: scripts
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - if: env.SUPABASE_URL == ''
