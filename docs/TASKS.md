@@ -71,7 +71,7 @@ flowchart LR
 | T-006 | Guard do portão e catraca de cobertura | T-005 | done |
 | T-007 | Portão: ruleset de main ativo | T-006 | done |
 | T-008 | Migrações 01–02 e tipos gerados | T-007 | done |
-| T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | todo |
+| T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | done |
 | T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | todo |
 | T-011 | Migração 07 e integração do sync no banco | T-010 | todo |
 | T-012 | Domínio base | T-007 | todo |
@@ -311,7 +311,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-009 — Migrações 03–04: integrações, sync, histórico e RPCs
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-04 | RN-95..RN-99 | T-008 | não |
+| done | S1 | M | US-04 | RN-95..RN-99 | T-008 | não |
 
 **Escopo:**
 - migração 03 (§3.4);
