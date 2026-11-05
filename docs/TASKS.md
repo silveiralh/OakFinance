@@ -66,7 +66,7 @@ flowchart LR
 | T-001 | Tooling da raiz e documentos base | — | done |
 | T-002 | Esqueleto dos workspaces e configs de teste | T-001 | done |
 | T-003 | Supabase local, pgTAP e Edge Functions | T-002 | done |
-| T-004 | CI com 8 jobs e varredura de segredos | T-003 | todo |
+| T-004 | CI com 8 jobs e varredura de segredos | T-003 | done |
 | T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | todo |
 | T-006 | Guard do portão e catraca de cobertura | T-005 | todo |
 | T-007 | Portão: ruleset de main ativo | T-006 | todo |
@@ -231,7 +231,7 @@ Todos os arquivos que serão protegidos pelo guard (vitest e playwright configs)
 ### T-004 — CI com 8 jobs e varredura de segredos
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | — | RN-101 | T-003 | não |
+| done | S1 | M | — | RN-101 | T-003 | não |
 
 **Escopo:**
 - `.github/workflows/ci.yml` (§8.6): `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e` (3 projetos, sharding 3) e `build`; `concurrency`, `permissions: contents: read`, timeouts, sem segredos; o `guard` roda `scripts/ci-guard.ts` só se o arquivo existir (senão imprime "bootstrap");
