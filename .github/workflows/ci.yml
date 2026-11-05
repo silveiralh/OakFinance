@@ -141,7 +141,16 @@ jobs:
       - name: supabase start
         run: supabase start
       - name: navegadores do Playwright
-        run: pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit
+        timeout-minutes: 16
+        run: |
+          # O download às vezes trava; cada tentativa tem 5 min.
+          for attempt in 1 2 3; do
+            if timeout 300 pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit; then
+              exit 0
+            fi
+            echo "::warning::instalação dos navegadores falhou (tentativa $attempt de 3)"
+          done
+          exit 1
       - name: playwright (android, iphone, desktop)
         env:
           CI: "true"
