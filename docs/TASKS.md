@@ -65,7 +65,7 @@ flowchart LR
 |---|---|---|---|
 | T-001 | Tooling da raiz e documentos base | — | done |
 | T-002 | Esqueleto dos workspaces e configs de teste | T-001 | done |
-| T-003 | Supabase local, pgTAP e Edge Functions | T-002 | todo |
+| T-003 | Supabase local, pgTAP e Edge Functions | T-002 | done |
 | T-004 | CI com 8 jobs e varredura de segredos | T-003 | todo |
 | T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | todo |
 | T-006 | Guard do portão e catraca de cobertura | T-005 | todo |
@@ -213,7 +213,7 @@ Todos os arquivos que serão protegidos pelo guard (vitest e playwright configs)
 ### T-003 — Supabase local, pgTAP e Edge Functions
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-02 | — | T-002 | não |
+| done | S1 | M | US-02 | — | T-002 | não |
 
 **Escopo:**
 - `supabase/config.toml`: serviços mínimos da §8.2, login por e-mail só local, `verify_jwt` por função;
