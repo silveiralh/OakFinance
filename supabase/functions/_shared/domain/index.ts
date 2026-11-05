@@ -7,11 +7,8 @@ export * from './ids.ts';
 export * from './installments.ts';
 export * from './invoices.ts';
 export * from './money.ts';
-<<<<<<< HEAD
-export * from './recurrence.ts';
-=======
 export * from './nfce/qr.ts';
->>>>>>> f238836 (feat(domain): lê o QR da NFC-e e valida a chave de acesso)
+export * from './recurrence.ts';
 export type * from './types.ts';
 
 export const DOMAIN_PACKAGE = '@oakfinance/domain';
