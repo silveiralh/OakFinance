@@ -37,7 +37,7 @@ Precedência: 04-review > RN do PRD (regras e números) > UX (textos e telas) > 
 2. **Ler** `docs/HANDOFF.md` e `docs/TASKS.md` por inteiro.
 3. **Triagem, antes da cadeia:**
    1. Issue aberta com título `regressão:` → é a tarefa desta sessão: PR `revert:` do commit culpado ou `fix:` com teste de regressão.
-   2. PR aberto de sessão anterior com CI vermelho e menos de 3 rodadas de correção → continue nele. Se tiver o rótulo `needs-owner`, não mexa e siga adiante.
+   2. PR aberto de sessão anterior (CI vermelho com menos de 3 rodadas de correção, ou `[WIP]` sem commits há mais de 30 min) → continue nele. Se tiver o rótulo `needs-owner`, não mexa e siga adiante.
    3. Issue `Setup do cliente`: veja quais `SETUP-xx` o cliente marcou como feitos. Tarefas `blocked: aguarda cliente — SETUP-xx` com o item feito voltam a `todo`, e isso entra no seu PR.
 4. **Escolher a tarefa:** a primeira, em ordem de ID, com Status `todo`, com todas as "Depende de" em `done` e que não esteja `blocked`. Se ela tiver "Cliente: sim" e o item `SETUP-xx` não estiver feito, marque `blocked: aguarda cliente — SETUP-xx` e pegue a próxima liberada.
 5. **Branch:** `git fetch origin && git switch -c task/T-xxx-slug origin/main` (slug curto em kebab-case).
@@ -56,9 +56,15 @@ Precedência: 04-review > RN do PRD (regras e números) > UX (textos e telas) > 
    - Nas T-001 a T-003 ainda não há CI: o merge acontece depois dos checks locais passarem.
 13. **CI vermelho:** liste os runs do commit (`gh api "repos/silveiralh/OakFinance/actions/runs?head_sha=<sha>"`), leia o log da falha (`gh run view <id> --log-failed`; se falhar, baixe `gh api repos/silveiralh/OakFinance/actions/runs/<id>/logs > <arquivo fora do repo>.zip`), corrija no mesmo PR e repita o passo 12. São no máximo **3 rodadas de correção**. Uma falha de infraestrutura (runner, rede, download) pode ser re-executada uma vez com `gh api -X POST repos/silveiralh/OakFinance/actions/runs/<id>/rerun-failed-jobs` sem contar como rodada.
 14. **Se não conseguir em 3 rodadas:** deixe o PR aberto. Abra um PR `docs: bloqueia T-xxx` que só altere `TASKS.md` (`blocked: CI — <motivo curto>`) e `HANDOFF.md` (o que falhou, hipóteses, link do run) e faça o merge dele pelo passo 12. Encerre a sessão.
-15. **Segunda tarefa:** permitida só se a primeira tiver tamanho P, já estiver mergeada e a sessão tiver gastado menos de 2 h.
-16. **Encerrar:** nenhum arquivo local sem commit, nenhum branch órfão, `HANDOFF.md` em `main` refletindo a realidade.
-17. **Espelhar no Projeto:** o cliente acompanha o andamento pelo Projeto claude.ai "Sistema PWA de Gerenciamento Financeiro". Se a ferramenta `Projects` estiver disponível na sessão, grave o `docs/HANDOFF.md` de `main` em `claude/status.md` (`project_write` com `local_path`) e, quando `docs/TASKS.md` mudar, em `claude/TASKS.md`. Sem a ferramenta, apenas siga; o repositório continua sendo a fonte da verdade.
+15. **Encadear tarefas (decisão do cliente, D-007):** depois do merge confirmado, se a sessão começou há **menos de 3 h 30 min** e não apareceu erro de limite de uso, volte ao passo 2 e faça a próxima tarefa liberada, uma por PR. Pare de pegar tarefas novas quando ocorrer qualquer um destes:
+    - passaram 3 h 30 min do início (para não sobrepor a próxima sessão agendada);
+    - qualquer erro ou aviso de limite de uso ou de taxa (rate limit, 429, "limit");
+    - duas tarefas seguidas bloqueadas;
+    - nenhuma tarefa liberada.
+    Anote a hora de início no começo da sessão (`date -u`) e confira antes de cada nova tarefa.
+16. **Salvar progresso cedo:** abra o PR com o prefixo `[WIP]` no título logo após o primeiro commit e faça push a cada parte concluída. Se a sessão for interrompida pelo limite de uso, o trabalho fica no branch. Na triagem, um PR `[WIP]` de sessão anterior sem commits há mais de 30 min é retomado (passo 3.2), e o `[WIP]` sai do título quando a tarefa termina (`gh api -X PATCH repos/silveiralh/OakFinance/pulls/<n> -f title="…"`).
+17. **Encerrar:** nenhum arquivo local sem commit, nenhum branch órfão, `HANDOFF.md` em `main` refletindo a realidade.
+18. **Espelhar no Projeto:** o cliente acompanha o andamento pelo Projeto claude.ai "Sistema PWA de Gerenciamento Financeiro". Se a ferramenta `Projects` estiver disponível na sessão, grave o `docs/HANDOFF.md` de `main` em `claude/status.md` (`project_write` com `local_path`) e, quando `docs/TASKS.md` mudar, em `claude/TASKS.md`. Sem a ferramenta, apenas siga; o repositório continua sendo a fonte da verdade.
 
 ## 4. Regras invioláveis
 
@@ -69,7 +75,7 @@ Precedência: 04-review > RN do PRD (regras e números) > UX (textos e telas) > 
 - **Nunca** altere spec sem registrar em `docs/DECISIONS.md` (a linha do Apêndice A, D-001, é a única exceção rotineira).
 - **Nunca** crie contas, chaves ou recursos externos nem gere chaves VAPID de produção. Isso é do cliente (SETUP). Sem uma variável, use mocks e fixtures.
 - **Nunca** edite uma migração já mergeada; corrija com uma migração nova. Nada de DDL destrutivo.
-- **Uma tarefa por sessão** (duas só pela regra do passo 15). Uma tarefa por PR.
+- **Uma tarefa por PR.** Várias tarefas por sessão só pela regra do passo 15.
 - Nunca imprima variáveis de segredo no CI (`set -x`, `echo $SECRET`, artefatos).
 
 ## 5. Tarefas que dependem do cliente
