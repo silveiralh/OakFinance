@@ -1,5 +1,7 @@
 // API pública do domínio (tech §5). Regras puras: sem I/O, sem relógio e sem aleatoriedade implícitos.
+export * from './categorization.ts';
 export * from './dates.ts';
+export * from './defaults.ts';
 export * from './errors.ts';
 export * from './ids.ts';
 export * from './installments.ts';
