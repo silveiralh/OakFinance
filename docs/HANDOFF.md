@@ -12,6 +12,7 @@
 - Guard (T-006): `scripts/ci-guard.ts` (caminhos protegidos, testes não caem, proibições, migrações imutáveis e sem DDL destrutivo, drift de contrato via `.d.ts` do domínio, `fix:` com teste, título e `T-xxx`, PR de fork) e `scripts/coverage-ratchet.ts` (`pnpm coverage:ratchet`, só sobe). O `ci.yml` também roda em `edited`, para o guard reavaliar título e corpo.
 - **Bootstrap encerrado:** a partir de agora, mudar `.github/**`, `biome.json`, `vitest.config.*`, `playwright.config.ts`, `scripts/ci-guard.ts`, `scripts/ci-secrets.ts`, `.gitleaks.toml`, `000-setup.test.sql` ou `lefthook.yml`, ou baixar `coverage-baseline.json`, reprova o guard e exige o rótulo `needs-owner`.
 - Banco (T-008/T-009): migrações 01 (base), 02 (núcleo), 03 (integrações e push) e 04 (sync, histórico, observabilidade e RPCs `sync_push`/`sync_pull`/`get_row_history`/`map_external_account`/push/`log_events`/`ping`); `db-types.ts` gerado e checado no job `db`; pgTAP `010-core-checks` e `020-sync`. **Ainda sem RLS** (migração 05, T-010).
+- Domínio base (T-012): `types`, `money`, `dates`, `ids` (namespaces v5 fixos) e `DomainError` em `packages/domain`, com testes de propriedade (fast-check, 200 execuções) e cobertura 100/97; cópia em `supabase/functions/_shared/domain` com `uuid` no import map do Deno.
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
 - Última tarefa concluída: T-009. Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
@@ -91,3 +92,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-007 | PR #10 | done | ruleset de main conferido (8 checks, strict, linear, sem force-push/exclusão, bypass só admin em PR); M0 |
 | 05/11/2026 | T-008 | PR #11 | done | migrações 01–02, tipos gerados, 19 asserções pgTAP (RN-01/05/07/09, US-02) |
 | 05/11/2026 | T-009 | PR #13 | done | migrações 03–04, sync e RPCs, 36 asserções pgTAP; D-008 (privilégios) |
+| 05/11/2026 | T-012 | PR #17 | done | domínio base (dinheiro, datas, ids v5, erros); D-010 |

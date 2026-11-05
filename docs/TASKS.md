@@ -74,7 +74,7 @@ flowchart LR
 | T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | done |
 | T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | todo |
 | T-011 | Migração 07 e integração do sync no banco | T-010 | todo |
-| T-012 | Domínio base | T-007 | todo |
+| T-012 | Domínio base | T-007 | done |
 | T-013 | Domínio: faturas | T-012 | todo |
 | T-014 | Domínio: parcelas | T-013 | todo |
 | T-015 | Domínio: recorrências | T-013 | todo |
@@ -356,7 +356,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-012 — Domínio base
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | — | RN-01, RN-02, RN-03 | T-007 | não |
+| done | S1 | M | — | RN-01, RN-02, RN-03 | T-007 | não |
 
 **Escopo:** `types.ts`, `money.ts`, `dates.ts`, `ids.ts` (namespaces v5 gerados uma vez e fixados), `errors.ts` (`DomainError`), `index.ts`; cópia por `pnpm vendor` para `_shared/domain`; Apêndice A.
 
