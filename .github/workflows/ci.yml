@@ -145,12 +145,19 @@ jobs:
       - name: navegadores do Playwright
         timeout-minutes: 16
         run: |
-          # O download às vezes trava; cada tentativa tem 5 min.
+          # O apt do runner às vezes trava num download: timeout curto por pacote, novas tentativas
+          # e, entre tentativas, encerra o apt que ficou para trás (senão ele segura o lock do dpkg).
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' \
+            | sudo tee /etc/apt/apt.conf.d/99oakfinance-retries > /dev/null
           for attempt in 1 2 3; do
-            if timeout 300 pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit; then
+            if timeout -k 10 300 pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit; then
               exit 0
             fi
             echo "::warning::instalação dos navegadores falhou (tentativa $attempt de 3)"
+            sudo pkill -9 -x apt-get || true
+            sudo pkill -9 -x dpkg || true
+            sleep 3
+            sudo dpkg --configure -a || true
           done
           exit 1
       - name: playwright (android, iphone, desktop)
