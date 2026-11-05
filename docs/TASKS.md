@@ -75,7 +75,7 @@ flowchart LR
 | T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | done |
 | T-011 | Migração 07 e integração do sync no banco | T-010 | todo |
 | T-012 | Domínio base | T-007 | done |
-| T-013 | Domínio: faturas | T-012 | todo |
+| T-013 | Domínio: faturas | T-012 | done |
 | T-014 | Domínio: parcelas | T-013 | todo |
 | T-015 | Domínio: recorrências | T-013 | todo |
 | T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | todo |
@@ -371,7 +371,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-013 — Domínio: faturas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-17, US-18, US-19 | RN-09..RN-18 | T-012 | não |
+| done | S1 | M | US-17, US-18, US-19 | RN-09..RN-18 | T-012 | não |
 
 **Escopo:** `invoices.ts` (§5.2).
 
