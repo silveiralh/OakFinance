@@ -63,6 +63,11 @@ enabled = false
 [auth.external.google]
 enabled = false
 
+# Cadastro fechado (ADR-17): só e-mails de app.allowed_emails. No ambiente local a allowlist vem do seed.sql.
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/public/hook_before_user_created"
+
 [edge_runtime]
 enabled = true
 policy = "per_worker"

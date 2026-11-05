@@ -72,7 +72,7 @@ flowchart LR
 | T-007 | Portão: ruleset de main ativo | T-006 | done |
 | T-008 | Migrações 01–02 e tipos gerados | T-007 | done |
 | T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | done |
-| T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | todo |
+| T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | done |
 | T-011 | Migração 07 e integração do sync no banco | T-010 | todo |
 | T-012 | Domínio base | T-007 | done |
 | T-013 | Domínio: faturas | T-012 | todo |
@@ -325,7 +325,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-010 — Migrações 05–06: RLS e cadastro fechado
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-01, US-02 | RN-101, RN-102 | T-009 | não |
+| done | S1 | M | US-01, US-02 | RN-101, RN-102 | T-009 | não |
 
 **Escopo:** migrações 05 e 06, hook `before_user_created` ligado no `config.toml` local, `030-rls.test.sql` (§8.3 itens 1–5, 7 e 8, com dois usuários `@example.test`).
 
