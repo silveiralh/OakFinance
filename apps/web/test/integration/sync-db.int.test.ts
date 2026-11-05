@@ -170,11 +170,15 @@ describe('sync ponta a ponta (Supabase local)', () => {
       [userA],
     );
     expect(rows[0]?.n).toBe(1);
-    const { error } = await admin.auth.admin.createUser({
+    // O cadastro público passa pelo hook before_user_created (a Admin API não passa)
+    const anon = createClient(API_URL, CLIENT_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { data, error } = await anon.auth.signUp({
       email: 'fora-da-lista@example.test',
       password: PASSWORD,
-      email_confirm: true,
     });
+    expect(data.user).toBeNull();
     expect(error?.message ?? '').toContain('Este app é de uso privado.');
   });
 
