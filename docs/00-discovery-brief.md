@@ -1,6 +1,8 @@
 # Discovery — PWA de Gerenciamento Financeiro Pessoal
 
-*Entrevista com o cliente em 05/11/2026 · equipe de discovery: Produto/Negócio, UX e Arquitetura · v2 (perguntas em aberto respondidas)*
+*Entrevista com o cliente em 05/11/2026 · equipe de discovery: Produto/Negócio, UX e Arquitetura · v3*
+
+> **Atualização v3 (05/11):** nome **OakFinance**; marca **só tipográfica** (sem símbolo); visual **Aero sóbrio e premium, sem elementos lúdicos**, para jovens adultos; repositório `silveiralh/oakfinance` público; compra no cartão conta no mês do vencimento. As especificações em `docs/01`–`04` prevalecem sobre este brief.
 
 ## 1. Visão
 
