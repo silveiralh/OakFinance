@@ -69,7 +69,7 @@ flowchart LR
 | T-004 | CI com 8 jobs e varredura de segredos | T-003 | done |
 | T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | done |
 | T-006 | Guard do portão e catraca de cobertura | T-005 | done |
-| T-007 | Portão: ruleset de main ativo | T-006 | todo |
+| T-007 | Portão: ruleset de main ativo | T-006 | blocked: aguarda cliente — SETUP-04 |
 | T-008 | Migrações 01–02 e tipos gerados | T-007 | todo |
 | T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | todo |
 | T-010 | Migrações 05–06: RLS e cadastro fechado | T-009 | todo |
@@ -283,7 +283,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-007 — Portão: ruleset de main ativo
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | — | — | T-006 | sim — SETUP-04 |
+| blocked: aguarda cliente — SETUP-04 (ruleset de main) | S1 | P | — | — | T-006 | sim — SETUP-04 |
 
 **Escopo:** só docs. `gh api repos/silveiralh/oakfinance/rules/branches/main` confirma PR obrigatório, os 8 checks, branch atualizada, histórico linear e bloqueio de force-push e de exclusão.
 
