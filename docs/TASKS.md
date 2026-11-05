@@ -76,7 +76,7 @@ flowchart LR
 | T-011 | Migração 07 e integração do sync no banco | T-010 | done |
 | T-012 | Domínio base | T-007 | done |
 | T-013 | Domínio: faturas | T-012 | done |
-| T-014 | Domínio: parcelas | T-013 | todo |
+| T-014 | Domínio: parcelas | T-013 | done |
 | T-015 | Domínio: recorrências | T-013 | todo |
 | T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | todo |
 | T-017 | Domínio: Disponível para gastar | T-016 | todo |
@@ -387,7 +387,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-014 — Domínio: parcelas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-20, US-21 | RN-20..RN-25 | T-013 | não |
+| done | S1 | M | US-20, US-21 | RN-20..RN-25 | T-013 | não |
 
 **Escopo:** `installments.ts` (§5.3).
 
