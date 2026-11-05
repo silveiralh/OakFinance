@@ -30,23 +30,13 @@ jobs:
           version: ${{ env.SUPABASE_CLI_VERSION }}
       - run: supabase start
       - name: navegadores do Playwright
-        timeout-minutes: 16
+        # Uma tentativa só, com prazo longo: o espelho de apt do runner às vezes fica lento
+        # (o WebKit puxa ~180 pacotes) e matar a tentativa no meio só desperdiça o download.
+        timeout-minutes: 20
         run: |
-          # O apt do runner às vezes trava num download: timeout curto por pacote, novas tentativas
-          # e, entre tentativas, encerra o apt que ficou para trás (senão ele segura o lock do dpkg).
-          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' \
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "60";\nAcquire::https::Timeout "60";\n' \
             | sudo tee /etc/apt/apt.conf.d/99oakfinance-retries > /dev/null
-          for attempt in 1 2 3; do
-            if timeout -k 10 300 pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit; then
-              exit 0
-            fi
-            echo "::warning::instalação dos navegadores falhou (tentativa $attempt de 3)"
-            sudo pkill -9 -x apt-get || true
-            sudo pkill -9 -x dpkg || true
-            sleep 3
-            sudo dpkg --configure -a || true
-          done
-          exit 1
+          pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit
       - name: playwright (3 projetos, 3 repetições)
         env:
           CI: "true"
