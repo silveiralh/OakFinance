@@ -1,0 +1,13 @@
+# DECISIONS — log de decisões
+
+Registro cronológico das decisões que complementam ou ajustam as specs. Cada entrada aponta para o ADR (tech §1.3) ou para a seção afetada. Mudança de spec só entra com uma linha aqui (CLAUDE.md §4); o Apêndice A da `02-tech-spec.md` (D-001) é a única exceção rotineira.
+
+| ID | Data | Decisão | Afeta | Motivo |
+|---|---|---|---|---|
+| D-001 | 05/11/2026 | O "Apêndice A — Registro de implementação" da `docs/specs/02-tech-spec.md` registra, uma linha por PR, toda mudança na API pública de `packages/domain` ou nas migrações. O `guard` (T-006) exige a linha quando há drift de contrato. | tech §0 item 3, §3, §5; ADR novo não é exigido para a linha | Evita um ADR por detalhe de implementação e mantém o contrato rastreável |
+| D-002 | 05/11/2026 | Branch de tarefa é `task/T-xxx-slug`, que prevalece sobre `feat/<id>-<slug>` da tech §2.5. O tipo do commit continua no título do PR. | tech §2.5 | A tarefa, e não o tipo do commit, identifica o trabalho de cada sessão |
+| D-003 | 05/11/2026 | O merge acontece só depois de a sessão observar todos os checks verdes pela API REST (CLAUDE.md §3 passo 12), em vez de `gh pr merge --auto`. Até a T-004, depois dos checks locais. | tech §2.5 (auto-merge), §8.6 | O GraphQL do GitHub (usado por `gh pr`) é bloqueado no ambiente das sessões |
+| D-004 | 05/11/2026 | Modo bootstrap do `guard`: enquanto `scripts/ci-guard.ts` não existe em `origin/main`, o job imprime "bootstrap" e passa. Os arquivos protegidos nascem nas T-001..T-006; depois, mudança neles exige o rótulo `needs-owner`. | tech §0 item 8, §8.6 item 1 | O PR que cria o guard não pode ser barrado por ele mesmo |
+| D-005 | 05/11/2026 | O timeout da busca da NFC-e é 10 s (RN-84), e não os 20 s da tech §6.2.3. | tech §6.2.3; T-090 | Precedência: RN do PRD > tech |
+| D-006 | 05/11/2026 | A issue `Setup do cliente` do GitHub é o canal em que o cliente marca os itens `SETUP-xx` feitos (só o ID e "feito", nunca valores). | `docs/SETUP.md`; CLAUDE.md §5 | Canal assíncrono visível para as sessões sem expor segredos |
+| D-007 | 05/11/2026 | Cada sessão encadeia tarefas, uma por PR, até 3 h 30 min do início, erro de limite de uso, duas tarefas seguidas bloqueadas ou nenhuma tarefa liberada. | CLAUDE.md §3 passo 15; tech §0 | Decisão do cliente: acelerar a cadeia sem sobrepor a próxima sessão agendada |

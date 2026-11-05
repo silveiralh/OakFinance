@@ -63,7 +63,7 @@ flowchart LR
 
 | ID | Título | Depende de | Status |
 |---|---|---|---|
-| T-001 | Tooling da raiz e documentos base | — | todo |
+| T-001 | Tooling da raiz e documentos base | — | done |
 | T-002 | Esqueleto dos workspaces e configs de teste | T-001 | todo |
 | T-003 | Supabase local, pgTAP e Edge Functions | T-002 | todo |
 | T-004 | CI com 8 jobs e varredura de segredos | T-003 | todo |
@@ -170,7 +170,7 @@ flowchart LR
 ### T-001 — Tooling da raiz e documentos base
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | — | — | — | não |
+| done | S1 | P | — | — | — | não |
 
 **Escopo:** `package.json` (`packageManager` pnpm, `engines` node 24), `pnpm-workspace.yaml`, `.nvmrc`/`.node-version` (24), `tsconfig.base.json` (tech §2.3), `biome.json` (§2.4), `lefthook.yml`, `commitlint.config.ts`, `.editorconfig`, `.gitignore` (bloqueia `.env*` exceto `.env.example` e `supabase/.env.test`), `.env.example` (só nomes da §9.8), `.github/pull_request_template.md` (CLAUDE.md §7), `README.md`.
 
