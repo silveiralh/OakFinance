@@ -1705,6 +1705,7 @@ export type Database = {
         Args: { p_account_id: string; p_card_id: string; p_id: string; p_is_ignored: boolean };
         Returns: undefined;
       };
+      ops_health: { Args: Record<PropertyKey, never>; Returns: Json };
       ping: { Args: Record<PropertyKey, never>; Returns: string };
       sync_pull: { Args: { p_limit?: number; p_since: number }; Returns: Json };
       sync_push: { Args: { p_device_id: string; p_mutations: Json }; Returns: Json };

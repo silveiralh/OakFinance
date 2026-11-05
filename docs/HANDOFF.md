@@ -13,10 +13,11 @@
 - **Bootstrap encerrado:** a partir de agora, mudar `.github/**`, `biome.json`, `vitest.config.*`, `playwright.config.ts`, `scripts/ci-guard.ts`, `scripts/ci-secrets.ts`, `.gitleaks.toml`, `000-setup.test.sql` ou `lefthook.yml`, ou baixar `coverage-baseline.json`, reprova o guard e exige o rótulo `needs-owner`.
 - Banco (T-008/T-009): migrações 01 (base), 02 (núcleo), 03 (integrações e push) e 04 (sync, histórico, observabilidade e RPCs `sync_push`/`sync_pull`/`get_row_history`/`map_external_account`/push/`log_events`/`ping`); `db-types.ts` gerado e checado no job `db`; pgTAP `010-core-checks` e `020-sync`.
 - RLS e cadastro fechado (T-010): migrações 05 (RLS forçada em todo `public`, D-009) e 06 (perfil no cadastro e hook `before_user_created`); hook ligado no `config.toml` local e allowlist `e2e-a`/`e2e-b@example.test` no `seed.sql`; pgTAP `030-rls`.
+- Cron e sync no banco (T-011): migração 07 (`invoke_function`, `enqueue_pluggy_sync`, `purge` que pula pais com filho vivo e grava `job_runs`, 5 jobs do cron) e `ops_health()`; pgTAP `040-purge`; testes de integração `apps/web/test/integration/sync-db.int.test.ts` (usuários reais pela Admin API, rodam no `pnpm test:db` via `scripts/test-int.sh`).
 - Domínio base (T-012): `types`, `money`, `dates`, `ids` (namespaces v5 fixos) e `DomainError` em `packages/domain`, com testes de propriedade (fast-check, 200 execuções) e cobertura 100/97; cópia em `supabase/functions/_shared/domain` com `uuid` no import map do Deno.
 - Faturas (T-013): `packages/domain/src/invoices.ts` com os 9 casos da RN-12, os 6 exemplos da §5.2, status da RN-14, saldo credor da RN-15 e recálculo da RN-17/RN-18.
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
-- Últimas tarefas concluídas: T-010 e T-012. Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Últimas tarefas concluídas: T-010, T-011, T-012 e T-013. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
@@ -28,7 +29,9 @@
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-011 — Migração 07 e integração do sync no banco.**
+- **Próximas tarefas: T-013..T-024 (domínio) e T-025 (design system).** T-013 a T-016 já têm branch local pronta na sessão de 05/11 (ver histórico).
+- Integração: a Admin API do Auth **não** passa pelo hook `before_user_created`; para testar a allowlist use o cadastro público (`auth.signUp`).
+- `keepalive.yml`: o `ops_health` acusa "reminders-tick nunca rodou" até a função existir (T-064); o keepalive só roda depois do SETUP-05/09.
 - O guard trata qualquer "truncate" em migração como DDL destrutivo, inclusive `revoke … truncate` (falso positivo; contornado com `revoke all` + `grant` em D-009). Sugestão ao dono: afinar a regra em `scripts/ci-guard.ts` (caminho protegido).
 - pgTAP: funções auxiliares de teste vão em `pg_temp` (`create function pg_temp.x(...)`, chamadas como `pg_temp.x(...)`); para voltar a postgres no meio do teste, `reset role`.
 - Tipos do banco: `supabase gen types` não roda no ambiente da sessão. Quando a migração mudar, o `scripts/gen-db-types.sh --check` do job `db` falha e imprime o arquivo inteiro entre `----- INICIO db-types.ts -----` e `----- FIM db-types.ts -----`; baixe o log do job (`gh api repos/silveiralh/OakFinance/actions/jobs/<id>/logs`), tire o prefixo de data de cada linha e grave em `apps/web/src/data/db-types.ts`. Isso gasta uma rodada de CI.
@@ -99,4 +102,5 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-009 | PR #13 | done | migrações 03–04, sync e RPCs, 36 asserções pgTAP; D-008 (privilégios) |
 | 05/11/2026 | T-010 | PR #14 | done | RLS forçada, cadastro fechado, 26 asserções pgTAP; D-009 |
 | 05/11/2026 | T-012 | PR #17 | done | domínio base (dinheiro, datas, ids v5, erros); D-010 |
+| 05/11/2026 | T-011 | PR #16 | done | migração 07 (cron, expurgo, saúde), 11 asserções pgTAP e 6 testes de integração do sync (50 iterações concorrentes) |
 | 05/11/2026 | T-013 | PR #18 | done | faturas: RN-09..RN-18, propriedades de monotonicidade e partição |
