@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Tokens Aero (claro/escuro) chegam na T-025. */
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}

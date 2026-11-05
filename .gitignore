@@ -12,6 +12,7 @@ reports/
 playwright-report/
 test-results/
 blob-report/
+e2e-results.json
 
 # Supabase local
 supabase/.temp/

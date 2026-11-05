@@ -10,8 +10,15 @@
   },
   "scripts": {
     "prepare": "lefthook install",
+    "dev": "pnpm --filter @oakfinance/web dev",
     "lint": "biome ci .",
     "format": "biome check --write .",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm -r typecheck && deno check scripts/mock-pluggy.ts",
+    "test": "pnpm -r test && vitest run",
+    "build": "pnpm --filter @oakfinance/web build",
+    "e2e": "pnpm --filter @oakfinance/web e2e",
+    "vendor": "node scripts/vendor-shared.ts",
+    "verify": "pnpm lint && pnpm typecheck && pnpm vendor --check && pnpm test && pnpm build",
     "commitlint": "commitlint"
   },
   "devDependencies": {
@@ -20,6 +27,8 @@
     "@commitlint/config-conventional": "21.2.4",
     "@commitlint/types": "21.2.3",
     "lefthook": "2.2.2",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "@types/node": "24.19.2",
+    "vitest": "5.1.0"
   }
 }
