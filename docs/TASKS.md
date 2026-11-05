@@ -68,7 +68,7 @@ flowchart LR
 | T-003 | Supabase local, pgTAP e Edge Functions | T-002 | done |
 | T-004 | CI com 8 jobs e varredura de segredos | T-003 | done |
 | T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | done |
-| T-006 | Guard do portão e catraca de cobertura | T-005 | todo |
+| T-006 | Guard do portão e catraca de cobertura | T-005 | done |
 | T-007 | Portão: ruleset de main ativo | T-006 | todo |
 | T-008 | Migrações 01–02 e tipos gerados | T-007 | todo |
 | T-009 | Migrações 03–04: integrações, sync e RPCs | T-008 | todo |
@@ -267,7 +267,7 @@ Passos que chamam scripts ainda inexistentes usam scripts do `package.json` que 
 ### T-006 — Guard do portão e catraca de cobertura
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | — | — | T-005 | não |
+| done | S1 | M | — | — | T-005 | não |
 
 **Escopo:**
 - `scripts/ci-guard.ts` (§8.6 item 1): caminhos protegidos; contagem de testes não cai; proibições `.only`/`.skip`/`todo`/`xit`/`@ts-nocheck`/`biome-ignore` sem motivo/`skip(` no pgTAP; migrações imutáveis e sem DDL destrutivo; drift de contrato atendido pelo Apêndice A; `fix:` exige teste; título convencional e `T-\d+` no corpo; PR de fork falha; modo bootstrap enquanto o guard não existe em `origin/main`;
