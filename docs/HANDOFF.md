@@ -80,4 +80,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-003 | PR #4 | done | Supabase local, helpers pgTAP, base das Edge Functions; `supabase start` não roda no ambiente da sessão (imagens bloqueadas), validado com Postgres 16 + pgTAP local |
 | 05/11/2026 | T-004 | PR #5 | done | CI com 8 checks, varredura de segredos e dados pessoais, gitleaks, check-build e greps |
 | 05/11/2026 | T-005 | PR #6 | done | deploy, backup, keepalive, nightly, preview (build sem segredo + deploy por workflow_run), dependabot e Stryker |
-| 05/11/2026 | T-006 | PR #7 | done | guard do portão (modo bootstrap neste PR) e catraca de cobertura; pede SETUP-04 |
+| 05/11/2026 | T-006 | PR #8 | done | guard do portão (modo bootstrap neste PR) e catraca de cobertura; pede SETUP-04 |
