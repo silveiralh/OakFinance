@@ -2658,3 +2658,12 @@ Gere uma frase longa (`openssl rand -base64 48`) → secret do GitHub `BACKUP_PA
 - Cloudflare — Limites do Pages: https://developers.cloudflare.com/pages/platform/limits/
 - Cloudflare — Migrar de Pages para Workers (static assets, `_headers`, SPA): https://developers.cloudflare.com/workers/static-assets/migration-guides/migrate-from-pages/
 - Versões de pacotes: consulta ao registro npm (`npm view <pacote> version`) em 05/11/2026 — vite-plugin-pwa 2.0.0, dexie 4.4.7, vite 8.3.6, react 19.3.1, typescript 7.0.2 (latest) / 6.0.3, typescript-eslint 8.72.1 (peer `typescript <6.1`), vitest 5.1.0, @playwright/test 1.64.1, @supabase/supabase-js 2.119.0, supabase CLI 3.0.0, react-pluggy-connect 2.12.0, barcode-detector 3.2.3, linkedom 0.18.15, web-push 3.6.7.
+
+---
+
+## Apêndice A — Registro de implementação
+
+Uma linha por PR que mude a API pública de `packages/domain` ou as migrações (decisão D-001 em `docs/DECISIONS.md`). Mudanças que alteram o comportamento de um **[CONTRATO]** continuam exigindo ADR novo na seção 1.3.
+
+| Data | Tarefa | PR | Área | Mudança |
+|---|---|---|---|---|

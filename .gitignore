@@ -1,0 +1,37 @@
+# Dependências e saídas de build
+node_modules/
+dist/
+build/
+coverage/
+reports/
+*.tsbuildinfo
+.vite/
+.stryker-tmp/
+
+# Testes E2E
+playwright-report/
+test-results/
+blob-report/
+
+# Supabase local
+supabase/.temp/
+supabase/.branches/
+
+# Variáveis de ambiente: nunca versionar (repositório público)
+.env
+.env.*
+*.env
+!.env.example
+!supabase/.env.test
+
+# Arquivos reais dos usuários nunca entram no repositório (só fixtures anonimizadas)
+*.ofx
+!**/fixtures/**/*.ofx
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json
