@@ -31,7 +31,8 @@
     "ci:e2e": "pnpm e2e",
     "ci:build": "pnpm build && node scripts/check-build.ts",
     "ci:local": "pnpm ci:guard && pnpm ci:secrets && pnpm ci:lint-types && pnpm ci:unit && pnpm ci:db && pnpm ci:fn && pnpm ci:e2e && pnpm ci:build",
-    "commitlint": "commitlint"
+    "commitlint": "commitlint",
+    "smoke:remote": "echo 'smoke remoto: pendente T-036 (smoke.spec.ts contra a URL de produção)'"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.5",

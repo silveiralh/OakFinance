@@ -1,0 +1,54 @@
+# Keepalive do Supabase Free (tech §6.5) e alerta de saúde (§7.3), para produção e staging.
+# Pula com aviso enquanto as variáveis do projeto estiverem vazias (SETUP-05 e SETUP-09).
+name: keepalive
+
+on:
+  schedule:
+    - cron: "37 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  keepalive:
+    name: keepalive (${{ matrix.environment }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    environment: ${{ matrix.environment }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - environment: production
+            prefix: PROD
+          - environment: staging
+            prefix: STAGING
+    env:
+      SUPABASE_URL: ${{ vars[format('SUPABASE_{0}_URL', matrix.prefix)] }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+      - if: env.SUPABASE_URL == ''
+        env:
+          ENV_NAME: ${{ matrix.environment }}
+        run: |
+          echo "::warning::Keepalive pulado em $ENV_NAME: variáveis do Supabase vazias."
+      - name: ping (chave publicável)
+        if: env.SUPABASE_URL != ''
+        env:
+          SUPABASE_KEY: ${{ vars[format('SUPABASE_{0}_PUBLISHABLE_KEY', matrix.prefix)] }}
+        run: |
+          echo "::add-mask::$SUPABASE_KEY"
+          node scripts/ops-check.ts ping
+      - name: ops_health (chave secreta)
+        if: env.SUPABASE_URL != ''
+        env:
+          SUPABASE_KEY: ${{ secrets[format('SUPABASE_{0}_SECRET_KEY', matrix.prefix)] }}
+        run: |
+          echo "::add-mask::$SUPABASE_KEY"
+          node scripts/ops-check.ts health

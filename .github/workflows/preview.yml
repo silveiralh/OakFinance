@@ -1,0 +1,46 @@
+# Preview de PR (tech §8.7), informativo e fora dos required checks.
+# Sem segredos: só faz o build com as variáveis públicas de staging e publica dist/ como artefato.
+# O deploy no Pages acontece no preview-deploy.yml (workflow_run), que não executa código do PR.
+# Pula enquanto vars.CF_PAGES_PROJECT estiver vazia (SETUP-08 e SETUP-09).
+name: preview
+
+on:
+  pull_request:
+
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build de preview
+    if: vars.CF_PAGES_PROJECT != '' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: build com variáveis de staging
+        env:
+          VITE_APP_ENV: preview
+          VITE_SUPABASE_URL: ${{ vars.SUPABASE_STAGING_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_STAGING_PUBLISHABLE_KEY }}
+          VITE_VAPID_PUBLIC_KEY: ${{ vars.VAPID_PUBLIC_KEY_STAGING }}
+        run: pnpm ci:build
+      - name: migração nova (schema pendente no staging)
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --depth=1 origin "$BASE_REF"
+          if git diff --name-only "origin/$BASE_REF" HEAD -- supabase/migrations | grep -q .; then
+            echo "pending" > apps/web/dist/.schema-pending
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview-dist
+          path: apps/web/dist/
+          include-hidden-files: true
+          retention-days: 3

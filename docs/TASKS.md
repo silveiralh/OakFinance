@@ -67,7 +67,7 @@ flowchart LR
 | T-002 | Esqueleto dos workspaces e configs de teste | T-001 | done |
 | T-003 | Supabase local, pgTAP e Edge Functions | T-002 | done |
 | T-004 | CI com 8 jobs e varredura de segredos | T-003 | done |
-| T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | todo |
+| T-005 | Workflows de deploy, preview, nightly, keepalive, backup | T-004 | done |
 | T-006 | Guard do portão e catraca de cobertura | T-005 | todo |
 | T-007 | Portão: ruleset de main ativo | T-006 | todo |
 | T-008 | Migrações 01–02 e tipos gerados | T-007 | todo |
@@ -247,7 +247,7 @@ Todos os arquivos que serão protegidos pelo guard (vitest e playwright configs)
 ### T-005 — Workflows de deploy, preview, nightly, keepalive e backup
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-05 | — | T-004 | não |
+| done | S1 | M | US-05 | — | T-004 | não |
 
 **Escopo:**
 - `deploy.yml` (backup → staging → produção → smoke, Environments `staging`/`production`; termina com aviso e sucesso quando `vars.SUPABASE_PROD_REF` está vazio);

@@ -8,18 +8,23 @@
 - Workspaces (T-002): `packages/domain`, `packages/nfce-parser` e `apps/web` (Vite 8.3.6, React 19.3.1, TS 6.0.3, Tailwind 4.3.4), Vitest 5.1 com limiares de `coverage-baseline.json`, Playwright 1.64.1 (android, iphone, desktop), `scripts/mock-pluggy.ts` e `scripts/vendor-shared.ts`. `pnpm verify` verde.
 - Supabase local (T-003): `supabase/config.toml` com serviços mínimos, `seed.sql`, helpers pgTAP (`000-setup.test.sql`, API do basejump) e smoke, `supabase/functions/deno.json`, `_shared/errors.ts` e `_shared/http.ts` com testes Deno. Scripts `test:db`, `test:fn` e `typecheck:deno`.
 - CI (T-004): `.github/workflows/ci.yml` com os 8 checks (`guard` em modo bootstrap, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e` agregando 3 shards, `build`), `scripts/ci-secrets.ts`, `.gitleaks.toml`, `scripts/check-build.ts`, `scripts/ci-greps.ts`, `scripts/check-fn-coverage.ts` e `pnpm ci:local`.
-- Ainda não há migrações nem deploy. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
-- Última tarefa concluída: T-004.
+- Workflows (T-005): `deploy.yml` (backup → staging → produção → smoke; pula com aviso sem `vars.SUPABASE_PROD_REF`), `backup.yml` (dump cifrado), `keepalive.yml` (`ping` e `ops_health` em prod e staging), `nightly.yml` (E2E ×3, Stryker, gitleaks no histórico, audit, keepalive em 48 h), `preview.yml` + `preview-deploy.yml`, `dependabot.yml` e `packages/domain/stryker.config.json`.
+- Ainda não há migrações nem deploy real. Marco atual: nenhum. O próximo é o M0 (depois da T-007).
+- Última tarefa concluída: T-005.
 
 ## 2. Estado do CI e do deploy
 
-- CI: `ci.yml` ativo desde a T-004 (PR #5), em todo PR e em push em `main`. O check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
-- Deploy, nightly e keepalive: inexistentes (nascem na T-005; o deploy só funciona de verdade na T-036).
+- CI: `ci.yml` ativo desde a T-004, em todo PR e em push em `main`. O check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
+- Deploy (`deploy.yml`), backup, keepalive e preview existem desde a T-005, mas pulam com aviso até o SETUP-05/08/09 (variáveis vazias). O deploy real começa na T-036.
+- Nightly: roda às 04:13 BRT; abre issue `regressão: nightly` se falhar. O `smoke:remote` imprime "pendente T-036".
 - Ruleset de `main`: ainda não ativo (SETUP-04, depois da T-006).
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-005 — Workflows de deploy, preview, nightly, keepalive e backup.**
+- **Próxima tarefa: T-006 — Guard do portão e catraca de cobertura.**
+- Preview: o `preview.yml` (pull_request) só faz build com variáveis públicas e sobe `dist/` como artefato; o `preview-deploy.yml` (workflow_run, Environment `staging`) publica no Pages sem executar código do PR. Assim nenhum workflow com segredo dispara em `pull_request`.
+- O Dependabot abre PRs `chore(deps)` sem `T-xxx` no corpo; a T-006 precisa decidir como o guard trata esses PRs (hoje a regra da §8.6 os reprovaria).
+- Stryker com pnpm: `plugins: ['@stryker-mutator/vitest-runner']` explícito e `inPlace: true` (o sandbox não enxerga `coverage-baseline.json` na raiz).
 - `actionlint` local: `pip install actionlint-py --break-system-packages`. `gitleaks` local: `apt-get install gitleaks` (8.16; o CI usa 8.28.0).
 - `scripts/check-build.ts` tem `REQUIRE_PWA = false`; a T-030 liga (manifest, `sw.js`, `_headers`, precache).
 - `ci-secrets --all` acusa os e-mails de exemplo na `02-tech-spec.md` §9.2 (`email-1@…`), que já estavam lá; o modo de PR só lê linhas adicionadas.
@@ -72,3 +77,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-002 | PR #3 | done | workspaces, configs de teste, mock da Pluggy e vendor; E2E local só android/desktop (sem WebKit no ambiente) |
 | 05/11/2026 | T-003 | PR #4 | done | Supabase local, helpers pgTAP, base das Edge Functions; `supabase start` não roda no ambiente da sessão (imagens bloqueadas), validado com Postgres 16 + pgTAP local |
 | 05/11/2026 | T-004 | PR #5 | done | CI com 8 checks, varredura de segredos e dados pessoais, gitleaks, check-build e greps |
+| 05/11/2026 | T-005 | PR #6 | done | deploy, backup, keepalive, nightly, preview (build sem segredo + deploy por workflow_run), dependabot e Stryker |

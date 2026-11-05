@@ -1,0 +1,57 @@
+# Backup cifrado do banco de produção (tech §8.7 item 1; o plano Free não tem backup automático).
+# Semanal e chamado pelo deploy. Pula com aviso enquanto vars.SUPABASE_PROD_REF estiver vazio.
+name: backup
+
+on:
+  schedule:
+    - cron: "7 8 * * 0"
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    name: backup
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    env:
+      PROD_REF: ${{ vars.SUPABASE_PROD_REF }}
+    steps:
+      - if: env.PROD_REF == ''
+        run: |
+          echo "::warning::Backup pulado: vars.SUPABASE_PROD_REF vazia (SETUP-05 e SETUP-09)."
+      - if: env.PROD_REF != ''
+        uses: supabase/setup-cli@v1
+        with:
+          version: 3.0.0
+      - name: dump cifrado
+        if: env.PROD_REF != ''
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_PROD_DB_PASSWORD }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          umask 077
+          if [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::error::BACKUP_PASSPHRASE ausente (SETUP-12)."
+            exit 1
+          fi
+          work="$RUNNER_TEMP/backup"
+          mkdir -p "$work" out
+          supabase db dump --remote="$PROD_REF" --password "$SUPABASE_DB_PASSWORD" -f "$work/schema.sql"
+          supabase db dump --remote="$PROD_REF" --password "$SUPABASE_DB_PASSWORD" --data-only --use-copy -f "$work/data.sql"
+          stamp="$(date -u +%Y%m%dT%H%M%SZ)"
+          tar -C "$work" -czf - schema.sql data.sql \
+            | openssl enc -aes-256-cbc -pbkdf2 -salt -pass env:BACKUP_PASSPHRASE -out "out/oakfinance-$stamp.tar.gz.enc"
+          rm -rf "$work"
+      - if: env.PROD_REF != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-producao
+          path: out/*.enc
+          retention-days: 30
+          if-no-files-found: error
