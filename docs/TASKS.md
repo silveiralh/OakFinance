@@ -87,7 +87,7 @@ flowchart LR
 | T-020 | Domínio: conciliação I | T-013, T-015 | todo |
 | T-021 | Domínio: conciliação II | T-020, T-014 | todo |
 | T-022 | Domínio: importação OFX/CSV | T-020 | todo |
-| T-023 | Domínio: QR da NFC-e | T-012 | todo |
+| T-023 | Domínio: QR da NFC-e | T-012 | done |
 | T-024 | Domínio: lembretes devidos | T-017, T-018 | todo |
 | T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | todo |
 | T-026 | Componentes de base | T-025 | todo |
@@ -512,7 +512,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-023 — Domínio: QR da NFC-e
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-54, US-55 | RN-82, RN-84, RN-85 | T-012 | não |
+| done | S1 | P | US-54, US-55 | RN-82, RN-84, RN-85 | T-012 | não |
 
 **Escopo:** `nfce/qr.ts` (§5.10).
 
