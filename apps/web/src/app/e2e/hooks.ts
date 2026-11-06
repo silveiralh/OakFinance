@@ -22,6 +22,8 @@ declare global {
       accountNames(): Promise<string[]>;
       counts(): Promise<Record<string, number>>;
       syncNow(): Promise<boolean>;
+      /** Receita avulsa recebida hoje na conta (E02: o mês passa a ter Base). */
+      addIncome(accountId: string, cents: number, description: string): Promise<string>;
       /** Despesa avulsa de hoje na conta (E06/US-14). */
       addExpense(accountId: string, cents: number, description: string): Promise<string>;
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
@@ -135,6 +137,26 @@ export function installE2eHooks(user: UserSession): () => void {
         client_updated_at: now,
       } satisfies LocalRow<'transactions'>;
       await saveRow(user.db, 'transactions', row);
+      user.engine.notifyWrite();
+      return id;
+    },
+    async addIncome(accountId: string, cents: number, description: string) {
+      const id = newId();
+      const now = new Date().toISOString();
+      await saveRow(user.db, 'transactions', {
+        ...EXPENSE_DEFAULTS,
+        kind: 'income',
+        tags: [],
+        id,
+        user_id: user.userId,
+        amount_cents: cents,
+        occurred_on: todayIn('America/Sao_Paulo', new Date()),
+        description,
+        account_id: accountId,
+        created_at: now,
+        updated_at: now,
+        client_updated_at: now,
+      });
       user.engine.notifyWrite();
       return id;
     },
