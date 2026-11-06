@@ -142,4 +142,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 06/11/2026 | T-025 | PR #32 | done | tokens, fontes, ambiente (D-013), i18n e marca; contraste da §4.3 por teste |
 | 06/11/2026 | T-026 | PR #33 | done | componentes de base da UX §5 com testes de papéis ARIA, estados e alvo de toque |
 | 06/11/2026 | T-027 | PR #34 | done | componentes de entrada (teclado, foco, aria-live); agendamento pausado a pedido do cliente |
-| 06/11/2026 | T-028 | PR #NN | done | componentes de dados, /__styleguide e snapshot visual dos tokens |
+| 06/11/2026 | T-028 | PR #35 | done | componentes de dados, /__styleguide e snapshot visual dos tokens |
