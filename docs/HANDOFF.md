@@ -124,7 +124,7 @@
 
 ## 6. Checklist de aparelho real
 
-Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, da T-030: instalar no Android (Chrome) e no iPhone (Compartilhar → Adicionar à Tela de Início), ícone e nome "OakFinance" na tela inicial, abrir em modo avião depois do primeiro acesso e o aviso "Nova versão disponível." depois de um deploy; da T-034: entrar com Google no iPhone instalado na Tela de Início e no Android (o retorno precisa voltar ao app, R5), e abrir sem rede depois do login sem ver a tela de entrada.
+Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, da T-030: instalar no Android (Chrome) e no iPhone (Compartilhar → Adicionar à Tela de Início), ícone e nome "OakFinance" na tela inicial, abrir em modo avião depois do primeiro acesso e o aviso "Nova versão disponível." depois de um deploy; da T-034: entrar com Google no iPhone instalado na Tela de Início e no Android (o retorno precisa voltar ao app, R5), e abrir sem rede depois do login sem ver a tela de entrada; da T-037: no iPhone, conferir se os passos do guia batem com a posição do botão Compartilhar da versão do iOS instalada, e no Android, se o "Instalar app" abre o diálogo nativo do Chrome.
 
 ## 7. Histórico
 
