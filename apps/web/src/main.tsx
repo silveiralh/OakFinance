@@ -8,8 +8,14 @@ if (!root) {
   throw new Error('Elemento #root ausente em index.html');
 }
 
-createRoot(root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+async function boot(container: HTMLElement) {
+  let page = <App />;
+  // /__styleguide só no build E2E: fora dele, o import some do bundle (constante substituída no build)
+  if (import.meta.env.VITE_E2E === '1' && window.location.pathname === '/__styleguide') {
+    const { Styleguide } = await import('./styleguide/Styleguide');
+    page = <Styleguide />;
+  }
+  createRoot(container).render(<StrictMode>{page}</StrictMode>);
+}
+
+void boot(root);
