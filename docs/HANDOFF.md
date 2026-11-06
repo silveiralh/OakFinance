@@ -60,7 +60,8 @@
 
 ## 3. Próximos passos
 
-- **Próxima tarefa: T-036 (primeiro deploy) está `blocked` (SETUP-05..09/12 incompletos; o deploy já falha por falta do `SUPABASE_ACCESS_TOKEN`, issue #38). A próxima liberada é a T-044 (Detalhe, exclusão com desfazer e histórico).** Depois: T-046, T-047, T-049. Na T01, tocar a linha hoje abre o Q01 de edição; a T-044 deve levar o toque ao T02 (`/lancamentos/:id`) e manter Editar no menu.
+- **Redesign (D-022, 06/11):** o cliente reprovou o visual Aero. A T-100 (redesign com a nova referência, ícones Lucide e paleta clara) está `blocked` até o acesso ao arquivo de referência. As tarefas de tela T-044, T-045, T-046, T-047, T-049 e T-050 ficam bloqueadas até lá; siga pelas de lógica liberadas (T-072 conector Pluggy e mock, T-088 nfce-fetch e as que dependem delas). Não crie telas novas no visual atual.
+- **Próxima tarefa: T-036 (primeiro deploy) está `blocked` (SETUP-05..09/12 incompletos; o deploy já falha por falta do `SUPABASE_ACCESS_TOKEN`, issue #38). A próxima liberada é a T-072 (Conector Pluggy e mock), porque as de tela aguardam o redesign (T-100).** Depois: T-073, T-074, T-075, T-088. Na T01, tocar a linha hoje abre o Q01 de edição; a T-044 deve levar o toque ao T02 (`/lancamentos/:id`) e manter Editar no menu.
 - Q01: falta o modo Guardar (`?novo=guardar`, US-33), parcelas (US-20), "Repetir todo mês" e o aprendizado da correção de categoria. O `reloadBlocked` do G07 olha só o `?novo=` (não o `?editar=`); com o rascunho no `kv`, uma recarga já não perde o que foi digitado. A edição ainda não é aberta de T02 (T-044 liga o botão Editar ao `?editar=`). Com o Q01 aberto (modal), o toast do G07 fica inerte; o E15 usa o gancho `__oakE2E.applyUpdate()`.
 - Cartões: mudar fechamento/vencimento de um cartão existente (aviso "{n} itens podem mudar de fatura", RN-17) fica para a US-11 (T-047 ou a tarefa de edição); hoje a S03 só cria, arquiva e exclui.
 - Onboarding: depois do login no Android o fluxo da UX §2.3 passa pelo ON02a; hoje o login leva ao Início (o encadeamento ON03 → ON02a/ON04 → … e `profiles.onboarding` entram com as telas do onboarding). Os textos de captura estilizada do Safari ainda são só o `<ol>` do InstallGuide.
@@ -114,6 +115,7 @@
 | SETUP-13 Pluggy e Meu Pluggy (trial de 15 dias) | quando a T-077 estiver `done` | T-083, M3 |
 | SETUP-14 arquivos reais anonimizáveis (canal privado) | antes da S4 | T-085, T-087, T-090 |
 | SETUP-15 licença; SETUP-16 decisões pendentes | antes da T-099 | T-099 |
+| Referência visual (arquivo do Figma) pelo conector | agora | T-100 e as tarefas de tela (D-022) |
 
 - Conferido pela API em 06/11: SETUP-01, 02 e 04 feitos (só squash, auto-merge e exclusão automática de branch ligados; issue #2 reaberta com 01–04 marcados). SETUP-03 substituído pela D-012 (as sessões herdam o admin do dono; valem as salvaguardas).
 - **T-036 `blocked: aguarda cliente — SETUP-05..09, SETUP-12`** (marcada em 06/11). Volta a `todo` quando a issue #2 tiver esses itens marcados.
@@ -185,3 +187,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, 
 | 06/11/2026 | T-041 | PR #48 | done | Mais detalhes (descrição sugere categoria, data distante, observação), agendada → efetivada, receita Recebida/A receber/Prevista, edição pelo Q01 e "Confirmar {descrição}" (US-13, US-24); D-019 |
 | 06/11/2026 | T-042 | PR #49 | done | transferência (não muda o 50/30/20), estorno de R$ 80,00 na fatura dez/2026 reduzindo Desejos, rascunho do Q01 por 24 h (G17); D-020 |
 | 06/11/2026 | T-043 | PR #50 | done | T01: mês, resumo, chips + Filtros com total, busca sem acento e por valor (< 300 ms com 5.000), grupos por dia, janela virtual, Excluir com Desfazer; D-021; 3 rodadas no E2E do WebKit (quadros parados por chips de vidro em fieldset flex) |
+| 06/11/2026 | T-100 | PR #52 | decisão | D-022: redesign com a nova referência do cliente (paleta clara, Lucide); telas T-044..T-050 bloqueadas até a T-100 |
