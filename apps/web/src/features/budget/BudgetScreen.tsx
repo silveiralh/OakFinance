@@ -8,9 +8,9 @@ import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
+import { useToday } from '../../lib/useToday';
 import { BudgetRing, GlassCard, ProgressBar } from '../../ui';
 import { loadHomeRows } from '../dashboard/data';
-import { useToday } from '../dashboard/HomeOverview';
 import { BAND_NAME, type BandView, budgetView, type CategoryLine } from './budget';
 
 const TONE = { needs: 'band-needs', wants: 'band-wants', savings: 'band-savings' } as const;

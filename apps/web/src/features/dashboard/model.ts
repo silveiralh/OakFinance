@@ -264,17 +264,4 @@ export function firstName(displayName: string | null | undefined): string {
   return (displayName ?? '').trim().split(/\s+/)[0] ?? '';
 }
 
-/** Milissegundos até a próxima meia-noite no fuso (virada do dia e do mês, RN-48). */
-export function msUntilNextDay(now: Date, timeZone = TIME_ZONE): number {
-  const parts = new Intl.DateTimeFormat('en-GB', {
-    timeZone,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hourCycle: 'h23',
-  }).formatToParts(now);
-  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
-  const elapsed =
-    ((get('hour') * 60 + get('minute')) * 60 + get('second')) * 1000 + now.getMilliseconds();
-  return Math.max(1, 86_400_000 - elapsed);
-}
+export { msUntilNextDay } from '../../lib/useToday';

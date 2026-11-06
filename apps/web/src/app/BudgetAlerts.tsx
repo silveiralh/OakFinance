@@ -14,8 +14,8 @@ import {
   parseBudgetKey,
 } from '../features/budget/budget';
 import { loadHomeRows } from '../features/dashboard/data';
-import { useToday } from '../features/dashboard/HomeOverview';
 import { t } from '../i18n/pt-BR';
+import { useToday } from '../lib/useToday';
 import { useToast } from '../ui';
 import { useAuth } from './auth';
 import { useValuesHidden } from './values';

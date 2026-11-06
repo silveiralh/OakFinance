@@ -15,7 +15,6 @@ import {
   TopBar,
 } from '../ui';
 import { AutoPosts } from './AutoPosts';
-import { BudgetAlerts } from './BudgetAlerts';
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
@@ -27,6 +26,10 @@ import { HideValuesButton, ValuesFromProfile } from './values';
 
 const QuickEntryHost = lazy(() =>
   import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.QuickEntryHost })),
+);
+// RN-92: os avisos de orçamento carregam o cálculo do mês; ficam fora do bundle inicial
+const BudgetAlerts = lazy(() =>
+  import('./BudgetAlerts').then((m) => ({ default: m.BudgetAlerts })),
 );
 const FabMenu = lazy(() =>
   import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.FabMenu })),
@@ -104,7 +107,9 @@ export function AppShell() {
       <WipedDialog />
       <ValuesFromProfile />
       <AutoPosts />
-      <BudgetAlerts />
+      <Suspense fallback={null}>
+        <BudgetAlerts />
+      </Suspense>
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}

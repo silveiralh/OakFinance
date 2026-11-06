@@ -16,7 +16,7 @@ import type { LocalRow } from '../src/data/db';
 import { cardFromRow } from '../src/data/mappers';
 import { saveRow } from '../src/data/repositories/rows';
 import { relativeDay } from '../src/features/dashboard/HomeCards';
-import { HomeOverview, useToday } from '../src/features/dashboard/HomeOverview';
+import { HomeOverview } from '../src/features/dashboard/HomeOverview';
 import {
   dayPeriod,
   firstName,
@@ -26,6 +26,7 @@ import {
 } from '../src/features/dashboard/model';
 import { buildInvoice } from '../src/features/quick-entry/model';
 import { filtersFromParams, NO_FILTERS } from '../src/features/transactions/list';
+import { useToday } from '../src/lib/useToday';
 import { ToastProvider } from '../src/ui';
 import { fakeAuth } from './auth-fixture';
 import { makeRow, tx } from './data/rows';
