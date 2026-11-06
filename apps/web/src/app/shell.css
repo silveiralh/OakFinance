@@ -678,6 +678,195 @@ body:has(.screen-welcome) .backdrop {
   text-align: center;
 }
 
+/* T-058: herói "Disponível para gastar", H01-S e cards do Início */
+.home-greeting {
+  margin: 0;
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+.home-card-empty {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+.home-card-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.home-pill-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--surface-solid-2);
+  color: var(--text-primary);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  justify-self: start;
+}
+.home-pill-link[data-tone="accent"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.home-pill-link:focus-visible,
+.home-card-link:focus-visible,
+.home-upcoming-item:focus-visible,
+.home-formula-line:focus-visible,
+.home-budget:focus-visible,
+.home-review:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.home-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  justify-self: start;
+  min-height: var(--touch-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--on-dark);
+  font: inherit;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.home-card .home-pace {
+  justify-self: start;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-solid-2);
+}
+.home-block {
+  display: grid;
+}
+.home-list {
+  padding: var(--space-3) var(--space-4);
+}
+.home-upcoming,
+.home-formula-lines,
+.home-formula-next ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-upcoming-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.home-upcoming-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.home-upcoming-text {
+  display: grid;
+  min-width: 0;
+}
+.home-upcoming-text > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--font-weight-semibold);
+}
+.home-upcoming-when {
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.home-budget {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.home-budget-lines {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+.home-budget-lines dt {
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.home-budget-lines dd {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+.home-reserve {
+  display: grid;
+  gap: var(--space-3);
+}
+.home-reserve p {
+  margin: 0;
+}
+.home-review {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+.home-formula {
+  display: grid;
+  gap: var(--space-3);
+}
+.home-formula-line {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+.home-formula-next {
+  padding: 0 0 var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.home-formula-next p {
+  margin: 0 0 var(--space-1);
+}
+.home-formula-next li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.home-formula-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  font-weight: var(--font-weight-bold);
+}
+.home-formula-footer {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {

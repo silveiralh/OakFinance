@@ -1931,6 +1931,24 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `home.formula.title` | Como o valor é calculado |
 | `home.formula.footer` | Você pode ajustar o cálculo em Ajustes › Disponível para gastar. |
 | `home.install.card` | Instale o app para receber lembretes |
+| `home.hero.heading` | Disponível para gastar: {valor} |
+| `home.greeting.morning` | Bom dia, {nome} |
+| `home.greeting.afternoon` | Boa tarde, {nome} |
+| `home.greeting.evening` | Boa noite, {nome} |
+| `home.formula.fixed` | Receita fixa do mês |
+| `home.formula.variable` | Receitas variáveis recebidas |
+| `home.formula.expected` | Receitas previstas |
+| `home.formula.withdrawals` | Resgates da reserva |
+| `home.formula.spent` | Gastos realizados |
+| `home.formula.upcoming` | Faturas, parcelas e contas fixas que ainda vencem |
+| `home.formula.savings` | Poupança do mês ({p}%) |
+| `home.formula.total` | Disponível para gastar |
+| `home.formula.next` | Próximas saídas |
+| `home.upcoming.tomorrow` | Amanhã |
+| `home.upcoming.inDays` | Em {n} dias |
+| `home.upcoming.all` | Ver tudo |
+| `home.budget.line` | {gasto} de {meta} |
+| `home.reserve.progress` | {valor} de {meta} · {p}% |
 
 **Lançamento rápido**
 

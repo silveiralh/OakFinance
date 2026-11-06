@@ -9,7 +9,7 @@ import {
 } from '@oakfinance/domain';
 import { ChevronLeft, ChevronRight, Receipt, Search } from 'lucide-react';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import type { LocalRow } from '../../data/db';
@@ -34,6 +34,7 @@ import {
   type Chip,
   type DayGroup,
   filteredTotal,
+  filtersFromParams,
   filterTransactions,
   groupByDay,
   type ListFilters,
@@ -207,7 +208,8 @@ export function TransactionsScreen({
   const showToast = useToast();
   const hidden = useValuesHidden();
   const [month, setMonth] = useState<YearMonth>(today.slice(0, 7) as YearMonth);
-  const [filters, setFilters] = useState<ListFilters>(NO_FILTERS);
+  const [params] = useSearchParams();
+  const [filters, setFilters] = useState<ListFilters>(() => filtersFromParams(params));
   const [panel, setPanel] = useState(false);
   const [acting, setActing] = useState<Tx | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
