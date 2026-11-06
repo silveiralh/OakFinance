@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext } from '../src/app/auth';
+import { resetDrafts } from '../src/data/drafts';
 import { createAccount } from '../src/data/repositories/accounts';
 import { createCard } from '../src/data/repositories/cards';
 import { ensureSeeds } from '../src/data/seeds';
@@ -265,5 +266,30 @@ describe('Q01 tela (US-12, US-17)', () => {
     }
     fireEvent.click(screen.getByRole('button', { name: 'Ler nota' }));
     expect(onPick).toHaveBeenCalledWith('/nota');
+  });
+});
+
+describe('issue #71: Q01 sem conta nem cartão', () => {
+  // o rascunho do Q01 fica em memória: sem limpar, o valor digitado aqui vaza para o próximo teste
+  afterEach(() => resetDrafts());
+
+  it('US-12: sem forma de pagamento, "Lançar" diz "Cadastre uma conta ou um cartão primeiro" e oferece Adicionar conta', async () => {
+    const auth = fakeAuth('signedIn');
+    const user = auth.user;
+    if (!user) {
+      throw new Error('sem usuário');
+    }
+    await ensureSeeds(user.db, user.userId);
+    expect(missingReason(100, 'cat', false)).toBe('Cadastre uma conta ou um cartão primeiro');
+    expect(missingReason(0, 'cat', false)).toBe('Informe o valor');
+    mount(auth);
+    type('1000');
+    fireEvent.click(await screen.findByRole('radio', { name: /Farmácia/ }));
+    const submit = screen.getByTestId('quick-submit');
+    expect(submit).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByText('Cadastre uma conta ou um cartão primeiro')).toBeInTheDocument();
+    expect(screen.getByTestId('quick-add-account')).toHaveTextContent('Adicionar conta');
+    fireEvent.click(submit);
+    expect(await user.db.transactions.count()).toBe(0);
   });
 });

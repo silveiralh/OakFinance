@@ -1,5 +1,6 @@
 import { dayMonth, invoiceForPurchase, monthLabel, todayIn } from '@oakfinance/domain';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { clearDraft, loadDraft, saveDraft } from '../../data/drafts';
@@ -109,6 +110,7 @@ export function QuickEntrySheet({
       : null,
     [user, editId],
   );
+  const navigate = useNavigate();
   const [mode, setMode] = useState<QuickKind>(initialMode);
   const [amount, setAmount] = useState(0);
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -244,7 +246,7 @@ export function QuickEntrySheet({
   const parcelled = Boolean(card) && mode === 'expense' && !editing && count > 1;
   const missing = transfer
     ? transferMissing(amount, origin, toId)
-    : (missingReason(amount, categoryId) ??
+    : (missingReason(amount, categoryId, method !== null) ??
       (parcelled && installmentProblem(amount, count, installMode)
         ? t('quick.missing.installments')
         : null));
@@ -652,6 +654,16 @@ export function QuickEntrySheet({
         )}
         {!income && status === 'pending' && (
           <p className="account-meta">{t('quick.scheduled', { data: formatDateBR(date) })}</p>
+        )}
+        {!transfer && method === null && (
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => void navigate('/ajustes/contas')}
+            data-testid="quick-add-account"
+          >
+            {t('accounts.add')}
+          </Button>
         )}
         <Button
           size="lg"
