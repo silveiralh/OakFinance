@@ -1988,6 +1988,11 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `accounts.method.pix` / `.debit` / `.boleto` / `.transfer` / `.other` / `.cash` / `.credit` | Pix / Débito / Boleto / TED/DOC / Outro / Dinheiro / Crédito |
 | `quick.method` | {forma} · {conta} |
 | `quick.readNote` | Ler nota |
+| `quick.description` / `.notes` / `.date` | Descrição / Observação / Data |
+| `quick.yes` / `.no` | Sim / Não |
+| `quick.scheduled` | Agendada para {data} |
+| `income.confirm.title` | Confirmar {descrição} |
+| `income.confirm.ok` / `.changeDate` / `.wontCome` | Confirmar / Mudar data / Não vai cair |
 | `accounts.methods` | Formas: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |

@@ -229,7 +229,7 @@ describe('Q01 tela (US-12, US-17)', () => {
   it('"Mais" abre o seletor com todas as categorias de despesa', async () => {
     const auth = await setup();
     mount(auth);
-    fireEvent.click(await screen.findByRole('button', { name: 'Mais detalhes' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Mais' }));
     expect(await screen.findByText('Moradia')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Moradia'));
     await waitFor(() => expect(screen.getByRole('radio', { name: /Moradia/ })).toBeChecked());

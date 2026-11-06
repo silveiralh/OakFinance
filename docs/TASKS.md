@@ -103,7 +103,7 @@ flowchart LR
 | T-038 | Contas | T-035 | done |
 | T-039 | Cartões com prévia da fatura | T-038, T-013 | done |
 | T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | done |
-| T-041 | Mais detalhes, edição e receita variável | T-040 | todo |
+| T-041 | Mais detalhes, edição e receita variável | T-040 | done |
 | T-042 | Transferência, estorno e rascunho | T-041 | todo |
 | T-043 | Lista de lançamentos | T-041 | todo |
 | T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | todo |
@@ -744,7 +744,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-041 — Mais detalhes, edição e receita variável
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-13, US-24 | RN-04..RN-06, RN-33, RN-34, RN-61 | T-040 | não |
+| done | S1 | M | US-13, US-24 | RN-04..RN-06, RN-33, RN-34, RN-61 | T-040 | não |
 
 **Escopo:**
 - Mais detalhes: descrição sugere categoria sem sobrescrever a escolhida; confirmação para data a mais de 60 dias; agendada vira efetivada na data (RN-05, ao abrir);

@@ -1,12 +1,14 @@
 import { dayMonth, invoiceForPurchase, monthLabel, todayIn } from '@oakfinance/domain';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import type { LocalRow } from '../../data/db';
 import { newId } from '../../data/ids';
 import { useLive } from '../../data/live';
 import { cardFromRow } from '../../data/mappers';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { writeLocal } from '../../data/storage';
-import { t } from '../../i18n/pt-BR';
+import { t, uiText } from '../../i18n/pt-BR';
+import { formatDateBR } from '../../lib/format';
 import { track } from '../../lib/telemetry';
 import {
   AmountInput,
@@ -15,8 +17,12 @@ import {
   CategoryChip,
   CategoryPicker,
   type ChipCategory,
+  DateChip,
   Dialog,
   PaymentMethodPicker,
+  SegmentedControl,
+  Switch,
+  TextField,
   useToast,
 } from '../../ui';
 import { quickEntryElapsed, resetQuickEntryClock } from './clock';
@@ -26,8 +32,13 @@ import {
   buildInvoice,
   buildMethods,
   expenseCategories,
+  incomeCategories,
+  isFarDate,
   missingReason,
+  type QuickKind,
+  statusFor,
   suggestCategories,
+  suggestFromDescription,
 } from './model';
 
 export const LAST_METHOD_KEY = 'quick.lastMethod';
@@ -46,12 +57,21 @@ function chip(row: {
 export interface QuickEntrySheetProps {
   onClose: () => void;
   today?: string;
+  /** Modo inicial (`?novo=despesa|receita`). */
+  mode?: QuickKind;
+  /** Edição de um lançamento existente (`?editar=<id>`, US-13). */
+  editId?: string | null;
 }
 
-/** Q01 em modo Despesa (UX §3 Q01, US-12, US-17): valor → categoria → Lançar, com o último meio usado. */
+/**
+ * Q01 (UX §3 Q01): Despesa ou Receita — valor → categoria → Lançar, com "Mais detalhes" (descrição que sugere a
+ * categoria sem sobrescrever a escolhida, data com confirmação acima de 60 dias, observação) e edição.
+ */
 export function QuickEntrySheet({
   onClose,
   today = todayIn('America/Sao_Paulo', new Date()),
+  mode: initialMode = 'expense',
+  editId = null,
 }: QuickEntrySheetProps) {
   const { user } = useAuth();
   const toast = useToast();
@@ -59,41 +79,112 @@ export function QuickEntrySheet({
     user
       ? async () => ({
           categories: await user.db.categories.toArray(),
+          rules: await user.db.category_rules.toArray(),
           accounts: await user.db.accounts.toArray(),
           cards: await user.db.cards.toArray(),
-          recent: await user.db.transactions.where('occurred_on').aboveOrEqual('0000').toArray(),
+          recent: await user.db.transactions.toArray(),
           lastMethod: (await user.db.kv.get(LAST_METHOD_KEY))?.value,
+          editing: editId ? await user.db.transactions.get(editId) : undefined,
         })
       : null,
-    [user],
+    [user, editId],
   );
+  const [mode, setMode] = useState<QuickKind>(initialMode);
   const [amount, setAmount] = useState(0);
   const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryByRule, setCategoryByRule] = useState(false);
   const [methodId, setMethodId] = useState<string | null>(null);
+  const [details, setDetails] = useState(false);
+  const [description, setDescription] = useState('');
+  const [notes, setNotes] = useState('');
+  const [date, setDate] = useState(today);
+  const [received, setReceived] = useState<'yes' | 'no'>('yes');
+  const [countBefore, setCountBefore] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const [asking, setAsking] = useState(false);
+  const [confirmFar, setConfirmFar] = useState(false);
   const answer = useRef<((discard: boolean) => void) | null>(null);
+  const loaded = useRef(false);
 
-  const methods = useMemo(() => buildMethods(data?.accounts ?? [], data?.cards ?? []), [data]);
+  // Edição: preenche o formulário uma vez com a linha existente
+  const editing: LocalRow<'transactions'> | undefined = data?.editing;
+  useEffect(() => {
+    if (!editing || loaded.current) {
+      return;
+    }
+    loaded.current = true;
+    setMode(editing.kind === 'income' ? 'income' : 'expense');
+    setAmount(editing.amount_cents);
+    setCategoryId(editing.category_id);
+    setDescription(editing.description ?? '');
+    setNotes(editing.notes ?? '');
+    setDate(editing.occurred_on);
+    setReceived(editing.status === 'posted' ? 'yes' : 'no');
+    setCountBefore(editing.count_before_received);
+    const method = editing.card_id
+      ? `credit:${editing.card_id}`
+      : `${({ meal_voucher: 'vr', food_voucher: 'va' } as Record<string, string>)[editing.payment_method] ?? editing.payment_method}:${editing.account_id}`;
+    setMethodId(method);
+    if (editing.description || editing.notes || editing.occurred_on !== today) {
+      setDetails(true);
+    }
+  }, [editing, today]);
+
+  const income = mode === 'income';
+  const allMethods = useMemo(() => buildMethods(data?.accounts ?? [], data?.cards ?? []), [data]);
+  const methods = income ? allMethods.filter((m) => m.kind !== 'credit') : allMethods;
   const suggestions = useMemo(
-    () => suggestCategories(data?.categories ?? [], data?.recent ?? [], today),
-    [data, today],
+    () =>
+      income
+        ? incomeCategories(data?.categories ?? []).slice(0, 5)
+        : suggestCategories(data?.categories ?? [], data?.recent ?? [], today),
+    [data, today, income],
   );
-  const allCategories = useMemo(() => expenseCategories(data?.categories ?? []).map(chip), [data]);
+  const pickerCategories = useMemo(
+    () =>
+      (income
+        ? incomeCategories(data?.categories ?? [])
+        : expenseCategories(data?.categories ?? [])
+      ).map(chip),
+    [data, income],
+  );
   const lastMethod = typeof data?.lastMethod === 'string' ? data.lastMethod : null;
   const method = methods.find((m) => m.id === (methodId ?? lastMethod)) ?? methods[0] ?? null;
   const card = method?.cardId ? data?.cards.find((c) => c.id === method.cardId) : undefined;
-  const invoice = card ? invoiceForPurchase(cardFromRow(card), today) : null;
+  const invoice = card ? invoiceForPurchase(cardFromRow(card), date) : null;
   const missing = missingReason(amount, categoryId);
   const pickedOutside = categoryId && !suggestions.some((c) => c.id === categoryId);
-  const pickedChip = pickedOutside ? allCategories.find((c) => c.id === categoryId) : undefined;
+  const pickedChip = pickedOutside ? pickerCategories.find((c) => c.id === categoryId) : undefined;
+  const status = statusFor(mode, date, today, received === 'yes');
 
   if (!user) {
     return null;
   }
 
-  const submit = async () => {
+  const changeMode = (next: QuickKind) => {
+    setMode(next);
+    setCategoryId(null);
+    setCategoryByRule(false);
+  };
+
+  // RN-61: a descrição sugere a categoria só enquanto o usuário não escolheu uma
+  const changeDescription = (text: string) => {
+    setDescription(text);
+    if (categoryId && !categoryByRule) {
+      return;
+    }
+    const suggested = suggestFromDescription(text, mode, data?.rules ?? [], data?.categories ?? []);
+    setCategoryId(suggested);
+    setCategoryByRule(suggested !== null);
+  };
+
+  const pick = (id: string) => {
+    setCategoryId(id);
+    setCategoryByRule(false);
+  };
+
+  const save = async () => {
     if (missing || !method || !categoryId) {
       return;
     }
@@ -101,16 +192,40 @@ export function QuickEntrySheet({
     if (invoice && card && !(await user.db.invoices.get(invoice.id))) {
       await saveRow(user.db, 'invoices', buildInvoice(invoice, user.userId, nowIso));
     }
-    const row = buildExpense({
-      id: newId(),
+    const fresh = buildExpense({
+      id: editing?.id ?? newId(),
       userId: user.userId,
       amountCents: amount,
       categoryId,
       method,
-      occurredOn: today,
+      occurredOn: date,
       invoiceId: invoice?.id ?? null,
       nowIso,
+      kind: mode,
+      status,
+      description,
+      notes,
+      countBeforeReceived: income && received === 'no' && countBefore,
     });
+    // na edição, mantém as colunas que o Q01 não mostra (origem, vínculos, série…)
+    const row: LocalRow<'transactions'> = editing
+      ? {
+          ...editing,
+          kind: fresh.kind,
+          status: fresh.status,
+          amount_cents: fresh.amount_cents,
+          occurred_on: fresh.occurred_on,
+          description: fresh.description,
+          notes: fresh.notes,
+          category_id: fresh.category_id,
+          category_source: categoryByRule ? 'rule' : 'manual',
+          payment_method: fresh.payment_method,
+          account_id: fresh.account_id,
+          card_id: fresh.card_id,
+          invoice_id: fresh.invoice_id,
+          count_before_received: fresh.count_before_received,
+        }
+      : { ...fresh, category_source: categoryByRule ? 'rule' : 'manual' };
     const result = await saveRow(user.db, 'transactions', row);
     if (!result.ok) {
       return;
@@ -119,31 +234,51 @@ export function QuickEntrySheet({
     await writeLocal(() => user.db.kv.put({ key: LAST_METHOD_KEY, value: method.id }));
     user.engine.notifyWrite();
     const offline = typeof navigator !== 'undefined' && !navigator.onLine;
-    const elapsed = quickEntryElapsed();
-    void track(user.db, {
-      code: 'lancamento_salvo',
-      context: { ...(elapsed !== null && { duracao_ms: elapsed }), offline, origem: 'manual' },
-    });
+    if (!editing) {
+      const elapsed = quickEntryElapsed();
+      void track(user.db, {
+        code: 'lancamento_salvo',
+        context: { ...(elapsed !== null && { duracao_ms: elapsed }), offline, origem: 'manual' },
+      });
+    }
     resetQuickEntryClock();
-    toast({
-      message: offline ? t('toast.savedOffline') : t('toast.saved'),
-      action: {
-        label: t('toast.undo'),
-        onPress: () => {
-          void deleteRow(user.db, 'transactions', row.id).then(() => user.engine.notifyWrite());
-        },
-      },
-    });
+    toast(
+      editing
+        ? { message: t('toast.edited') }
+        : {
+            message: income
+              ? t('toast.incomeSaved')
+              : offline
+                ? t('toast.savedOffline')
+                : t('toast.saved'),
+            action: {
+              label: t('toast.undo'),
+              onPress: () => {
+                void deleteRow(user.db, 'transactions', row.id).then(() =>
+                  user.engine.notifyWrite(),
+                );
+              },
+            },
+          },
+    );
     onClose();
+  };
+
+  const submit = () => {
+    if (isFarDate(date, today)) {
+      setConfirmFar(true);
+      return;
+    }
+    void save();
   };
 
   return (
     <BottomSheet
       open
-      title={t('quick.title')}
+      title={editing ? t('quick.edit.title') : t('quick.title')}
       onClose={onClose}
       confirmClose={() =>
-        amount === 0 || saved
+        amount === 0 || saved || editing
           ? true
           : new Promise<boolean>((resolve) => {
               answer.current = resolve;
@@ -153,6 +288,17 @@ export function QuickEntrySheet({
       data-testid="quick-entry"
     >
       <div className="quick-entry">
+        {!editing && (
+          <SegmentedControl
+            label={t('quick.title')}
+            value={mode}
+            onChange={changeMode}
+            options={[
+              { value: 'expense', label: t('quick.type.expense') },
+              { value: 'income', label: t('quick.type.income') },
+            ]}
+          />
+        )}
         <AmountInput value={amount} onChange={setAmount} autoFocus />
         <div className="quick-chips" role="radiogroup" aria-label={t('quick.type.expense')}>
           {suggestions.map((c) => (
@@ -161,7 +307,8 @@ export function QuickEntrySheet({
               name="quick-category"
               category={chip(c)}
               selected={categoryId === c.id}
-              onPress={() => setCategoryId(c.id)}
+              suggested={categoryId === c.id && categoryByRule}
+              onPress={() => pick(c.id)}
             />
           ))}
           {pickedChip && (
@@ -169,11 +316,12 @@ export function QuickEntrySheet({
               name="quick-category"
               category={pickedChip}
               selected
+              suggested={categoryByRule}
               onPress={() => setPickerOpen(true)}
             />
           )}
           <Button variant="ghost" size="sm" onClick={() => setPickerOpen(true)}>
-            {t('quick.more')}
+            {uiText.more}
           </Button>
         </div>
         {method && (
@@ -191,27 +339,81 @@ export function QuickEntrySheet({
               : {})}
           />
         )}
+        {income && (
+          <>
+            <SegmentedControl
+              label={t('quick.income.received')}
+              value={received}
+              onChange={setReceived}
+              options={[
+                { value: 'yes', label: t('quick.yes') },
+                { value: 'no', label: t('quick.no') },
+              ]}
+            />
+            {received === 'no' && (
+              <Switch
+                label={t('quick.income.countBefore')}
+                checked={countBefore}
+                onChange={setCountBefore}
+              />
+            )}
+          </>
+        )}
+        {!details ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setDetails(true)}
+            data-testid="quick-details"
+          >
+            {t('quick.more')}
+          </Button>
+        ) : (
+          <div className="quick-details">
+            <TextField
+              label={t('quick.description')}
+              value={description}
+              onChange={changeDescription}
+            />
+            <DateChip label={t('quick.date')} value={date} onChange={setDate} today={today} />
+            <TextField label={t('quick.notes')} value={notes} onChange={setNotes} />
+          </div>
+        )}
+        {!income && status === 'pending' && (
+          <p className="account-meta">{t('quick.scheduled', { data: formatDateBR(date) })}</p>
+        )}
         <Button
           size="lg"
           fullWidth
           confirmed={saved}
           disabled={missing !== null}
           disabledReason={missing ?? ''}
-          onClick={() => void submit()}
+          onClick={submit}
           data-testid="quick-submit"
         >
-          {t('quick.cta')}
+          {editing ? t('quick.edit.save') : t('quick.cta')}
         </Button>
       </div>
       <CategoryPicker
         open={pickerOpen}
         onClose={() => setPickerOpen(false)}
-        categories={allCategories}
+        categories={pickerCategories}
         value={categoryId}
         onChange={(id) => {
-          setCategoryId(id);
+          pick(id);
           setPickerOpen(false);
         }}
+      />
+      <Dialog
+        open={confirmFar}
+        title={t('quick.farDate')}
+        description={formatDateBR(date)}
+        confirmLabel={t('quick.cta')}
+        onConfirm={() => {
+          setConfirmFar(false);
+          void save();
+        }}
+        onCancel={() => setConfirmFar(false)}
       />
       <Dialog
         open={asking}
