@@ -111,6 +111,22 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
     if (!user || !autoSync) {
       return;
     }
+    // Seeds depois do primeiro pull que der certo (tech §3.8): um seed apagado em outro aparelho já chegou como
+    // tombstone e não volta
+    let seeded = false;
+    const offSeeds = user.engine.subscribe(() => {
+      if (seeded || user.engine.getSnapshot().phase !== 'done') {
+        return;
+      }
+      seeded = true;
+      void import('../data/seeds')
+        .then((m) => m.ensureSeeds(user.db, user.userId))
+        .then((result) => {
+          if (result.ok && result.value > 0) {
+            user.engine.notifyWrite();
+          }
+        });
+    });
     const stop = user.engine.start();
     let uninstall: (() => void) | undefined;
     if (import.meta.env.VITE_E2E === '1') {
@@ -119,6 +135,7 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
       });
     }
     return () => {
+      offSeeds();
       stop();
       uninstall?.();
     };

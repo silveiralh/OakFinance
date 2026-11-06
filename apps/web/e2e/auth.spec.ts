@@ -41,6 +41,10 @@ test('E20: sair com alterações pendentes avisa, "Enviar e sair" envia e apaga 
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
   const dbName = await page.evaluate(() => window.__oakE2E?.dbName ?? '');
   expect(dbName).toMatch(/^oakfinance_/);
+  // os seeds do primeiro login já subiram (T-035)
+  await expect
+    .poll(() => page.evaluate(() => window.__oakE2E?.counts()), { timeout: 20_000 })
+    .toMatchObject({ categories: 31, pending: 0 });
 
   await context.setOffline(true);
   await page.evaluate(() => window.__oakE2E?.addAccount('Conta do E2E'));
