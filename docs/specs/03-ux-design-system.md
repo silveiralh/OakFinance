@@ -2244,6 +2244,15 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `fixed.expenseSaved` | Conta fixa salva. |
 | `fixed.confirmPaid` | Informe o valor pago. |
 | `fixed.skipToast` | Ocorrência pulada neste mês. |
+| `fixed.editValue` | Mudar valor |
+| `fixed.editTitle` | Mudar valor de {descrição} |
+| `fixed.occurrence` | Ocorrência |
+| `fixed.endTitle` | Encerrar {descrição} |
+| `fixed.endOn` | Última data |
+| `fixed.endHint` | As ocorrências previstas depois dessa data somem; as efetivadas ficam. |
+| `fixed.ended` | Recorrência encerrada. |
+| `fixed.updated` | Valor atualizado. |
+| `fixed.until` | até {data} |
 | `future.empty` | Nenhum valor comprometido nos próximos meses. |
 | `future.emptyHint` | Compras parceladas e contas fixas aparecem aqui. |
 | `future.table` | Ver como tabela |

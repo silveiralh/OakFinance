@@ -2,6 +2,7 @@
 // ocorrência vira lançamento com id v5 (recorrência, data) ao confirmar (valor real) ou "Não recebi este mês"
 // (cancelada, sai da Base). Dois aparelhos que confirmam a mesma ocorrência gravam a mesma linha (RN-97 decide).
 import {
+  addDays,
   type Card,
   clampDay,
   dueAutoPosts,
@@ -18,7 +19,10 @@ import {
 import type { LocalRow, OakDb } from '../../data/db';
 import { newId } from '../../data/ids';
 import { cardFromRow, txToRow } from '../../data/mappers';
-import { saveRow } from '../../data/repositories/rows';
+import { putInTransaction, saveRow, writeScope } from '../../data/repositories/rows';
+import type { Result } from '../../data/result';
+import { writeLocal } from '../../data/storage';
+import { deviceId } from '../../data/sync/clock';
 import { buildInvoice } from '../quick-entry/model';
 
 type RecurrenceRow = LocalRow<'recurrences'>;
@@ -191,7 +195,7 @@ function blankTx(id: string, userId: string, nowIso: string): TxRow {
 export function occurrenceRow(
   rec: Recurrence,
   date: ISODate,
-  outcome: { status: 'posted'; amountCents: number } | { status: 'cancelled' },
+  outcome: Outcome,
   existing: TxRow | undefined,
   userId: string,
   nowIso: string,
@@ -202,7 +206,7 @@ export function occurrenceRow(
     date,
     card,
     [],
-    outcome.status === 'posted' ? outcome.amountCents : rec.amountCents,
+    outcome.status === 'cancelled' ? rec.amountCents : outcome.amountCents,
   );
   return {
     ...txToRow({ ...tx, deletedAt: null }, existing ?? blankTx(tx.id, userId, nowIso)),
@@ -211,13 +215,19 @@ export function occurrenceRow(
   };
 }
 
+/** Efetivada com o valor real, só a ocorrência futura com outro valor (pendente) ou cancelada. */
+export type Outcome =
+  | { status: 'posted'; amountCents: number }
+  | { status: 'pending'; amountCents: number }
+  | { status: 'cancelled' };
+
 /** Grava a ocorrência (e a fatura do cartão, se faltar) com o resultado escolhido. */
 async function writeOccurrence(
   db: OakDb,
   userId: string,
   rec: Recurrence,
   date: ISODate,
-  outcome: { status: 'posted'; amountCents: number } | { status: 'cancelled' },
+  outcome: Outcome,
   nowMs: number,
 ) {
   const cardRow = rec.cardId ? await db.cards.get(rec.cardId) : undefined;
@@ -340,4 +350,111 @@ export async function runAutoPosts(
     }
   }
   return n;
+}
+
+/**
+ * RN-30 "Só esta ocorrência": muda só o valor dela. Passada ou de hoje fica efetivada; futura fica pendente (continua
+ * prevista, com o valor novo).
+ */
+export function editOneOccurrence(
+  db: OakDb,
+  userId: string,
+  rec: Recurrence,
+  date: ISODate,
+  amountCents: number,
+  today: ISODate,
+  nowMs: number = Date.now(),
+) {
+  return writeOccurrence(
+    db,
+    userId,
+    rec,
+    date,
+    { status: date <= today ? 'posted' : 'pending', amountCents },
+    nowMs,
+  );
+}
+
+/**
+ * RN-30 "Esta e as próximas": encerra a original na véspera da ocorrência e cria uma nova a partir dela com o valor
+ * novo; as ocorrências já lançadas não mudam. Devolve a nova recorrência.
+ */
+export async function splitRecurrence(
+  db: OakDb,
+  row: RecurrenceRow,
+  fromDate: ISODate,
+  amountCents: number,
+  nowMs: number = Date.now(),
+): Promise<Result<RecurrenceRow>> {
+  const device = await deviceId(db);
+  const iso = new Date(nowMs).toISOString();
+  const next: RecurrenceRow = {
+    ...row,
+    id: newId(),
+    amount_cents: amountCents,
+    start_on: fromDate,
+    day_of_month: row.frequency === 'monthly' ? Number(fromDate.slice(8, 10)) : row.day_of_month,
+    end_on: row.end_on,
+    max_occurrences: null,
+    created_at: iso,
+    updated_at: iso,
+    client_updated_at: iso,
+    server_version: 0,
+  };
+  return writeLocal(() =>
+    db.transaction('rw', writeScope(['recurrences', 'transactions']), async () => {
+      await putInTransaction(
+        db,
+        'recurrences',
+        { ...row, end_on: addDays(fromDate, -1) },
+        device,
+        nowMs,
+      );
+      await putInTransaction(db, 'recurrences', next, device, nowMs);
+      await dropPendingAfter(db, row.id, addDays(fromDate, -1), device, nowMs, iso);
+      return next;
+    }),
+  );
+}
+
+/** Ocorrências pendentes (não efetivadas) depois de `after` saem (RN-30). */
+async function dropPendingAfter(
+  db: OakDb,
+  recurrenceId: string,
+  after: ISODate,
+  device: string,
+  nowMs: number,
+  iso: string,
+) {
+  const rows = await db.transactions.where('recurrence_id').equals(recurrenceId).toArray();
+  for (const row of rows) {
+    if (
+      row.deleted_at === null &&
+      row.status === 'pending' &&
+      (row.recurrence_date ?? '') > after
+    ) {
+      await putInTransaction(db, 'transactions', { ...row, deleted_at: iso }, device, nowMs);
+    }
+  }
+}
+
+/**
+ * RN-30 "Encerrar a partir desta" / excluir (= encerrar hoje): fim = data escolhida; as previstas depois dela somem e
+ * as efetivadas ficam.
+ */
+export async function endRecurrence(
+  db: OakDb,
+  row: RecurrenceRow,
+  endOn: ISODate,
+  nowMs: number = Date.now(),
+): Promise<Result<number>> {
+  const device = await deviceId(db);
+  const iso = new Date(nowMs).toISOString();
+  return writeLocal(() =>
+    db.transaction('rw', writeScope(['recurrences', 'transactions']), async () => {
+      await putInTransaction(db, 'recurrences', { ...row, end_on: endOn }, device, nowMs);
+      await dropPendingAfter(db, row.id, endOn, device, nowMs, iso);
+      return 1;
+    }),
+  );
 }

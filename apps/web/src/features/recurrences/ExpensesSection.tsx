@@ -6,6 +6,7 @@ import { Plus, Repeat } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { UserSession } from '../../app/auth';
 import { maskMoney, useValuesHidden } from '../../app/values';
+import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
 import { parseDay } from '../../data/repositories/cards';
@@ -33,6 +34,7 @@ import {
   runAutoPosts,
   skipOccurrence,
 } from './model';
+import { RecurrenceTools } from './RecurrenceTools';
 
 interface Draft {
   description: string;
@@ -115,6 +117,7 @@ export function ExpensesSection({ user, today }: { user: UserSession; today: ISO
     return null;
   }
   const rowById = new Map(data.transactions.map((r) => [r.id, r]));
+  const recRows = new Map(data.recurrences.map((r) => [r.id, r]));
   const methods = [
     ...data.accounts
       .filter((a) => a.type === 'checking' || a.type === 'savings')
@@ -242,7 +245,7 @@ export function ExpensesSection({ user, today }: { user: UserSession; today: ISO
                         approxCents: approx,
                       })}
                     </p>
-                    {!currentTx && (
+                    {(!currentTx || currentTx.status === 'pending') && (
                       <div className="detail-actions">
                         <Button
                           variant="secondary"
@@ -259,6 +262,19 @@ export function ExpensesSection({ user, today }: { user: UserSession; today: ISO
                       </div>
                     )}
                   </>
+                )}
+                {recRows.get(rec.id) && (
+                  <RecurrenceTools
+                    user={user}
+                    rec={rec}
+                    row={recRows.get(rec.id) as LocalRow<'recurrences'>}
+                    open={mine.filter(
+                      (o) =>
+                        o.realizedTxId === null ||
+                        rowById.get(o.realizedTxId)?.status === 'pending',
+                    )}
+                    today={today}
+                  />
                 )}
                 {next.length > 0 && (
                   <ul className="cards-invoices" data-testid="expense-upcoming">
