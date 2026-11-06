@@ -51,6 +51,7 @@
 - Deploy: `deploy.yml` roda em cada push em `main` e termina com aviso e sucesso enquanto as variáveis do Supabase estão vazias (SETUP-05/09). Backup, keepalive e preview também pulam com aviso. O deploy real começa na T-036.
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Ainda não rodou.
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
+- Infra do job `db`: em 06/11 o `supabase start` falhou uma vez por limite de download do Docker Hub ("toomanyrequests") e porta 54322 ocupada; sem re-execução pela API (403), só um novo commit real refaz o run.
 - E2E instável: o passo "navegadores do Playwright" expira em 20 min em cerca de 1 a cada 3 runs (apt lento no runner). A sessão não consegue re-executar runs; o run volta a rodar no próximo push real (rebase). A correção definitiva é o PR #15 (imagem `mcr.microsoft.com/playwright`), com `needs-owner` porque mexe em `.github/**`.
 - Ruleset de `main`: ativo desde 05/11 (SETUP-04). Todo merge exige os 8 checks verdes e a branch atualizada.
 
