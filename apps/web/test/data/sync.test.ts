@@ -457,6 +457,40 @@ describe('G06: edição vinda de outro aparelho', () => {
   });
 });
 
+describe('estados para os banners (T-045)', () => {
+  it('G18: o snapshot traz o created_at da pendência mais antiga, e nada sem fila', async () => {
+    const db = open();
+    const server = new FakeServer();
+    await saveRow(db, 'transactions', tx('t1'), { nowMs: T0 });
+    await saveRow(db, 'transactions', tx('t2'), { nowMs: T0 + 60_000 });
+    const { e } = engine(db, server, { isOnline: () => false });
+    await e.syncNow();
+    expect(e.getSnapshot()).toMatchObject({
+      phase: 'offline',
+      pending: 2,
+      oldestPendingAt: new Date(T0).toISOString(),
+    });
+    const online = engine(db, server).e;
+    await online.syncNow();
+    expect(online.getSnapshot()).toMatchObject({ pending: 0, oldestPendingAt: null });
+  });
+
+  it('US-05: "recovering" fica ligado só durante o pull que começa do cursor 0', async () => {
+    const db = open();
+    const server = new FakeServer();
+    server.put('transactions', tx('nuvem'));
+    const { e } = engine(db, server);
+    const seen: boolean[] = [];
+    e.subscribe(() => seen.push(e.getSnapshot().recovering));
+    await e.syncNow();
+    expect(seen).toContain(true);
+    expect(e.getSnapshot().recovering).toBe(false);
+    seen.length = 0;
+    await e.syncNow();
+    expect(seen).not.toContain(true);
+  });
+});
+
 describe('motor (tech §4.5 e §4.8, RN-96..RN-99)', () => {
   it('ciclo: push antes do pull, contadores, telemetria sync.done enviada por log_events', async () => {
     const db = open();

@@ -107,7 +107,7 @@ flowchart LR
 | T-042 | Transferência, estorno e rascunho | T-041 | done |
 | T-043 | Lista de lançamentos | T-041 | done |
 | T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | done |
-| T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | todo |
+| T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | done |
 | T-046 | Ocultar valores | T-043 | todo |
 | T-047 | Cartões e faturas (C01/C02) | T-040 | todo |
 | T-048 | Pagamento de fatura e saldo credor | T-047 | todo |
@@ -793,7 +793,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-045 — Offline ponta a ponta e estados de sync
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-04, US-64 | RN-95, RN-96, RN-100 | T-044, T-030 | não |
+| done | S1 | M | US-04, US-64 | RN-95, RN-96, RN-100 | T-044, T-030 | não |
 
 **Escopo:** SyncBadge ligado ao motor; banners G01, G04 (depois da 3ª falha, com Tentar novamente), G05, G15, G18 (pendência há mais de 24 h) e G08 ("Recuperando seus dados…"); selo "Não sincronizado".
 

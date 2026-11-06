@@ -3,7 +3,7 @@
 import { todayIn } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
 import { newId } from '../../data/ids';
-import { saveRow } from '../../data/repositories/rows';
+import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { pendingCount } from '../../data/sync/outbox';
 import { applyUpdate } from '../../lib/sw-update';
 import type { UserSession } from '../auth';
@@ -23,6 +23,10 @@ declare global {
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
       setAmount(id: string, cents: number): Promise<void>;
       amountOf(id: string): Promise<number | null>;
+      /** Exclusão lógica, como o Excluir da T01/T02. */
+      remove(id: string): Promise<void>;
+      /** Valor e exclusão da linha local (`null` se não existe). */
+      rowState(id: string): Promise<{ amount: number; deleted: boolean } | null>;
       /** Simula o toque em "Atualizar" do G07 (o toast fica inerte atrás do Q01 modal). */
       applyUpdate(): void;
     };
@@ -128,6 +132,14 @@ export function installE2eHooks(user: UserSession): () => void {
       user.engine.notifyWrite();
     },
     amountOf: async (id: string) => (await user.db.transactions.get(id))?.amount_cents ?? null,
+    async remove(id: string) {
+      await deleteRow(user.db, 'transactions', id);
+      user.engine.notifyWrite();
+    },
+    async rowState(id: string) {
+      const row = await user.db.transactions.get(id);
+      return row ? { amount: row.amount_cents, deleted: row.deleted_at !== null } : null;
+    },
     pending: () => pendingCount(user.db),
     accountNames: async () => (await user.db.accounts.toArray()).map((row) => row.name),
     counts: async () => ({
