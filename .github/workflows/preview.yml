@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: build com variáveis de staging
         env:
@@ -38,7 +38,7 @@ jobs:
           if git diff --name-only "origin/$BASE_REF" HEAD -- supabase/migrations | grep -q .; then
             echo "pending" > apps/web/dist/.schema-pending
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: preview-dist
           path: apps/web/dist/
