@@ -2019,6 +2019,21 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `budget.over` | {valor} acima do planejado |
 | `budget.adjust` | Ajustar percentuais |
 | `budget.sumError` | Os percentuais somam {x}%. Ajuste para totalizar 100%. |
+| `calc.percentages` | Percentuais do orçamento |
+| `calc.pct` | {p}% |
+| `calc.cardMonth` | Compras no cartão contam no mês |
+| `calc.cardMonth.due` | do vencimento da fatura |
+| `calc.cardMonth.purchase` | da compra |
+| `calc.restricted` | Considerar VR/VA nos cálculos |
+| `calc.expected` | Incluir receitas previstas |
+| `calc.expectedHint` | Respeita o “Contar antes de receber” de cada receita. |
+| `calc.savings` | Descontar a poupança do mês ({p}%) |
+| `calc.upcoming` | Descontar faturas e contas que ainda vencem no mês |
+| `calc.upcomingOff` | Sem esse desconto, o valor deixa de ser conservador. |
+| `calc.preview` | Com estes ajustes: {valor} disponíveis em {mês} |
+| `calc.previewNoIncome` | Com estes ajustes: cadastre a renda para calcular |
+| `calc.save` | Salvar ajustes |
+| `calc.saved` | Ajustes salvos. |
 | `budget.income` | Renda do mês |
 | `budget.line` | {gasto} de {meta} · {p}% |
 | `budget.saved` | Poupado {valor} de {meta} |

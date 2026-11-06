@@ -1055,6 +1055,52 @@ body:has(.screen-welcome) .backdrop {
   min-height: 48px;
 }
 
+/* T-061: S06 ajustes do cálculo */
+.calc {
+  display: grid;
+  gap: var(--space-4);
+}
+.calc-block {
+  display: grid;
+  gap: var(--space-3);
+}
+.calc-pcts {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.calc-pcts legend {
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-weight-bold);
+}
+.calc-pct {
+  display: grid;
+  grid-template-columns: 7rem 1fr 3.5rem;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+}
+.calc-pct input[type="range"] {
+  width: 100%;
+  min-height: var(--touch-min);
+  accent-color: var(--surface-dark);
+}
+.calc-pct output {
+  font-weight: var(--font-weight-bold);
+  text-align: end;
+}
+.calc-error {
+  margin: 0;
+  color: var(--status-danger-fg);
+  font-weight: var(--font-weight-semibold);
+}
+.calc-preview {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {
