@@ -1,0 +1,1 @@
+export { IncomeScreen } from './IncomeScreen';

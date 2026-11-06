@@ -2186,6 +2186,33 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `categories.saved` | Categoria salva. |
 | `categories.locked` | Categoria do sistema: não pode ser editada. |
 | `categories.rules` | Regras |
+| `fixed.list` | Receitas fixas |
+| `fixed.new` | Nova receita fixa |
+| `fixed.description` | Descrição |
+| `fixed.amount` | Valor |
+| `fixed.day` | Dia do mês |
+| `fixed.account` | Conta |
+| `fixed.category` | Categoria |
+| `fixed.save` | Salvar |
+| `fixed.every` | {valor} · todo dia {dia} · {conta} |
+| `fixed.empty` | Nenhuma receita fixa cadastrada |
+| `fixed.emptyHint` | Cadastre o salário uma vez e ele entra no cálculo todo mês. |
+| `fixed.upcoming` | Próximas |
+| `fixed.confirm` | Confirmar |
+| `fixed.notReceived` | Não recebi este mês |
+| `fixed.received` | Recebida em {data} · {valor} |
+| `fixed.skipped` | Não recebida em {mês} |
+| `fixed.expected` | Prevista para {data} · {valor} |
+| `fixed.late` | Atrasada desde {data} · {valor} |
+| `fixed.confirmTitle` | Confirmar {descrição} |
+| `fixed.confirmHint` | Informe o valor que caiu na conta. |
+| `fixed.confirmed` | Receita confirmada. |
+| `fixed.notReceivedToast` | Receita marcada como não recebida. |
+| `fixed.saved` | Receita fixa salva. |
+| `fixed.missingDescription` | Informe a descrição. |
+| `fixed.missingAmount` | Informe o valor. |
+| `fixed.missingAccount` | Escolha a conta. |
+| `fixed.noAccount` | Cadastre uma conta para receber a renda. |
 
 **Conexões, importação, nota, conferência**
 
