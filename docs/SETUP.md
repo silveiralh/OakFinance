@@ -42,6 +42,7 @@ Coisas que só você pode fazer. As sessões automáticas nunca criam contas nem
 - **Avise:** "SETUP-02 feito".
 
 ## SETUP-03 — Credencial das sessões sem admin
+- **Substituído pela D-012 (06/11/2026):** as sessões usam a conta do dono e herdam o admin; valem as salvaguardas descritas em `docs/DECISIONS.md`. Nada a fazer.
 - **Por quê:** se as sessões tiverem papel de admin, elas conseguem pular o portão. O CI só é o portão de verdade se elas não puderem.
 - **Passo a passo:**
   1. Dê às sessões automáticas uma credencial (GitHub App ou token *fine-grained*) com acesso **só** a `silveiralh/oakfinance`: *Contents* e *Pull requests* em *Read and write*, *Issues* em *Read and write*, *Actions* em *Read*, *Administration* em *Read*. Nada de papel de admin.
