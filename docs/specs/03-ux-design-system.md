@@ -1993,6 +1993,10 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `quick.scheduled` | Agendada para {data} |
 | `income.confirm.title` | Confirmar {descrição} |
 | `income.confirm.ok` / `.changeDate` / `.wontCome` | Confirmar / Mudar data / Não vai cair |
+| `quick.from` / `.to` | De / Para |
+| `quick.missing.destination` | Escolha a conta de destino |
+| `quick.draft.restored` | Rascunho recuperado. |
+| `quick.draft.discard` | Descartar |
 | `accounts.methods` | Formas: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |

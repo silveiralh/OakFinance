@@ -145,7 +145,7 @@ export function missingReason(amountCents: number, categoryId: string | null): s
   return null;
 }
 
-export type QuickKind = 'expense' | 'income';
+export type QuickKind = 'expense' | 'income' | 'transfer' | 'refund';
 
 /** Categorias de receita do seletor. */
 export function incomeCategories(categories: readonly Category[]): Category[] {
@@ -227,6 +227,8 @@ export interface ExpenseInput {
   description?: string | null;
   notes?: string | null;
   countBeforeReceived?: boolean;
+  /** Transferência (RN-08): conta de destino. */
+  counterpartAccountId?: string | null;
 }
 
 /** Despesa (padrão: efetivada) ou receita, linha completa no formato do Postgres (US-12, US-13, US-24). */
@@ -250,7 +252,7 @@ export function buildExpense(input: ExpenseInput): Tx {
     card_id: input.method.cardId ?? null,
     invoice_id: input.invoiceId,
     invoice_pinned: false,
-    counterpart_account_id: null,
+    counterpart_account_id: input.counterpartAccountId ?? null,
     counterpart_card_id: null,
     series_id: null,
     installment_number: null,
@@ -323,4 +325,51 @@ export function overdueIncomes(rows: readonly Tx[], today: ISODate): Tx[] {
       row.recurrence_id === null &&
       row.occurred_on < today,
   );
+}
+
+/** Contas que podem ser origem ou destino de transferência (RN-08: nunca cartão). */
+export function transferAccounts(
+  accounts: readonly LocalRow<'accounts'>[],
+): LocalRow<'accounts'>[] {
+  return accounts.filter((a) => a.deleted_at === null && a.archived_at === null);
+}
+
+/** O que falta na transferência: valor e um destino diferente da origem (US-16). */
+export function transferMissing(
+  amountCents: number,
+  from: string | null,
+  to: string | null,
+): string | null {
+  if (amountCents <= 0) {
+    return t('quick.missing.amount');
+  }
+  if (!from || !to || from === to) {
+    return t('quick.missing.destination');
+  }
+  return null;
+}
+
+export const DRAFT_KEY = 'quick';
+export const DRAFT_TTL_MS = 24 * 60 * 60 * 1000;
+
+export interface QuickDraft {
+  savedAt: number;
+  mode: QuickKind;
+  amount: number;
+  categoryId: string | null;
+  description: string;
+  notes: string;
+  date: ISODate;
+}
+
+/** Rascunho ainda válido (até 24 h, G17) e com algo digitado. */
+export function usableDraft(value: unknown, nowMs: number): QuickDraft | null {
+  if (typeof value !== 'object' || value === null) {
+    return null;
+  }
+  const draft = value as Partial<QuickDraft>;
+  if (typeof draft.savedAt !== 'number' || nowMs - draft.savedAt > DRAFT_TTL_MS || !draft.amount) {
+    return null;
+  }
+  return draft as QuickDraft;
 }
