@@ -10,6 +10,7 @@ export * from './invoices.ts';
 export * from './money.ts';
 export * from './nfce/qr.ts';
 export * from './recurrence.ts';
+export * from './spendable.ts';
 export type * from './types.ts';
 
 export const DOMAIN_PACKAGE = '@oakfinance/domain';

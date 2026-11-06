@@ -79,7 +79,7 @@ flowchart LR
 | T-014 | Domínio: parcelas | T-013 | done |
 | T-015 | Domínio: recorrências | T-013 | done |
 | T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | done |
-| T-017 | Domínio: Disponível para gastar | T-016 | todo |
+| T-017 | Domínio: Disponível para gastar | T-016 | done |
 | T-018 | Domínio: reserva | T-016 | todo |
 | T-019 | Domínio: categorização e seeds | T-012 | done |
 | T-020 | Domínio: conciliação I | T-013, T-015 | todo |
@@ -434,7 +434,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-017 — Domínio: Disponível para gastar
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-30, US-34 | RN-47..RN-51 | T-016 | não |
+| done | S1 | M | US-30, US-34 | RN-47..RN-51 | T-016 | não |
 
 **Escopo:** `spendable.ts` (§5.6).
 
