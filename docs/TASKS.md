@@ -111,7 +111,7 @@ flowchart LR
 | T-046 | Ocultar valores | T-043 | done |
 | T-047 | Cartões e faturas (C01/C02) | T-040 | done |
 | T-048 | Pagamento de fatura e saldo credor | T-047 | done |
-| T-049 | Categorias | T-035 | todo |
+| T-049 | Categorias | T-035 | done |
 | T-050 | Salário como receita fixa | T-041, T-015 | todo |
 | T-051 | Editar e arquivar contas e cartões | T-047 | todo |
 | T-052 | Compra parcelada | T-048, T-014 | todo |
@@ -840,7 +840,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-049 — Categorias
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-27 | RN-39..RN-42 | T-035 | não |
+| done | S1 | P | US-27 | RN-39..RN-42 | T-035 | não |
 
 **Escopo:** S04: lista por faixa; criar e editar (nome, ícone, faixa obrigatória); trocar faixa com o aviso "Isso muda os totais de todos os meses"; arquivar; excluir pedindo destino (move lançamentos, recorrências e regras); categorias de sistema bloqueadas e fora do seletor manual.
 
