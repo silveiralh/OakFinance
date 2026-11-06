@@ -113,7 +113,7 @@ flowchart LR
 | T-048 | Pagamento de fatura e saldo credor | T-047 | done |
 | T-049 | Categorias | T-035 | done |
 | T-050 | Salário como receita fixa | T-041, T-015 | done |
-| T-051 | Editar e arquivar contas e cartões | T-047 | todo |
+| T-051 | Editar e arquivar contas e cartões | T-047 | done |
 | T-052 | Compra parcelada | T-048, T-014 | todo |
 | T-053 | Editar e cancelar parcelada | T-052 | todo |
 | T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | todo |
@@ -864,7 +864,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-051 — Editar e arquivar contas e cartões
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-11 | RN-07, RN-17 | T-047 | não |
+| done | S2 | P | US-11 | RN-07, RN-17 | T-047 | não |
 
 **Escopo:** mudar fechamento, vencimento ou regra com a prévia "{n} itens podem mudar de fatura" (só faturas abertas e futuras, sem itens fixados); arquivar e desarquivar; excluir só sem uso; selo "arquivada".
 

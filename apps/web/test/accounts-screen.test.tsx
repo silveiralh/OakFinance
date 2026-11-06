@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AuthContext } from '../src/app/auth';
+import { deleteAccount } from '../src/data/repositories/accounts';
 import { AccountsScreen, methodsLabel } from '../src/features/accounts/AccountsScreen';
 import { fakeAuth } from './auth-fixture';
 import { tx } from './data/rows';
@@ -52,9 +53,12 @@ describe('S03 contas (US-09)', () => {
       'li',
     ) as HTMLElement;
     const id = row.dataset.testid?.replace('account-', '') ?? '';
+    expect(within(row).getByRole('button', { name: 'Excluir' })).toBeInTheDocument();
     await auth.user?.db.transactions.put(tx('t1', { account_id: id }));
-    fireEvent.click(within(row).getByRole('button', { name: 'Excluir' }));
-    expect(await within(row).findByRole('alert')).toHaveTextContent('Esta conta tem lançamentos.');
+    // US-11: com uso, só "Arquivar"; o repositório também recusa a exclusão
+    await waitFor(() => expect(within(row).queryByRole('button', { name: 'Excluir' })).toBeNull());
+    const refused = await deleteAccount(auth.user?.db as never, id);
+    expect(refused.ok ? null : refused.error.code).toBe('ACCOUNT_HAS_TRANSACTIONS');
     fireEvent.click(within(row).getByRole('button', { name: 'Arquivar' }));
     expect(await screen.findByText('Contas arquivadas')).toBeInTheDocument();
     fireEvent.click(await screen.findByRole('button', { name: 'Desarquivar' }));

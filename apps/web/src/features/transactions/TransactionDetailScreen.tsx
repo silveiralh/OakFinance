@@ -155,8 +155,13 @@ export function TransactionDetailScreen({
     : undefined;
   const row = toRow(tx, category, today as Parameters<typeof toRow>[2]);
   const status = statusText(row.state);
-  const account = tx.account_id ? names.accounts.get(tx.account_id) : undefined;
-  const card = tx.card_id ? names.cards.get(tx.card_id) : undefined;
+  // US-11: conta ou cartão arquivado continua com o nome e o selo "arquivada"
+  const archivedTag = (row: { archived_at: string | null } | undefined) =>
+    row?.archived_at ? ` · ${t('accounts.archivedBadge')}` : '';
+  const accountRow = tx.account_id ? data.accounts.find((a) => a.id === tx.account_id) : undefined;
+  const account = accountRow ? `${accountRow.name}${archivedTag(accountRow)}` : undefined;
+  const cardOfTx = tx.card_id ? data.cards.find((c) => c.id === tx.card_id) : undefined;
+  const card = cardOfTx ? `${cardOfTx.name}${archivedTag(cardOfTx)}` : undefined;
   const destination = tx.counterpart_account_id
     ? names.accounts.get(tx.counterpart_account_id)
     : tx.counterpart_card_id

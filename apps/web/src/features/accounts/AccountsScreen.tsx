@@ -61,12 +61,15 @@ function AccountRow({
   onArchive,
   onUnarchive,
   onDelete,
+  canDelete,
   error,
 }: {
   account: LocalRow<'accounts'>;
   onArchive: () => void;
   onUnarchive: () => void;
   onDelete: () => void;
+  /** US-11: "Excluir" só para conta sem lançamentos nem recorrências; com uso, só "Arquivar". */
+  canDelete: boolean;
   error: string | null;
 }) {
   const archived = account.archived_at !== null;
@@ -95,9 +98,11 @@ function AccountRow({
             <Button variant="ghost" size="sm" iconStart={Archive} onClick={onArchive}>
               {t('accounts.archive')}
             </Button>
-            <Button variant="ghost" size="sm" iconStart={Trash2} onClick={onDelete}>
-              {t('accounts.delete')}
-            </Button>
+            {canDelete && (
+              <Button variant="ghost" size="sm" iconStart={Trash2} onClick={onDelete}>
+                {t('accounts.delete')}
+              </Button>
+            )}
           </>
         )}
       </div>
@@ -111,6 +116,30 @@ export function AccountsScreen() {
   const accounts = useLive(
     user
       ? () => user.db.accounts.filter((row) => row.deleted_at === null).sortBy('sort_order')
+      : null,
+    [user],
+  );
+  // contas com uso (lançamentos como origem ou destino e recorrências)
+  const used = useLive(
+    user
+      ? async () => {
+          const ids = new Set<string>();
+          await user.db.transactions.each((r) => {
+            if (r.deleted_at === null) {
+              for (const id of [r.account_id, r.counterpart_account_id]) {
+                if (id) {
+                  ids.add(id);
+                }
+              }
+            }
+          });
+          await user.db.recurrences.each((r) => {
+            if (r.deleted_at === null && r.account_id) {
+              ids.add(r.account_id);
+            }
+          });
+          return ids;
+        }
       : null,
     [user],
   );
@@ -181,6 +210,7 @@ export function AccountsScreen() {
       onArchive={() => void act(account.id, () => archiveAccount(user.db, account.id))}
       onUnarchive={() => void act(account.id, () => unarchiveAccount(user.db, account.id))}
       onDelete={() => void act(account.id, () => deleteAccount(user.db, account.id))}
+      canDelete={used !== undefined && !used.has(account.id)}
     />
   );
 
