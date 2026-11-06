@@ -14,6 +14,7 @@ import {
   ToastProvider,
   TopBar,
 } from '../ui';
+import { AutoPosts } from './AutoPosts';
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
@@ -101,6 +102,7 @@ export function AppShell() {
       <RemoteEditsToast />
       <WipedDialog />
       <ValuesFromProfile />
+      <AutoPosts />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}

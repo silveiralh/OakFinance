@@ -38,6 +38,7 @@ import {
   recurrenceFromRow,
   skipOccurrence,
 } from './model';
+import { RecurrenceTools } from './RecurrenceTools';
 
 export const SALARY_SLUG = 'salario';
 const UPCOMING = 3;
@@ -80,14 +81,15 @@ export function occurrenceText(
       mês: monthLabel(monthOf(occ.date)),
     });
   }
-  if (tx) {
+  if (tx && tx.status !== 'pending') {
     const valor = maskMoney(formatBRL(tx.amount_cents), hidden);
     return t(expense ? 'fixed.paid' : 'fixed.received', { data: formatDateBR(occ.date), valor });
   }
-  // RN-31: valor variável aparece como "≈ R$ X" (última efetivada ou o cadastrado)
-  const amount = maskMoney(formatBRL(opts.approxCents ?? occ.amountCents), hidden);
+  // RN-31: valor variável aparece como "≈ R$ X" (última efetivada ou o cadastrado); "Só esta" fixa o valor
+  const fixed = tx ? tx.amount_cents : null;
+  const amount = maskMoney(formatBRL(fixed ?? opts.approxCents ?? occ.amountCents), hidden);
   const valor =
-    opts.approxCents !== undefined && opts.approxCents !== null
+    fixed === null && opts.approxCents !== undefined && opts.approxCents !== null
       ? t('fixed.approx', { valor: amount })
       : amount;
   return occ.date < today
@@ -152,6 +154,7 @@ export function IncomeScreen({
     return <section className="screen" data-screen="S05" data-testid="screen-S05" />;
   }
   const rowById = new Map(data.transactions.map((r) => [r.id, r]));
+  const recRows = new Map(data.recurrences.map((r) => [r.id, r]));
   const accountName = new Map(data.accounts.map((a) => [a.id, a.name]));
 
   const openNew = () => {
@@ -252,7 +255,7 @@ export function IncomeScreen({
                     <p className="cards-line" data-testid="fixed-current">
                       {occurrenceText(current, currentTx, today, hidden)}
                     </p>
-                    {!currentTx && (
+                    {(!currentTx || currentTx.status === 'pending') && (
                       <div className="detail-actions">
                         <Button
                           variant="secondary"
@@ -269,6 +272,19 @@ export function IncomeScreen({
                       </div>
                     )}
                   </>
+                )}
+                {recRows.get(rec.id) && (
+                  <RecurrenceTools
+                    user={user}
+                    rec={rec}
+                    row={recRows.get(rec.id) as LocalRow<'recurrences'>}
+                    open={mine.filter(
+                      (o) =>
+                        o.realizedTxId === null ||
+                        rowById.get(o.realizedTxId)?.status === 'pending',
+                    )}
+                    today={today}
+                  />
                 )}
                 {next.length > 0 && (
                   <>
