@@ -583,7 +583,7 @@ describe('H01 — cards e saudação', () => {
     expect(dayPeriod(new Date('2026-11-15T16:00:00.000Z'))).toBe('afternoon'); // 13:00
     expect(dayPeriod(new Date('2026-11-15T23:30:00.000Z'))).toBe('evening'); // 20:30
     expect(dayPeriod(new Date('2026-11-15T06:00:00.000Z'))).toBe('evening'); // 03:00
-    expect(firstName('Ana Maria Teste')).toBe('Ana');
+    expect(firstName('Pessoa de Teste')).toBe('Pessoa');
     expect(firstName(null)).toBe('');
   });
 
