@@ -6,14 +6,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.json && vite build",
-    "build:e2e": "VITE_E2E=1 vite build",
+    "build": "node scripts/build-icons.mjs && tsc --noEmit -p tsconfig.json && vite build",
+    "build:e2e": "node scripts/build-icons.mjs && VITE_E2E=1 vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run --coverage",
-    "e2e": "pnpm run build:e2e && playwright test"
+    "e2e": "pnpm run build:e2e && playwright test",
+    "icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/manrope": "5.3.0",
     "@supabase/supabase-js": "2.119.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
@@ -33,6 +36,7 @@
     "happy-dom": "21.0.4",
     "msw": "3.0.3",
     "pg": "8.23.1",
+    "sharp": "0.35.5",
     "tailwindcss": "4.3.4",
     "typescript": "6.0.3",
     "vite": "8.3.6",

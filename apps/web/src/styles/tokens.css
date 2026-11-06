@@ -1,0 +1,431 @@
+/* ==========================================================
+   tokens.css — OakFinance · Aero sóbrio
+   ========================================================== */
+:root {
+  color-scheme: light;
+
+  /* ---------- 1. PRIMITIVOS ---------- */
+  /* Aqua (marca) */
+  --aqua-50: #eefaff;
+  --aqua-100: #d6f1ff;
+  --aqua-200: #a9e2fa;
+  --aqua-300: #5ccfff;
+  --aqua-400: #2fb6ee;
+  --aqua-500: #22a8e6;
+  --aqua-600: #1580bf;
+  --aqua-650: #0b76ae;
+  --aqua-700: #0a5f8c;
+  --aqua-800: #075884;
+  --aqua-900: #053f5f;
+  /* Grama (receita, poupança) */
+  --grass-100: #ddf7df;
+  --grass-300: #6be38f;
+  --grass-400: #45c86a;
+  --grass-450: #5ccb55;
+  --grass-500: #4cb848;
+  --grass-600: #2e8b3e;
+  --grass-700: #1a6430;
+  --grass-900: #0f3320;
+  /* Céu (fundo) */
+  --sky-100: #e8f7ff;
+  --sky-200: #d8f1fc;
+  --sky-300: #8fd3f5;
+  --sky-500: #4fb6ec;
+  /* Tinta (texto claro) */
+  --ink-900: #0a2540;
+  --ink-700: #2b4a66;
+  --ink-600: #3d5c78;
+  --ink-500: #5e7a93;
+  --ink-300: #a7bccd;
+  --ink-200: #c5d9e8;
+  /* Névoa (texto escuro) */
+  --mist-50: #eaf6ff;
+  --mist-300: #a9c8de;
+  --mist-400: #8fb2cb;
+  --mist-500: #6f93ae;
+  --mist-700: #2f5470;
+  /* Noite */
+  --night-950: #04121f;
+  --night-900: #071827;
+  --night-850: #0b2236;
+  --night-800: #0f2a40;
+  --night-700: #0e3a57;
+  --night-650: #0b2d4a;
+  --night-600: #061a2e;
+  /* Violeta (faixa Desejos) */
+  --violet-100: #eee8ff;
+  --violet-300: #b9a2ff;
+  --violet-400: #9d82f5;
+  --violet-500: #7a55d3;
+  --violet-700: #5e3fb0;
+  /* Âmbar (alerta) */
+  --amber-100: #fff1d6;
+  --amber-300: #ffc75a;
+  --amber-400: #f2a93b;
+  --amber-600: #a86400;
+  --amber-700: #804400;
+  --amber-900: #3a2a0e;
+  /* Coral (acima do limite, destrutivo) */
+  --coral-100: #ffe3de;
+  --coral-300: #ff9583;
+  --coral-400: #f47360;
+  --coral-600: #c2402c;
+  --coral-700: #a3301f;
+  --coral-900: #3d1a16;
+  --white: #ffffff;
+
+  /* ---------- 2. SEMÂNTICOS (tema claro) ---------- */
+  /* Fundo */
+  --bg-base: var(--sky-100);
+  --bg-backdrop:
+    radial-gradient(90% 50% at 80% 0%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, #4fb6ec 0%, #8fd3f5 38%, #d8f1fc 72%, #e8f7ff 100%);
+
+  /* Texto */
+  --text-primary: var(--ink-900); /* títulos, valores, corpo */
+  --text-secondary: var(--ink-700); /* rótulos, apoio */
+  --text-tertiary: var(--ink-600); /* metadados */
+  --text-on-primary: var(--white); /* sobre botão primário aqua */
+  --text-on-success: var(--ink-900);
+  --text-on-danger: var(--white);
+  --text-link: var(--aqua-700);
+  --text-disabled: var(--ink-500); /* isento de contraste (WCAG 1.4.3), sempre com outro sinal */
+
+  /* Dinheiro — nunca depender só da cor */
+  --money-income: var(--grass-700); /* + sinal "+", ícone ArrowDownLeft, prefixo SR "Receita" */
+  --money-expense: var(--text-primary); /* neutro, sinal "−", ícone ArrowUpRight */
+  --money-saving: var(--aqua-700); /* ícone Vault, rótulo "Guardado" */
+  --money-transfer: var(--ink-700); /* ícone ArrowsLeftRight */
+
+  /* Status */
+  --status-info-fg: var(--aqua-700);
+  --status-info-bg: var(--aqua-100);
+  --status-success-fg: var(--grass-700);
+  --status-success-bg: var(--grass-100);
+  --status-warning-fg: var(--amber-700);
+  --status-warning-bg: var(--amber-100);
+  --status-warning-fill: var(--amber-600);
+  --status-danger-fg: var(--coral-700);
+  --status-danger-bg: var(--coral-100);
+  --status-danger-fill: var(--coral-600);
+
+  /* Faixas 50/30/20 (preenchimentos ≥ 3:1 sobre vidro) */
+  --band-needs: var(--aqua-600); /* Necessidades · ícone House */
+  --band-wants: var(--violet-500); /* Desejos · ícone Tag */
+  --band-savings: var(--grass-600); /* Poupança · ícone Vault */
+  --band-track: rgba(10, 37, 64, 0.1); /* trilho decorativo */
+
+  /* Bordas e foco */
+  --border-subtle: rgba(255, 255, 255, 0.7); /* borda de vidro (decorativa) */
+  --border-strong: var(--ink-500); /* campos, controles: ≥ 3:1 */
+  --focus-ring-color: var(--aqua-700);
+  --focus-ring: 0 0 0 2px var(--white), 0 0 0 5px var(--focus-ring-color);
+
+  /* Superfícies sólidas (fallback do vidro e áreas internas) */
+  --surface-solid-1: #eef8fe;
+  --surface-solid-2: #f5fbff;
+  --surface-solid-3: #ffffff;
+  --surface-inset: rgba(
+    10,
+    37,
+    64,
+    0.05
+  ); /* área rebaixada dentro de vidro (nunca vidro sobre vidro) */
+  --surface-pressed: rgba(10, 37, 64, 0.08); /* feedback de toque */
+  --scrim: rgba(4, 18, 31, 0.4); /* fundo atrás de sheet/diálogo */
+
+  /* ---------- 3. GRADIENTES ---------- */
+  --grad-primary: linear-gradient(180deg, #0b76ae 0%, #075884 100%); /* texto branco ≥ 4,98:1 */
+  --grad-primary-pressed: linear-gradient(180deg, #075884 0%, #053f5f 100%);
+  --grad-success: linear-gradient(180deg, #7ad96b 0%, #5ccb55 100%); /* texto ink-900 ≥ 7,49:1 */
+  --grad-danger: linear-gradient(180deg, #b0362a 0%, #a3301f 100%); /* texto branco ≥ 6,16:1 */
+  /* Brilho especular discreto (camada ::before na metade de cima do vidro) */
+  --grad-gloss: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.06) 48%,
+    rgba(255, 255, 255, 0) 52%
+  );
+  --grad-gloss-button: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0) 51%
+  );
+  /* Cores de cartão (escolha do usuário; texto branco: nome e total ≥ 18px peso 700) */
+  --grad-card-aqua: linear-gradient(135deg, #0b76ae, #053f5f);
+  --grad-card-grass: linear-gradient(135deg, #2e8b3e, #0f3320);
+  --grad-card-violet: linear-gradient(135deg, #7a55d3, #3e2580);
+  --grad-card-night: linear-gradient(135deg, #1e5a72, #04121f);
+  --grad-card-coral: linear-gradient(135deg, #c2402c, #5e1b12);
+  --grad-card-graphite: linear-gradient(135deg, #3d5c78, #0a2540);
+
+  /* Marca OakFinance (ver 4.11) */
+  --brand-oak: var(--ink-900); /* "Oak" · 15,54:1 sobre branco */
+  --brand-finance: var(--aqua-700); /* "Finance" · 6,93:1 sobre branco */
+  --brand-oak-sheen: linear-gradient(180deg, #2b4a66 0%, #0a2540 100%);
+  --brand-finance-sheen: linear-gradient(180deg, #0b76ae 0%, #075884 100%);
+  --brand-icon-bg: linear-gradient(180deg, #0b76ae 0%, #053f5f 100%);
+  --brand-mono: var(--ink-900);
+
+  /* ---------- 4. VIDRO ---------- */
+  /* Nível 1: chips e controles sobre o fundo */
+  --glass-1-bg: rgba(255, 255, 255, 0.5);
+  --glass-1-blur: 12px;
+  /* Nível 2: cards de conteúdo (padrão) */
+  --glass-2-bg: rgba(255, 255, 255, 0.72);
+  --glass-2-blur: 20px;
+  /* Nível 3: barra de abas, topo rolado, sheets, diálogos, toasts */
+  --glass-3-bg: rgba(255, 255, 255, 0.86);
+  --glass-3-blur: 28px;
+  --glass-saturate: 160%;
+  --glass-border: 1px solid var(--border-subtle);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(10, 37, 64, 0.04);
+  /* Fallbacks sólidos equivalentes */
+  --glass-1-solid: var(--surface-solid-1);
+  --glass-2-solid: var(--surface-solid-2);
+  --glass-3-solid: var(--surface-solid-3);
+
+  /* ---------- 5. TIPOGRAFIA ---------- */
+  --font-display: "Manrope Variable", "Manrope", "Inter Variable", system-ui, sans-serif;
+  --font-text: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-numeric-features: "tnum" 1, "lnum" 1;
+
+  /* Escala (rem; 1rem = 16px; respeita o zoom do usuário) */
+  --font-size-hero: clamp(2.5rem, 10vw, 3.25rem); /* 40–52px · valor Disponível para gastar */
+  --font-size-display: 2rem; /* 32px · AmountInput, total da fatura, % da reserva */
+  --font-size-title: 1.375rem; /* 22px · título de tela */
+  --font-size-heading: 1.125rem; /* 18px · título de card */
+  --font-size-body: 1rem; /* 16px · corpo, campos (≥ 16px evita zoom no iOS) */
+  --font-size-label: 0.875rem; /* 14px · rótulos, chips */
+  --font-size-caption: 0.8125rem; /* 13px · metadados (mínimo absoluto) */
+
+  --line-height-tight: 1.15;
+  --line-height-snug: 1.3;
+  --line-height-body: 1.5;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --letter-spacing-hero: -0.025em;
+  --letter-spacing-title: -0.01em;
+  --letter-spacing-caps: 0.06em; /* só em rótulos curtos em caixa alta */
+
+  /* ---------- 6. ESPAÇAMENTO (base 4px) ---------- */
+  --space-0: 0;
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 · margem lateral do celular */
+  --space-5: 1.25rem; /* 20 · padding interno de card */
+  --space-6: 1.5rem; /* 24 · entre cards */
+  --space-8: 2rem; /* 32 */
+  --space-10: 2.5rem; /* 40 */
+  --space-12: 3rem; /* 48 */
+  --space-16: 4rem; /* 64 */
+  --gutter: var(--space-4);
+  --touch-min: 48px;
+
+  /* ---------- 7. RAIOS ---------- */
+  --radius-xs: 6px; /* skeleton, tags pequenas */
+  --radius-sm: 10px; /* campos, teclas */
+  --radius-md: 14px; /* botões */
+  --radius-lg: 20px; /* cards */
+  --radius-xl: 28px; /* sheets (cantos de cima), diálogos */
+  --radius-pill: 999px; /* chips, badges, FAB */
+
+  /* ---------- 8. SOMBRAS (profundidade) ---------- */
+  --shadow-1: 0 1px 2px rgba(10, 37, 64, 0.06), 0 2px 8px rgba(10, 37, 64, 0.05);
+  --shadow-2: 0 4px 16px rgba(10, 37, 64, 0.08), 0 1px 3px rgba(10, 37, 64, 0.05);
+  --shadow-3: 0 12px 40px rgba(10, 37, 64, 0.14), 0 2px 6px rgba(10, 37, 64, 0.06);
+  --shadow-fab: 0 6px 20px rgba(7, 88, 132, 0.3), 0 1px 3px rgba(7, 88, 132, 0.2);
+
+  /* ---------- 9. MOVIMENTO (só funcional) ---------- */
+  --motion-duration-press: 100ms; /* feedback de toque */
+  --motion-duration-fast: 150ms; /* hover, troca de estado, ícone de confirmação */
+  --motion-duration-base: 200ms; /* fade de valores, toast, menus, cards de conferência */
+  --motion-duration-slow: 250ms; /* sheet, diálogo, navegação, arcos de progresso */
+  --motion-duration-fade: 100ms; /* substituto de tudo em movimento reduzido */
+  --motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --motion-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  /* Sem easing com overshoot: nada "quica" */
+
+  /* ---------- 10. CAMADAS ---------- */
+  --z-backdrop: 0;
+  --z-content: 1;
+  --z-topbar: 10;
+  --z-tabbar: 10;
+  --z-fab: 11;
+  --z-banner: 12;
+  --z-scrim: 40;
+  --z-sheet: 41;
+  --z-dialog: 50;
+  --z-toast: 60;
+
+  /* ---------- 11. ÍCONES ---------- */
+  --icon-sm: 20px;
+  --icon-md: 24px;
+  --icon-lg: 32px;
+}
+
+/* ==========================================================
+   AERO NOTURNO (tema escuro)
+   ========================================================== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-base: var(--night-900);
+  --bg-backdrop:
+    radial-gradient(90% 50% at 80% 0%, rgba(47, 182, 238, 0.1) 0%, rgba(47, 182, 238, 0) 60%),
+    linear-gradient(180deg, #061a2e 0%, #0b2d4a 55%, #0e3a57 100%);
+
+  --text-primary: var(--mist-50);
+  --text-secondary: var(--mist-300);
+  --text-tertiary: var(--mist-400);
+  --text-on-primary: var(--night-950);
+  --text-on-success: var(--night-950);
+  --text-on-danger: var(--night-950);
+  --text-link: var(--aqua-300);
+  --text-disabled: var(--mist-500);
+
+  --money-income: var(--grass-300);
+  --money-expense: var(--text-primary);
+  --money-saving: var(--aqua-300);
+  --money-transfer: var(--mist-300);
+
+  --status-info-fg: var(--aqua-300);
+  --status-info-bg: #0b3550;
+  --status-success-fg: var(--grass-300);
+  --status-success-bg: var(--grass-900);
+  --status-warning-fg: var(--amber-300);
+  --status-warning-bg: var(--amber-900);
+  --status-warning-fill: var(--amber-400);
+  --status-danger-fg: var(--coral-300);
+  --status-danger-bg: var(--coral-900);
+  --status-danger-fill: var(--coral-400);
+
+  --band-needs: var(--aqua-400);
+  --band-wants: var(--violet-400);
+  --band-savings: var(--grass-400);
+  --band-track: rgba(234, 246, 255, 0.1);
+
+  --border-subtle: rgba(140, 220, 255, 0.18);
+  --border-strong: var(--mist-500);
+  --focus-ring-color: #7fdbff;
+  --focus-ring: 0 0 0 2px var(--night-900), 0 0 0 5px var(--focus-ring-color);
+
+  --surface-solid-1: #0d2539;
+  --surface-solid-2: var(--night-800);
+  --surface-solid-3: #12324b;
+  --surface-inset: rgba(234, 246, 255, 0.05);
+  --surface-pressed: rgba(234, 246, 255, 0.08);
+  --scrim: rgba(2, 8, 14, 0.6);
+
+  --grad-primary: linear-gradient(180deg, #5ccfff 0%, #22a8e6 100%); /* texto night-950 ≥ 7,03:1 */
+  --grad-primary-pressed: linear-gradient(180deg, #22a8e6 0%, #1580bf 100%);
+  --grad-success: linear-gradient(180deg, #6be38f 0%, #45c86a 100%); /* texto night-950 ≥ 8,75:1 */
+  --grad-danger: linear-gradient(180deg, #ffa796 0%, #ff9583 100%); /* texto night-950 ≥ 8,89:1 */
+  --grad-gloss: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 48%,
+    rgba(255, 255, 255, 0) 52%
+  );
+  --grad-gloss-button: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.03) 50%,
+    rgba(255, 255, 255, 0) 51%
+  );
+
+  --brand-oak: var(--mist-50); /* 16,36:1 sobre night-900 */
+  --brand-finance: var(--aqua-300); /* 10,11:1 sobre night-900 */
+  --brand-oak-sheen: linear-gradient(180deg, #ffffff 0%, #a9c8de 100%);
+  --brand-finance-sheen: linear-gradient(180deg, #7fdbff 0%, #2fb6ee 100%);
+  --brand-mono: var(--mist-50);
+
+  --glass-1-bg: rgba(11, 34, 54, 0.45);
+  --glass-2-bg: rgba(11, 34, 54, 0.66);
+  --glass-3-bg: rgba(11, 34, 54, 0.84);
+  --glass-saturate: 130%;
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 12px 40px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-fab: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(92, 207, 255, 0.25);
+}
+
+/* ==========================================================
+   VIDRO SÓLIDO: preferência do sistema, ajuste do app ou falta de suporte
+   O script de ambiente (4.10) grava data-glass="solid" quando
+   prefers-reduced-transparency: reduce e o ajuste está em "Automática".
+   ========================================================== */
+:root[data-glass="solid"] {
+  --glass-1-bg: var(--glass-1-solid);
+  --glass-2-bg: var(--glass-2-solid);
+  --glass-3-bg: var(--glass-3-solid);
+  --glass-1-blur: 0px;
+  --glass-2-blur: 0px;
+  --glass-3-blur: 0px;
+  --grad-gloss: none;
+  --border-subtle: var(--ink-200);
+}
+:root[data-theme="dark"][data-glass="solid"] {
+  --border-subtle: var(--mist-700);
+}
+
+/* Desempenho baixo: menos desfoque */
+:root[data-perf="low"] {
+  --glass-2-blur: 10px;
+  --glass-3-blur: 14px;
+}
+
+/* ==========================================================
+   MOVIMENTO REDUZIDO: nada se desloca; só opacidade em 100ms
+   ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) {
+    --motion-duration-press: 0ms;
+    --motion-duration-fast: var(--motion-duration-fade);
+    --motion-duration-base: var(--motion-duration-fade);
+    --motion-duration-slow: var(--motion-duration-fade);
+  }
+}
+:root[data-motion="reduced"] {
+  --motion-duration-press: 0ms;
+  --motion-duration-fast: var(--motion-duration-fade);
+  --motion-duration-base: var(--motion-duration-fade);
+  --motion-duration-slow: var(--motion-duration-fade);
+}
+
+/* ==========================================================
+   BASE
+   ========================================================== */
+html {
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-text);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: inherit;
+}
+.money,
+[data-money] {
+  font-feature-settings: var(--font-numeric-features);
+  font-variant-numeric: tabular-nums lining-nums;
+}
