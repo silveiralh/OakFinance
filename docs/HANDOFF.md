@@ -187,4 +187,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, 
 | 06/11/2026 | T-041 | PR #48 | done | Mais detalhes (descrição sugere categoria, data distante, observação), agendada → efetivada, receita Recebida/A receber/Prevista, edição pelo Q01 e "Confirmar {descrição}" (US-13, US-24); D-019 |
 | 06/11/2026 | T-042 | PR #49 | done | transferência (não muda o 50/30/20), estorno de R$ 80,00 na fatura dez/2026 reduzindo Desejos, rascunho do Q01 por 24 h (G17); D-020 |
 | 06/11/2026 | T-043 | PR #50 | done | T01: mês, resumo, chips + Filtros com total, busca sem acento e por valor (< 300 ms com 5.000), grupos por dia, janela virtual, Excluir com Desfazer; D-021; 3 rodadas no E2E do WebKit (quadros parados por chips de vidro em fieldset flex) |
-| 06/11/2026 | T-100 | PR #51 | decisão | D-022: redesign com a nova referência do cliente (paleta clara, Lucide); telas T-044..T-050 bloqueadas até a T-100 |
+| 06/11/2026 | T-100 | PR #52 | decisão | D-022: redesign com a nova referência do cliente (paleta clara, Lucide); telas T-044..T-050 bloqueadas até a T-100 |
