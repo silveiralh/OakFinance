@@ -14,7 +14,6 @@ import { deleteUserDb, OakDb } from '../data/db';
 import type { SyncEngine } from '../data/sync/engine';
 import { pendingCount } from '../data/sync/outbox';
 import { getEnv } from '../lib/env';
-import { callbackUrl, getSupabase } from '../lib/supabase';
 
 export type AuthStatus = 'loading' | 'signedOut' | 'signedIn' | 'unconfigured';
 
@@ -70,8 +69,30 @@ export interface AuthProviderProps {
 }
 
 export function AuthProvider({ children, client: injected, autoSync = true }: AuthProviderProps) {
-  const client = useMemo(() => (injected === undefined ? getSupabase() : injected), [injected]);
-  const [status, setStatus] = useState<AuthStatus>(client ? 'loading' : 'unconfigured');
+  // O supabase-js (~45 KB gzip) vem sob demanda, fora do bundle inicial; `undefined` = carregando
+  const [client, setClient] = useState<SupabaseClient | null | undefined>(
+    injected !== undefined ? injected : getEnv().supabasePublishableKey ? undefined : null,
+  );
+  const [status, setStatus] = useState<AuthStatus>(client === null ? 'unconfigured' : 'loading');
+
+  useEffect(() => {
+    if (client !== undefined) {
+      return;
+    }
+    let alive = true;
+    void import('../lib/supabase').then((m) => {
+      if (alive) {
+        const created = m.getSupabase();
+        setClient(created);
+        if (!created) {
+          setStatus('unconfigured');
+        }
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, [client]);
   const [user, setUser] = useState<UserSession | null>(null);
 
   useEffect(() => {
@@ -149,7 +170,7 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
       const { error } = await client.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: callbackUrl(),
+          redirectTo: `${window.location.origin}/auth/callback`,
           ...(selectAccount && { queryParams: { prompt: 'select_account' } }),
         },
       });
@@ -182,7 +203,7 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
   );
 
   const value = useMemo<AuthValue>(
-    () => ({ status, user, client, signInWithGoogle, signOut, pending }),
+    () => ({ status, user, client: client ?? null, signInWithGoogle, signOut, pending }),
     [status, user, client, signInWithGoogle, signOut, pending],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

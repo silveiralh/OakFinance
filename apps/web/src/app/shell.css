@@ -209,3 +209,17 @@
   display: grid;
   gap: var(--space-4);
 }
+
+.quick-entry {
+  display: grid;
+  gap: var(--space-4);
+}
+.quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.fab-menu {
+  display: grid;
+  gap: var(--space-2);
+}

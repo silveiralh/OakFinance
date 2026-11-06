@@ -1909,7 +1909,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `quick.missing.amount` | Informe o valor |
 | `quick.missing.category` | Escolha a categoria |
 | `quick.more` | Mais detalhes |
-| `quick.invoiceHint` | Entra na fatura de {mês} (fecha {data}) |
+| `quick.invoiceHint` | Entra na fatura de {mês}, vence {data} |
 | `quick.installments` | {n}x de {valor} · primeira parcela em {mês} |
 | `quick.income.received` | Já caiu na conta? |
 | `quick.income.countBefore` | Contar antes de receber |
@@ -1985,7 +1985,9 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `accounts.add` | Adicionar conta |
 | `accounts.name` / `.type` / `.institution` / `.balance` | Nome / Tipo / Banco / Saldo atual |
 | `accounts.type.checking` / `.cash` / `.meal` / `.food` | Conta corrente / Carteira (dinheiro) / VR / VA |
-| `accounts.method.pix` / `.debit` / `.boleto` / `.transfer` / `.other` / `.cash` | Pix / Débito / Boleto / TED/DOC / Outro / Dinheiro |
+| `accounts.method.pix` / `.debit` / `.boleto` / `.transfer` / `.other` / `.cash` / `.credit` | Pix / Débito / Boleto / TED/DOC / Outro / Dinheiro / Crédito |
+| `quick.method` | {forma} · {conta} |
+| `quick.readNote` | Ler nota |
 | `accounts.methods` | Formas: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |

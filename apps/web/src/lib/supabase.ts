@@ -27,8 +27,3 @@ export function getSupabase(): SupabaseClient | null {
   }
   return client;
 }
-
-/** URL de retorno do OAuth (Redirect URLs do Supabase, tech §9.2). */
-export function callbackUrl(origin: string = window.location.origin): string {
-  return `${origin}/auth/callback`;
-}

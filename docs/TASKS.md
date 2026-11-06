@@ -102,7 +102,7 @@ flowchart LR
 | T-037 | Boas-vindas e instalação guiada | T-030, T-034 | done |
 | T-038 | Contas | T-035 | done |
 | T-039 | Cartões com prévia da fatura | T-038, T-013 | done |
-| T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | todo |
+| T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | done |
 | T-041 | Mais detalhes, edição e receita variável | T-040 | todo |
 | T-042 | Transferência, estorno e rascunho | T-041 | todo |
 | T-043 | Lista de lançamentos | T-041 | todo |
@@ -729,7 +729,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-040 — Lançamento rápido de despesa
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-12, US-17 | RN-01, RN-05, RN-06, RN-12, RN-104 | T-039, T-019, T-027 | não |
+| done | S1 | M | US-12, US-17 | RN-01, RN-05, RN-06, RN-12, RN-104 | T-039, T-019, T-027 | não |
 
 **Escopo:**
 - Q01 em modo Despesa (`?novo=despesa`), 5 chips (sem histórico: Mercado, Restaurantes e delivery, Transporte, Combustível, Farmácia), último meio usado;

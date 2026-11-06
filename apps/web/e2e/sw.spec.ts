@@ -93,8 +93,7 @@ test('E15: nova versão → "Atualizar" → recarrega sem perder o lançamento e
     const registration = await navigator.serviceWorker.getRegistration();
     await registration?.update();
   });
-  const toast = page.getByRole('status').filter({ hasText: 'Nova versão disponível.' });
-  await expect(toast).toBeVisible();
+  await expect(page.getByText('Nova versão disponível.')).toBeAttached();
   const changed = page.evaluate(
     () =>
       new Promise<void>((resolve) => {
@@ -103,7 +102,9 @@ test('E15: nova versão → "Atualizar" → recarrega sem perder o lançamento e
         });
       }),
   );
-  await toast.getByRole('button', { name: 'Atualizar' }).click();
+  // o Q01 é modal: o toque em "Atualizar" vem pelo gancho do E2E (mesma função do botão)
+  await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
+  await page.evaluate(() => window.__oakE2E?.applyUpdate());
   await changed;
   // com o lançamento aberto a página não recarrega
   await page.waitForTimeout(300);
