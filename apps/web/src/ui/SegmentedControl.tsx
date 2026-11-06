@@ -1,10 +1,10 @@
 import { useId } from 'react';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface SegmentedOption<T extends string> {
   value: T;
   label: string;
-  icon?: PhosphorIcon;
+  icon?: AppIcon;
 }
 
 export interface SegmentedControlProps<T extends string> extends BaseProps {
@@ -45,7 +45,7 @@ export function SegmentedControl<T extends string>({
               checked={checked}
               onChange={() => onChange(o.value)}
             />
-            {Glyph && <Glyph size={20} weight={checked ? 'fill' : 'regular'} aria-hidden="true" />}
+            {Glyph && <Glyph size={20} strokeWidth={checked ? 2.5 : 2} aria-hidden="true" />}
             {o.label}
           </label>
         );

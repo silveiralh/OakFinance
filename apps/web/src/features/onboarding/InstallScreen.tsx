@@ -1,4 +1,4 @@
-import { Info } from '@phosphor-icons/react';
+import { Info } from 'lucide-react';
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useAuth } from '../../app/auth';

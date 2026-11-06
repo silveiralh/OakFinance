@@ -1,16 +1,16 @@
 import {
-  Bank,
-  CaretDown,
+  Banknote,
+  ChevronDown,
   CreditCard,
-  ForkKnife,
-  Money,
-  PixLogo,
+  Diamond,
+  Landmark,
   ShoppingCart,
-} from '@phosphor-icons/react';
+  Utensils,
+} from 'lucide-react';
 import { useId, useState } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { BottomSheet } from './BottomSheet';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export type MethodKind = 'pix' | 'debit' | 'credit' | 'cash' | 'vr' | 'va' | 'account';
 
@@ -24,14 +24,14 @@ export interface PaymentMethodOption {
   detail?: string;
 }
 
-export const METHOD_ICON: Readonly<Record<MethodKind, PhosphorIcon>> = {
-  pix: PixLogo,
+export const METHOD_ICON: Readonly<Record<MethodKind, AppIcon>> = {
+  pix: Diamond,
   debit: CreditCard,
   credit: CreditCard,
-  cash: Money,
-  vr: ForkKnife,
+  cash: Banknote,
+  vr: Utensils,
   va: ShoppingCart,
-  account: Bank,
+  account: Landmark,
 };
 
 export interface PaymentMethodPickerProps extends BaseProps {
@@ -71,7 +71,7 @@ function MethodList({
               onChange={() => onPick(m.id)}
             />
             <span className="method-icon" aria-hidden="true">
-              <Glyph size={24} weight={m.id === value ? 'fill' : 'regular'} />
+              <Glyph size={24} strokeWidth={m.id === value ? 2.5 : 2} />
               {m.kind === 'debit' && <span className="method-seal">D</span>}
             </span>
             <span className="method-text">
@@ -123,7 +123,7 @@ export function PaymentMethodPicker({
           <span className="sr-only">{`${label}: `}</span>
           {current?.label ?? label}
         </span>
-        <CaretDown size={16} aria-hidden="true" />
+        <ChevronDown size={16} aria-hidden="true" />
       </button>
       {hint}
       <BottomSheet open={open} onClose={() => setOpen(false)} title={label}>

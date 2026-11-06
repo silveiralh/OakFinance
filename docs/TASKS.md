@@ -106,13 +106,13 @@ flowchart LR
 | T-041 | Mais detalhes, edição e receita variável | T-040 | done |
 | T-042 | Transferência, estorno e rascunho | T-041 | done |
 | T-043 | Lista de lançamentos | T-041 | done |
-| T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | blocked: aguarda redesign — T-100 (D-022) |
-| T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | blocked: aguarda redesign — T-100 (D-022) |
-| T-046 | Ocultar valores | T-043 | blocked: aguarda redesign — T-100 (D-022) |
-| T-047 | Cartões e faturas (C01/C02) | T-040 | blocked: aguarda redesign — T-100 (D-022) |
+| T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | todo |
+| T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | todo |
+| T-046 | Ocultar valores | T-043 | todo |
+| T-047 | Cartões e faturas (C01/C02) | T-040 | todo |
 | T-048 | Pagamento de fatura e saldo credor | T-047 | todo |
-| T-049 | Categorias | T-035 | blocked: aguarda redesign — T-100 (D-022) |
-| T-050 | Salário como receita fixa | T-041, T-015 | blocked: aguarda redesign — T-100 (D-022) |
+| T-049 | Categorias | T-035 | todo |
+| T-050 | Salário como receita fixa | T-041, T-015 | todo |
 | T-051 | Editar e arquivar contas e cartões | T-047 | todo |
 | T-052 | Compra parcelada | T-048, T-014 | todo |
 | T-053 | Editar e cancelar parcelada | T-052 | todo |
@@ -162,7 +162,7 @@ flowchart LR
 | T-097 | Desempenho | T-095 | todo |
 | T-098 | Operação e resiliência | T-095, T-036 | todo |
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | todo |
-| T-100 | Redesign visual (nova referência do cliente) | T-043 | blocked: aguarda cliente — referência visual pelo conector do Figma |
+| T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 
 ---
 
@@ -782,7 +782,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-044 — Detalhe, exclusão com desfazer e histórico
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda redesign — T-100 (D-022) | S1 | M | US-13, US-14, US-04 | RN-97..RN-99 | T-043 | não |
+| todo | S1 | M | US-13, US-14, US-04 | RN-97..RN-99 | T-043 | não |
 
 **Escopo:** T02 para lançamentos avulsos: `<dl>`, Editar, Excluir com toast de 8 s; histórico via `get_row_history` ("Disponível com conexão" offline); Restaurar esta versão; G06. Exclusões de série e de recorrência ficam para T-053 e T-055.
 
@@ -793,7 +793,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-045 — Offline ponta a ponta e estados de sync
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda redesign — T-100 (D-022) | S1 | M | US-04, US-64 | RN-95, RN-96, RN-100 | T-044, T-030 | não |
+| todo | S1 | M | US-04, US-64 | RN-95, RN-96, RN-100 | T-044, T-030 | não |
 
 **Escopo:** SyncBadge ligado ao motor; banners G01, G04 (depois da 3ª falha, com Tentar novamente), G05, G15, G18 (pendência há mais de 24 h) e G08 ("Recuperando seus dados…"); selo "Não sincronizado".
 
@@ -804,7 +804,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-046 — Ocultar valores
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda redesign — T-100 (D-022) | S1 | P | US-57 | RN-103 | T-043 | não |
+| todo | S1 | P | US-57 | RN-103 | T-043 | não |
 
 **Escopo:** botão olho com `aria-pressed`; `data-values`; "R$ ••••" e "Valor oculto" para leitor de tela; preferência em `profiles.settings.hideValues` e no aparelho; valor em digitação continua visível.
 
@@ -815,7 +815,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-047 — Cartões e faturas (C01/C02)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda redesign — T-100 (D-022) | S1 | M | US-17, US-18 | RN-10..RN-15, RN-18 | T-040 | não |
+| todo | S1 | M | US-17, US-18 | RN-10..RN-15, RN-18 | T-040 | não |
 
 **Escopo:**
 - C01: carrossel de InvoiceCard, próximas 3 faturas, limite usado;
@@ -840,7 +840,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-049 — Categorias
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda redesign — T-100 (D-022) | S1 | P | US-27 | RN-39..RN-42 | T-035 | não |
+| todo | S1 | P | US-27 | RN-39..RN-42 | T-035 | não |
 
 **Escopo:** S04: lista por faixa; criar e editar (nome, ícone, faixa obrigatória); trocar faixa com o aviso "Isso muda os totais de todos os meses"; arquivar; excluir pedindo destino (move lançamentos, recorrências e regras); categorias de sistema bloqueadas e fora do seletor manual.
 
@@ -851,7 +851,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-050 — Salário como receita fixa
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda redesign — T-100 (D-022) | S1 | M | US-23 | RN-26..RN-28, RN-32, RN-34, RN-38 | T-041, T-015 | não |
+| todo | S1 | M | US-23 | RN-26..RN-28, RN-32, RN-34, RN-38 | T-041, T-015 | não |
 
 **Escopo:** receita fixa em S05 e em "Repetir todo mês" do Q01; projeção; confirmar com valor real (R$ 4.870,00); "Não recebi este mês" (cancelada); idempotência v5 entre dois aparelhos (teste de integração).
 
@@ -1429,7 +1429,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-100 — Redesign visual (nova referência do cliente)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — referência visual pelo conector do Figma | S1 | M | US-62 | — | T-043 | sim — acesso ao arquivo de referência |
+| done | S1 | M | US-62 | — | T-043 | sim — acesso ao arquivo de referência |
 
 **Escopo (D-022):** troca só da camada visual. Nova paleta clara e amigável (sem fundos escuros como padrão), tipografia, raios, sombras e espaçamentos tirados da referência do cliente; novos tokens em `apps/web/src/styles/` e UX §4 reescrita (com ADR); componentes de `apps/web/src/ui/` restilizados; ícones da Lucide (`lucide-react`) no lugar da Phosphor, com um mapa único de ícones por categoria; telas já feitas (ON01/ON02, ON03, S03, Q01, T01, Início) migradas. Não muda RN, fluxo, rotas, textos da UX §6, dados nem sync. React 19 + Vite 8 continuam (a stack não limita o visual); Tailwind 4, já instalado, pode substituir o CSS próprio.
 

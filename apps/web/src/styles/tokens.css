@@ -1,57 +1,50 @@
 /* ==========================================================
-   tokens.css — OakFinance · Aero sóbrio
+   tokens.css — OakFinance · Menta e lima (D-023)
+   Fundo menta claro, cards brancos, pretos para destaque e lima
+   como cor de ação. Os nomes semânticos são os mesmos do Aero:
+   os componentes leem só estes tokens.
    ========================================================== */
 :root {
   color-scheme: light;
 
   /* ---------- 1. PRIMITIVOS ---------- */
-  /* Aqua (marca) */
-  --aqua-50: #eefaff;
-  --aqua-100: #d6f1ff;
-  --aqua-200: #a9e2fa;
-  --aqua-300: #5ccfff;
-  --aqua-400: #2fb6ee;
-  --aqua-500: #22a8e6;
-  --aqua-600: #1580bf;
-  --aqua-650: #0b76ae;
-  --aqua-700: #0a5f8c;
-  --aqua-800: #075884;
-  --aqua-900: #053f5f;
-  /* Grama (receita, poupança) */
-  --grass-100: #ddf7df;
-  --grass-300: #6be38f;
-  --grass-400: #45c86a;
-  --grass-450: #5ccb55;
-  --grass-500: #4cb848;
-  --grass-600: #2e8b3e;
-  --grass-700: #1a6430;
-  --grass-900: #0f3320;
-  /* Céu (fundo) */
-  --sky-100: #e8f7ff;
-  --sky-200: #d8f1fc;
-  --sky-300: #8fd3f5;
-  --sky-500: #4fb6ec;
-  /* Tinta (texto claro) */
-  --ink-900: #0a2540;
-  --ink-700: #2b4a66;
-  --ink-600: #3d5c78;
-  --ink-500: #5e7a93;
-  --ink-300: #a7bccd;
-  --ink-200: #c5d9e8;
-  /* Névoa (texto escuro) */
-  --mist-50: #eaf6ff;
-  --mist-300: #a9c8de;
-  --mist-400: #8fb2cb;
-  --mist-500: #6f93ae;
-  --mist-700: #2f5470;
-  /* Noite */
-  --night-950: #04121f;
-  --night-900: #071827;
-  --night-850: #0b2236;
-  --night-800: #0f2a40;
-  --night-700: #0e3a57;
-  --night-650: #0b2d4a;
-  --night-600: #061a2e;
+  /* Menta (fundo) */
+  --mint-50: #f6feee;
+  --mint-100: #eefde0;
+  --mint-200: #e1f6cb;
+  --mint-300: #cdeaa9;
+  /* Lima (ação e destaque) */
+  --lime-200: #e3f5a8;
+  --lime-300: #d4f07e;
+  --lime-400: #c0e45c;
+  --lime-500: #aed246;
+  --lime-600: #7fa51f;
+  --lime-700: #4d7c0f;
+  --lime-800: #3a5c0b;
+  --lime-900: #233707;
+  /* Tinta (preto quente e cinzas esverdeados) */
+  --ink-950: #0b0d0a;
+  --ink-900: #151813;
+  --ink-850: #1c1f1a;
+  --ink-800: #2a2d27;
+  --ink-700: #3a3f36;
+  --ink-600: #4f5649;
+  --ink-500: #6b7265;
+  --ink-400: #8d9486;
+  --ink-300: #b9bfb2;
+  --ink-200: #dadfd3;
+  --ink-100: #eef0ea;
+  /* Névoa (texto no tema escuro) */
+  --mist-50: #f2f7ec;
+  --mist-300: #c4ccbb;
+  --mist-400: #a9b2a0;
+  --mist-500: #858e7c;
+  --mist-700: #3c4237;
+  /* Verde-azulado (faixa Necessidades, guardado) */
+  --teal-100: #d5f3ee;
+  --teal-300: #5fd4c3;
+  --teal-600: #0f766e;
+  --teal-700: #0b5e58;
   /* Violeta (faixa Desejos) */
   --violet-100: #eee8ff;
   --violet-300: #b9a2ff;
@@ -75,33 +68,41 @@
   --white: #ffffff;
 
   /* ---------- 2. SEMÂNTICOS (tema claro) ---------- */
-  /* Fundo */
-  --bg-base: var(--sky-100);
-  --bg-backdrop:
-    radial-gradient(90% 50% at 80% 0%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 60%),
-    linear-gradient(180deg, #4fb6ec 0%, #8fd3f5 38%, #d8f1fc 72%, #e8f7ff 100%);
+  /* Fundo: menta liso */
+  --bg-base: var(--mint-100);
+  --bg-backdrop: linear-gradient(180deg, #eefde0 0%, #eefde0 100%);
+
+  /* Destaque (lima com texto preto; preto com texto branco) */
+  --accent: var(--lime-400);
+  --accent-pressed: var(--lime-500);
+  --accent-soft: var(--lime-200);
+  --on-accent: var(--ink-950);
+  --surface-dark: var(--ink-950);
+  --surface-dark-raised: var(--ink-800);
+  --on-dark: var(--white);
+  --on-dark-muted: var(--ink-300);
 
   /* Texto */
-  --text-primary: var(--ink-900); /* títulos, valores, corpo */
+  --text-primary: var(--ink-950); /* títulos, valores, corpo */
   --text-secondary: var(--ink-700); /* rótulos, apoio */
   --text-tertiary: var(--ink-600); /* metadados */
-  --text-on-primary: var(--white); /* sobre botão primário aqua */
-  --text-on-success: var(--ink-900);
+  --text-on-primary: var(--white); /* sobre o botão primário preto */
+  --text-on-success: var(--ink-950);
   --text-on-danger: var(--white);
-  --text-link: var(--aqua-700);
+  --text-link: var(--lime-800);
   --text-disabled: var(--ink-500); /* isento de contraste (WCAG 1.4.3), sempre com outro sinal */
 
   /* Dinheiro — nunca depender só da cor */
-  --money-income: var(--grass-700); /* + sinal "+", ícone ArrowDownLeft, prefixo SR "Receita" */
+  --money-income: var(--lime-800); /* + sinal "+", ícone ArrowDownLeft, prefixo SR "Receita" */
   --money-expense: var(--text-primary); /* neutro, sinal "−", ícone ArrowUpRight */
-  --money-saving: var(--aqua-700); /* ícone Vault, rótulo "Guardado" */
-  --money-transfer: var(--ink-700); /* ícone ArrowsLeftRight */
+  --money-saving: var(--teal-700); /* ícone PiggyBank, rótulo "Guardado" */
+  --money-transfer: var(--ink-700); /* ícone ArrowLeftRight */
 
-  /* Status */
-  --status-info-fg: var(--aqua-700);
-  --status-info-bg: var(--aqua-100);
-  --status-success-fg: var(--grass-700);
-  --status-success-bg: var(--grass-100);
+  /* Status (seleção usa o par info: lima com texto preto) */
+  --status-info-fg: var(--ink-950);
+  --status-info-bg: var(--lime-400);
+  --status-success-fg: var(--lime-800);
+  --status-success-bg: #e6f7cf;
   --status-warning-fg: var(--amber-700);
   --status-warning-bg: var(--amber-100);
   --status-warning-fill: var(--amber-600);
@@ -109,93 +110,79 @@
   --status-danger-bg: var(--coral-100);
   --status-danger-fill: var(--coral-600);
 
-  /* Faixas 50/30/20 (preenchimentos ≥ 3:1 sobre vidro) */
-  --band-needs: var(--aqua-600); /* Necessidades · ícone House */
+  /* Faixas 50/30/20 (preenchimentos ≥ 3:1 sobre branco) */
+  --band-needs: var(--teal-600); /* Necessidades · ícone House */
   --band-wants: var(--violet-500); /* Desejos · ícone Tag */
-  --band-savings: var(--grass-600); /* Poupança · ícone Vault */
-  --band-track: rgba(10, 37, 64, 0.1); /* trilho decorativo */
+  --band-savings: var(--lime-700); /* Poupança · ícone PiggyBank */
+  --band-track: rgba(11, 13, 10, 0.08); /* trilho decorativo */
 
   /* Bordas e foco */
-  --border-subtle: rgba(255, 255, 255, 0.7); /* borda de vidro (decorativa) */
+  --border-subtle: rgba(11, 13, 10, 0.08); /* divisórias e contornos decorativos */
   --border-strong: var(--ink-500); /* campos, controles: ≥ 3:1 */
-  --focus-ring-color: var(--aqua-700);
-  --focus-ring: 0 0 0 2px var(--white), 0 0 0 5px var(--focus-ring-color);
+  --focus-ring-color: var(--ink-950);
+  --focus-ring: 0 0 0 2px var(--white), 0 0 0 4px var(--focus-ring-color);
 
-  /* Superfícies sólidas (fallback do vidro e áreas internas) */
-  --surface-solid-1: #eef8fe;
-  --surface-solid-2: #f5fbff;
-  --surface-solid-3: #ffffff;
-  --surface-inset: rgba(
-    10,
-    37,
-    64,
-    0.05
-  ); /* área rebaixada dentro de vidro (nunca vidro sobre vidro) */
-  --surface-pressed: rgba(10, 37, 64, 0.08); /* feedback de toque */
-  --scrim: rgba(4, 18, 31, 0.4); /* fundo atrás de sheet/diálogo */
+  /* Superfícies */
+  --surface-solid-1: var(--white);
+  --surface-solid-2: var(--white);
+  --surface-solid-3: var(--white);
+  --surface-inset: rgba(11, 13, 10, 0.05); /* área rebaixada dentro de card */
+  --surface-pressed: rgba(11, 13, 10, 0.08); /* feedback de toque */
+  --scrim: rgba(11, 13, 10, 0.45); /* fundo atrás de sheet/diálogo */
 
-  /* ---------- 3. GRADIENTES ---------- */
-  --grad-primary: linear-gradient(180deg, #0b76ae 0%, #075884 100%); /* texto branco ≥ 4,98:1 */
-  --grad-primary-pressed: linear-gradient(180deg, #075884 0%, #053f5f 100%);
-  --grad-success: linear-gradient(180deg, #7ad96b 0%, #5ccb55 100%); /* texto ink-900 ≥ 7,49:1 */
+  /* ---------- 3. PREENCHIMENTOS ---------- */
+  --grad-primary: linear-gradient(180deg, #151813 0%, #0b0d0a 100%); /* texto branco ≥ 18:1 */
+  --grad-primary-pressed: linear-gradient(180deg, #2a2d27 0%, #151813 100%);
+  --grad-success: linear-gradient(180deg, #c0e45c 0%, #aed246 100%); /* texto ink-950 ≥ 12:1 */
   --grad-danger: linear-gradient(180deg, #b0362a 0%, #a3301f 100%); /* texto branco ≥ 6,16:1 */
-  /* Brilho especular discreto (camada ::before na metade de cima do vidro) */
-  --grad-gloss: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.06) 48%,
-    rgba(255, 255, 255, 0) 52%
-  );
-  --grad-gloss-button: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    rgba(255, 255, 255, 0) 51%
-  );
+  --grad-gloss: none;
+  --grad-gloss-button: none;
   /* Cores de cartão (escolha do usuário; texto branco: nome e total ≥ 18px peso 700) */
-  --grad-card-aqua: linear-gradient(135deg, #0b76ae, #053f5f);
-  --grad-card-grass: linear-gradient(135deg, #2e8b3e, #0f3320);
+  --grad-card-aqua: linear-gradient(135deg, #0f766e, #0b3b37);
+  --grad-card-grass: linear-gradient(135deg, #4d7c0f, #1d2f05);
   --grad-card-violet: linear-gradient(135deg, #7a55d3, #3e2580);
-  --grad-card-night: linear-gradient(135deg, #1e5a72, #04121f);
+  --grad-card-night: linear-gradient(135deg, #2a2d27, #0b0d0a);
   --grad-card-coral: linear-gradient(135deg, #c2402c, #5e1b12);
-  --grad-card-graphite: linear-gradient(135deg, #3d5c78, #0a2540);
+  --grad-card-graphite: linear-gradient(135deg, #4f5649, #151813);
 
   /* Marca OakFinance (ver 4.11) */
-  --brand-oak: var(--ink-900); /* "Oak" · 15,54:1 sobre branco */
-  --brand-finance: var(--aqua-700); /* "Finance" · 6,93:1 sobre branco */
-  --brand-oak-sheen: linear-gradient(180deg, #2b4a66 0%, #0a2540 100%);
-  --brand-finance-sheen: linear-gradient(180deg, #0b76ae 0%, #075884 100%);
-  --brand-icon-bg: linear-gradient(180deg, #0b76ae 0%, #053f5f 100%);
-  --brand-mono: var(--ink-900);
+  --brand-oak: var(--ink-950); /* "Oak" */
+  --brand-finance: var(--lime-700); /* "Finance" · ≥ 4,5:1 sobre branco e menta */
+  --brand-oak-sheen: linear-gradient(180deg, #151813 0%, #0b0d0a 100%);
+  --brand-finance-sheen: linear-gradient(180deg, #4d7c0f 0%, #3a5c0b 100%);
+  --brand-icon-bg: linear-gradient(180deg, #151813 0%, #0b0d0a 100%);
+  --brand-mono: var(--ink-950);
 
-  /* ---------- 4. VIDRO ---------- */
+  /* ---------- 4. SUPERFÍCIES DE CARD (antigo "vidro"; agora sólidas) ---------- */
   /* Nível 1: chips e controles sobre o fundo */
-  --glass-1-bg: rgba(255, 255, 255, 0.5);
-  --glass-1-blur: 12px;
+  --glass-1-bg: var(--white);
+  --glass-1-blur: 0px;
   /* Nível 2: cards de conteúdo (padrão) */
-  --glass-2-bg: rgba(255, 255, 255, 0.72);
-  --glass-2-blur: 20px;
-  /* Nível 3: barra de abas, topo rolado, sheets, diálogos, toasts */
-  --glass-3-bg: rgba(255, 255, 255, 0.86);
-  --glass-3-blur: 28px;
-  --glass-saturate: 160%;
-  --glass-border: 1px solid var(--border-subtle);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(10, 37, 64, 0.04);
+  --glass-2-bg: var(--white);
+  --glass-2-blur: 0px;
+  /* Nível 3: barra de abas, sheets, diálogos, toasts */
+  --glass-3-bg: var(--white);
+  --glass-3-blur: 0px;
+  --glass-saturate: 100%;
+  --glass-border: 1px solid transparent;
+  --glass-highlight: 0 0 0 0 transparent;
   /* Fallbacks sólidos equivalentes */
   --glass-1-solid: var(--surface-solid-1);
   --glass-2-solid: var(--surface-solid-2);
   --glass-3-solid: var(--surface-solid-3);
 
   /* ---------- 5. TIPOGRAFIA ---------- */
-  --font-display: "Manrope Variable", "Manrope", "Inter Variable", system-ui, sans-serif;
-  --font-text: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display:
+    "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-text:
+    "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-numeric-features: "tnum" 1, "lnum" 1;
 
   /* Escala (rem; 1rem = 16px; respeita o zoom do usuário) */
-  --font-size-hero: clamp(2.5rem, 10vw, 3.25rem); /* 40–52px · valor Disponível para gastar */
+  --font-size-hero: clamp(2.25rem, 9vw, 2.875rem); /* 36–46px · valor Disponível para gastar */
   --font-size-display: 2rem; /* 32px · AmountInput, total da fatura, % da reserva */
   --font-size-title: 1.375rem; /* 22px · título de tela */
-  --font-size-heading: 1.125rem; /* 18px · título de card */
+  --font-size-heading: 1.0625rem; /* 17px · título de card */
   --font-size-body: 1rem; /* 16px · corpo, campos (≥ 16px evita zoom no iOS) */
   --font-size-label: 0.875rem; /* 14px · rótulos, chips */
   --font-size-caption: 0.8125rem; /* 13px · metadados (mínimo absoluto) */
@@ -204,43 +191,43 @@
   --line-height-snug: 1.3;
   --line-height-body: 1.5;
 
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+  --font-weight-regular: 500;
+  --font-weight-medium: 600;
+  --font-weight-semibold: 700;
+  --font-weight-bold: 800;
 
-  --letter-spacing-hero: -0.025em;
-  --letter-spacing-title: -0.01em;
-  --letter-spacing-caps: 0.06em; /* só em rótulos curtos em caixa alta */
+  --letter-spacing-hero: -0.01em;
+  --letter-spacing-title: 0;
+  --letter-spacing-caps: 0.04em; /* só em rótulos curtos em caixa alta */
 
   /* ---------- 6. ESPAÇAMENTO (base 4px) ---------- */
   --space-0: 0;
   --space-1: 0.25rem; /* 4 */
   --space-2: 0.5rem; /* 8 */
   --space-3: 0.75rem; /* 12 */
-  --space-4: 1rem; /* 16 · margem lateral do celular */
-  --space-5: 1.25rem; /* 20 · padding interno de card */
-  --space-6: 1.5rem; /* 24 · entre cards */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.25rem; /* 20 · margem lateral e padding de card */
+  --space-6: 1.5rem; /* 24 */
   --space-8: 2rem; /* 32 */
   --space-10: 2.5rem; /* 40 */
   --space-12: 3rem; /* 48 */
   --space-16: 4rem; /* 64 */
-  --gutter: var(--space-4);
+  --gutter: var(--space-5);
   --touch-min: 48px;
 
   /* ---------- 7. RAIOS ---------- */
   --radius-xs: 6px; /* skeleton, tags pequenas */
-  --radius-sm: 10px; /* campos, teclas */
-  --radius-md: 14px; /* botões */
+  --radius-sm: 16px; /* campos, teclas */
+  --radius-md: 999px; /* botões: pílula */
   --radius-lg: 20px; /* cards */
   --radius-xl: 28px; /* sheets (cantos de cima), diálogos */
-  --radius-pill: 999px; /* chips, badges, FAB */
+  --radius-pill: 999px; /* chips, badges, FAB, barra de abas */
 
-  /* ---------- 8. SOMBRAS (profundidade) ---------- */
-  --shadow-1: 0 1px 2px rgba(10, 37, 64, 0.06), 0 2px 8px rgba(10, 37, 64, 0.05);
-  --shadow-2: 0 4px 16px rgba(10, 37, 64, 0.08), 0 1px 3px rgba(10, 37, 64, 0.05);
-  --shadow-3: 0 12px 40px rgba(10, 37, 64, 0.14), 0 2px 6px rgba(10, 37, 64, 0.06);
-  --shadow-fab: 0 6px 20px rgba(7, 88, 132, 0.3), 0 1px 3px rgba(7, 88, 132, 0.2);
+  /* ---------- 8. SOMBRAS (discretas) ---------- */
+  --shadow-1: 0 1px 2px rgba(11, 13, 10, 0.04);
+  --shadow-2: 0 2px 12px rgba(11, 13, 10, 0.05);
+  --shadow-3: 0 12px 32px rgba(11, 13, 10, 0.14);
+  --shadow-fab: 0 6px 18px rgba(11, 13, 10, 0.2);
 
   /* ---------- 9. MOVIMENTO (só funcional) ---------- */
   --motion-duration-press: 100ms; /* feedback de toque */
@@ -265,41 +252,48 @@
   --z-dialog: 50;
   --z-toast: 60;
 
-  /* ---------- 11. ÍCONES ---------- */
+  /* ---------- 11. ÍCONES (Lucide, traço 2) ---------- */
   --icon-sm: 20px;
   --icon-md: 24px;
   --icon-lg: 32px;
 }
 
 /* ==========================================================
-   AERO NOTURNO (tema escuro)
+   TEMA ESCURO (grafite e lima)
    ========================================================== */
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg-base: var(--night-900);
-  --bg-backdrop:
-    radial-gradient(90% 50% at 80% 0%, rgba(47, 182, 238, 0.1) 0%, rgba(47, 182, 238, 0) 60%),
-    linear-gradient(180deg, #061a2e 0%, #0b2d4a 55%, #0e3a57 100%);
+  --bg-base: var(--ink-950);
+  --bg-backdrop: linear-gradient(180deg, #0b0d0a 0%, #0b0d0a 100%);
+
+  --accent: var(--lime-400);
+  --accent-pressed: var(--lime-300);
+  --accent-soft: #2c3a10;
+  --on-accent: var(--ink-950);
+  --surface-dark: #000000;
+  --surface-dark-raised: var(--ink-800);
+  --on-dark: var(--white);
+  --on-dark-muted: var(--mist-300);
 
   --text-primary: var(--mist-50);
   --text-secondary: var(--mist-300);
   --text-tertiary: var(--mist-400);
-  --text-on-primary: var(--night-950);
-  --text-on-success: var(--night-950);
-  --text-on-danger: var(--night-950);
-  --text-link: var(--aqua-300);
+  --text-on-primary: var(--ink-950);
+  --text-on-success: var(--ink-950);
+  --text-on-danger: var(--ink-950);
+  --text-link: var(--lime-300);
   --text-disabled: var(--mist-500);
 
-  --money-income: var(--grass-300);
+  --money-income: var(--lime-300);
   --money-expense: var(--text-primary);
-  --money-saving: var(--aqua-300);
+  --money-saving: var(--teal-300);
   --money-transfer: var(--mist-300);
 
-  --status-info-fg: var(--aqua-300);
-  --status-info-bg: #0b3550;
-  --status-success-fg: var(--grass-300);
-  --status-success-bg: var(--grass-900);
+  --status-info-fg: var(--ink-950);
+  --status-info-bg: var(--lime-400);
+  --status-success-fg: var(--lime-300);
+  --status-success-bg: #24320c;
   --status-warning-fg: var(--amber-300);
   --status-warning-bg: var(--amber-900);
   --status-warning-fill: var(--amber-400);
@@ -307,62 +301,47 @@
   --status-danger-bg: var(--coral-900);
   --status-danger-fill: var(--coral-400);
 
-  --band-needs: var(--aqua-400);
+  --band-needs: var(--teal-300);
   --band-wants: var(--violet-400);
-  --band-savings: var(--grass-400);
-  --band-track: rgba(234, 246, 255, 0.1);
+  --band-savings: var(--lime-400);
+  --band-track: rgba(242, 247, 236, 0.1);
 
-  --border-subtle: rgba(140, 220, 255, 0.18);
+  --border-subtle: rgba(242, 247, 236, 0.1);
   --border-strong: var(--mist-500);
-  --focus-ring-color: #7fdbff;
-  --focus-ring: 0 0 0 2px var(--night-900), 0 0 0 5px var(--focus-ring-color);
+  --focus-ring-color: var(--lime-300);
+  --focus-ring: 0 0 0 2px var(--ink-950), 0 0 0 4px var(--focus-ring-color);
 
-  --surface-solid-1: #0d2539;
-  --surface-solid-2: var(--night-800);
-  --surface-solid-3: #12324b;
-  --surface-inset: rgba(234, 246, 255, 0.05);
-  --surface-pressed: rgba(234, 246, 255, 0.08);
-  --scrim: rgba(2, 8, 14, 0.6);
+  --surface-solid-1: var(--ink-850);
+  --surface-solid-2: var(--ink-850);
+  --surface-solid-3: var(--ink-800);
+  --surface-inset: rgba(242, 247, 236, 0.06);
+  --surface-pressed: rgba(242, 247, 236, 0.1);
+  --scrim: rgba(0, 0, 0, 0.6);
 
-  --grad-primary: linear-gradient(180deg, #5ccfff 0%, #22a8e6 100%); /* texto night-950 ≥ 7,03:1 */
-  --grad-primary-pressed: linear-gradient(180deg, #22a8e6 0%, #1580bf 100%);
-  --grad-success: linear-gradient(180deg, #6be38f 0%, #45c86a 100%); /* texto night-950 ≥ 8,75:1 */
-  --grad-danger: linear-gradient(180deg, #ffa796 0%, #ff9583 100%); /* texto night-950 ≥ 8,89:1 */
-  --grad-gloss: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 48%,
-    rgba(255, 255, 255, 0) 52%
-  );
-  --grad-gloss-button: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.16) 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    rgba(255, 255, 255, 0) 51%
-  );
+  --grad-primary: linear-gradient(180deg, #c0e45c 0%, #aed246 100%); /* texto ink-950 ≥ 12:1 */
+  --grad-primary-pressed: linear-gradient(180deg, #aed246 0%, #7fa51f 100%);
+  --grad-success: linear-gradient(180deg, #d4f07e 0%, #c0e45c 100%);
+  --grad-danger: linear-gradient(180deg, #ffa796 0%, #ff9583 100%); /* texto ink-950 ≥ 8:1 */
 
-  --brand-oak: var(--mist-50); /* 16,36:1 sobre night-900 */
-  --brand-finance: var(--aqua-300); /* 10,11:1 sobre night-900 */
-  --brand-oak-sheen: linear-gradient(180deg, #ffffff 0%, #a9c8de 100%);
-  --brand-finance-sheen: linear-gradient(180deg, #7fdbff 0%, #2fb6ee 100%);
+  --brand-oak: var(--mist-50);
+  --brand-finance: var(--lime-400);
+  --brand-oak-sheen: linear-gradient(180deg, #ffffff 0%, #f2f7ec 100%);
+  --brand-finance-sheen: linear-gradient(180deg, #d4f07e 0%, #c0e45c 100%);
   --brand-mono: var(--mist-50);
 
-  --glass-1-bg: rgba(11, 34, 54, 0.45);
-  --glass-2-bg: rgba(11, 34, 54, 0.66);
-  --glass-3-bg: rgba(11, 34, 54, 0.84);
-  --glass-saturate: 130%;
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  --glass-1-bg: var(--ink-850);
+  --glass-2-bg: var(--ink-850);
+  --glass-3-bg: var(--ink-800);
 
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.25);
-  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-3: 0 12px 40px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
-  --shadow-fab: 0 6px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(92, 207, 255, 0.25);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-fab: 0 6px 18px rgba(0, 0, 0, 0.5);
 }
 
 /* ==========================================================
-   VIDRO SÓLIDO: preferência do sistema, ajuste do app ou falta de suporte
-   O script de ambiente (4.10) grava data-glass="solid" quando
-   prefers-reduced-transparency: reduce e o ajuste está em "Automática".
+   TRANSPARÊNCIA REDUZIDA (data-glass="solid"): as superfícies já são
+   sólidas; aqui os cards ganham contorno visível para separar do fundo.
    ========================================================== */
 :root[data-glass="solid"] {
   --glass-1-bg: var(--glass-1-solid);
@@ -372,16 +351,16 @@
   --glass-2-blur: 0px;
   --glass-3-blur: 0px;
   --grad-gloss: none;
-  --border-subtle: var(--ink-200);
+  --border-subtle: var(--ink-300);
+  --glass-border: 1px solid var(--border-subtle);
 }
 :root[data-theme="dark"][data-glass="solid"] {
   --border-subtle: var(--mist-700);
 }
 
-/* Desempenho baixo: menos desfoque */
+/* Desempenho baixo: sem sombras grandes (não há desfoque no visual menta) */
 :root[data-perf="low"] {
-  --glass-2-blur: 10px;
-  --glass-3-blur: 14px;
+  --shadow-3: 0 4px 12px rgba(11, 13, 10, 0.14);
 }
 
 /* ==========================================================

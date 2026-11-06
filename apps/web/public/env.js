@@ -69,7 +69,7 @@
     for (const name of ['theme', 'glass', 'motion', 'perf', 'values']) {
       root.setAttribute(`data-${name}`, env[name]);
     }
-    const color = env.theme === 'dark' ? '#061A2E' : '#4FB6EC';
+    const color = env.theme === 'dark' ? '#0B0D0A' : '#EEFDE0';
     for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
       meta.setAttribute('content', color);
     }

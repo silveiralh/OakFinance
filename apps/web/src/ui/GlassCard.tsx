@@ -1,4 +1,4 @@
-import { CheckCircle, Info, Warning } from '@phosphor-icons/react';
+import { CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import { createElement, type ReactNode } from 'react';
 import { Skeleton } from './Skeleton';
 import { type BaseProps, cx } from './types';
@@ -16,7 +16,7 @@ export interface GlassCardProps extends BaseProps {
   loading?: boolean;
 }
 
-const TONE_ICON = { info: Info, warning: Warning, success: CheckCircle } as const;
+const TONE_ICON = { info: Info, warning: TriangleAlert, success: CircleCheck } as const;
 
 /** UX §5.4: vidro em níveis; tom com faixa e ícone (nunca só cor); card inteiro clicável quando interativo. */
 export function GlassCard({

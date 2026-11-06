@@ -1,7 +1,7 @@
-import type { Icon } from '@phosphor-icons/react';
+import type { LucideIcon } from 'lucide-react';
 
-/** Ícone da Phosphor (UX §4.7). */
-export type PhosphorIcon = Icon;
+/** Ícone da Lucide (UX §4.7, D-023). */
+export type AppIcon = LucideIcon;
 
 /** Props comuns: todos aceitam `className` e repassam `data-testid` (UX §5). */
 export interface BaseProps {

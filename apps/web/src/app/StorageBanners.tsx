@@ -1,4 +1,4 @@
-import { HardDrives, Warning } from '@phosphor-icons/react';
+import { HardDrive, TriangleAlert } from 'lucide-react';
 import { useSyncExternalStore } from 'react';
 import { getStorageStatus, subscribeStorage } from '../data/storage';
 import { shellText } from '../i18n/pt-BR';
@@ -12,18 +12,13 @@ export function StorageBanners() {
       {status.mode === 'online-only' && (
         <Banner
           tone="warning"
-          icon={Warning}
+          icon={TriangleAlert}
           message={shellText.storageBlocked}
           data-testid="g12"
         />
       )}
       {status.full && (
-        <Banner
-          tone="warning"
-          icon={HardDrives}
-          message={shellText.storageFull}
-          data-testid="g11"
-        />
+        <Banner tone="warning" icon={HardDrive} message={shellText.storageFull} data-testid="g11" />
       )}
     </div>
   );

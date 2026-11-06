@@ -1,15 +1,15 @@
-import { Check } from '@phosphor-icons/react';
+import { Check } from 'lucide-react';
 import { type MouseEvent, type ReactNode, useId } from 'react';
 import { uiText } from '../i18n/pt-BR';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface ButtonProps extends BaseProps {
   children: ReactNode;
   variant?: 'primary' | 'success' | 'secondary' | 'ghost' | 'danger';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
-  iconStart?: PhosphorIcon;
-  iconEnd?: PhosphorIcon;
+  iconStart?: AppIcon;
+  iconEnd?: AppIcon;
   loading?: boolean;
   confirmed?: boolean;
   disabled?: boolean;
@@ -73,7 +73,7 @@ export function Button({
       )}
       {!loading && confirmed && (
         <span data-part="overlay">
-          <Check size={20} weight="bold" aria-hidden="true" />
+          <Check size={20} strokeWidth={2.5} aria-hidden="true" />
           <span className="sr-only">{uiText.saved}</span>
         </span>
       )}

@@ -1,17 +1,17 @@
-import { Check, MagnifyingGlass, Plus } from '@phosphor-icons/react';
+import { Check, Plus, Search } from 'lucide-react';
 import { useId, useMemo, useState } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { TextField } from './TextField';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export type CategoryBand = 'needs' | 'wants' | 'savings' | 'income' | 'none';
 
 export interface ChipCategory {
   id: string;
   name: string;
-  icon: PhosphorIcon;
+  icon: AppIcon;
   band: CategoryBand;
 }
 
@@ -57,12 +57,12 @@ export function CategoryChip({
         checked={selected}
         onChange={onPress}
       />
-      <Glyph size={20} weight={selected ? 'fill' : 'regular'} aria-hidden="true" />
+      <Glyph size={20} strokeWidth={selected ? 2.5 : 2} aria-hidden="true" />
       <span>
         {category.name}
         {suggested && <span className="sr-only">{`, ${uiText.suggested}`}</span>}
       </span>
-      {selected && <Check size={16} weight="bold" aria-hidden="true" />}
+      {selected && <Check size={16} strokeWidth={2.5} aria-hidden="true" />}
     </label>
   );
 }
@@ -137,7 +137,7 @@ export function CategoryPicker({
         type="search"
         value={query}
         onChange={setQuery}
-        prefixIcon={MagnifyingGlass}
+        prefixIcon={Search}
         clearable
       />
       {groups.map((g) => (

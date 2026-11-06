@@ -239,7 +239,7 @@ describe('AppShell (UX §3.0 e §2.1)', () => {
     expect(shellCss).toMatch(/\.shell \.shell-sidebar \{\s*position: fixed;/);
     expect(shellCss).toMatch(/width: 248px/);
     expect(shellCss).toMatch(/max-width: 1200px/);
-    expect(shellCss).toMatch(/calc\(64px \+ env\(safe-area-inset-bottom\) \+ var\(--space-6\)\)/);
+    expect(shellCss).toMatch(/calc\(64px \+ env\(safe-area-inset-bottom\) \+ var\(--space-12\)\)/);
     expect(shellCss).not.toMatch(/#[0-9a-fA-F]{3,8}\b|rgba?\(/);
   });
 });

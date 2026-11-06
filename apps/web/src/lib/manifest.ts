@@ -9,8 +9,8 @@ export const MANIFEST = {
   scope: '/',
   display: 'standalone' as const,
   orientation: 'any' as const,
-  theme_color: '#4FB6EC',
-  background_color: '#E8F7FF',
+  theme_color: '#EEFDE0',
+  background_color: '#EEFDE0',
   icons: [
     { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
     { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },

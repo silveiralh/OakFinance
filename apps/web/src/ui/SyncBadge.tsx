@@ -1,10 +1,4 @@
-import {
-  ArrowsClockwise,
-  CloudArrowUp,
-  CloudCheck,
-  CloudSlash,
-  Warning,
-} from '@phosphor-icons/react';
+import { CloudCheck, CloudOff, CloudUpload, RefreshCw, TriangleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { type BaseProps, cx } from './types';
@@ -38,10 +32,10 @@ export function syncLabel(state: SyncState, pendingCount: number): string {
 
 const ICON = {
   synced: CloudCheck,
-  pending: CloudArrowUp,
-  syncing: ArrowsClockwise,
-  offline: CloudSlash,
-  error: Warning,
+  pending: CloudUpload,
+  syncing: RefreshCw,
+  offline: CloudOff,
+  error: TriangleAlert,
 } as const;
 
 /** UX §5.24: pílula no topo; `synced` some depois de 2 s; região viva só para offline, erro e a volta após erro. */

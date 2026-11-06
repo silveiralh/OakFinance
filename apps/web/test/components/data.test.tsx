@@ -1,5 +1,5 @@
-import { House, ShoppingCart } from '@phosphor-icons/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { House, ShoppingCart } from 'lucide-react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   BudgetRing,

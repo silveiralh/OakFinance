@@ -1,4 +1,4 @@
-import { DeviceMobile } from '@phosphor-icons/react';
+import { Smartphone } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { t } from '../../i18n/pt-BR';
@@ -20,7 +20,7 @@ export function InstallCard() {
   const target = installTarget(navigator);
   return (
     <Banner
-      icon={DeviceMobile}
+      icon={Smartphone}
       message={t('home.install.card')}
       action={{
         label: t('onb.install.android.cta'),

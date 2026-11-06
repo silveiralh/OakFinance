@@ -1,4 +1,5 @@
 import { ScreenStub } from '../../app/ScreenStub';
+import { HomeOverview } from './HomeOverview';
 import { IncomeToConfirm } from './IncomeToConfirm';
 import { InstallCard } from './InstallCard';
 
@@ -7,7 +8,9 @@ export function HomeScreen() {
     <>
       <InstallCard />
       <IncomeToConfirm />
-      <ScreenStub screen="H01" />
+      <section className="screen" data-screen="H01" data-testid="screen-H01">
+        <HomeOverview />
+      </section>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { X } from '@phosphor-icons/react';
+import { X } from 'lucide-react';
 import { type KeyboardEvent, type ReactNode, useCallback, useEffect, useId, useRef } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { type BaseProps, cx } from './types';

@@ -1,4 +1,4 @@
-import { ArrowDown, CheckCircle, Copy } from '@phosphor-icons/react';
+import { ArrowDown, CircleCheck, Copy } from 'lucide-react';
 import { Fragment } from 'react';
 import { t } from '../i18n/pt-BR';
 import { Button } from './Button';
@@ -92,7 +92,7 @@ export function InstallGuide({
   if (state === 'installed') {
     return (
       <div className={cx('install', className)} role="status" data-testid={testId}>
-        <CheckCircle size={32} weight="fill" aria-hidden="true" />
+        <CircleCheck size={32} strokeWidth={2.5} aria-hidden="true" />
         <p>{t('onb.install.done')}</p>
       </div>
     );

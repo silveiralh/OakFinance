@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { Plus, Star, Trash } from '@phosphor-icons/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { Plus, Star, Trash2 } from 'lucide-react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Button, FAB, IconButton } from '../../src/ui';
 import { LONG_PRESS_MS } from '../../src/ui/FAB';
@@ -45,7 +45,7 @@ describe('Button (UX §5.1)', () => {
         variant="danger"
         size="lg"
         fullWidth
-        iconStart={Trash}
+        iconStart={Trash2}
         iconEnd={Plus}
         onClick={onClick}
         data-testid="b"

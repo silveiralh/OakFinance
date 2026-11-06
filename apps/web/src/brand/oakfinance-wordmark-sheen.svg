@@ -2,13 +2,13 @@
   <title id="ws-t">OakFinance</title>
   <defs>
     <linearGradient id="ws-ink" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="46">
-      <stop offset="0" stop-color="#2B4A66"/>
-      <stop offset="1" stop-color="#0A2540"/>
+      <stop offset="0" stop-color="#151813"/>
+      <stop offset="1" stop-color="#0B0D0A"/>
     </linearGradient>
     <linearGradient id="ws-aqua" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="46">
-      <stop offset="0" stop-color="#0B76AE"/>
-      <stop offset="1" stop-color="#075884"/>
+      <stop offset="0" stop-color="#4D7C0F"/>
+      <stop offset="1" stop-color="#3A5C0B"/>
     </linearGradient>
   </defs>
-  <text x="8" y="45" font-family="Manrope, Inter, system-ui, sans-serif" font-weight="700" font-size="42" letter-spacing="-1.05"><tspan fill="url(#ws-ink)">Oak</tspan><tspan fill="url(#ws-aqua)" dx="0.5">Finance</tspan></text>
+  <text x="8" y="45" font-family="Nunito, system-ui, sans-serif" font-weight="800" font-size="42" letter-spacing="-0.4"><tspan fill="url(#ws-ink)">Oak</tspan><tspan fill="url(#ws-aqua)" dx="0.5">Finance</tspan></text>
 </svg>

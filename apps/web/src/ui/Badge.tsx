@@ -1,8 +1,8 @@
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface BadgeProps extends BaseProps {
   tone?: 'neutral' | 'info' | 'success' | 'warning' | 'danger';
-  icon: PhosphorIcon;
+  icon: AppIcon;
   label: string;
 }
 
@@ -16,7 +16,7 @@ export function Badge({
 }: BadgeProps) {
   return (
     <span className={cx('badge', className)} data-tone={tone} data-testid={testId}>
-      <Glyph size={14} weight="bold" aria-hidden="true" />
+      <Glyph size={14} strokeWidth={2.5} aria-hidden="true" />
       {label}
     </span>
   );
