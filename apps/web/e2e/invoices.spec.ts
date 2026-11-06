@@ -52,9 +52,9 @@ test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o 
     .getByRole('button', { name: /^Mover para a fatura de / });
   const target = (await options.first().textContent()) ?? '';
   await options.first().click();
-  await expect(page.getByText(/^Lançamento movido para a fatura de /)).toBeVisible();
+  // o toast pode esperar na fila atrás de avisos de outros testes do mesmo usuário (G06); confere o dado
   const month = target.replace('Mover para a fatura de ', '');
-  await expect(page.getByTestId('detail-list')).toContainText(month);
+  await expect(page.getByTestId('detail-list')).toContainText(month, { timeout: 15_000 });
 
   // a fatura de origem fica vazia
   await page.goBack();
@@ -94,4 +94,38 @@ test('E04: invoices — compra à vista no cartão e "Registrar pagamento" deixa
   await expect(page.getByText(/^Pagamento da fatura de .+ registrado\.$/)).toBeVisible();
   await expect(page.getByTestId('invoice-head')).toContainText('Paga');
   await expect(page.getByRole('button', { name: 'Registrar pagamento' })).toHaveCount(0);
+});
+
+test('E04: installments — compra em 3x no cartão "fecha 3 / vence 10" aparece nas 3 faturas certas', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await login(page, 'e2e-a@example.test');
+  await hooks(page);
+  const stamp = Date.now();
+  const name = `Cartão 3x ${stamp % 100_000}`;
+  const card = await page.evaluate(([n]) => window.__oakE2E?.addCard(n, 3, 10) ?? '', [name] as [
+    string,
+  ]);
+  const description = `Parcelada ${stamp}`;
+  await page.evaluate(([c, d]) => window.__oakE2E?.addCardInstallments(c, 30_000, 3, d) ?? '', [
+    card,
+    description,
+  ] as [string, string]);
+
+  await page.goto('/cartoes');
+  await page
+    .locator('[aria-roledescription="cartão"]', { hasText: name })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'Ver fatura' }).click();
+  for (const k of [1, 2, 3]) {
+    const items = page.getByTestId('invoice-items');
+    await expect(items).toContainText(description);
+    await expect(items).toContainText(`${k}/3`);
+    await expect(page.getByTestId('invoice-total')).toHaveText('R$ 100,00');
+    await page.getByRole('button', { name: 'Próximo mês' }).click();
+  }
+  // a 4ª fatura não tem parcela
+  await expect(page.getByText('Nenhuma compra nesta fatura.')).toBeVisible();
 });

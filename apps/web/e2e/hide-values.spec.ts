@@ -19,7 +19,8 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
 }) => {
   test.setTimeout(90_000);
   // usuário B: a preferência vai para a conta e não pode afetar os testes do A que rodam em paralelo
-  await login(page, 'e2e-b@example.test');
+  // a primeira entrada cria o usuário; se outro teste criar o e2e-b ao mesmo tempo, a tentativa falha e repete
+  await login(page, 'e2e-b@example.test').catch(() => login(page, 'e2e-b@example.test'));
   await hooks(page);
   const stamp = Date.now();
   const account = await page.evaluate(

@@ -114,7 +114,7 @@ flowchart LR
 | T-049 | Categorias | T-035 | done |
 | T-050 | Salário como receita fixa | T-041, T-015 | done |
 | T-051 | Editar e arquivar contas e cartões | T-047 | done |
-| T-052 | Compra parcelada | T-048, T-014 | todo |
+| T-052 | Compra parcelada | T-048, T-014 | done |
 | T-053 | Editar e cancelar parcelada | T-052 | todo |
 | T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | todo |
 | T-055 | Editar, pular e encerrar recorrências | T-054 | todo |
@@ -875,7 +875,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-052 — Compra parcelada
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-20 | RN-20..RN-23 | T-048, T-014 | não |
+| done | S2 | M | US-20 | RN-20..RN-23 | T-048, T-014 | não |
 
 **Escopo:** InstallmentStepper no Q01 mostrando a divisão da RN-21; Total/Parcela; validações de 2–48 e de total mínimo; parcelas materializadas; parcelamento só no crédito.
 

@@ -6,6 +6,7 @@ import { clearDraft, loadDraft, saveDraft } from '../../data/drafts';
 import { newId } from '../../data/ids';
 import { useLive } from '../../data/live';
 import { cardFromRow } from '../../data/mappers';
+import { deleteSeries } from '../../data/repositories/cascade';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { writeLocal } from '../../data/storage';
 import { t, uiText } from '../../i18n/pt-BR';
@@ -20,6 +21,7 @@ import {
   type ChipCategory,
   DateChip,
   Dialog,
+  InstallmentStepper,
   PaymentMethodPicker,
   SegmentedControl,
   Select,
@@ -30,6 +32,12 @@ import {
 import { buildFixedIncome, confirmOccurrence, recurrenceFromRow } from '../recurrences/model';
 import { quickEntryElapsed, resetQuickEntryClock } from './clock';
 import { categoryIcon } from './icons';
+import {
+  type InstallmentMode,
+  installmentProblem,
+  installmentRows,
+  saveInstallmentPurchase,
+} from './installments';
 import {
   buildExpense,
   buildInvoice,
@@ -108,6 +116,8 @@ export function QuickEntrySheet({
   const [received, setReceived] = useState<'yes' | 'no'>('yes');
   const [countBefore, setCountBefore] = useState(false);
   const [repeat, setRepeat] = useState(false);
+  const [count, setCount] = useState(1);
+  const [installMode, setInstallMode] = useState<InstallmentMode>('total');
   const [fromId, setFromId] = useState<string | null>(null);
   const [toId, setToId] = useState<string | null>(null);
   const draftChecked = useRef(false);
@@ -225,9 +235,14 @@ export function QuickEntrySheet({
   const method = methods.find((m) => m.id === (methodId ?? lastMethod)) ?? methods[0] ?? null;
   const card = method?.cardId ? data?.cards.find((c) => c.id === method.cardId) : undefined;
   const invoice = card ? invoiceForPurchase(cardFromRow(card), date) : null;
+  // US-20: parcelar só no crédito e só ao lançar uma despesa nova
+  const parcelled = Boolean(card) && mode === 'expense' && !editing && count > 1;
   const missing = transfer
     ? transferMissing(amount, origin, toId)
-    : missingReason(amount, categoryId);
+    : (missingReason(amount, categoryId) ??
+      (parcelled && installmentProblem(amount, count, installMode)
+        ? t('quick.missing.installments')
+        : null));
   const pickedOutside = categoryId && !suggestions.some((c) => c.id === categoryId);
   const pickedChip = pickedOutside ? pickerCategories.find((c) => c.id === categoryId) : undefined;
   const status = statusFor(mode, date, today, received === 'yes');
@@ -343,6 +358,52 @@ export function QuickEntrySheet({
       user.engine.notifyWrite();
       resetQuickEntryClock();
       toast({ message: t('fixed.saved') });
+      onClose();
+      return;
+    }
+    if (parcelled && card) {
+      const seriesId = newId();
+      const rows = installmentRows({
+        seriesId,
+        userId: user.userId,
+        card,
+        invoices: await user.db.invoices.where('card_id').equals(card.id).toArray(),
+        base: row,
+        amountCents: amount,
+        count,
+        mode: installMode,
+        purchaseDate: date,
+        nowIso,
+      });
+      const saved = await saveInstallmentPurchase(user.db, rows);
+      if (!saved.ok) {
+        return;
+      }
+      setSaved(true);
+      await clearDraft(user.db, DRAFT_KEY);
+      if (method) {
+        await writeLocal(() => user.db.kv.put({ key: LAST_METHOD_KEY, value: method.id }));
+      }
+      user.engine.notifyWrite();
+      const elapsed = quickEntryElapsed();
+      void track(user.db, {
+        code: 'lancamento_salvo',
+        context: {
+          ...(elapsed !== null && { duracao_ms: elapsed }),
+          offline: typeof navigator !== 'undefined' && !navigator.onLine,
+          origem: 'manual',
+        },
+      });
+      resetQuickEntryClock();
+      toast({
+        message: t('toast.saved'),
+        action: {
+          label: t('toast.undo'),
+          onPress: () => {
+            void deleteSeries(user.db, seriesId).then(() => user.engine.notifyWrite());
+          },
+        },
+      });
       onClose();
       return;
     }
@@ -496,6 +557,17 @@ export function QuickEntrySheet({
                   }),
                 }
               : {})}
+          />
+        )}
+        {card && mode === 'expense' && !editing && (
+          <InstallmentStepper
+            value={count}
+            onChange={setCount}
+            amountCents={amount}
+            mode={installMode}
+            onModeChange={setInstallMode}
+            {...(invoice ? { firstInvoiceLabel: monthLabel(invoice.referenceMonth) } : {})}
+            data-testid="quick-installments"
           />
         )}
         {income && (
