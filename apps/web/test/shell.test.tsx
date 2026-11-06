@@ -72,7 +72,21 @@ describe('rotas do UX §2.1 e §3', () => {
       expect(table.get(id), id).toBe(routerPath(path));
       expect(shellText.screens[id as ScreenId], id).toBe(title);
     }
-    expect(Object.keys(shellText.screens).sort()).toEqual(withRoute.map(([id]) => id).sort());
+    // subtelas de Configurações (tabela da UX §3 S01, rotas definidas em D-016): nome igual ao da tabela
+    const subscreens = new Map(
+      [...ux.matchAll(/^\| (S\d\d) \| ([^|]+) \|/gm)].map((m) => [m[1] ?? '', (m[2] ?? '').trim()]),
+    );
+    const extra = Object.keys(shellText.screens).filter((id) => !spec.has(id));
+    expect(extra).toEqual(['S03']);
+    for (const id of extra) {
+      expect(shellText.screens[id as ScreenId], id).toBe(subscreens.get(id));
+    }
+    expect(table.get('S03')).toBe('/ajustes/contas');
+    expect(
+      Object.keys(shellText.screens)
+        .filter((id) => spec.has(id))
+        .sort(),
+    ).toEqual(withRoute.map(([id]) => id).sort());
   });
 
   it('UX §4.11.1: título "{Tela} · OakFinance"', () => {

@@ -1978,6 +1978,25 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `future.summary` | Comprometido nos próximos 3 meses: {valor} |
 | `about.tagline` | Controle financeiro com clareza. |
 
+**Contas (S03)**
+
+| Chave | Texto |
+|---|---|
+| `accounts.add` | Adicionar conta |
+| `accounts.name` / `.type` / `.institution` / `.balance` | Nome / Tipo / Banco / Saldo atual |
+| `accounts.type.checking` / `.cash` / `.meal` / `.food` | Conta corrente / Carteira (dinheiro) / VR / VA |
+| `accounts.method.pix` / `.debit` / `.boleto` / `.transfer` / `.other` / `.cash` | Pix / Débito / Boleto / TED/DOC / Outro / Dinheiro |
+| `accounts.methods` | Formas: {formas} |
+| `accounts.immediate` | Meio imediato, sem formas |
+| `accounts.save` | Salvar |
+| `accounts.archive` / `.unarchive` / `.delete` | Arquivar / Desarquivar / Excluir |
+| `accounts.archived` | Contas arquivadas |
+| `accounts.empty` | Nenhuma conta cadastrada |
+| `accounts.duplicate` | Você já tem uma conta com esse nome |
+| `accounts.nameRequired` | Informe o nome da conta. |
+| `accounts.nameTooLong` | Use até 40 caracteres. |
+| `accounts.hasTransactions` | Esta conta tem lançamentos. Arquive para tirá-la do lançamento rápido sem perder o histórico. |
+
 **Conexões, importação, nota, conferência**
 
 | Chave | Texto |

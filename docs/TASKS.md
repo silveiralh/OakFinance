@@ -100,7 +100,7 @@ flowchart LR
 | T-035 | Seeds no primeiro login e isolamento | T-034, T-019 | done |
 | T-036 | Primeiro deploy staging e produção | T-030, T-034 | blocked: aguarda cliente — SETUP-05..09, SETUP-12 |
 | T-037 | Boas-vindas e instalação guiada | T-030, T-034 | done |
-| T-038 | Contas | T-035 | todo |
+| T-038 | Contas | T-035 | done |
 | T-039 | Cartões com prévia da fatura | T-038, T-013 | todo |
 | T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | todo |
 | T-041 | Mais detalhes, edição e receita variável | T-040 | todo |
@@ -707,7 +707,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-038 — Contas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-09 | RN-07 | T-035 | não |
+| done | S1 | P | US-09 | RN-07 | T-035 | não |
 
 **Escopo:** S03 contas: tipos corrente, carteira, VR e VA; formas Pix/Débito/Boleto/TED-DOC/Outro; saldo inicial; nome único entre as ativas ("Você já tem uma conta com esse nome").
 
