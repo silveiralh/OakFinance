@@ -218,7 +218,7 @@ export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
           </Link>
         </GlassCard>
       )}
-      <Link to="/ajustes" className="budget-adjust">
+      <Link to="/ajustes/calculo" className="budget-adjust">
         {t('budget.adjust')}
       </Link>
     </section>

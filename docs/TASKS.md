@@ -123,7 +123,7 @@ flowchart LR
 | T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | done |
 | T-059 | Orçamento 50/30/20 e limites | T-058 | done |
 | T-060 | Reserva de emergência | T-058, T-018 | done |
-| T-061 | Ajustes do cálculo (S06) | T-059 | todo |
+| T-061 | Ajustes do cálculo (S06) | T-059 | done |
 | T-062 | Central de avisos (H02) | T-045 | todo |
 | T-063 | Ativar notificações push | T-062, T-030 | todo |
 | T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | todo |
@@ -978,7 +978,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-061 — Ajustes do cálculo (S06)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-34 | RN-35, RN-43, RN-46, RN-47 | T-059 | não |
+| done | S2 | P | US-34 | RN-35, RN-43, RN-46, RN-47 | T-059 | não |
 
 **Escopo:** S06: percentuais (soma 100%, "Os percentuais somam X%…"); mês do cartão (vencimento ou compra); VR/VA; receitas previstas; poupança; faturas que ainda vencem (com aviso de que deixa de ser conservador); prévia do valor resultante.
 
