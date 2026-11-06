@@ -689,7 +689,7 @@ Lista em GlassCards agrupados; cada item leva a uma subtela:
 
 Botão primário: pílula preta com texto branco (no escuro, pílula lima com texto preto). Secundário: pílula branca com contorno sutil. Fantasma: texto preto em negrito, sem sublinhado. Seleção (chips, segmentado, aba): fundo lima com texto preto **e** contorno preto de 2 px ou ícone de check, para não depender só da cor.
 
-**Tema e largura (D-025).** O claro é o padrão, mesmo com o sistema no escuro; o escuro só com a escolha "Escuro" ou "Automático" no S08. No `lg` o conteúdo usa a largura toda (sem limite de 1200 px): Início em duas colunas (cartão e atalhos à esquerda, últimos lançamentos à direita) e S03 com lista e formulário lado a lado a partir de 1280 px.
+**Tema e largura (D-025).** O claro é o padrão, mesmo com o sistema no escuro; o escuro só com a escolha "Escuro" ou "Automático" no S08. No `lg` o conteúdo usa a largura toda (sem limite de 1200 px), numa coluna só que cresce para ocupar a tela (D-026): no Início, cartão do mês com mais respiro e valor de 48–72 px, atalhos de 120 px e títulos maiores.
 
 **Forma e tipografia.** Fonte única arredondada: **Nunito** variável (auto-hospedada, latin e latin-ext), pesos 500–800. Botões, chips, campos de busca e barra de abas em pílula (`--radius-md: 999px`); cards com raio 20 px; campos com raio 16 px e borda 1 px `--border-strong`. Sombras discretas (`--shadow-1/2`); sem brilho especular, sem vidro.
 

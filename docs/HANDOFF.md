@@ -51,7 +51,7 @@
 
 ## 2. Estado do CI e do deploy
 
-- CI: `ci.yml` verde em `main` (último merge: D-025, PR #56). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
+- CI: `ci.yml` verde em `main` (último merge: D-026, PR #57). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
 - Deploy: `deploy.yml` verde em `main` desde 06/11 (issue #38 resolvida pelo cliente com os secrets do SETUP-09). Keepalive: a 1ª execução manual (06/11) falhou só pelo tick da T-064, corrigido no PR #54; a próxima, agendada para 11:37 UTC, deve passar (as sessões não conseguem disparar workflows: `dispatches` dá 403).
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Em 06/11 falhou (issue #51) por `pnpm audit` (qs, glob, minimatch: corrigidos com overrides no `pnpm-workspace.yaml`) e por keepalive vermelho (tick da T-064 ainda inexistente: corrigido em `ops-check.ts`).
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
@@ -61,7 +61,7 @@
 
 ## 3. Próximos passos
 
-- **Tema e largura (D-025):** o app abre claro mesmo com o sistema escuro (`public/env.js`: escuro só com preferência `dark` ou `auto`); a T-068 (S08) deve oferecer Claro (padrão), Escuro e Automático. No `lg` não há mais limite de 1200 px; telas novas devem aproveitar a largura (duas colunas quando houver lista + formulário).
+- **Tema e largura (D-025):** o app abre claro mesmo com o sistema escuro (`public/env.js`: escuro só com preferência `dark` ou `auto`); a T-068 (S08) deve oferecer Claro (padrão), Escuro e Automático. No `lg` não há mais limite de 1200 px e **não se usam duas colunas** (D-026): uma coluna que estica, com elementos maiores (ver o bloco `@media (min-width: 1024px)` do fim de `shell.css`).
 - **Visual (D-023):** telas novas seguem a UX §4.0 (menta, cards brancos, lima e preto, pílulas, Lucide). Use os componentes de `src/ui/` e os tokens; para destaque, `.glass` com `data-tone="dark"` ou `data-tone="accent"`. Ícone novo de categoria: acrescente o nome em `CATEGORY_ICONS`. Para revisar telas logadas localmente sem Supabase, intercepte `127.0.0.1:54321` no Playwright (sessão falsa e `sync_push`/`sync_pull` vazios).
 - **Próxima tarefa: T-036 (primeiro deploy) está `blocked` (SETUP-05..09/12 incompletos; o deploy já falha por falta do `SUPABASE_ACCESS_TOKEN`, issue #38). A próxima liberada é a T-044 (Detalhe, exclusão com desfazer e histórico).** Depois: T-045, T-046, T-047, T-049, T-050. Na T01, tocar a linha hoje abre o Q01 de edição; a T-044 deve levar o toque ao T02 (`/lancamentos/:id`) e manter Editar no menu.
 - Q01: falta o modo Guardar (`?novo=guardar`, US-33), parcelas (US-20), "Repetir todo mês" e o aprendizado da correção de categoria. O `reloadBlocked` do G07 olha só o `?novo=` (não o `?editar=`); com o rascunho no `kv`, uma recarga já não perde o que foi digitado. A edição ainda não é aberta de T02 (T-044 liga o botão Editar ao `?editar=`). Com o Q01 aberto (modal), o toast do G07 fica inerte; o E15 usa o gancho `__oakE2E.applyUpdate()`.
@@ -195,3 +195,4 @@
 | 06/11/2026 | — | PR #54 | fix | issue #51 (nightly): overrides de qs, glob e minimatch para o `pnpm audit`; keepalive não reprova o tick antes da T-064 |
 | 06/11/2026 | T-036 | PR #55 | done | deploy verde em staging e produção (https://oakfinance.pages.dev); smoke remoto por HTTP (D-024); SETUP-10 liberado para o cliente |
 | 06/11/2026 | — | PR #56 | fix | D-025: claro por padrão mesmo com o sistema escuro; Início e S03 ocupam a largura do computador; foco das pílulas sem contorno quadrado |
+| 06/11/2026 | — | PR #57 | fix | D-026: no computador, uma coluna que estica e elementos maiores (sem duas colunas no Início e na S03) |
