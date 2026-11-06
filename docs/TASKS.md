@@ -87,7 +87,7 @@ flowchart LR
 | T-022 | Domínio: importação OFX/CSV | T-020 | done |
 | T-023 | Domínio: QR da NFC-e | T-012 | done |
 | T-024 | Domínio: lembretes devidos | T-017, T-018 | done |
-| T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | todo |
+| T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | done |
 | T-026 | Componentes de base | T-025 | todo |
 | T-027 | Componentes de entrada | T-026, T-012 | todo |
 | T-028 | Componentes de dados e styleguide | T-027 | todo |
@@ -538,7 +538,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-025 — Tokens, fontes, ambiente, i18n e marca
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-62 | RN-103 | T-007 | não |
+| done | S1 | M | US-62 | RN-103 | T-007 | não |
 
 **Escopo:**
 - `src/styles/tokens.css` (UX §4.2 literal) e `base.css`;

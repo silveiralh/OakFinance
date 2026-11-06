@@ -36,3 +36,8 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Ícones gerados no build a partir de apps/web/src/brand (scripts/build-icons.mjs)
+apps/web/public/icons/
+apps/web/public/apple-touch-icon.png
+apps/web/public/favicon.ico

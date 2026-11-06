@@ -1,7 +1,50 @@
 @import "tailwindcss";
+@import "./fonts.css";
+@import "./tokens.css";
 
-/* Tokens Aero (claro/escuro) chegam na T-025. */
-:root {
-  color-scheme: light dark;
-  font-family: system-ui, sans-serif;
+/* Receita do vidro (UX §4.2): classe utilitária `.glass` com modificador de nível. */
+.glass {
+  --_bg: var(--glass-2-bg);
+  --_blur: var(--glass-2-blur);
+  position: relative;
+  background: var(--_bg);
+  -webkit-backdrop-filter: blur(var(--_blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--_blur)) saturate(var(--glass-saturate));
+  border: var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-highlight), var(--shadow-2);
+  isolation: isolate;
+}
+.glass::before {
+  /* brilho especular discreto */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--grad-gloss);
+  pointer-events: none;
+  z-index: -1;
+  mask: linear-gradient(#000 0 0) top / 100% 46% no-repeat; /* só a metade de cima */
+}
+.glass[data-level="1"] {
+  --_bg: var(--glass-1-bg);
+  --_blur: var(--glass-1-blur);
+  box-shadow: var(--glass-highlight), var(--shadow-1);
+}
+.glass[data-level="3"] {
+  --_bg: var(--glass-3-bg);
+  --_blur: var(--glass-3-blur);
+  box-shadow: var(--glass-highlight), var(--shadow-3);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--glass-2-solid);
+  }
+  .glass[data-level="1"] {
+    background: var(--glass-1-solid);
+  }
+  .glass[data-level="3"] {
+    background: var(--glass-3-solid);
+  }
 }

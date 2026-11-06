@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 64" role="img" aria-labelledby="wsd-t">
+  <title id="wsd-t">OakFinance</title>
+  <defs>
+    <linearGradient id="wsd-ink" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="46">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#A9C8DE"/>
+    </linearGradient>
+    <linearGradient id="wsd-aqua" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="46">
+      <stop offset="0" stop-color="#7FDBFF"/>
+      <stop offset="1" stop-color="#2FB6EE"/>
+    </linearGradient>
+  </defs>
+  <text x="8" y="45" font-family="Manrope, Inter, system-ui, sans-serif" font-weight="700" font-size="42" letter-spacing="-1.05"><tspan fill="url(#wsd-ink)">Oak</tspan><tspan fill="url(#wsd-aqua)" dx="0.5">Finance</tspan></text>
+</svg>
