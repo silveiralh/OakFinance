@@ -173,3 +173,39 @@
   align-items: center;
   gap: var(--space-3);
 }
+
+.account-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.account-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.account-name {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+.account-meta,
+.account-error {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.account-error {
+  color: var(--status-danger-fg);
+}
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+.account-form {
+  display: grid;
+  gap: var(--space-4);
+}
