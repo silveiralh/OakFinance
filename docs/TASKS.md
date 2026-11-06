@@ -119,7 +119,7 @@ flowchart LR
 | T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | done |
 | T-055 | Editar, pular e encerrar recorrências | T-054 | done |
 | T-056 | Regras que aprendem | T-044, T-049 | done |
-| T-057 | Gerenciar regras (I06) | T-056 | todo |
+| T-057 | Gerenciar regras (I06) | T-056 | done |
 | T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | todo |
 | T-059 | Orçamento 50/30/20 e limites | T-058 | todo |
 | T-060 | Reserva de emergência | T-058, T-018 | todo |
@@ -930,7 +930,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-057 — Gerenciar regras (I06)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-29 | RN-59, RN-60 | T-056 | não |
+| done | S2 | P | US-29 | RN-59, RN-60 | T-056 | não |
 
 **Escopo:** I06: lista por último uso; editar termo com "Casaria com {n} lançamentos dos últimos 90 dias"; criar regra manual; apagar sem efeito retroativo; estado vazio.
 
