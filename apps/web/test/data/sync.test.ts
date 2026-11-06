@@ -394,6 +394,69 @@ describe('pull (tech §4.6 e §4.10)', () => {
   });
 });
 
+describe('G06: edição vinda de outro aparelho', () => {
+  it('G06: o pull conta só lançamentos que já estavam aqui e chegaram editados por outro aparelho', async () => {
+    const db = open();
+    const server = new FakeServer();
+    const stamp = '2026-11-06T12:00:00.000Z';
+    const later = '2026-11-06T12:05:00.000Z';
+    await db.transactions.bulkPut([
+      { ...tx('editada', { amount_cents: 4590 }), client_updated_at: stamp, _pending: 0 },
+      { ...tx('minha', { amount_cents: 100 }), client_updated_at: stamp, _pending: 0 },
+      { ...tx('igual', { amount_cents: 100 }), client_updated_at: stamp, _pending: 0 },
+      { ...tx('apagada', { amount_cents: 100 }), client_updated_at: stamp, _pending: 0 },
+    ]);
+    server.put('transactions', {
+      ...tx('editada', { amount_cents: 4950, device_id: 'outro' }),
+      client_updated_at: later,
+    });
+    server.put('transactions', {
+      ...tx('minha', { amount_cents: 200, device_id: 'este' }),
+      client_updated_at: later,
+    });
+    server.put('transactions', {
+      ...tx('igual', { amount_cents: 100, device_id: 'outro' }),
+      client_updated_at: stamp,
+    });
+    server.put('transactions', {
+      ...tx('apagada', { device_id: 'outro', deleted_at: later }),
+      client_updated_at: later,
+    });
+    server.put('transactions', {
+      ...tx('nova', { device_id: 'outro' }),
+      client_updated_at: later,
+    });
+    server.put('categories', {
+      ...makeRow('categories', { id: 'cat', device_id: 'outro' }),
+      client_updated_at: later,
+    });
+    const summary = await pullChanges(db, server.transport(), Date.now, 'este');
+    expect(summary.remoteEdits).toBe(1);
+    expect(await db.transactions.get('editada')).toMatchObject({ amount_cents: 4950 });
+    expect((await pullChanges(db, server.transport())).remoteEdits).toBe(0);
+  });
+
+  it('G06: o motor expõe a contagem e sobe a sequência a cada pull com edição de outro aparelho', async () => {
+    const db = open();
+    const server = new FakeServer();
+    await db.transactions.put({
+      ...tx('editada', { amount_cents: 4590 }),
+      client_updated_at: '2026-11-06T12:00:00.000Z',
+      _pending: 0,
+    });
+    server.put('transactions', {
+      ...tx('editada', { amount_cents: 4950, device_id: 'outro-aparelho' }),
+      client_updated_at: '2026-11-06T12:05:00.000Z',
+    });
+    const { e } = engine(db, server);
+    expect(e.getSnapshot()).toMatchObject({ remoteEdits: 0, remoteEditsSeq: 0 });
+    await e.syncNow();
+    expect(e.getSnapshot()).toMatchObject({ remoteEdits: 1, remoteEditsSeq: 1 });
+    await e.syncNow();
+    expect(e.getSnapshot().remoteEditsSeq).toBe(1);
+  });
+});
+
 describe('motor (tech §4.5 e §4.8, RN-96..RN-99)', () => {
   it('ciclo: push antes do pull, contadores, telemetria sync.done enviada por log_events', async () => {
     const db = open();

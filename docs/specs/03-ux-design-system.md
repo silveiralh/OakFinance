@@ -2048,6 +2048,61 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `list.noResult` | Nenhum resultado para "{termo}" |
 | `list.edit` / `.delete` | Editar / Excluir |
 | `list.actionsHint` | O que fazer com este lançamento? |
+| `detail.kind.expense` | Despesa |
+| `detail.kind.income` | Receita |
+| `detail.kind.transfer` | Transferência |
+| `detail.kind.refund` | Estorno |
+| `detail.kind.adjust` | Ajuste |
+| `detail.status.posted` | Efetivada |
+| `detail.field.kind` | Tipo |
+| `detail.field.status` | Status |
+| `detail.field.category` | Categoria |
+| `detail.field.method` | Meio de pagamento |
+| `detail.field.account` | Conta |
+| `detail.field.card` | Cartão |
+| `detail.field.destination` | Destino |
+| `detail.field.invoice` | Fatura |
+| `detail.field.date` | Data |
+| `detail.field.description` | Descrição |
+| `detail.field.notes` | Observação |
+| `detail.field.origin` | Origem |
+| `detail.field.amount` | Valor |
+| `detail.invoice` | {mês}, vence {data} |
+| `detail.origin.manual` | Manual |
+| `detail.origin.pluggy` | Open Finance |
+| `detail.origin.ofx` | OFX |
+| `detail.origin.csv` | CSV |
+| `detail.origin.nfce` | Nota fiscal |
+| `detail.origin.recurrence` | Conta fixa |
+| `detail.origin.installment` | Compra parcelada |
+| `detail.origin.system` | Gerado pelo app |
+| `detail.empty` | Não informado |
+| `detail.notFound` | Lançamento não encontrado. |
+| `detail.back` | Voltar para lançamentos |
+| `history.title` | Histórico |
+| `history.offline` | Disponível com conexão |
+| `history.loading` | Carregando histórico |
+| `history.empty` | Nenhuma alteração registrada. |
+| `history.error` | Não foi possível carregar o histórico. |
+| `history.here` | neste aparelho |
+| `history.elsewhere` | em outro aparelho |
+| `history.changed.amount` | Valor alterado de {de} para {para} |
+| `history.changed.category` | Categoria alterada de {de} para {para} |
+| `history.changed.date` | Data alterada de {de} para {para} |
+| `history.changed.description` | Descrição alterada de {de} para {para} |
+| `history.changed.notes` | Observação alterada |
+| `history.changed.method` | Meio de pagamento alterado de {de} para {para} |
+| `history.changed.account` | Conta alterada de {de} para {para} |
+| `history.changed.card` | Cartão alterado de {de} para {para} |
+| `history.changed.status` | Status alterado de {de} para {para} |
+| `history.changed.kind` | Tipo alterado de {de} para {para} |
+| `history.changed.other` | Outros dados alterados |
+| `history.deleted` | Lançamento excluído |
+| `history.restored` | Lançamento restaurado |
+| `history.conflict` | Versão perdida em conflito |
+| `history.restoredToast` | Versão restaurada. |
+| `sync.remoteEdited.one` | 1 lançamento foi atualizado a partir de outro aparelho. |
+| `sync.remoteEdited.many` | {n} lançamentos foram atualizados a partir de outro aparelho. |
 | `home.recent` / `.seeAll` | Últimos lançamentos / Ver todos |
 | `accounts.methods` | Formas: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |

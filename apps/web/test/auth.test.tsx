@@ -155,6 +155,7 @@ describe('US-01: sessão e banco por usuário', () => {
     expect(await Dexie.exists('oakfinance_u2')).toBe(false);
     expect(fake.auth.signOut).toHaveBeenCalledWith({ scope: 'local' });
     expect(screen.getByTestId('status')).toHaveTextContent('signedOut');
+    expect(box.current?.signedOutByUser).toBe(true);
   });
 
   it('RN-100: "Enviar e sair" sem rede não sai e mantém a fila', async () => {
@@ -191,6 +192,12 @@ describe('guarda de rota (UX §2.2)', () => {
     const out = createMemoryRouter(appRoutes(), { initialEntries: ['/lancamentos'] });
     render(<App router={out} auth={fakeAuth('signedOut')} />);
     await waitFor(() => expect(out.state.location.pathname).toBe('/boas-vindas'));
+  });
+
+  it('US-01: depois do "Sair", a guarda leva ao login (e não às boas-vindas)', async () => {
+    const out = createMemoryRouter(appRoutes(), { initialEntries: ['/ajustes'] });
+    render(<App router={out} auth={fakeAuth('signedOut', { signedOutByUser: true })} />);
+    await waitFor(() => expect(out.state.location.pathname).toBe('/entrar'));
   });
 
   it('com sessão, /entrar vai ao Início (abrir sem rede não mostra login)', async () => {
@@ -337,6 +344,8 @@ describe('G05 e G16 (UX §3 G, US-01)', () => {
       consecutiveFailures: 0,
       showErrorBanner: false,
       lastSyncAt: null,
+      remoteEdits: 0,
+      remoteEditsSeq: 0,
     });
     mount(<SessionExpired />, auth);
     expect(await screen.findByText('Sua sessão expirou.')).toBeInTheDocument();
