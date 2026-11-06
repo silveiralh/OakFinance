@@ -73,9 +73,8 @@
 | SETUP-14 arquivos reais anonimizáveis (canal privado) | antes da S4 | T-085, T-087, T-090 |
 | SETUP-15 licença; SETUP-16 decisões pendentes | antes da T-099 | T-099 |
 
-- Conferido pela API em 05/11: o repositório já é público (SETUP-01), mas as opções do SETUP-02 ainda não foram aplicadas (merge commit e rebase permitidos, auto-merge e exclusão automática de branch desligados). Nenhum item marcado na issue #2 ainda.
-- Branch remota `task/T-015-dominio-recorrencia` foi criada por engano na sessão de 05/11 (sem PR, conteúdo já em `main`): pode ser apagada pelo dono, junto com as `task/*` já mergeadas.
-- Nenhuma tarefa bloqueada. SETUP-02 ainda incompleto (auto-merge e exclusão automática de branches desligados).
+- Conferido pela API em 06/11: SETUP-01, 02 e 04 feitos (só squash, auto-merge e exclusão automática de branch ligados; issue #2 reaberta com 01–04 marcados). SETUP-03 substituído pela D-012 (as sessões herdam o admin do dono; valem as salvaguardas).
+- Nenhuma tarefa bloqueada. Próximo bloco do cliente: SETUP-05 a 09 e 12, necessários para a T-036.
 
 ## 5. Riscos conhecidos
 
@@ -121,3 +120,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-017 | PR #24 | done | Disponível para gastar (RN-47..RN-51), US-30 e US-34 |
 | 05/11/2026 | T-018 | PR #25 | done | reserva: meta sugerida, progresso e ETA (RN-52..RN-56) |
 | 06/11/2026 | T-047 | PR #26 | decisão | D-011: vencimento no dia útil seguinte quando cairia no fechamento (decisão do cliente) |
+| 06/11/2026 | T-007 | PR #27 | decisão | D-012: SETUP-03 substituído por salvaguardas (decisão do cliente) |
