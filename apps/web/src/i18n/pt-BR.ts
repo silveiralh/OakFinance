@@ -421,7 +421,7 @@ export const uiText = {
 
 /**
  * Textos da moldura do app: abas e barra lateral (UX §2.1), landmarks e link de pular (UX §3.0), erro de tela G09
- * (UX §3 G e §6.6), nova versão G07, armazenamento G11/G12, sessão G05/G14/G16 (UX §3 G), estados do ON03 (UX §3 ON03, §6.6), ON02c (UX §3) e iOS antigo (PRD US-06) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
+ * (UX §3 G e §6.6), sync G01/G04/G08/G15/G18 (UX §3 G, §6.6, D-028), nova versão G07, armazenamento G11/G12, sessão G05/G14/G16 (UX §3 G), estados do ON03 (UX §3 ON03, §6.6), ON02c (UX §3) e iOS antigo (PRD US-06) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
  * O `<title>` de cada rota é "{Tela} · OakFinance" (UX §4.11.1).
  */
 export const shellText = {
@@ -448,6 +448,17 @@ export const shellText = {
   privateTitle: 'Este app é de uso privado.',
   privateDescription: 'Esta conta Google não tem acesso.',
   otherAccount: 'Entrar com outra conta',
+  offlineBanner: 'Sem conexão. Você pode continuar lançando; tudo fica salvo no aparelho.',
+  syncFailedOne: '1 lançamento não foi sincronizado. Ele continua salvo no aparelho.',
+  syncFailedMany: '{n} lançamentos não foram sincronizados. Eles continuam salvos no aparelho.',
+  rejectedOne: '1 alteração não sincronizou.',
+  rejectedMany: '{n} alterações não sincronizaram.',
+  seeDetails: 'Ver detalhes',
+  stalePending: 'Abra com internet para guardar suas alterações na nuvem.',
+  recovering: 'Recuperando seus dados…',
+  wipedTitle: 'O sistema liberou espaço e apagou a cópia local.',
+  wipedDescription: 'Seus dados estão na nuvem e serão baixados novamente.',
+  downloadNow: 'Baixar agora',
   sessionExpiredTitle: 'Sua sessão expirou.',
   sessionExpiredDescription: 'Entre novamente para sincronizar. Nenhum lançamento foi perdido.',
   signInGoogle: 'Entrar com Google',

@@ -5,7 +5,7 @@ import { flushTelemetry, track } from '../../lib/telemetry';
 import type { OakDb } from '../db';
 import { deviceId } from './clock';
 import { pendingCount } from './outbox';
-import { pullChanges, purgeLocalTombstones } from './pull';
+import { pullChanges, purgeLocalTombstones, readCursor } from './pull';
 import { pushOutbox } from './push';
 import type { FailureKind, SyncTransport } from './transport';
 
@@ -37,6 +37,10 @@ export interface SyncSnapshot {
   /** G04: falhou 3 vezes seguidas. */
   showErrorBanner: boolean;
   lastSyncAt: string | null;
+  /** G18: `created_at` da alteração pendente mais antiga (`null` sem fila). */
+  oldestPendingAt: string | null;
+  /** G08: pull desde o cursor 0 em andamento ("Recuperando seus dados…"). */
+  recovering: boolean;
   /** G06: quantos lançamentos o último pull trouxe editados em outro aparelho. */
   remoteEdits: number;
   /** Sobe a cada pull com `remoteEdits > 0` (o toast do G06 aparece uma vez por pull). */
@@ -113,6 +117,8 @@ export class SyncEngine {
     consecutiveFailures: 0,
     showErrorBanner: false,
     lastSyncAt: null,
+    oldestPendingAt: null,
+    recovering: false,
     remoteEdits: 0,
     remoteEditsSeq: 0,
   };
@@ -155,7 +161,10 @@ export class SyncEngine {
   private async refreshCounts() {
     const pending = await pendingCount(this.db);
     const rejected = await this.db.outbox.where('state').equals('rejected').count();
-    this.set({ pending, rejected });
+    const oldest = pending
+      ? await this.db.outbox.where('state').anyOf(['queued', 'inflight']).sortBy('seq')
+      : [];
+    this.set({ pending, rejected, oldestPendingAt: oldest[0]?.created_at ?? null });
     return pending;
   }
 
@@ -225,7 +234,15 @@ export class SyncEngine {
   }
 
   private async pullAndClean(device: string) {
-    const pull = await pullChanges(this.db, this.transport, this.now, device);
+    const fromScratch = (await readCursor(this.db)) === 0;
+    if (fromScratch) {
+      this.set({ recovering: true });
+    }
+    const pull = await pullChanges(this.db, this.transport, this.now, device).finally(() => {
+      if (fromScratch) {
+        this.set({ recovering: false });
+      }
+    });
     if (pull.remoteEdits > 0) {
       this.set({
         remoteEdits: pull.remoteEdits,

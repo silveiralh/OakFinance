@@ -344,6 +344,8 @@ describe('G05 e G16 (UX §3 G, US-01)', () => {
       consecutiveFailures: 0,
       showErrorBanner: false,
       lastSyncAt: null,
+      oldestPendingAt: null,
+      recovering: false,
       remoteEdits: 0,
       remoteEditsSeq: 0,
     });

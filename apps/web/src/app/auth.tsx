@@ -14,6 +14,7 @@ import { deleteUserDb, OakDb } from '../data/db';
 import type { SyncEngine } from '../data/sync/engine';
 import { pendingCount } from '../data/sync/outbox';
 import { getEnv } from '../lib/env';
+import { clearLocalData } from '../lib/local-marker';
 
 export type AuthStatus = 'loading' | 'signedOut' | 'signedIn' | 'unconfigured';
 
@@ -204,6 +205,7 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
       setSignedOutByUser(true);
       user.db.close();
       await deleteUserDb(user.userId);
+      clearLocalData(user.userId);
       await client.auth.signOut({ scope: 'local' });
       setUser(null);
       setStatus('signedOut');
