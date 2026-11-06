@@ -106,7 +106,7 @@ flowchart LR
 | T-041 | Mais detalhes, edição e receita variável | T-040 | done |
 | T-042 | Transferência, estorno e rascunho | T-041 | done |
 | T-043 | Lista de lançamentos | T-041 | done |
-| T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | todo |
+| T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | done |
 | T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | todo |
 | T-046 | Ocultar valores | T-043 | todo |
 | T-047 | Cartões e faturas (C01/C02) | T-040 | todo |
@@ -782,7 +782,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-044 — Detalhe, exclusão com desfazer e histórico
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-13, US-14, US-04 | RN-97..RN-99 | T-043 | não |
+| done | S1 | M | US-13, US-14, US-04 | RN-97..RN-99 | T-043 | não |
 
 **Escopo:** T02 para lançamentos avulsos: `<dl>`, Editar, Excluir com toast de 8 s; histórico via `get_row_history` ("Disponível com conexão" offline); Restaurar esta versão; G06. Exclusões de série e de recorrência ficam para T-053 e T-055.
 
