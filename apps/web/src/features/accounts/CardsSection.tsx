@@ -1,10 +1,11 @@
 import { monthLabel, todayIn } from '@oakfinance/domain';
-import { Archive, CreditCard, Plus, Trash2 } from 'lucide-react';
+import { Archive, CreditCard, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { isActive } from '../../data/repositories/accounts';
+import { unarchiveCard } from '../../data/repositories/card-edit';
 import {
   archiveCard,
   createCard,
@@ -16,6 +17,7 @@ import {
 import { type MessageKey, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { AmountInput, Button, EmptyState, GlassCard, Select, Switch, TextField } from '../../ui';
+import { CardEditSheet } from './CardEditSheet';
 
 const NAME_ERROR: Record<'required' | 'tooLong' | 'duplicate', MessageKey> = {
   required: 'accounts.nameRequired',
@@ -52,6 +54,27 @@ export function CardsSection({
     [user],
   );
   const accounts = useLive(user ? () => user.db.accounts.filter(isActive).toArray() : null, [user]);
+  // US-11: excluir só sem uso (lançamentos e recorrências do cartão)
+  const used = useLive(
+    user
+      ? async () => {
+          const ids = new Set<string>();
+          await user.db.transactions.each((r) => {
+            if (r.deleted_at === null && r.card_id) {
+              ids.add(r.card_id);
+            }
+          });
+          await user.db.recurrences.each((r) => {
+            if (r.deleted_at === null && r.card_id) {
+              ids.add(r.card_id);
+            }
+          });
+          return ids;
+        }
+      : null,
+    [user],
+  );
+  const [editing, setEditing] = useState<LocalRow<'cards'> | null>(null);
   const [name, setName] = useState('');
   const [closing, setClosing] = useState('');
   const [due, setDue] = useState('');
@@ -112,6 +135,7 @@ export function CardsSection({
   };
 
   const active = (cards ?? []).filter((row) => row.archived_at === null);
+  const archived = (cards ?? []).filter((row) => row.archived_at !== null);
   const payers = (accounts ?? []).filter(
     (row) => row.type === 'checking' || row.type === 'savings',
   );
@@ -152,25 +176,64 @@ export function CardsSection({
                   <Button
                     variant="ghost"
                     size="sm"
+                    iconStart={Pencil}
+                    onClick={() => setEditing(card)}
+                  >
+                    {t('cards.edit')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     iconStart={Archive}
                     onClick={() => void act(card.id, () => archiveCard(user.db, card.id))}
                   >
                     {t('accounts.archive')}
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    iconStart={Trash2}
-                    onClick={() => void act(card.id, () => removeCard(user.db, card.id))}
-                  >
-                    {t('accounts.delete')}
-                  </Button>
+                  {used && !used.has(card.id) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      iconStart={Trash2}
+                      onClick={() => void act(card.id, () => removeCard(user.db, card.id))}
+                    >
+                      {t('accounts.delete')}
+                    </Button>
+                  )}
                 </div>
               </li>
             ))}
           </ul>
         )}
       </GlassCard>
+      {archived.length > 0 && (
+        <details className="account-archived" data-testid="cards-archived">
+          <summary>{t('cards.archived')}</summary>
+          <ul className="account-list">
+            {archived.map((card) => (
+              <li key={card.id} className="account-row">
+                <p className="account-name">{card.name}</p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  iconStart={RotateCcw}
+                  onClick={() => void act(card.id, () => unarchiveCard(user.db, card.id))}
+                >
+                  {t('accounts.unarchive')}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+      {editing && (
+        <CardEditSheet
+          user={user}
+          card={editing}
+          payers={payers}
+          today={today}
+          onClose={() => setEditing(null)}
+        />
+      )}
       <GlassCard level={2}>
         <form
           className="account-form"

@@ -2213,6 +2213,15 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `fixed.missingAmount` | Informe o valor. |
 | `fixed.missingAccount` | Escolha a conta. |
 | `fixed.noAccount` | Cadastre uma conta para receber a renda. |
+| `cards.edit` | Editar |
+| `cards.editTitle` | Editar cartão |
+| `cards.saveChanges` | Salvar alterações |
+| `cards.moveWarning` | {n} itens podem mudar de fatura |
+| `cards.moveHint` | Só faturas abertas e futuras são recalculadas; itens movidos à mão ficam onde estão. |
+| `cards.moveConfirm` | Confirmar |
+| `cards.archived` | Cartões arquivados |
+| `cards.updated` | Cartão atualizado. |
+| `accounts.archivedBadge` | arquivada |
 
 **Conexões, importação, nota, conferência**
 
