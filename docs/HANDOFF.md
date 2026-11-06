@@ -126,4 +126,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 06/11/2026 | T-047 | PR #26 | decisão | D-011: vencimento no dia útil seguinte quando cairia no fechamento (decisão do cliente) |
 | 06/11/2026 | T-007 | PR #27 | decisão | D-012: SETUP-03 substituído por salvaguardas (decisão do cliente) |
 | 06/11/2026 | T-020 | PR #28 | done | conciliação: US-48, RN-65..RN-68 e RN-72 |
-| 06/11/2026 | T-021 | PR #NN | done | conciliação II: US-50, RN-19, RN-69..RN-71 |
+| 06/11/2026 | T-021 | PR #29 | done | conciliação II: US-50, RN-19, RN-69..RN-71 |
