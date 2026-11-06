@@ -5,9 +5,35 @@ import { expect, login, test } from './fixtures/base';
 test('US-15: a lista abre no mês atual, filtra por chip e a busca sem resultado mostra o vazio', async ({
   page,
 }) => {
+  page.on('pageerror', (error) => console.log(`[T01] pageerror ${error.message}`));
+  page.on('console', (message) => console.log(`[T01] console ${message.type()} ${message.text()}`));
   await login(page, 'e2e-a@example.test');
   await page.goto('/lancamentos');
   await expect(page.getByTestId('screen-T01')).toBeVisible();
+  // Diagnóstico da T01 no WebKit: quadros, tamanho do documento e posição do chip em quadros seguidos.
+  const probe = await page.evaluate(
+    () =>
+      new Promise<string>((resolve) => {
+        const samples: string[] = [];
+        const chip = document.querySelector('.list-chips button');
+        let n = 0;
+        const tick = () => {
+          const r = chip?.getBoundingClientRect();
+          samples.push(
+            `${document.documentElement.scrollWidth}x${document.documentElement.scrollHeight} y${Math.round(window.scrollY)} s${window.visualViewport?.scale} chip${r ? `${Math.round(r.x)},${Math.round(r.y)},${Math.round(r.width)}x${Math.round(r.height)}` : '-'}`,
+          );
+          n += 1;
+          if (n < 6) {
+            requestAnimationFrame(tick);
+          } else {
+            resolve(samples.join(' | '));
+          }
+        };
+        requestAnimationFrame(tick);
+        setTimeout(() => resolve(`sem quadros (${n}): ${samples.join(' | ')}`), 3000);
+      }),
+  );
+  console.log(`[T01] ${test.info().project.name} ${probe}`);
   await expect(page.getByTestId('list-summary')).toContainText('Entradas');
   const expenses = page.getByRole('button', { name: 'Despesas', exact: true });
   await expenses.click();
