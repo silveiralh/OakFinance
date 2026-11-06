@@ -19,8 +19,13 @@ export function SettingsScreen() {
 function SettingsLinks() {
   const navigate = useNavigate();
   return (
-    <Button variant="secondary" onClick={() => void navigate('/ajustes/contas')}>
-      {shellText.screens.S03}
-    </Button>
+    <>
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/contas')}>
+        {shellText.screens.S03}
+      </Button>
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/categorias')}>
+        {shellText.screens.S04}
+      </Button>
+    </>
   );
 }

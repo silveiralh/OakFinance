@@ -386,6 +386,31 @@ body:has(.screen-welcome) .backdrop {
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
+.category-icons-field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.category-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: var(--space-1);
+}
+.category-icon {
+  display: grid;
+  place-items: center;
+  min-width: 48px;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.category-icon[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
 .detail-hero {
   display: grid;
   gap: var(--space-1);

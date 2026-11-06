@@ -2161,6 +2161,31 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `pay.noAccount` | Cadastre uma conta para registrar o pagamento. |
 | `pay.missingAmount` | Informe o valor do pagamento. |
 | `pay.over` | Acima do total: a diferença vira saldo credor na próxima fatura. |
+| `categories.income` | Receitas |
+| `categories.system` | Do sistema |
+| `categories.new` | Nova categoria |
+| `categories.name` | Nome da categoria |
+| `categories.icon` | Ícone |
+| `categories.band` | Faixa |
+| `categories.save` | Salvar |
+| `categories.edit` | Editar |
+| `categories.archive` | Arquivar |
+| `categories.unarchive` | Desarquivar |
+| `categories.delete` | Excluir |
+| `categories.archived` | Categorias arquivadas |
+| `categories.bandWarning` | Isso muda os totais de todos os meses |
+| `categories.bandConfirm` | Trocar faixa |
+| `categories.duplicate` | Você já tem uma categoria com esse nome |
+| `categories.nameRequired` | Informe o nome da categoria. |
+| `categories.nameTooLong` | Use até 40 caracteres. |
+| `categories.deleteTitle` | Excluir {nome}? |
+| `categories.deleteUsage` | {n} itens usam esta categoria. Escolha para onde movê-los. |
+| `categories.deleteTarget` | Mover para |
+| `categories.deleteConfirm` | Mover e excluir |
+| `categories.deleted` | Categoria excluída. |
+| `categories.saved` | Categoria salva. |
+| `categories.locked` | Categoria do sistema: não pode ser editada. |
+| `categories.rules` | Regras |
 
 **Conexões, importação, nota, conferência**
 
