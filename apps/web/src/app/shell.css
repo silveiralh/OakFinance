@@ -352,28 +352,7 @@ body:has(.screen-welcome) .backdrop {
   display: grid;
   gap: var(--space-5);
 }
-@media (min-width: 1024px) {
-  /* duas colunas: cartão e atalhos à esquerda, últimos lançamentos à direita */
-  .home {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    grid-template-areas:
-      "card recent"
-      "actions recent";
-    grid-template-rows: auto 1fr;
-    align-items: start;
-    gap: var(--space-6);
-  }
-  .home-card {
-    grid-area: card;
-    padding: var(--space-8);
-  }
-  .home-actions {
-    grid-area: actions;
-  }
-  .home-recent {
-    grid-area: recent;
-  }
-}
+
 .home-card {
   display: grid;
   gap: var(--space-2);
@@ -509,11 +488,50 @@ body:has(.screen-welcome) .backdrop {
   text-align: center;
 }
 
-@media (min-width: 1280px) {
-  /* S03 no computador: lista e formulário lado a lado (contas em cima, cartões embaixo) */
-  .screen[data-screen="S03"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-    gap: var(--space-6);
+@media (min-width: 1024px) {
+  /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
+  .home {
+    gap: var(--space-8);
+  }
+  .home-card {
+    gap: var(--space-3);
+    padding: var(--space-10) var(--space-12);
+    border-radius: 28px;
+  }
+  .home-card-month {
+    font-size: var(--font-size-heading);
+  }
+  .home-card-label {
+    font-size: var(--font-size-body);
+  }
+  .home-card-value {
+    font-size: clamp(3rem, 4.5vw, 4.5rem);
+  }
+  .home-card-stats {
+    gap: var(--space-12);
+  }
+  .home-card-stats dt {
+    font-size: var(--font-size-label);
+  }
+  .home-card-stats dd {
+    font-size: var(--font-size-title);
+  }
+  .home-actions {
+    gap: var(--space-4);
+  }
+  .home-action {
+    min-height: 120px;
+    gap: var(--space-2);
+    font-size: var(--font-size-body);
+  }
+  .home-action svg {
+    width: 32px;
+    height: 32px;
+  }
+  .home-section-head h2 {
+    font-size: var(--font-size-title);
+  }
+  .home-recent-list {
+    padding: var(--space-3) var(--space-6);
   }
 }

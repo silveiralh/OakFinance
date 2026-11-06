@@ -231,6 +231,14 @@ describe('AppShell (UX §3.0 e §2.1)', () => {
     expect(quickEntryHref('/', '?novo=receita')).toBe('/?novo=despesa');
   });
 
+  it('D-026: no computador o Início é uma coluna que estica, com atalhos maiores', () => {
+    const desktop = shellCss.slice(shellCss.lastIndexOf('@media (min-width: 1024px)'));
+    expect(desktop).toMatch(/\.home-action \{[^}]*min-height: 120px;/);
+    expect(desktop).toMatch(/\.home-card-value \{[^}]*font-size: clamp\(3rem/);
+    expect(shellCss).not.toMatch(/grid-template-areas/);
+    expect(shellCss).not.toMatch(/data-screen="S03"\]/);
+  });
+
   it('CSS: abas fixas no celular e barra lateral de 248 px no lg, só com tokens', () => {
     expect(shellCss).toMatch(
       /@media \(min-width: 1024px\)[\s\S]*\.shell \.shell-tabbar \{\s*display: none;/,
