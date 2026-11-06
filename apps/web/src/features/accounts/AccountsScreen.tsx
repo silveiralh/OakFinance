@@ -17,6 +17,7 @@ import {
 } from '../../data/repositories/accounts';
 import { type MessageKey, t } from '../../i18n/pt-BR';
 import { AmountInput, Button, EmptyState, GlassCard, Select, TextField } from '../../ui';
+import { CardsSection } from './CardsSection';
 
 const TYPE_LABEL: Record<AccountType, MessageKey> = {
   checking: 'accounts.type.checking',
@@ -104,7 +105,7 @@ function AccountRow({
   );
 }
 
-/** S03 — contas (RN-07, US-09): criar, arquivar, desarquivar e excluir (só sem lançamentos). */
+/** S03 — contas (RN-07, US-09) e cartões (US-10): criar, arquivar, desarquivar e excluir (só sem lançamentos). */
 export function AccountsScreen() {
   const { user } = useAuth();
   const accounts = useLive(
@@ -232,6 +233,7 @@ export function AccountsScreen() {
           <ul className="account-list">{archived.map(row)}</ul>
         </details>
       )}
+      <CardsSection />
     </section>
   );
 }

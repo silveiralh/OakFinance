@@ -194,6 +194,23 @@ export const ptBR = {
   'accounts.nameTooLong': 'Use até 40 caracteres.',
   'accounts.hasTransactions':
     'Esta conta tem lançamentos. Arquive para tirá-la do lançamento rápido sem perder o histórico.',
+  'cards.add': 'Adicionar cartão',
+  'cards.name': 'Nome do cartão',
+  'cards.closing': 'Dia de fechamento',
+  'cards.due': 'Dia de vencimento',
+  'cards.limit': 'Limite',
+  'cards.payer': 'Conta que paga',
+  'cards.noPayer': 'Nenhuma conta',
+  'cards.rule': 'Compra no dia do fechamento vai para a próxima fatura',
+  'cards.ruleHint':
+    'Desligado, a compra feita no dia do fechamento entra na fatura que está fechando.',
+  'cards.preview': 'Compras de hoje vão para a fatura de {mês}, que vence em {data}',
+  'cards.day31': 'Em meses mais curtos, o fechamento será no último dia do mês.',
+  'cards.invalidDay': 'Escolha um dia entre 1 e 31.',
+  'cards.sameDay': 'Fechamento e vencimento no mesmo dia. Confira na sua fatura.',
+  'cards.closesDue': 'Fecha dia {f} · vence dia {v}',
+  'cards.empty': 'Nenhum cartão cadastrado',
+  'cards.duplicate': 'Você já tem um cartão com esse nome',
   'conn.connect': 'Conectar banco',
   'conn.explain':
     'A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos.',

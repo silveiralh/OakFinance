@@ -32,7 +32,7 @@ describe('S03 contas (US-09)', () => {
     mount();
     expect(await screen.findByText('Nenhuma conta cadastrada')).toBeInTheDocument();
     await add('BB');
-    expect(await screen.findByText('BB')).toBeInTheDocument();
+    expect(await screen.findByText('BB', { selector: '.account-name' })).toBeInTheDocument();
     expect(screen.getByText('Formas: Pix, Débito, Boleto, TED/DOC, Outro')).toBeInTheDocument();
     await add('bb');
     expect(await screen.findByText('Você já tem uma conta com esse nome')).toBeInTheDocument();
@@ -48,7 +48,9 @@ describe('S03 contas (US-09)', () => {
   it('RN-07: com lançamentos, excluir orienta a arquivar; arquivar e desarquivar', async () => {
     const auth = mount();
     await add('Nubank');
-    const row = (await screen.findByText('Nubank')).closest('li') as HTMLElement;
+    const row = (await screen.findByText('Nubank', { selector: '.account-name' })).closest(
+      'li',
+    ) as HTMLElement;
     const id = row.dataset.testid?.replace('account-', '') ?? '';
     await auth.user?.db.transactions.put(tx('t1', { account_id: id }));
     fireEvent.click(within(row).getByRole('button', { name: 'Excluir' }));
