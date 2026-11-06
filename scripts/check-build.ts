@@ -1,14 +1,14 @@
 // Verificações do build de produção (tech §8.6, job `build`):
 // - nenhum segredo nem o formulário de login de E2E em dist/;
 // - orçamento: JS inicial ≤ 250 KB gzip, precache ≤ 3 MB, .wasm fora do bundle inicial;
-// - manifest, sw.js e _headers quando o PWA existir (REQUIRE_PWA, ligado na T-030).
+// - manifest, sw.js e _headers quando o PWA existir (REQUIRE_PWA, ligado desde a T-030).
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-/** Liga na T-030 (vite-plugin-pwa): exige manifest, sw.js e _headers com CSP. */
-export const REQUIRE_PWA = false;
+/** Ligado na T-030 (vite-plugin-pwa): exige manifest, sw.js e _headers com CSP. */
+export const REQUIRE_PWA = true;
 
 export const FORBIDDEN_IN_DIST = [
   'sb_secret_',
@@ -104,7 +104,7 @@ export function precacheBytes(dist: string): number {
   }
   const text = readFileSync(sw, 'utf8');
   let total = 0;
-  for (const match of text.matchAll(/url:\s*"([^"]+)"/g)) {
+  for (const match of text.matchAll(/"?url"?:\s*"([^"]+)"/g)) {
     const file = join(dist, (match[1] ?? '').replace(/^\//, ''));
     if (existsSync(file)) {
       total += statSync(file).size;

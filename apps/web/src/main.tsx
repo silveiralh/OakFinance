@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
+import { registerServiceWorker } from './lib/sw-update';
 import './styles/base.css';
 
 const root = document.getElementById('root');
@@ -16,6 +17,8 @@ async function boot(container: HTMLElement) {
     page = <Styleguide />;
   }
   createRoot(container).render(<StrictMode>{page}</StrictMode>);
+  // Depois do primeiro render: o SW não disputa a rede com o carregamento do shell
+  void registerServiceWorker();
 }
 
 void boot(root);

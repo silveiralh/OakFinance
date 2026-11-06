@@ -21,6 +21,7 @@ import {
   TopBar,
 } from '../ui';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
+import { UpdatePrompt } from './UpdatePrompt';
 import { useCurrentScreen, useDocumentTitle } from './useScreen';
 import './shell.css';
 
@@ -84,6 +85,7 @@ export function AppShell() {
   const title = screen ? shellText.screens[screen] : shellText.appName;
   return (
     <ToastProvider>
+      <UpdatePrompt />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}
