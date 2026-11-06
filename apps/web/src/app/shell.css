@@ -318,6 +318,74 @@ body:has(.screen-welcome) .backdrop {
   margin: 0;
   font-weight: var(--font-weight-semibold);
 }
+.cards-carousel {
+  display: flex;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--space-1);
+}
+.cards-slide {
+  flex: 0 0 min(320px, 85%);
+  scroll-snap-align: start;
+}
+.cards-slide[data-selected="true"] .invoice-card {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+.cards-nav {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.cards-current {
+  display: grid;
+  gap: var(--space-2);
+}
+.cards-line {
+  margin: 0;
+}
+.cards-invoices {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.cards-invoice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-md, 12px);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.cards-invoice-month {
+  flex: 1 1 auto;
+}
+.cards-invoice-total {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.invoice-head {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: start;
+}
+.invoice-head-total {
+  margin: 0;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
 .detail-hero {
   display: grid;
   gap: var(--space-1);
