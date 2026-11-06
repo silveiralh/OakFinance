@@ -6,15 +6,20 @@ export type DomainErrorCode =
   | 'UNSAFE_INTEGER'
   | 'INSTALLMENTS_LOCKED'
   | 'OFX_INVALID'
+  | 'IMPORT_TOO_LARGE'
   | 'NFCE_QR_INVALID'
   | 'NFCE_KEY_DV';
 
 export class DomainError extends Error {
   readonly code: DomainErrorCode;
 
-  constructor(code: DomainErrorCode, message?: string) {
+  /** Linha do arquivo onde a entrada falhou (OFX_INVALID), quando se aplica. */
+  readonly line: number | null;
+
+  constructor(code: DomainErrorCode, message?: string, details: { line?: number } = {}) {
     super(message ?? code);
     this.name = 'DomainError';
     this.code = code;
+    this.line = details.line ?? null;
   }
 }
