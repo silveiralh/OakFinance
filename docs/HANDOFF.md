@@ -98,6 +98,7 @@
 
 - Conferido pela API em 06/11: SETUP-01, 02 e 04 feitos (só squash, auto-merge e exclusão automática de branch ligados; issue #2 reaberta com 01–04 marcados). SETUP-03 substituído pela D-012 (as sessões herdam o admin do dono; valem as salvaguardas).
 - Nenhuma tarefa bloqueada. Próximo bloco do cliente: SETUP-05 a 09 e 12, necessários para a T-036.
+- **Issue #38 `regressão: deploy` (06/11):** não é bug de código. As variables do Supabase já existem (o deploy parou de pular), mas o job `staging` falhou com `SUPABASE_ACCESS_TOKEN ausente`. Falta cadastrar no Environment os secrets da tech §9.8 (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_*_DB_PASSWORD` etc., SETUP-09) e re-executar o `deploy`. Rótulo `needs-owner`; as sessões não mexem nela até lá.
 
 ## 5. Riscos conhecidos
 
