@@ -60,4 +60,4 @@ export {
 } from './TextField';
 export { type ToastInput, ToastProvider, useToast } from './Toast';
 export { type RowTx, rowLabel, TransactionRow, type TransactionRowProps } from './TransactionRow';
-export type { BaseProps, PhosphorIcon } from './types';
+export type { AppIcon, BaseProps } from './types';

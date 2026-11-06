@@ -1,11 +1,11 @@
-import { X } from '@phosphor-icons/react';
+import { X } from 'lucide-react';
 import { uiText } from '../i18n/pt-BR';
 import { Button } from './Button';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface BannerProps extends BaseProps {
   tone?: 'info' | 'warning';
-  icon: PhosphorIcon;
+  icon: AppIcon;
   message: string;
   action?: { label: string; onPress: () => void };
   onDismiss?: () => void;

@@ -1,5 +1,5 @@
 import { todayIn } from '@oakfinance/domain';
-import { Archive, ArrowCounterClockwise, Bank, Plus, Trash } from '@phosphor-icons/react';
+import { Archive, Landmark, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -87,7 +87,7 @@ function AccountRow({
       </div>
       <div className="account-actions">
         {archived ? (
-          <Button variant="ghost" size="sm" iconStart={ArrowCounterClockwise} onClick={onUnarchive}>
+          <Button variant="ghost" size="sm" iconStart={RotateCcw} onClick={onUnarchive}>
             {t('accounts.unarchive')}
           </Button>
         ) : (
@@ -95,7 +95,7 @@ function AccountRow({
             <Button variant="ghost" size="sm" iconStart={Archive} onClick={onArchive}>
               {t('accounts.archive')}
             </Button>
-            <Button variant="ghost" size="sm" iconStart={Trash} onClick={onDelete}>
+            <Button variant="ghost" size="sm" iconStart={Trash2} onClick={onDelete}>
               {t('accounts.delete')}
             </Button>
           </>
@@ -189,7 +189,7 @@ export function AccountsScreen() {
       <GlassCard level={2}>
         {active.length === 0 ? (
           <EmptyState
-            icon={Bank}
+            icon={Landmark}
             title={t('accounts.empty')}
             description={t('onb.accounts.title')}
           />

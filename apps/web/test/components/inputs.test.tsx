@@ -1,5 +1,5 @@
-import { MagnifyingGlass, TrendDown, TrendUp } from '@phosphor-icons/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { Search, TrendingDown, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { SegmentedControl, Select, Switch, TextField } from '../../src/ui';
@@ -12,7 +12,7 @@ function ControlledField(props: { error?: string; hint?: string }) {
       value={value}
       onChange={setValue}
       clearable
-      prefixIcon={MagnifyingGlass}
+      prefixIcon={Search}
       {...props}
     />
   );
@@ -38,8 +38,8 @@ function ControlledSegmented() {
       value={v}
       onChange={setV}
       options={[
-        { value: 'expense', label: 'Despesa', icon: TrendDown },
-        { value: 'income', label: 'Receita', icon: TrendUp },
+        { value: 'expense', label: 'Despesa', icon: TrendingDown },
+        { value: 'income', label: 'Receita', icon: TrendingUp },
       ]}
     />
   );

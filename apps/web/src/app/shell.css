@@ -32,7 +32,7 @@
 }
 .shell-main {
   /* zona segura: nada fica escondido atrás das abas (UX §4.8) */
-  padding: var(--space-4) var(--gutter) calc(64px + env(safe-area-inset-bottom) + var(--space-6));
+  padding: var(--space-4) var(--gutter) calc(64px + env(safe-area-inset-bottom) + var(--space-12));
   outline: none;
 }
 .shell-main[aria-busy="true"] {
@@ -43,7 +43,7 @@
   position: fixed;
 }
 .shell .shell-tabbar .tab-center {
-  margin-top: -12px;
+  margin: 0 var(--space-1);
 }
 
 .shell-sidebar {
@@ -52,6 +52,9 @@
 
 @media (min-width: 1024px) {
   .shell .shell-tabbar {
+    display: none;
+  }
+  .shell .shell-tabbar.tabbar {
     display: none;
   }
   .shell .shell-sidebar {
@@ -89,10 +92,9 @@
     box-shadow: var(--focus-ring);
   }
   .shell-side-link[aria-current="page"] {
-    /* forma além da cor: pílula de vidro e texto 600 */
-    background: var(--glass-1-bg);
-    box-shadow: var(--glass-highlight);
-    color: var(--text-primary);
+    /* forma além da cor: pílula lima e texto em negrito */
+    background: var(--accent);
+    color: var(--on-accent);
     font-weight: var(--font-weight-semibold);
   }
   .shell-column {
@@ -118,9 +120,56 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+}
+/* ON01 na referência D-023: tela lima inteira, título grande e ação em pílula preta */
+.onboarding:has(.screen-welcome) {
+  align-content: stretch;
+}
+body:has(.screen-welcome) {
+  background: var(--accent);
+}
+body:has(.screen-welcome) .backdrop {
+  display: none;
+}
+.screen-welcome {
+  align-content: end;
+  gap: var(--space-6);
+  color: var(--on-accent);
+  --text-primary: var(--on-accent);
+  --text-link: var(--on-accent);
+  --brand-mono: var(--on-accent);
 }
 .screen-welcome .screen-title {
+  align-self: start;
   font-size: var(--font-size-display);
+}
+.welcome-lead {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 8vw, 2.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+.welcome-feature-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-dark);
+  color: var(--on-dark);
+}
+.welcome-actions .btn[data-variant="ghost"] {
+  padding: 0 var(--space-2);
+}
+.welcome-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-6);
 }
 
 .screen-error {
@@ -172,6 +221,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  font-weight: var(--font-weight-medium);
 }
 
 .account-list {
@@ -275,12 +325,158 @@
   color: var(--text-secondary);
 }
 .list-chip {
-  border: 1px solid var(--border-strong);
-  background: transparent;
+  flex: none;
+  border: 2px solid transparent;
+  background: var(--surface-solid-3);
+  box-shadow: var(--shadow-1);
+}
+.list-chip[data-selected="true"] {
+  border-color: var(--ink-950);
 }
 .list-chips {
   min-width: 0;
-  margin: 0;
+  margin: 0 calc(-1 * var(--gutter));
   padding: 0;
   border: 0;
+}
+.list-chips .quick-chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 2px var(--gutter) var(--space-2);
+  scrollbar-width: none;
+}
+
+/* ---------- Início (D-023) ---------- */
+.home {
+  display: grid;
+  gap: var(--space-5);
+  max-width: 760px;
+}
+.home-card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+.home-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.home-card-month {
+  margin: 0;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-bold);
+  text-transform: capitalize;
+}
+.home-card-new {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-4) 0 6px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: inherit;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+}
+.home-card-new-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-dark);
+  color: var(--on-dark);
+}
+.home-card-label {
+  margin: var(--space-2) 0 0;
+  color: var(--on-dark-muted);
+  font-size: var(--font-size-label);
+}
+.home-card-value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+.home-card-stats {
+  display: flex;
+  gap: var(--space-6);
+  margin: var(--space-2) 0 0;
+}
+.home-card-stats dt {
+  color: var(--on-dark-muted);
+  font-size: var(--font-size-caption);
+}
+.home-card-stats dd {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+}
+.home-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.home-action {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-1);
+  min-height: 72px;
+  padding: var(--space-2) var(--space-1);
+  border-radius: 30px;
+  background: var(--surface-solid-3);
+  color: var(--text-primary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  text-decoration: none;
+  box-shadow: var(--shadow-1);
+}
+.home-action[data-accent="true"] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.home-action:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+.home-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.home-section-head h2 {
+  margin: 0;
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+.home-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--touch-min);
+  color: var(--text-primary);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+.home-recent-list {
+  padding: var(--space-2) var(--space-4);
+}
+
+.list-rows {
+  padding: var(--space-1) var(--space-4) var(--space-2);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid-2);
+  box-shadow: var(--shadow-2);
+}
+.list-rows .list-day:first-of-type {
+  margin-top: var(--space-2);
 }

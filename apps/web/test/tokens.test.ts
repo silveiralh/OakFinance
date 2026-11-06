@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { composite, contrastRatio, parseColor, type Rgba } from '../src/lib/contrast';
 
-// Contraste da UX §4.3 calculado a partir de tokens.css (não de valores copiados no teste).
+// Contraste da UX §4.3 calculado a partir de tokens.css (não de valores copiados no teste). Visual D-023.
 const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(join(here, '../src/styles/tokens.css'), 'utf8').replace(
   /\/\*[\s\S]*?\*\//g,
@@ -46,17 +46,11 @@ function stops(map: Map<string, string>, name: string): Rgba[] {
 
 const WHITE = parseColor('#ffffff');
 
-// Pior pixel do fundo: claro = topo do gradiente; escuro = base #0E3A57 + realce aqua + 6% de brilho.
+// Visual menta (D-023): fundo liso, cards sólidos. O pior fundo claro é a própria menta; no escuro, o grafite.
 const lightBackdrop = stops(light, 'bg-backdrop')[0] as Rgba;
-const darkBackdrop = (() => {
-  const gradient = value(dark, 'bg-backdrop');
-  const glow = /rgba\(47, 182, 238, ([\d.]+)\)/.exec(gradient);
-  const base = stops(dark, 'bg-backdrop').at(-1) as Rgba;
-  const withGlow = composite({ ...parseColor('rgb(47, 182, 238)'), a: Number(glow?.[1]) }, base);
-  return composite({ ...WHITE, a: 0.06 }, withGlow);
-})();
+const darkBackdrop = stops(dark, 'bg-backdrop')[0] as Rgba;
 
-const glass = (map: Map<string, string>, level: 1 | 2 | 3, backdrop: Rgba) =>
+const card = (map: Map<string, string>, level: 1 | 2 | 3, backdrop: Rgba) =>
   composite(color(map, `glass-${level}-bg`), backdrop);
 
 const TEXT_TOKENS = [
@@ -69,17 +63,29 @@ const TEXT_TOKENS = [
   'status-danger-fg',
 ] as const;
 
+/** Elementos que não são texto (WCAG 1.4.11) e precisam de 3:1 sobre o card. */
+const NON_TEXT = [
+  'band-needs',
+  'band-wants',
+  'band-savings',
+  'status-warning-fill',
+  'status-danger-fill',
+  'border-strong',
+  'focus-ring-color',
+] as const;
+
 describe('US-62: contraste do tema claro (UX §4.3)', () => {
   const surfaces: Array<[string, Rgba]> = [
-    ['vidro 1', glass(light, 1, lightBackdrop)],
-    ['vidro 2', glass(light, 2, lightBackdrop)],
-    ['vidro 3', glass(light, 3, lightBackdrop)],
-    ['sólido', color(light, 'surface-solid-2')],
+    ['card 1', card(light, 1, lightBackdrop)],
+    ['card 2', card(light, 2, lightBackdrop)],
+    ['card 3', card(light, 3, lightBackdrop)],
+    ['fundo menta', lightBackdrop],
     ['branco', WHITE],
   ];
 
-  it('o pior pixel do fundo claro é #4FB6EC', () => {
-    expect(lightBackdrop).toEqual(parseColor('#4FB6EC'));
+  it('o fundo claro é a menta #EEFDE0, liso', () => {
+    expect(lightBackdrop).toEqual(parseColor('#EEFDE0'));
+    expect(stops(light, 'bg-backdrop')).toEqual([lightBackdrop, lightBackdrop]);
   });
 
   for (const token of [...TEXT_TOKENS, 'violet-700']) {
@@ -91,16 +97,16 @@ describe('US-62: contraste do tema claro (UX §4.3)', () => {
   }
 
   it('os números batem com a tabela da §4.3 (método conferido)', () => {
-    const g1 = surfaces[0]?.[1] as Rgba;
-    expect(contrastRatio(color(light, 'text-primary'), g1)).toBeCloseTo(10.36, 1);
-    expect(contrastRatio(color(light, 'text-tertiary'), g1)).toBeCloseTo(4.67, 1);
-    expect(contrastRatio(color(light, 'text-primary'), lightBackdrop)).toBeCloseTo(6.83, 1);
-    expect(contrastRatio(color(light, 'text-primary'), WHITE)).toBeCloseTo(15.54, 1);
+    expect(contrastRatio(color(light, 'text-primary'), WHITE)).toBeCloseTo(19.51, 1);
+    expect(contrastRatio(color(light, 'text-primary'), lightBackdrop)).toBeCloseTo(18.36, 1);
+    expect(contrastRatio(color(light, 'text-tertiary'), WHITE)).toBeCloseTo(7.61, 1);
+    expect(contrastRatio(color(light, 'on-accent'), color(light, 'accent'))).toBeCloseTo(13.47, 1);
   });
 
-  it('direto no fundo, só --text-primary passa', () => {
-    expect(contrastRatio(color(light, 'text-primary'), lightBackdrop)).toBeGreaterThanOrEqual(4.5);
-    expect(contrastRatio(color(light, 'text-secondary'), lightBackdrop)).toBeLessThan(4.5);
+  it('direto no fundo menta, todo o texto passa (não há vidro sobre gradiente)', () => {
+    for (const token of TEXT_TOKENS) {
+      expect(contrastRatio(color(light, token), lightBackdrop), token).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it('pares de componente ≥ 4,5:1', () => {
@@ -118,33 +124,32 @@ describe('US-62: contraste do tema claro (UX §4.3)', () => {
         contrastRatio(color(light, `status-${status}-fg`), color(light, `status-${status}-bg`)),
       ).toBeGreaterThanOrEqual(4.5);
     }
+    expect(contrastRatio(color(light, 'on-accent'), color(light, 'accent'))).toBeGreaterThanOrEqual(
+      4.5,
+    );
     expect(
-      contrastRatio(color(light, 'text-primary'), color(light, 'status-info-bg')),
+      contrastRatio(color(light, 'on-dark'), color(light, 'surface-dark')),
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      contrastRatio(color(light, 'on-dark-muted'), color(light, 'surface-dark')),
     ).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('não texto sobre vidro 2 no pior caso ≥ 3:1 (WCAG 1.4.11)', () => {
-    const g2 = surfaces[1]?.[1] as Rgba;
-    for (const token of [
-      'band-needs',
-      'band-wants',
-      'band-savings',
-      'status-warning-fill',
-      'status-danger-fill',
-      'border-strong',
-      'aqua-650',
-      'focus-ring-color',
-    ]) {
-      expect(contrastRatio(color(light, token), g2), token).toBeGreaterThanOrEqual(3);
+  it('não texto sobre o card no pior caso ≥ 3:1 (WCAG 1.4.11)', () => {
+    const c2 = surfaces[1]?.[1] as Rgba;
+    for (const token of NON_TEXT) {
+      expect(contrastRatio(color(light, token), c2), token).toBeGreaterThanOrEqual(3);
     }
+    // a lima é preenchimento de seleção: separa do card pelo contorno preto (2 px), não pela cor
+    expect(contrastRatio(color(light, 'ink-950'), c2)).toBeGreaterThanOrEqual(3);
   });
 });
 
-describe('US-62: contraste do Aero noturno (UX §4.3)', () => {
+describe('US-62: contraste do tema escuro (UX §4.3)', () => {
   const surfaces: Array<[string, Rgba]> = [
-    ['vidro 1', glass(dark, 1, darkBackdrop)],
-    ['vidro 2', glass(dark, 2, darkBackdrop)],
-    ['vidro 3', glass(dark, 3, darkBackdrop)],
+    ['card 1', card(dark, 1, darkBackdrop)],
+    ['card 2', card(dark, 2, darkBackdrop)],
+    ['card 3', card(dark, 3, darkBackdrop)],
     ['sólido', color(dark, 'surface-solid-2')],
     ['fundo base', color(dark, 'bg-base')],
   ];
@@ -172,18 +177,9 @@ describe('US-62: contraste do Aero noturno (UX §4.3)', () => {
         contrastRatio(color(dark, `status-${status}-fg`), color(dark, `status-${status}-bg`)),
       ).toBeGreaterThanOrEqual(4.5);
     }
-    const g2 = surfaces[1]?.[1] as Rgba;
-    for (const token of [
-      'band-needs',
-      'band-wants',
-      'band-savings',
-      'status-warning-fill',
-      'status-danger-fill',
-      'border-strong',
-      'aqua-500',
-      'focus-ring-color',
-    ]) {
-      expect(contrastRatio(color(dark, token), g2), token).toBeGreaterThanOrEqual(3);
+    const c3 = surfaces[2]?.[1] as Rgba;
+    for (const token of [...NON_TEXT, 'accent']) {
+      expect(contrastRatio(color(dark, token), c3), token).toBeGreaterThanOrEqual(3);
     }
   });
 });
@@ -199,7 +195,8 @@ describe('tokens.css', () => {
     expect(css).toContain(':root[data-perf="low"]');
     expect(css).toContain(':root[data-motion="reduced"]');
     expect(css).toContain('prefers-reduced-motion: reduce');
-    expect(value(light, 'glass-2-bg')).toBe('rgba(255, 255, 255, 0.72)');
+    expect(value(light, 'glass-2-bg')).toBe('#ffffff');
+    expect(value(light, 'glass-2-blur')).toBe('0px');
   });
 
   it('parseColor aceita #RGB, rgb() e recusa o resto', () => {

@@ -1,5 +1,5 @@
 import { formatBRL, MAX_TX_CENTS, parseBRL, parseSignedCents } from '@oakfinance/domain';
-import { WarningCircle } from '@phosphor-icons/react';
+import { CircleAlert } from 'lucide-react';
 import { type ClipboardEvent, type KeyboardEvent, useId } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { NumericKeypad } from './NumericKeypad';
@@ -125,7 +125,7 @@ export function AmountInput({
       </span>
       {error && (
         <p id={`${id}-error`} className="field-error">
-          <WarningCircle size={16} aria-hidden="true" />
+          <CircleAlert size={16} aria-hidden="true" />
           {error}
         </p>
       )}

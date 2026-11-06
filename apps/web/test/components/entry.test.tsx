@@ -1,5 +1,5 @@
-import { ForkKnife, Pill, ShoppingCart, Ticket } from '@phosphor-icons/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { Pill, ShoppingCart, Ticket, Utensils } from 'lucide-react';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -166,7 +166,7 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
 const CATS: ChipCategory[] = [
   { id: 'mercado', name: 'Mercado', icon: ShoppingCart, band: 'needs' },
   { id: 'farmacia', name: 'Farmácia', icon: Pill, band: 'needs' },
-  { id: 'restaurantes', name: 'Restaurantes e delivery', icon: ForkKnife, band: 'wants' },
+  { id: 'restaurantes', name: 'Restaurantes e delivery', icon: Utensils, band: 'wants' },
   { id: 'lazer', name: 'Lazer', icon: Ticket, band: 'wants' },
   { id: 'salario', name: 'Salário', icon: Ticket, band: 'income' },
 ];

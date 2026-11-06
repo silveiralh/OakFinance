@@ -60,8 +60,8 @@ beforeEach(() => {
     root.removeAttribute(a);
   }
   document.head.innerHTML =
-    '<meta name="theme-color" content="#4FB6EC" media="(prefers-color-scheme: light)">' +
-    '<meta name="theme-color" content="#061A2E" media="(prefers-color-scheme: dark)">';
+    '<meta name="theme-color" content="#EEFDE0" media="(prefers-color-scheme: light)">' +
+    '<meta name="theme-color" content="#0B0D0A" media="(prefers-color-scheme: dark)">';
   localStorage.clear();
   listeners.length = 0;
   delete window.oakEnv;
@@ -83,7 +83,7 @@ describe('public/env.js (UX §4.1, §4.10)', () => {
       'data-values': 'shown',
     });
     const metas = [...document.querySelectorAll('meta[name="theme-color"]')];
-    expect(metas.map((m) => m.getAttribute('content'))).toEqual(['#4FB6EC', '#4FB6EC']);
+    expect(metas.map((m) => m.getAttribute('content'))).toEqual(['#EEFDE0', '#EEFDE0']);
   });
 
   it('US-62: sistema escuro, movimento e transparência reduzidos, aparelho modesto', () => {
@@ -96,7 +96,7 @@ describe('public/env.js (UX §4.1, §4.10)', () => {
       'data-perf': 'low',
     });
     expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe(
-      '#061A2E',
+      '#0B0D0A',
     );
   });
 

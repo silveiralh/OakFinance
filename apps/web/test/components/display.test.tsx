@@ -1,5 +1,5 @@
-import { Bank, CheckCircle, ListBullets, Warning } from '@phosphor-icons/react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { CircleCheck, Landmark, List, TriangleAlert } from 'lucide-react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   AppBackdrop,
@@ -125,7 +125,7 @@ describe('GlassCard (UX §5.4) e AppBackdrop (UX §5.5)', () => {
 
 describe('Badge, Skeleton, EmptyState e Banner', () => {
   it('Badge sempre com ícone e texto (UX §5.34)', () => {
-    render(<Badge tone="danger" icon={Warning} label="Venceu ontem" data-testid="b" />);
+    render(<Badge tone="danger" icon={TriangleAlert} label="Venceu ontem" data-testid="b" />);
     const badge = screen.getByTestId('b');
     expect(badge).toHaveTextContent('Venceu ontem');
     expect(badge).toHaveAttribute('data-tone', 'danger');
@@ -147,7 +147,7 @@ describe('Badge, Skeleton, EmptyState e Banner', () => {
     const secondary = vi.fn();
     render(
       <EmptyState
-        icon={Bank}
+        icon={Landmark}
         title="Nenhum banco conectado"
         description="Conecte o BB ou o Nubank para receber lançamentos automaticamente."
         primaryAction={{ label: 'Conectar banco', onPress: primary }}
@@ -164,9 +164,7 @@ describe('Badge, Skeleton, EmptyState e Banner', () => {
   });
 
   it('EmptyState de erro é alerta', () => {
-    render(
-      <EmptyState variant="error" icon={ListBullets} title="Erro" description="Tente de novo." />,
-    );
+    render(<EmptyState variant="error" icon={List} title="Erro" description="Tente de novo." />);
     expect(screen.getByRole('alert')).toHaveTextContent('Erro');
   });
 
@@ -174,7 +172,7 @@ describe('Badge, Skeleton, EmptyState e Banner', () => {
     const onDismiss = vi.fn();
     const onPress = vi.fn();
     const { rerender } = render(
-      <Banner icon={CheckCircle} message="Tudo certo." onDismiss={onDismiss} />,
+      <Banner icon={CircleCheck} message="Tudo certo." onDismiss={onDismiss} />,
     );
     expect(screen.getByRole('status')).toHaveTextContent('Tudo certo.');
     fireEvent.click(screen.getByRole('button', { name: 'Fechar' }));
@@ -182,7 +180,7 @@ describe('Badge, Skeleton, EmptyState e Banner', () => {
     rerender(
       <Banner
         tone="warning"
-        icon={Warning}
+        icon={TriangleAlert}
         message="A conexão expira em 3 dias."
         action={{ label: 'Renovar', onPress }}
       />,
@@ -190,7 +188,7 @@ describe('Badge, Skeleton, EmptyState e Banner', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('A conexão expira em 3 dias.');
     fireEvent.click(screen.getByRole('button', { name: 'Renovar' }));
     expect(onPress).toHaveBeenCalled();
-    rerender(<Banner tone="warning" icon={Warning} message="Sem ação." />);
+    rerender(<Banner tone="warning" icon={TriangleAlert} message="Sem ação." />);
     expect(screen.getByRole('status')).toHaveTextContent('Sem ação.');
   });
 });

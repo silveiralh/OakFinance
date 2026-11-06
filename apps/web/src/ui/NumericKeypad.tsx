@@ -1,4 +1,4 @@
-import { Backspace } from '@phosphor-icons/react';
+import { Delete } from 'lucide-react';
 import { useRef } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { type BaseProps, cx } from './types';
@@ -69,7 +69,7 @@ export function NumericKeypad({
           onBackspace();
         }}
       >
-        <Backspace size={24} aria-hidden="true" />
+        <Delete size={24} aria-hidden="true" />
       </button>
     </fieldset>
   );

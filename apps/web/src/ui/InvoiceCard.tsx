@@ -1,18 +1,10 @@
 import { formatBRL, HIDDEN_AMOUNT, type InvoiceStatus } from '@oakfinance/domain';
-import {
-  CalendarBlank,
-  CheckCircle,
-  CircleHalf,
-  Clock,
-  Lock,
-  LockOpen,
-  WarningCircle,
-} from '@phosphor-icons/react';
+import { Calendar, CircleAlert, CircleCheck, Clock, Contrast, Lock, LockOpen } from 'lucide-react';
 import { t, uiText } from '../i18n/pt-BR';
 import { useEnvironment } from '../lib/useEnvironment';
 import { Badge } from './Badge';
 import { ProgressBar } from './ProgressBar';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface InvoiceCardData {
   card: {
@@ -45,13 +37,13 @@ export function invoiceBadge(
   status: InvoiceStatus,
   daysToDue: number | undefined,
 ): {
-  icon: PhosphorIcon;
+  icon: AppIcon;
   label: string;
   tone: 'neutral' | 'info' | 'success' | 'warning' | 'danger';
 } {
   if (status === 'overdue') {
     return {
-      icon: WarningCircle,
+      icon: CircleAlert,
       label: t('card.status.overdue', { quando: '' }).trim(),
       tone: 'danger',
     };
@@ -74,11 +66,11 @@ export function invoiceBadge(
     case 'closed':
       return { icon: Lock, label: t('card.status.closed'), tone: 'neutral' };
     case 'partial':
-      return { icon: CircleHalf, label: uiText.invoicePartial, tone: 'warning' };
+      return { icon: Contrast, label: uiText.invoicePartial, tone: 'warning' };
     case 'paid':
-      return { icon: CheckCircle, label: t('card.status.paid'), tone: 'success' };
+      return { icon: CircleCheck, label: t('card.status.paid'), tone: 'success' };
     default:
-      return { icon: CalendarBlank, label: uiText.invoiceFuture, tone: 'neutral' };
+      return { icon: Calendar, label: uiText.invoiceFuture, tone: 'neutral' };
   }
 }
 

@@ -1,5 +1,5 @@
 import { formatBRL, HIDDEN_AMOUNT } from '@oakfinance/domain';
-import { Warning } from '@phosphor-icons/react';
+import { TriangleAlert } from 'lucide-react';
 import { useId } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { useEnvironment } from '../lib/useEnvironment';
@@ -133,7 +133,9 @@ export function BudgetRing({
               return (
                 <tr key={b.key} data-band={b.key}>
                   <th scope="row">
-                    {pct >= 80 && b.key !== 'savings' && <Warning size={16} aria-hidden="true" />}
+                    {pct >= 80 && b.key !== 'savings' && (
+                      <TriangleAlert size={16} aria-hidden="true" />
+                    )}
                     {NAME[b.key]}
                   </th>
                   <td>{`${pct}%`}</td>

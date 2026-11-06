@@ -1,5 +1,5 @@
 // Rota /__styleguide: só existe no build E2E (VITE_E2E=1). Base do snapshot visual dos tokens (T-028).
-import { Bell, House, ListBullets, ShoppingCart, Tag, Vault } from '@phosphor-icons/react';
+import { Bell, House, List, PiggyBank, ShoppingCart, Tag } from 'lucide-react';
 import {
   AppBackdrop,
   BrandLogo,
@@ -129,10 +129,10 @@ export function Styleguide() {
         center={<FAB onPress={() => {}} />}
         items={[
           { key: 'home', label: 'Início', icon: House, href: '/' },
-          { key: 'list', label: 'Lançamentos', icon: ListBullets, href: '/lancamentos' },
+          { key: 'list', label: 'Lançamentos', icon: List, href: '/lancamentos' },
           { key: 'plan', label: 'Planejar', icon: Tag, href: '/planejar' },
           { key: 'notices', label: 'Avisos', icon: Bell, href: '/avisos', badge: 2 },
-          { key: 'reserve', label: 'Reserva', icon: Vault, href: '/planejar/reserva' },
+          { key: 'reserve', label: 'Reserva', icon: PiggyBank, href: '/planejar/reserva' },
         ]}
       />
     </>

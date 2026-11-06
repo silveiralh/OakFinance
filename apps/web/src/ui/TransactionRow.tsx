@@ -1,9 +1,9 @@
 import { formatBRL, HIDDEN_AMOUNT, MINUS_SIGN } from '@oakfinance/domain';
-import { CloudArrowUp, DotsThree, LinkSimple } from '@phosphor-icons/react';
+import { CloudUpload, Ellipsis, Link } from 'lucide-react';
 import { uiText } from '../i18n/pt-BR';
 import { useEnvironment } from '../lib/useEnvironment';
 import { MoneyText } from './MoneyText';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export type TxState = 'scheduled' | 'forecast' | 'to_receive' | 'late' | 'cancelled';
 
@@ -14,7 +14,7 @@ export interface RowTx {
   description?: string;
   category: {
     name: string;
-    icon: PhosphorIcon;
+    icon: AppIcon;
     band: 'needs' | 'wants' | 'savings' | 'income' | 'none';
   };
   method: string;
@@ -74,7 +74,7 @@ export function rowLabel(tx: RowTx, hidden: boolean): string {
     .join(', ');
 }
 
-/** UX §5.19: selos sempre com texto; cancelada fica riscada; ações com alternativa ao deslize (DotsThree). */
+/** UX §5.19: selos sempre com texto; cancelada fica riscada; ações com alternativa ao deslize (Ellipsis). */
 export function TransactionRow({
   tx,
   density = 'comfortable',
@@ -115,13 +115,13 @@ export function TransactionRow({
             {tx.needsReview && <span className="tx-seal">{uiText.needsReview}</span>}
             {tx.linked && (
               <span className="tx-seal">
-                <LinkSimple size={12} />
+                <Link size={12} />
                 {uiText.linked}
               </span>
             )}
             {tx.syncState !== 'synced' && (
               <span className="tx-seal" data-seal="sync">
-                <CloudArrowUp size={12} />
+                <CloudUpload size={12} />
                 {uiText.syncError}
               </span>
             )}
@@ -133,7 +133,7 @@ export function TransactionRow({
       </button>
       {onActions && (
         <button type="button" className="icon-btn" aria-label={uiText.actions} onClick={onActions}>
-          <DotsThree size={24} weight="bold" aria-hidden="true" />
+          <Ellipsis size={24} strokeWidth={2.5} aria-hidden="true" />
         </button>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { Button } from './Button';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 interface Action {
   label: string;
@@ -8,7 +8,7 @@ interface Action {
 
 export interface EmptyStateProps extends BaseProps {
   variant?: 'empty' | 'filtered' | 'error' | 'offline' | 'done';
-  icon: PhosphorIcon;
+  icon: AppIcon;
   title: string;
   description: string;
   primaryAction?: Action;

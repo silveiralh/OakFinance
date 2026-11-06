@@ -1,55 +1,59 @@
-// Ícones das categorias padrão (nomes Phosphor de `defaults.ts`, UX §4.7). Nome desconhecido → Tag.
+// Ícones das categorias (UX §4.7, D-023). As categorias guardam o nome do ícone (seeds de `defaults.ts`, já
+// sincronizados): o nome salvo não muda, só o desenho. Cada nome aponta para um ícone da Lucide; desconhecido → Tag.
 import {
-  AirplaneTilt,
-  ArrowCounterClockwise,
-  ArrowsLeftRight,
-  Briefcase,
+  ArrowLeftRight,
+  Banknote,
+  BriefcaseBusiness,
+  BriefcaseMedical,
   Bus,
+  CircleEllipsis,
+  CirclePlus,
   Coins,
   CreditCard,
-  DotsThreeCircle,
-  FirstAidKit,
-  ForkKnife,
-  GasPump,
+  Fuel,
   Gift,
   GraduationCap,
-  HouseLine,
-  Lightning,
+  House,
   PawPrint,
+  PiggyBank,
   Pill,
-  PlusCircle,
+  Plane,
   Receipt,
   Repeat,
+  RotateCcw,
   Scissors,
   ShieldCheck,
   ShoppingBag,
   ShoppingCart,
   Tag,
   Ticket,
-  TrendUp,
-  Vault,
-} from '@phosphor-icons/react';
-import type { PhosphorIcon } from '../../ui';
+  TrendingUp,
+  Utensils,
+  Zap,
+} from 'lucide-react';
+import type { AppIcon } from '../../ui';
 
-const ICONS: Readonly<Record<string, PhosphorIcon>> = {
-  AirplaneTilt,
-  ArrowCounterClockwise,
-  ArrowsLeftRight,
-  Briefcase,
+/** Nome salvo na categoria → ícone desenhado. */
+export const CATEGORY_ICONS: Readonly<Record<string, AppIcon>> = {
+  AirplaneTilt: Plane,
+  ArrowCounterClockwise: RotateCcw,
+  ArrowsLeftRight: ArrowLeftRight,
+  Briefcase: BriefcaseBusiness,
   Bus,
   Coins,
   CreditCard,
-  DotsThreeCircle,
-  FirstAidKit,
-  ForkKnife,
-  GasPump,
+  DotsThreeCircle: CircleEllipsis,
+  FirstAidKit: BriefcaseMedical,
+  ForkKnife: Utensils,
+  GasPump: Fuel,
   Gift,
   GraduationCap,
-  HouseLine,
-  Lightning,
+  HouseLine: House,
+  Lightning: Zap,
+  Money: Banknote,
   PawPrint,
   Pill,
-  PlusCircle,
+  PlusCircle: CirclePlus,
   Receipt,
   Repeat,
   Scissors,
@@ -57,10 +61,10 @@ const ICONS: Readonly<Record<string, PhosphorIcon>> = {
   ShoppingBag,
   ShoppingCart,
   Ticket,
-  TrendUp,
-  Vault,
+  TrendUp: TrendingUp,
+  Vault: PiggyBank,
 };
 
-export function categoryIcon(name: string | null): PhosphorIcon {
-  return (name && ICONS[name]) || Tag;
+export function categoryIcon(name: string | null): AppIcon {
+  return (name && CATEGORY_ICONS[name]) || Tag;
 }

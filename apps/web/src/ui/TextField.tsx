@@ -1,7 +1,7 @@
-import { Check, WarningCircle, X } from '@phosphor-icons/react';
+import { Check, CircleAlert, X } from 'lucide-react';
 import { type ChangeEvent, type ReactNode, useId } from 'react';
 import { uiText } from '../i18n/pt-BR';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 interface FieldFrame {
   label: string;
@@ -39,7 +39,7 @@ function Frame({
       )}
       {frame.error && (
         <p id={`${id}-error`} className="field-error">
-          <WarningCircle size={16} aria-hidden="true" />
+          <CircleAlert size={16} aria-hidden="true" />
           {frame.error}
         </p>
       )}
@@ -57,7 +57,7 @@ function describedBy(id: string, frame: FieldFrame): string | undefined {
 export interface TextFieldProps extends BaseProps, FieldFrame {
   value: string;
   onChange: (value: string) => void;
-  prefixIcon?: PhosphorIcon;
+  prefixIcon?: AppIcon;
   clearable?: boolean;
   type?: 'text' | 'search' | 'email' | 'tel' | 'url';
   inputMode?: 'text' | 'decimal' | 'numeric' | 'search' | 'email' | 'tel' | 'url';
@@ -194,7 +194,7 @@ export function Switch({
         onClick={() => onChange(!checked)}
       >
         <span className="switch-thumb">
-          {checked && <Check size={14} weight="bold" aria-hidden="true" />}
+          {checked && <Check size={14} strokeWidth={2.5} aria-hidden="true" />}
         </span>
       </button>
     </div>

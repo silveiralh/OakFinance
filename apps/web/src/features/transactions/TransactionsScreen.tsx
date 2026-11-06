@@ -7,7 +7,7 @@ import {
   todayIn,
   type YearMonth,
 } from '@oakfinance/domain';
-import { CaretLeft, CaretRight, MagnifyingGlass, Receipt } from '@phosphor-icons/react';
+import { ChevronLeft, ChevronRight, Receipt, Search } from 'lucide-react';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -136,7 +136,23 @@ function rowState(tx: Tx, today: ISODate): RowTx['state'] {
   return 'scheduled';
 }
 
-function toRow(tx: Tx, category: Category | undefined, today: ISODate): RowTx {
+const METHOD_LABEL: Readonly<Record<string, MessageKey>> = {
+  pix: 'accounts.method.pix',
+  debit: 'accounts.method.debit',
+  boleto: 'accounts.method.boleto',
+  transfer: 'accounts.method.transfer',
+  cash: 'accounts.method.cash',
+  credit: 'accounts.method.credit',
+  other: 'accounts.method.other',
+};
+
+/** "Pix", "Crédito"…; benefício e desconhecido ficam sem rótulo. */
+export function methodLabel(method: string | null): string {
+  const key = method ? METHOD_LABEL[method] : undefined;
+  return key ? t(key) : '';
+}
+
+export function toRow(tx: Tx, category: Category | undefined, today: ISODate): RowTx {
   const kind =
     tx.kind === 'income' || tx.kind === 'refund' || tx.kind === 'adjust_in'
       ? 'income'
@@ -160,7 +176,7 @@ function toRow(tx: Tx, category: Category | undefined, today: ISODate): RowTx {
           ? band
           : 'none',
     },
-    method: tx.payment_method ?? '',
+    method: methodLabel(tx.payment_method),
     when: formatDateBR(tx.occurred_on),
     ...(tx.installment_number && tx.installment_count
       ? { installment: { n: tx.installment_number, total: tx.installment_count } }
@@ -252,7 +268,7 @@ export function TransactionsScreen({
     <section className="screen" data-screen="T01" data-testid="screen-T01">
       <div className="list-month">
         <IconButton
-          icon={CaretLeft}
+          icon={ChevronLeft}
           label={t('list.prevMonth')}
           onClick={() => setMonth(addMonths(month, -1))}
         />
@@ -260,7 +276,7 @@ export function TransactionsScreen({
           {title}
         </h2>
         <IconButton
-          icon={CaretRight}
+          icon={ChevronRight}
           label={t('list.nextMonth')}
           onClick={() => setMonth(addMonths(month, 1))}
         />
@@ -285,7 +301,7 @@ export function TransactionsScreen({
         label={t('list.search')}
         value={filters.query}
         onChange={(query) => set({ query })}
-        prefixIcon={MagnifyingGlass}
+        prefixIcon={Search}
       />
       <fieldset className="list-chips">
         <legend className="sr-only">{t('list.filters')}</legend>

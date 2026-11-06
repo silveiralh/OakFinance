@@ -668,7 +668,39 @@ Lista em GlassCards agrupados; cada item leva a uma subtela:
 
 ---
 
-## 4. Design system Aero sóbrio — tokens
+## 4. Design system — tokens
+
+### 4.0 Visual menta e lima (D-023, substitui o Aero sóbrio)
+
+> **Vale sobre tudo o que segue nesta seção.** Em 06/11/2026 o cliente trocou o Aero (vidro, céu azul, brilho) por um visual claro e amigável, a partir de uma referência própria de app financeiro. A referência muda **só a aparência**: telas, fluxos, regras, textos (§6) e acessibilidade continuam. Onde as subseções 4.1–4.11 falam de vidro, desfoque, gradiente de céu ou aqua, leia com as regras abaixo. A fonte da verdade dos valores é `apps/web/src/styles/tokens.css`; os nomes semânticos (`--text-*`, `--status-*`, `--band-*`, `--glass-*`, `--grad-*`) foram mantidos.
+
+**Paleta**
+
+| Papel | Claro | Escuro | Uso |
+|---|---|---|---|
+| Fundo (`--bg-base`) | menta `#EEFDE0`, liso | grafite `#0B0D0A` | toda a tela; sem gradiente |
+| Card (`--glass-1/2/3-bg`) | branco `#FFFFFF` | `#1C1F1A` / `#2A2D27` | cards, chips, sheets internos; sólidos, sem desfoque |
+| Destaque (`--accent` / `--on-accent`) | lima `#C0E45C` com texto `#0B0D0A` | igual | seleção, FAB, aba ativa, ação secundária forte |
+| Escuro (`--surface-dark` / `--on-dark`) | `#0B0D0A` com texto branco | `#000000` | cartão do mês no Início, barra de abas, ícone da categoria, botão primário |
+| Texto | `#0B0D0A` · `#3A3F36` · `#4F5649` | `#F2F7EC` · `#C4CCBB` · `#A9B2A0` | primário · secundário · terciário |
+| Receita / guardado | `#3A5C0B` / `#0B5E58` | `#D4F07E` / `#5FD4C3` | sempre com sinal e ícone, nunca só cor |
+| Faixas 50/30/20 | Necessidades `#0F766E` · Desejos `#7A55D3` · Poupança `#4D7C0F` | `#5FD4C3` · `#9D82F5` · `#C0E45C` | ≥ 3:1 sobre o card |
+| Alerta / perigo | âmbar e coral do Aero | idem | sem mudança |
+
+Botão primário: pílula preta com texto branco (no escuro, pílula lima com texto preto). Secundário: pílula branca com contorno sutil. Fantasma: texto preto em negrito, sem sublinhado. Seleção (chips, segmentado, aba): fundo lima com texto preto **e** contorno preto de 2 px ou ícone de check, para não depender só da cor.
+
+**Forma e tipografia.** Fonte única arredondada: **Nunito** variável (auto-hospedada, latin e latin-ext), pesos 500–800. Botões, chips, campos de busca e barra de abas em pílula (`--radius-md: 999px`); cards com raio 20 px; campos com raio 16 px e borda 1 px `--border-strong`. Sombras discretas (`--shadow-1/2`); sem brilho especular, sem vidro.
+
+**Moldura.** Barra de abas flutuante: pílula preta centrada a 12 px do fundo (mais a área segura), itens em círculo com rótulo de 11 px, aba ativa em lima, FAB lima de 52 px no meio. A zona segura do conteúdo passa a `64px + env(safe-area-inset-bottom) + var(--space-12)`. TopBar sem fundo próprio (fundo menta) e título centralizado em 17 px negrito. No `lg`, barra lateral branca com o item ativo em pílula lima. Sheets e diálogos com fundo menta e cards brancos por cima.
+
+**Telas de referência.** ON01: tela lima inteira, logo monocromática, frase de abertura em 30–40 px negrito, benefícios com ícone em círculo preto e, embaixo, "Já uso em outro aparelho" à esquerda e "Começar" em pílula preta com seta à direita. H01 (até a T-058 trazer o Disponível para gastar): cartão preto com o mês, botão lima "Novo lançamento", Saídas em destaque e Entradas e Guardado abaixo; quatro atalhos em pílula (Despesa, Receita, Lançamentos, Contas e cartões, o último em lima); "Últimos lançamentos" com "Ver todos". Linha de lançamento: ícone branco em círculo preto com anel na cor da faixa, divisória de 1 px entre linhas, cards brancos. T01: chips em uma linha com rolagem horizontal.
+
+**Ícones.** Biblioteca **Lucide** (`lucide-react`), traço 2 (2,5 no estado ativo ou selecionado, no lugar do `fill` da Phosphor). As categorias continuam salvando o nome antigo (ex.: `ForkKnife`); `features/quick-entry/icons.ts` traduz o nome salvo para o ícone Lucide (`Utensils`), sem migração de dados. "Entrar com Google" usa o ícone `LogIn` (a Lucide não tem logos de marca).
+
+**Marca.** Continua só tipográfica: "Oak" em `#0B0D0A` e "Finance" em `#4D7C0F` (escuro: `#F2F7EC` e `#C0E45C`), em Nunito 800. Ícone do app: quadrado preto com o monograma "OF" em lima. `theme-color`: `#EEFDE0` (claro) e `#0B0D0A` (escuro).
+
+**Contraste.** Verificado em `test/tokens.test.ts` a partir do `tokens.css`: todo texto ≥ 4,5:1 sobre o card branco **e** direto sobre a menta (ex.: primário 19,51:1 no branco e 18,36:1 na menta; terciário 7,61:1; preto sobre lima 13,47:1); elementos não textuais ≥ 3:1. A lima não serve de texto nem de borda sobre branco (1,4:1): seleção sempre leva o contorno preto.
+
 
 ### 4.1 Arquitetura de tokens
 
@@ -680,7 +712,7 @@ Três camadas, todas como CSS custom properties em `src/styles/tokens.css`:
 
 **Direção visual:** Aero sóbrio e premium. Vidro translúcido em camadas com desfoque e borda fina clara, profundidade por sombras suaves, gradientes discretos de azul-céu e aqua, brilho especular sutil (no máximo 35% de opacidade no claro e 8% no escuro), tipografia geométrica limpa e muito espaço em branco. Referência de tom: bancos digitais e fintechs premium. Sem ilustrações, mascotes ou efeitos decorativos.
 
-Resolução do tema: script inline bloqueante no `<head>` do `index.html` lê a preferência salva (`localStorage` com try/catch; padrão "auto") e `matchMedia('(prefers-color-scheme: dark)')`, e grava `data-theme="light"` ou `data-theme="dark"` **resolvido** no `<html>` antes do primeiro paint (escuta mudanças do sistema quando "auto"). Assim o CSS só precisa de `[data-theme="dark"]`. O `<meta name="theme-color">` é atualizado junto (`#4FB6EC` claro, `#061A2E` escuro).
+Resolução do tema: script inline bloqueante no `<head>` do `index.html` lê a preferência salva (`localStorage` com try/catch; padrão "auto") e `matchMedia('(prefers-color-scheme: dark)')`, e grava `data-theme="light"` ou `data-theme="dark"` **resolvido** no `<html>` antes do primeiro paint (escuta mudanças do sistema quando "auto"). Assim o CSS só precisa de `[data-theme="dark"]`. O `<meta name="theme-color">` é atualizado junto (`#EEFDE0` claro, `#0B0D0A` escuro, D-023).
 
 ### 4.2 Tokens CSS (copiar como está)
 
@@ -1341,8 +1373,8 @@ Trecho do `manifest.webmanifest`:
   "start_url": "/?origem=pwa",
   "display": "standalone",
   "orientation": "any",
-  "theme_color": "#4FB6EC",
-  "background_color": "#E8F7FF",
+  "theme_color": "#EEFDE0",
+  "background_color": "#EEFDE0",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
@@ -2014,6 +2046,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `list.noResult` | Nenhum resultado para "{termo}" |
 | `list.edit` / `.delete` | Editar / Excluir |
 | `list.actionsHint` | O que fazer com este lançamento? |
+| `home.recent` / `.seeAll` | Últimos lançamentos / Ver todos |
 | `accounts.methods` | Formas: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |

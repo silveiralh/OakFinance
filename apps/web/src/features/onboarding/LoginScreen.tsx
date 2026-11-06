@@ -1,4 +1,4 @@
-import { GoogleLogo, LockKey, WifiSlash } from '@phosphor-icons/react';
+import { LockKeyhole, LogIn, WifiOff } from 'lucide-react';
 import { type ComponentType, lazy, Suspense, useState, useSyncExternalStore } from 'react';
 import { useSearchParams } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -51,7 +51,7 @@ export function LoginScreen() {
       <section className="screen screen-login" data-screen="ON03" data-testid="screen-G14">
         <EmptyState
           variant="error"
-          icon={LockKey}
+          icon={LockKeyhole}
           title={shellText.privateTitle}
           description={shellText.privateDescription}
           primaryAction={{ label: shellText.otherAccount, onPress: () => void start(true) }}
@@ -73,10 +73,10 @@ export function LoginScreen() {
           </Button>
         </div>
       )}
-      {!online && <Banner tone="warning" icon={WifiSlash} message={shellText.firstAccessOffline} />}
+      {!online && <Banner tone="warning" icon={WifiOff} message={shellText.firstAccessOffline} />}
       <Button
         variant="secondary"
-        iconStart={GoogleLogo}
+        iconStart={LogIn}
         fullWidth
         loading={state === 'loading'}
         disabled={!online}

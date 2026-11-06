@@ -1,5 +1,5 @@
 import { formatBRL, HIDDEN_AMOUNT, type MonthStatus } from '@oakfinance/domain';
-import { CheckCircle, Info, TrendUp, WarningCircle } from '@phosphor-icons/react';
+import { CircleAlert, CircleCheck, Info, TrendingUp } from 'lucide-react';
 import { t, uiText } from '../i18n/pt-BR';
 import { useEnvironment } from '../lib/useEnvironment';
 import { type BaseProps, cx } from './types';
@@ -27,9 +27,9 @@ export function paceText(state: MonthStatus, amountCents: number, hidden: boolea
 }
 
 const ICON = {
-  on_track: CheckCircle,
-  attention: TrendUp,
-  over: WarningCircle,
+  on_track: CircleCheck,
+  attention: TrendingUp,
+  over: CircleAlert,
   no_income: Info,
 } as const;
 const TONE = {
@@ -52,7 +52,7 @@ export function PaceIndicator({
   const Glyph = ICON[state];
   const content = (
     <>
-      <Glyph size={20} weight="fill" aria-hidden="true" />
+      <Glyph size={20} strokeWidth={2.5} aria-hidden="true" />
       <span className="sr-only">{`${uiText.monthStatus}: `}</span>
       <span>{text}</span>
     </>

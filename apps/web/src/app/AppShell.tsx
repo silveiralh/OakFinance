@@ -1,22 +1,14 @@
-import {
-  ChartDonut,
-  CreditCard,
-  GearSix,
-  House,
-  ListBullets,
-  Plugs,
-  Plus,
-} from '@phosphor-icons/react';
+import { ChartPie, CreditCard, House, List, Plug, Plus, Settings } from 'lucide-react';
 import { lazy, Suspense, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate, useNavigation } from 'react-router';
 import { markQuickEntryStart } from '../features/quick-entry/clock';
 import { shellText, uiText } from '../i18n/pt-BR';
 import {
   AppBackdrop,
+  type AppIcon,
   BrandLogo,
   Button,
   FAB,
-  type PhosphorIcon,
   TabBar,
   type TabItem,
   ToastProvider,
@@ -47,18 +39,18 @@ export const TAB_ITEMS: readonly NavItem[] = [
   {
     key: 'transactions',
     label: shellText.nav.transactions,
-    icon: ListBullets,
+    icon: List,
     href: '/lancamentos',
   },
   { key: 'cards', label: shellText.nav.cards, icon: CreditCard, href: '/cartoes' },
-  { key: 'plan', label: shellText.nav.plan, icon: ChartDonut, href: PLAN_INDEX },
+  { key: 'plan', label: shellText.nav.plan, icon: ChartPie, href: PLAN_INDEX },
 ];
 
 /** Barra lateral do `lg`: os mesmos itens + Configurações + Conexões (UX §2.1). */
 export const SIDEBAR_ITEMS: readonly NavItem[] = [
   ...TAB_ITEMS,
-  { key: 'settings', label: shellText.nav.settings, icon: GearSix, href: '/ajustes' },
-  { key: 'connections', label: shellText.nav.connections, icon: Plugs, href: '/ajustes/conexoes' },
+  { key: 'settings', label: shellText.nav.settings, icon: Settings, href: '/ajustes' },
+  { key: 'connections', label: shellText.nav.connections, icon: Plug, href: '/ajustes/conexoes' },
 ];
 
 /** Abre o Q01 como sheet sobre a tela atual (`?novo=despesa`, UX §2.1). */
@@ -69,7 +61,7 @@ export function quickEntryHref(pathname: string, search: string): string {
 }
 
 function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
-  const Glyph: PhosphorIcon = item.icon;
+  const Glyph: AppIcon = item.icon;
   return (
     <Link
       to={item.href}
@@ -77,7 +69,7 @@ function SidebarLink({ item, active }: { item: NavItem; active: boolean }) {
       aria-current={active ? 'page' : undefined}
       data-nav={item.key}
     >
-      <Glyph size={24} weight={active ? 'fill' : 'regular'} aria-hidden="true" />
+      <Glyph size={24} strokeWidth={active ? 2.5 : 2} aria-hidden="true" />
       <span>{item.label}</span>
     </Link>
   );

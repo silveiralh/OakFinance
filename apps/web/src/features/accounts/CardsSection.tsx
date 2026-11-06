@@ -1,5 +1,5 @@
 import { monthLabel, todayIn } from '@oakfinance/domain';
-import { Archive, CreditCard, Plus, Trash } from '@phosphor-icons/react';
+import { Archive, CreditCard, Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -160,7 +160,7 @@ export function CardsSection({
                   <Button
                     variant="ghost"
                     size="sm"
-                    iconStart={Trash}
+                    iconStart={Trash2}
                     onClick={() => void act(card.id, () => removeCard(user.db, card.id))}
                   >
                     {t('accounts.delete')}

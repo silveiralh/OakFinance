@@ -3,12 +3,12 @@
   <defs>
     <linearGradient id="wsd-ink" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="46">
       <stop offset="0" stop-color="#FFFFFF"/>
-      <stop offset="1" stop-color="#A9C8DE"/>
+      <stop offset="1" stop-color="#F2F7EC"/>
     </linearGradient>
     <linearGradient id="wsd-aqua" gradientUnits="userSpaceOnUse" x1="0" y1="14" x2="0" y2="46">
-      <stop offset="0" stop-color="#7FDBFF"/>
-      <stop offset="1" stop-color="#2FB6EE"/>
+      <stop offset="0" stop-color="#D4F07E"/>
+      <stop offset="1" stop-color="#C0E45C"/>
     </linearGradient>
   </defs>
-  <text x="8" y="45" font-family="Manrope, Inter, system-ui, sans-serif" font-weight="700" font-size="42" letter-spacing="-1.05"><tspan fill="url(#wsd-ink)">Oak</tspan><tspan fill="url(#wsd-aqua)" dx="0.5">Finance</tspan></text>
+  <text x="8" y="45" font-family="Nunito, system-ui, sans-serif" font-weight="800" font-size="42" letter-spacing="-0.4"><tspan fill="url(#wsd-ink)">Oak</tspan><tspan fill="url(#wsd-aqua)" dx="0.5">Finance</tspan></text>
 </svg>

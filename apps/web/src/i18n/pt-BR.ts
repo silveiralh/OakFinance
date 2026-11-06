@@ -226,6 +226,8 @@ export const ptBR = {
   'list.edit': 'Editar',
   'list.delete': 'Excluir',
   'list.actionsHint': 'O que fazer com este lançamento?',
+  'home.recent': 'Últimos lançamentos',
+  'home.seeAll': 'Ver todos',
   'accounts.methods': 'Formas: {formas}',
   'accounts.immediate': 'Meio imediato, sem formas',
   'accounts.save': 'Salvar',

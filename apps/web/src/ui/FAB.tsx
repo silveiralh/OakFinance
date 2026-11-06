@@ -1,4 +1,4 @@
-import { Plus } from '@phosphor-icons/react';
+import { Plus } from 'lucide-react';
 import { useRef } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { type BaseProps, cx } from './types';
@@ -53,7 +53,7 @@ export function FAB({
         onPress();
       }}
     >
-      <Plus size={24} weight="bold" aria-hidden="true" />
+      <Plus size={24} strokeWidth={2.5} aria-hidden="true" />
     </button>
   );
 }

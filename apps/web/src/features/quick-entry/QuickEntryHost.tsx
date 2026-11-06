@@ -1,4 +1,4 @@
-import { QrCode } from '@phosphor-icons/react';
+import { QrCode } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { QUICK_ENTRY_PARAM } from '../../app/screens';

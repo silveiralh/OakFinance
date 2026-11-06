@@ -1,4 +1,4 @@
-import { SignOut as SignOutIcon } from '@phosphor-icons/react';
+import { LogOut as SignOutIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';

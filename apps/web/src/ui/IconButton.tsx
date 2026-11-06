@@ -1,8 +1,8 @@
 import type { MouseEvent } from 'react';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface IconButtonProps extends BaseProps {
-  icon: PhosphorIcon;
+  icon: AppIcon;
   label: string;
   variant?: 'glass' | 'plain';
   size?: 48 | 56;
@@ -32,7 +32,7 @@ export function IconButton({
       aria-pressed={pressed}
       onClick={onClick}
     >
-      <Glyph size={24} weight={pressed ? 'fill' : 'regular'} aria-hidden="true" />
+      <Glyph size={24} strokeWidth={pressed ? 2.5 : 2} aria-hidden="true" />
     </button>
   );
 }

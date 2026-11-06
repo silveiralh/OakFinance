@@ -1,4 +1,4 @@
-import { WarningCircle } from '@phosphor-icons/react';
+import { CircleAlert } from 'lucide-react';
 import { useRouteError } from 'react-router';
 import { shellText } from '../i18n/pt-BR';
 import { EmptyState } from '../ui';
@@ -22,7 +22,7 @@ export function ScreenErrorView({ error, onRetry = reload }: ScreenErrorViewProp
     <div className="screen-error" data-testid="screen-error">
       <EmptyState
         variant="error"
-        icon={WarningCircle}
+        icon={CircleAlert}
         title={shellText.screenErrorTitle}
         description={shellText.screenErrorDescription}
         primaryAction={{ label: shellText.retry, onPress: onRetry }}

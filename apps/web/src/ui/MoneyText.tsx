@@ -1,5 +1,5 @@
 import { formatBRL, HIDDEN_AMOUNT, MINUS_SIGN } from '@oakfinance/domain';
-import { ArrowDownLeft, ArrowsLeftRight, ArrowUpRight, Vault } from '@phosphor-icons/react';
+import { ArrowDownLeft, ArrowLeftRight, ArrowUpRight, PiggyBank } from 'lucide-react';
 import { uiText } from '../i18n/pt-BR';
 import { useEnvironment } from '../lib/useEnvironment';
 import { type BaseProps, cx } from './types';
@@ -19,8 +19,8 @@ export interface MoneyTextProps extends BaseProps {
 const ICON = {
   income: ArrowDownLeft,
   expense: ArrowUpRight,
-  saving: Vault,
-  transfer: ArrowsLeftRight,
+  saving: PiggyBank,
+  transfer: ArrowLeftRight,
 } as const;
 
 const PREFIX: Record<Exclude<MoneyKind, 'neutral'>, string> = {

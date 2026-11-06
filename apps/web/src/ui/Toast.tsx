@@ -1,4 +1,4 @@
-import { CheckCircle, Info, Warning } from '@phosphor-icons/react';
+import { CircleCheck, Info, TriangleAlert } from 'lucide-react';
 import {
   createContext,
   type ReactNode,
@@ -22,7 +22,7 @@ export interface ToastInput {
 export const TOAST_MS = 4000;
 export const TOAST_WITH_ACTION_MS = 8000;
 
-const ICON = { info: Info, success: CheckCircle, warning: Warning } as const;
+const ICON = { info: Info, success: CircleCheck, warning: TriangleAlert } as const;
 
 interface Queued extends ToastInput {
   id: number;

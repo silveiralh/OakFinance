@@ -1,7 +1,7 @@
-import { CaretLeft } from '@phosphor-icons/react';
+import { ChevronLeft } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { uiText } from '../i18n/pt-BR';
-import { type BaseProps, cx, type PhosphorIcon } from './types';
+import { type AppIcon, type BaseProps, cx } from './types';
 
 export interface TopBarProps extends BaseProps {
   title: string;
@@ -37,7 +37,7 @@ export function TopBar({
     >
       {onBack && (
         <button type="button" className="icon-btn" aria-label={uiText.back} onClick={onBack}>
-          <CaretLeft size={24} aria-hidden="true" />
+          <ChevronLeft size={24} aria-hidden="true" />
         </button>
       )}
       <h1 className="topbar-title">{title}</h1>
@@ -49,7 +49,7 @@ export function TopBar({
 export interface TabItem {
   key: string;
   label: string;
-  icon: PhosphorIcon;
+  icon: AppIcon;
   href: string;
   badge?: number;
 }
@@ -89,7 +89,7 @@ export function TabBar({
         }}
       >
         <span className="tab-pill">
-          <Glyph size={24} weight={active ? 'fill' : 'regular'} aria-hidden="true" />
+          <Glyph size={24} strokeWidth={active ? 2.5 : 2} aria-hidden="true" />
           {item.badge !== undefined && item.badge > 0 && (
             <span className="tab-badge">{item.badge}</span>
           )}

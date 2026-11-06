@@ -1,5 +1,5 @@
 import { formatBRL, HIDDEN_AMOUNT } from '@oakfinance/domain';
-import { CheckCircle } from '@phosphor-icons/react';
+import { CircleCheck } from 'lucide-react';
 import { uiText } from '../i18n/pt-BR';
 import { useEnvironment } from '../lib/useEnvironment';
 import { percentOf } from './ProgressBar';
@@ -69,7 +69,7 @@ export function GoalProgress({
         </div>
         {showLabel && (
           <span className="goal-label">
-            {reached && <CheckCircle size={16} weight="fill" aria-hidden="true" />}
+            {reached && <CircleCheck size={16} strokeWidth={2.5} aria-hidden="true" />}
             {label}
           </span>
         )}
@@ -119,7 +119,7 @@ export function GoalProgress({
       </svg>
       {showLabel && (
         <span className="goal-center">
-          {reached && <CheckCircle size={20} weight="fill" aria-hidden="true" />}
+          {reached && <CircleCheck size={20} strokeWidth={2.5} aria-hidden="true" />}
           <span>{label}</span>
         </span>
       )}
