@@ -15,7 +15,7 @@ test('US-62: styleguide renderiza os tokens e os componentes de dados', async ({
   await expect(page.getByRole('navigation', { name: 'Navegação principal' })).toBeVisible();
   const baseline = testInfo.snapshotPath('tokens.png');
   if (!existsSync(baseline)) {
-    const shot = await tokens.screenshot({ animations: 'disabled' });
+    const shot = await tokens.screenshot({ animations: 'disabled', scale: 'css', caret: 'hide' });
     process.stdout.write(
       `\n----- INICIO ${testInfo.project.name} tokens.png -----\n${shot.toString('base64')}\n----- FIM ${testInfo.project.name} tokens.png -----\n`,
     );
