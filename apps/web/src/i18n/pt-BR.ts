@@ -272,6 +272,64 @@ export const uiText = {
   of: 'de',
 } as const;
 
+/**
+ * Textos da moldura do app: abas e barra lateral (UX §2.1), landmarks e link de pular (UX §3.0), erro de tela G09
+ * (UX §3 G e §6.6) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
+ * O `<title>` de cada rota é "{Tela} · OakFinance" (UX §4.11.1).
+ */
+export const shellText = {
+  appName: 'OakFinance',
+  titleSeparator: ' · ',
+  skipToContent: 'Pular para o conteúdo',
+  nav: {
+    home: 'Início',
+    transactions: 'Lançamentos',
+    cards: 'Cartões',
+    plan: 'Planejar',
+    settings: 'Configurações',
+    connections: 'Conexões',
+  },
+  screenErrorTitle: 'Não foi possível carregar esta tela.',
+  screenErrorDescription: 'Seus dados estão seguros.',
+  retry: 'Tentar novamente',
+  screens: {
+    ON01: 'Boas-vindas',
+    ON02a: 'Instalar no Android',
+    ON02b: 'Instalar no iPhone',
+    ON02c: 'Instalar no computador',
+    ON03: 'Entrar com Google',
+    ON04: 'Lembretes',
+    ON05: 'Renda',
+    ON06: 'Contas e meios',
+    ON07: 'Cartões',
+    ON07b: 'Reserva',
+    ON08: 'Configuração concluída',
+    H01: 'Início',
+    H02: 'Central de avisos',
+    T01: 'Lançamentos',
+    T02: 'Detalhe do lançamento',
+    C01: 'Cartões e faturas',
+    C02: 'Fatura do mês',
+    P01: 'Orçamento 50/30/20',
+    P02: 'Reserva de emergência',
+    P03: 'Futuro: parcelas e contas fixas',
+    P04: 'Fechar o mês',
+    I01: 'Conexões e importação',
+    I02: 'Conectar banco',
+    I03: 'Importar OFX/CSV',
+    I04: 'Ler nota NFC-e',
+    I05: 'Conferir importados',
+    S01: 'Configurações',
+  },
+} as const;
+
+export type ScreenId = keyof typeof shellText.screens;
+
+/** "{Tela} · OakFinance" (UX §4.11.1 e checklist 2.4.2). */
+export function documentTitle(screen: ScreenId): string {
+  return `${shellText.screens[screen]}${shellText.titleSeparator}${shellText.appName}`;
+}
+
 /** Texto da chave com os placeholders preenchidos; placeholder sem valor fica como está. */
 export function t(key: MessageKey, values: Readonly<Record<string, string | number>> = {}): string {
   return ptBR[key].replace(/\{([^{}]+)\}/g, (whole, name: string) =>

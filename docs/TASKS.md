@@ -91,7 +91,7 @@ flowchart LR
 | T-026 | Componentes de base | T-025 | done |
 | T-027 | Componentes de entrada | T-026, T-012 | done |
 | T-028 | Componentes de dados e styleguide | T-027 | done |
-| T-029 | AppShell, rotas e CSP | T-028 | todo |
+| T-029 | AppShell, rotas e CSP | T-028 | done |
 | T-030 | PWA instalável e Service Worker | T-029 | todo |
 | T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | todo |
 | T-032 | Outbox, repositórios e relógio híbrido | T-031 | todo |
@@ -589,7 +589,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-029 — AppShell, rotas e CSP
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-62, US-64 | — | T-028 | não |
+| done | S1 | M | US-62, US-64 | — | T-028 | não |
 
 **Escopo:**
 - React Router 8 em modo SPA, com as rotas do UX em lazy;
