@@ -86,8 +86,18 @@ describe('public/env.js (UX §4.1, §4.10)', () => {
     expect(metas.map((m) => m.getAttribute('content'))).toEqual(['#EEFDE0', '#EEFDE0']);
   });
 
-  it('US-62: sistema escuro, movimento e transparência reduzidos, aparelho modesto', () => {
+  it('D-025: com o sistema escuro e sem preferência salva, o app abre no claro', () => {
+    device({ dark: true });
+    runEnvScript();
+    expect(root.getAttribute('data-theme')).toBe('light');
+    expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe(
+      '#EEFDE0',
+    );
+  });
+
+  it('US-62: tema Automático com sistema escuro, movimento e transparência reduzidos, aparelho modesto', () => {
     device({ dark: true, reducedMotion: true, reducedTransparency: true, memory: 4, cores: 8 });
+    localStorage.setItem(ENV_STORAGE_KEY, JSON.stringify({ theme: 'auto' }));
     runEnvScript();
     expect(attrs()).toMatchObject({
       'data-theme': 'dark',
@@ -121,6 +131,7 @@ describe('public/env.js (UX §4.1, §4.10)', () => {
     localStorage.setItem(ENV_STORAGE_KEY, '{quebrado');
     runEnvScript();
     expect(root.getAttribute('data-theme')).toBe('light');
+    localStorage.setItem(ENV_STORAGE_KEY, JSON.stringify({ theme: 'auto' }));
     device({ dark: true });
     for (const cb of listeners) {
       cb();

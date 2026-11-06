@@ -36,12 +36,11 @@
 
   const resolve = (prefs) => {
     const nav = window.navigator ?? {};
+    // D-025: o claro é o padrão mesmo com o sistema no escuro; o escuro só com a escolha "Escuro" ou "Automático"
     const theme =
-      prefs.theme === 'light' || prefs.theme === 'dark'
-        ? prefs.theme
-        : matches('(prefers-color-scheme: dark)')
-          ? 'dark'
-          : 'light';
+      prefs.theme === 'dark' || (prefs.theme === 'auto' && matches('(prefers-color-scheme: dark)'))
+        ? 'dark'
+        : 'light';
     const glass =
       prefs.glass === 'solid' ||
       matches('(prefers-reduced-transparency: reduce)') ||

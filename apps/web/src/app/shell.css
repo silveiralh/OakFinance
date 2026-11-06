@@ -101,8 +101,9 @@
     margin-left: calc(248px + 2 * var(--space-4));
   }
   .shell-main {
-    max-width: 1200px;
-    padding: var(--space-6) var(--space-6) var(--space-12);
+    /* D-025: no computador o conteúdo ocupa a largura toda (sem coluna estreita e vazio à direita) */
+    max-width: none;
+    padding: var(--space-6) var(--space-8) var(--space-12);
   }
 }
 
@@ -350,7 +351,28 @@ body:has(.screen-welcome) .backdrop {
 .home {
   display: grid;
   gap: var(--space-5);
-  max-width: 760px;
+}
+@media (min-width: 1024px) {
+  /* duas colunas: cartão e atalhos à esquerda, últimos lançamentos à direita */
+  .home {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-areas:
+      "card recent"
+      "actions recent";
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: var(--space-6);
+  }
+  .home-card {
+    grid-area: card;
+    padding: var(--space-8);
+  }
+  .home-actions {
+    grid-area: actions;
+  }
+  .home-recent {
+    grid-area: recent;
+  }
 }
 .home-card {
   display: grid;
@@ -479,4 +501,19 @@ body:has(.screen-welcome) .backdrop {
 }
 .list-rows .list-day:first-of-type {
   margin-top: var(--space-2);
+}
+.home-recent-empty {
+  margin: 0;
+  padding: var(--space-6) 0;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+@media (min-width: 1280px) {
+  /* S03 no computador: lista e formulário lado a lado (contas em cima, cartões embaixo) */
+  .screen[data-screen="S03"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: var(--space-6);
+  }
 }
