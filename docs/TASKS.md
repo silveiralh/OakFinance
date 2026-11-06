@@ -1017,7 +1017,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 |---|---|---|---|---|---|---|
 | todo | S2 | M | US-39, US-40 | RN-86..RN-89 | T-063, T-024, T-011 | não |
 
-**Escopo:** `supabase/functions/reminders-tick` (auth `secret`): roda para todos os usuários, sempre gera `notices`, enfileira o push, usa `for update skip locked`, adia o silêncio para 08:00 (com a regra do `daily_log` adiado), limita a 3 push por dia e grava `job_runs`. Kinds `daily_log`, `invoice_due` e `invoice_closed`.
+**Escopo:** passar `REMINDERS_TICK_LIVE` para `true` em `scripts/ops-check.ts` junto com o deploy da função (issue #51); `supabase/functions/reminders-tick` (auth `secret`): roda para todos os usuários, sempre gera `notices`, enfileira o push, usa `for update skip locked`, adia o silêncio para 08:00 (com a regra do `daily_log` adiado), limita a 3 push por dia e grava `job_runs`. Kinds `daily_log`, `invoice_due` e `invoice_closed`.
 
 **Pronto quando:** os testes Deno com relógio injetado cobrem os cenários da US-39 e da US-40.
 
