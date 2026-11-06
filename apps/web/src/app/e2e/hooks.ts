@@ -1,6 +1,6 @@
 // Só no build E2E (VITE_E2E=1): ganchos para o Playwright criar alterações locais antes de existir a tela de
 // lançamento (E20). Nunca entra no bundle de produção (import dinâmico atrás da constante).
-import { invoiceForPurchase, todayIn } from '@oakfinance/domain';
+import { invoiceForPurchase, noticeId, todayIn } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
 import { newId } from '../../data/ids';
 import { cardFromRow } from '../../data/mappers';
@@ -24,6 +24,8 @@ declare global {
       syncNow(): Promise<boolean>;
       /** Receita avulsa recebida hoje na conta (E02: o mês passa a ter Base). */
       addIncome(accountId: string, cents: number, description: string): Promise<string>;
+      /** Aviso na central como o reminders-tick gravaria (E18); devolve o id v5 da dedupe_key. */
+      addNotice(dedupeKey: string, title: string, body: string, navigate: string): Promise<string>;
       /** Despesa avulsa de hoje na conta (E06/US-14). */
       addExpense(accountId: string, cents: number, description: string): Promise<string>;
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
@@ -156,6 +158,28 @@ export function installE2eHooks(user: UserSession): () => void {
         created_at: now,
         updated_at: now,
         client_updated_at: now,
+      });
+      user.engine.notifyWrite();
+      return id;
+    },
+    async addNotice(dedupeKey: string, title: string, body: string, navigate: string) {
+      const id = noticeId(user.userId, dedupeKey);
+      const now = new Date().toISOString();
+      await saveRow(user.db, 'notices', {
+        id,
+        user_id: user.userId,
+        kind: 'bill_due',
+        dedupe_key: dedupeKey,
+        title,
+        body,
+        navigate,
+        read_at: null,
+        created_at: now,
+        updated_at: now,
+        client_updated_at: now,
+        deleted_at: null,
+        server_version: 0,
+        device_id: null,
       });
       user.engine.notifyWrite();
       return id;

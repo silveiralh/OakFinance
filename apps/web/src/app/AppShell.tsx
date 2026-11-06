@@ -15,6 +15,7 @@ import {
   TopBar,
 } from '../ui';
 import { AutoPosts } from './AutoPosts';
+import { NoticesBell } from './NoticesBell';
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
@@ -135,6 +136,7 @@ export function AppShell() {
             trailing={
               <>
                 {screen === 'H01' && <HideValuesButton />}
+                {screen === 'H01' && <NoticesBell />}
                 <ShellSyncBadge />
               </>
             }
