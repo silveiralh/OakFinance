@@ -1,9 +1,10 @@
 import { addMonths, installmentTxId, invoicePeriod } from '@oakfinance/domain';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext } from '../src/app/auth';
 import type { LocalRow } from '../src/data/db';
+import { resetDrafts } from '../src/data/drafts';
 import { cardFromRow } from '../src/data/mappers';
 import { createAccount } from '../src/data/repositories/accounts';
 import { createCard } from '../src/data/repositories/cards';
@@ -20,6 +21,9 @@ import { fakeAuth } from './auth-fixture';
 import { makeRow, tx } from './data/rows';
 
 const TODAY = '2026-11-05';
+
+// o rascunho do Q01 fica também em memória: sem limpar, o valor de um teste vaza para o seguinte (ordem embaralhada)
+afterEach(() => resetDrafts());
 
 const CARD_ROW: LocalRow<'cards'> = makeRow('cards', {
   id: 'nu',

@@ -52,9 +52,9 @@ test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o 
     .getByRole('button', { name: /^Mover para a fatura de / });
   const target = (await options.first().textContent()) ?? '';
   await options.first().click();
-  await expect(page.getByText(/^Lançamento movido para a fatura de /)).toBeVisible();
+  // o toast pode esperar na fila atrás de avisos de outros testes do mesmo usuário (G06); confere o dado
   const month = target.replace('Mover para a fatura de ', '');
-  await expect(page.getByTestId('detail-list')).toContainText(month);
+  await expect(page.getByTestId('detail-list')).toContainText(month, { timeout: 15_000 });
 
   // a fatura de origem fica vazia
   await page.goBack();
