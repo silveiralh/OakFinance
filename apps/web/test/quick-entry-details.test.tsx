@@ -1,3 +1,4 @@
+import { recurrenceTxId } from '@oakfinance/domain';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { act } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -269,5 +270,54 @@ describe('US-24: receita variável', () => {
       fireEvent.click(extra.querySelectorAll('button')[1] as HTMLElement);
     });
     expect(router.state.location.search).toBe('?editar=f3');
+  });
+});
+
+describe('US-23: "Repetir todo mês" na receita', () => {
+  it('US-23: cria a receita fixa no dia da data e o lançamento vira a ocorrência dessa data (id v5)', async () => {
+    const auth = await setup();
+    const onClose = mount(auth, { mode: 'income' });
+    type('500000');
+    fireEvent.click(await screen.findByRole('radio', { name: /Salário/ }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Sim' }));
+    await openDetails();
+    fireEvent.change(screen.getByLabelText('Descrição'), { target: { value: 'Salário' } });
+    fireEvent.click(screen.getByRole('switch', { name: 'Repetir todo mês' }));
+    fireEvent.click(screen.getByTestId('quick-submit'));
+    await waitFor(async () => expect(await auth.user?.db.recurrences.count()).toBe(1));
+    const [rec] = (await auth.user?.db.recurrences.toArray()) ?? [];
+    expect(rec).toMatchObject({
+      kind: 'income',
+      is_fixed_income: true,
+      amount_cents: 500_000,
+      day_of_month: 5,
+      start_on: TODAY,
+      account_id: 'bb',
+      description: 'Salário',
+    });
+    const tx = await submitted(auth);
+    expect(tx).toMatchObject({
+      recurrence_id: rec?.id,
+      recurrence_date: TODAY,
+      status: 'posted',
+      amount_cents: 500_000,
+    });
+    expect(tx?.id).toBe(recurrenceTxId(rec?.id ?? '', TODAY));
+    expect(await screen.findByText('Receita fixa salva.')).toBeInTheDocument();
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('US-23: "Repetir todo mês" com "Não" só cria a receita fixa (a ocorrência fica projetada)', async () => {
+    const auth = await setup();
+    mount(auth, { mode: 'income' });
+    type('500000');
+    fireEvent.click(await screen.findByRole('radio', { name: /Salário/ }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Não' }));
+    await openDetails();
+    fireEvent.click(screen.getByRole('switch', { name: 'Repetir todo mês' }));
+    fireEvent.click(screen.getByTestId('quick-submit'));
+    await waitFor(async () => expect(await auth.user?.db.recurrences.count()).toBe(1));
+    expect(await auth.user?.db.transactions.count()).toBe(0);
+    expect((await auth.user?.db.recurrences.toArray())?.[0]?.description).toBe('Salário');
   });
 });
