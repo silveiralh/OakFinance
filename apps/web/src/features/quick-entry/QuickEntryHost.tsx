@@ -8,6 +8,9 @@ import { BottomSheet, Button } from '../../ui';
 const QuickEntrySheet = lazy(() =>
   import('./QuickEntrySheet').then((m) => ({ default: m.QuickEntrySheet })),
 );
+const ReserveMoveSheet = lazy(() =>
+  import('../budget/ReserveMoveSheet').then((m) => ({ default: m.ReserveMoveSheet })),
+);
 
 export const EDIT_PARAM = 'editar';
 
@@ -20,20 +23,28 @@ export function withoutQuickEntry(pathname: string, search: string): string {
   return rest ? `${pathname}?${rest}` : pathname;
 }
 
-/** Abre o Q01 como sheet quando a URL tem `?novo=despesa` (o modo Receita/Guardar chega na T-041). */
+/** Abre o Q01 como sheet com `?novo=despesa` ou `?novo=receita`; `?novo=guardar` abre o modo Guardar (US-33). */
 export function QuickEntryHost() {
   const location = useLocation();
   const navigate = useNavigate();
   const mode = new URLSearchParams(location.search).get(QUICK_ENTRY_PARAM);
-  if (mode !== 'despesa') {
+  const close = () =>
+    void navigate(withoutQuickEntry(location.pathname, location.search), { replace: true });
+  if (mode === 'guardar') {
+    return (
+      <Suspense fallback={null}>
+        <ReserveMoveSheet kind="save" onClose={close} />
+      </Suspense>
+    );
+  }
+  if (mode !== 'despesa' && mode !== 'receita') {
     return null;
   }
   return (
     <Suspense fallback={null}>
       <QuickEntrySheet
-        onClose={() =>
-          void navigate(withoutQuickEntry(location.pathname, location.search), { replace: true })
-        }
+        onClose={close}
+        {...(mode === 'receita' ? { mode: 'income' as const } : {})}
       />
     </Suspense>
   );

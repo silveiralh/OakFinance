@@ -236,7 +236,7 @@ describe('Q01 tela (US-12, US-17)', () => {
     await waitFor(() => expect(screen.getByRole('radio', { name: /Moradia/ })).toBeChecked());
   });
 
-  it('host abre o Q01 só com ?novo=despesa; menu do toque longo tem Despesa, Receita, Guardar e Ler nota', async () => {
+  it('host abre o Q01 com ?novo=despesa (e não com um modo desconhecido); menu do toque longo tem Despesa, Receita, Guardar e Ler nota', async () => {
     const auth = await setup();
     const router = createMemoryRouter(
       [
@@ -249,7 +249,7 @@ describe('Q01 tela (US-12, US-17)', () => {
           ),
         },
       ],
-      { initialEntries: ['/lancamentos?novo=receita'] },
+      { initialEntries: ['/lancamentos?novo=outro'] },
     );
     render(
       <AuthContext.Provider value={auth}>
