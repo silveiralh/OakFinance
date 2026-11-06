@@ -21,7 +21,7 @@ test('E05: recurrences — o aluguel aparece a vencer e sai do "a vencer" ao ser
   await page.getByRole('button', { name: 'Nova conta fixa' }).click();
   const sheet = page.getByTestId('expense-sheet');
   await sheet.getByLabel('Descrição').fill(name);
-  const amount = sheet.getByLabel('Valor');
+  const amount = sheet.getByLabel('Valor', { exact: true });
   for (const d of '110000') {
     await amount.press(d);
   }
