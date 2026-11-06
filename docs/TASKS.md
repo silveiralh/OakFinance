@@ -117,7 +117,7 @@ flowchart LR
 | T-052 | Compra parcelada | T-048, T-014 | done |
 | T-053 | Editar e cancelar parcelada | T-052 | done |
 | T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | done |
-| T-055 | Editar, pular e encerrar recorrências | T-054 | todo |
+| T-055 | Editar, pular e encerrar recorrências | T-054 | done |
 | T-056 | Regras que aprendem | T-044, T-049 | todo |
 | T-057 | Gerenciar regras (I06) | T-056 | todo |
 | T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | todo |
@@ -908,7 +908,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-055 — Editar, pular e encerrar recorrências
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-26, US-14 | RN-28, RN-30 | T-054 | não |
+| done | S2 | M | US-26, US-14 | RN-28, RN-30 | T-054 | não |
 
 **Escopo:** "Só esta" e "Esta e as próximas" (encerra na véspera e cria a nova); Pular este mês; Encerrar a partir desta; excluir = encerrar hoje; materialização de `auto_post` depois do pull (`dueAutoPosts`).
 
