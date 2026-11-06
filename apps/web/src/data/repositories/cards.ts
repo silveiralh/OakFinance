@@ -10,9 +10,11 @@ import type { LocalRow, OakDb } from '../db';
 import { newId } from '../ids';
 import { cardFromRow } from '../mappers';
 import { err, type Result } from '../result';
+import { writeLocal } from '../storage';
+import { deviceId } from '../sync/clock';
 import { NAME_MAX } from './accounts';
 import { deleteCard as cascadeDeleteCard } from './cascade';
-import { saveRow } from './rows';
+import { putInTransaction, saveRow, writeScope } from './rows';
 
 export type DayProblem = 'invalid';
 
@@ -89,7 +91,7 @@ export function previewInvoice(card: Card, today: ISODate): InvoicePeriod {
   return currentOpenInvoice(card, today);
 }
 
-function validate(
+export function validateCard(
   input: CardInput,
   cards: readonly LocalRow<'cards'>[],
   selfId?: string,
@@ -115,7 +117,7 @@ export async function createCard(
   input: CardInput,
   { nowMs = Date.now(), id = newId() }: { nowMs?: number; id?: string } = {},
 ): Promise<CardResult> {
-  const problem = validate(input, await db.cards.toArray());
+  const problem = validateCard(input, await db.cards.toArray());
   if (problem) {
     return err(problem);
   }
@@ -155,6 +157,75 @@ export function cardUsage(db: OakDb, id: string): Promise<number> {
     .count();
 }
 
+/** US-11: o cartão tem lançamento (compra, estorno ou pagamento) ou recorrência; aí só arquivar. */
+export async function cardInUse(db: OakDb, id: string): Promise<boolean> {
+  if ((await cardUsage(db, id)) > 0) {
+    return true;
+  }
+  const payments = await db.transactions
+    .filter((t) => t.deleted_at === null && t.counterpart_card_id === id)
+    .count();
+  const recurrences = await db.recurrences
+    .filter((r) => r.deleted_at === null && r.card_id === id)
+    .count();
+  return payments + recurrences > 0;
+}
+
+/** Linha do cartão com os dados editados (o resto da linha fica). */
+export function editedCardRow(current: LocalRow<'cards'>, input: CardInput): LocalRow<'cards'> {
+  return {
+    ...current,
+    name: input.name.trim(),
+    closing_day: input.closingDay,
+    due_day: input.dueDay,
+    closing_day_rule: input.closingDayToNext === false ? 'same' : 'next',
+    limit_cents: input.limitCents ?? null,
+    payment_account_id: input.paymentAccountId ?? null,
+  };
+}
+
+/**
+ * Grava a edição do cartão numa transação: primeiro as faturas (o item aponta para elas), depois os itens que
+ * mudaram de fatura (RN-17) e por fim o cartão.
+ */
+export async function saveCardChange(
+  db: OakDb,
+  card: LocalRow<'cards'>,
+  invoices: readonly LocalRow<'invoices'>[],
+  transactions: readonly LocalRow<'transactions'>[],
+  { nowMs = Date.now() }: { nowMs?: number } = {},
+): Promise<Result<LocalRow<'cards'>>> {
+  const device = await deviceId(db);
+  return writeLocal(() =>
+    db.transaction('rw', writeScope(['invoices', 'transactions', 'cards']), async () => {
+      for (const row of invoices) {
+        await putInTransaction(db, 'invoices', row, device, nowMs);
+      }
+      for (const row of transactions) {
+        await putInTransaction(db, 'transactions', row, device, nowMs);
+      }
+      return putInTransaction(db, 'cards', card, device, nowMs);
+    }),
+  );
+}
+
+/** Desarquivar volta o cartão para o lançamento rápido, se o nome não colidir com um ativo (RN-07). */
+export async function unarchiveCard(
+  db: OakDb,
+  id: string,
+  { nowMs = Date.now() } = {},
+): Promise<CardResult> {
+  const current = await db.cards.get(id);
+  if (!current || current.deleted_at !== null) {
+    return err({ code: 'CARD_NOT_FOUND', message: id });
+  }
+  const problem = cardNameProblem(current.name, await db.cards.toArray(), id);
+  if (problem) {
+    return err({ code: 'CARD_NAME', problem, message: problem });
+  }
+  return saveRow(db, 'cards', { ...current, archived_at: null }, { nowMs });
+}
+
 export async function archiveCard(
   db: OakDb,
   id: string,
@@ -172,13 +243,13 @@ export async function archiveCard(
   );
 }
 
-/** Excluir só sem lançamentos (RN-07); as faturas vazias saem junto (cascata da tech §4.4). */
+/** Excluir só sem lançamentos nem recorrências (RN-07, US-11); as faturas vazias saem junto (tech §4.4). */
 export async function removeCard(
   db: OakDb,
   id: string,
   { nowMs = Date.now() } = {},
 ): Promise<Result<number, CardError | { code: string; message: string }>> {
-  if ((await cardUsage(db, id)) > 0) {
+  if (await cardInUse(db, id)) {
     return err({ code: 'CARD_HAS_TRANSACTIONS', message: id });
   }
   return cascadeDeleteCard(db, id, { nowMs });

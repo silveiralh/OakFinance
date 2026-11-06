@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AuthContext } from '../src/app/auth';
+import { deleteAccount } from '../src/data/repositories/accounts';
 import { AccountsScreen, methodsLabel } from '../src/features/accounts/AccountsScreen';
 import { fakeAuth } from './auth-fixture';
 import { tx } from './data/rows';
@@ -45,16 +46,21 @@ describe('S03 contas (US-09)', () => {
     expect(methodsLabel('cash')).toBe('Formas: Dinheiro');
   });
 
-  it('RN-07: com lançamentos, excluir orienta a arquivar; arquivar e desarquivar', async () => {
+  it('RN-07: com lançamentos, Excluir some e excluir é recusado; arquivar e desarquivar', async () => {
     const auth = mount();
     await add('Nubank');
     const row = (await screen.findByText('Nubank', { selector: '.account-name' })).closest(
       'li',
     ) as HTMLElement;
     const id = row.dataset.testid?.replace('account-', '') ?? '';
+    expect(await within(row).findByRole('button', { name: 'Excluir' })).toBeInTheDocument();
     await auth.user?.db.transactions.put(tx('t1', { account_id: id }));
-    fireEvent.click(within(row).getByRole('button', { name: 'Excluir' }));
-    expect(await within(row).findByRole('alert')).toHaveTextContent('Esta conta tem lançamentos.');
+    await waitFor(() =>
+      expect(within(row).queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument(),
+    );
+    const db = auth.user?.db;
+    const refused = db ? await deleteAccount(db, id) : null;
+    expect(refused?.ok === false ? refused.error.code : null).toBe('ACCOUNT_HAS_TRANSACTIONS');
     fireEvent.click(within(row).getByRole('button', { name: 'Arquivar' }));
     expect(await screen.findByText('Contas arquivadas')).toBeInTheDocument();
     fireEvent.click(await screen.findByRole('button', { name: 'Desarquivar' }));

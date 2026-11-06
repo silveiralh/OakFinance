@@ -2,6 +2,7 @@
 // grupos por dia com totais e o resumo Entradas · Saídas · Guardado.
 import { addMonths, type ISODate, parseBRL, type YearMonth } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
+import { t } from '../../i18n/pt-BR';
 
 type Tx = LocalRow<'transactions'>;
 type Category = LocalRow<'categories'>;
@@ -269,4 +270,28 @@ export function visibleWindow(
   const start = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
   const end = Math.min(total, Math.ceil((scrollTop + viewport) / rowHeight) + overscan);
   return { start, end };
+}
+
+/** Nome da conta com o selo "arquivada" quando ela foi arquivada (US-11); conta ausente, `undefined`. */
+export function accountLabel(
+  accounts: readonly Pick<LocalRow<'accounts'>, 'id' | 'name' | 'archived_at'>[],
+  id: string,
+): string | undefined {
+  const found = accounts.find((a) => a.id === id);
+  if (!found) {
+    return undefined;
+  }
+  return found.archived_at === null ? found.name : t('accounts.archivedTag', { nome: found.name });
+}
+
+/** Nome do cartão com o selo "arquivado" (US-11). */
+export function cardLabel(
+  cards: readonly Pick<LocalRow<'cards'>, 'id' | 'name' | 'archived_at'>[],
+  id: string,
+): string | undefined {
+  const found = cards.find((c) => c.id === id);
+  if (!found) {
+    return undefined;
+  }
+  return found.archived_at === null ? found.name : t('cards.archivedTag', { nome: found.name });
 }

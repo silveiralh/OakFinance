@@ -1,5 +1,5 @@
 import { todayIn } from '@oakfinance/domain';
-import { Archive, Landmark, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { Archive, Landmark, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -7,6 +7,7 @@ import { useLive } from '../../data/live';
 import {
   ACCOUNT_TYPES,
   type AccountType,
+  accountInUse,
   accountMethods,
   archiveAccount,
   createAccount,
@@ -14,6 +15,7 @@ import {
   isActive,
   type NameProblem,
   unarchiveAccount,
+  updateAccount,
 } from '../../data/repositories/accounts';
 import { type MessageKey, t } from '../../i18n/pt-BR';
 import { AmountInput, Button, EmptyState, GlassCard, Select, TextField } from '../../ui';
@@ -58,18 +60,61 @@ function typeLabel(type: string): string {
 
 function AccountRow({
   account,
+  inUse,
   onArchive,
   onUnarchive,
   onDelete,
+  onSave,
   error,
 }: {
   account: LocalRow<'accounts'>;
+  /** Com lançamento, recorrência ou cartão: só Arquivar (US-11). `undefined` enquanto carrega. */
+  inUse: boolean | undefined;
   onArchive: () => void;
   onUnarchive: () => void;
   onDelete: () => void;
+  onSave: (patch: { name: string; institution: string | null }) => Promise<boolean>;
   error: string | null;
 }) {
   const archived = account.archived_at !== null;
+  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState(account.name);
+  const [institution, setInstitution] = useState(account.institution ?? '');
+
+  if (editing) {
+    const save = async (event: FormEvent) => {
+      event.preventDefault();
+      if (await onSave({ name, institution: institution.trim() || null })) {
+        setEditing(false);
+      }
+    };
+    return (
+      <li className="account-row" data-testid={`account-${account.id}`}>
+        <form className="account-form" onSubmit={(event) => void save(event)}>
+          <TextField
+            label={t('accounts.name')}
+            value={name}
+            onChange={setName}
+            {...(error ? { error } : {})}
+          />
+          <TextField
+            label={t('accounts.institution')}
+            value={institution}
+            onChange={setInstitution}
+          />
+          <div className="account-actions">
+            <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
+              {t('accounts.cancel')}
+            </Button>
+            <Button type="submit" size="sm">
+              {t('accounts.save')}
+            </Button>
+          </div>
+        </form>
+      </li>
+    );
+  }
+
   return (
     <li className="account-row" data-testid={`account-${account.id}`}>
       <div>
@@ -92,12 +137,26 @@ function AccountRow({
           </Button>
         ) : (
           <>
+            <Button
+              variant="ghost"
+              size="sm"
+              iconStart={Pencil}
+              onClick={() => {
+                setName(account.name);
+                setInstitution(account.institution ?? '');
+                setEditing(true);
+              }}
+            >
+              {t('accounts.edit')}
+            </Button>
             <Button variant="ghost" size="sm" iconStart={Archive} onClick={onArchive}>
               {t('accounts.archive')}
             </Button>
-            <Button variant="ghost" size="sm" iconStart={Trash2} onClick={onDelete}>
-              {t('accounts.delete')}
-            </Button>
+            {inUse === false && (
+              <Button variant="ghost" size="sm" iconStart={Trash2} onClick={onDelete}>
+                {t('accounts.delete')}
+              </Button>
+            )}
           </>
         )}
       </div>
@@ -120,6 +179,20 @@ export function AccountsScreen() {
   const [balance, setBalance] = useState(0);
   const [nameError, setNameError] = useState<string | null>(null);
   const [rowError, setRowError] = useState<{ id: string; message: string } | null>(null);
+  const inUse = useLive(
+    user && accounts
+      ? async () => {
+          const used = new Set<string>();
+          for (const account of accounts) {
+            if (await accountInUse(user.db, account.id)) {
+              used.add(account.id);
+            }
+          }
+          return used;
+        }
+      : null,
+    [user, accounts],
+  );
 
   if (!user) {
     return null;
@@ -160,7 +233,7 @@ export function AccountsScreen() {
     if (result.ok) {
       setRowError(null);
       after(true);
-      return;
+      return true;
     }
     const message =
       result.error.code === 'ACCOUNT_HAS_TRANSACTIONS'
@@ -169,6 +242,7 @@ export function AccountsScreen() {
           ? t(NAME_ERROR[result.error.problem as NameProblem])
           : null;
     setRowError(message ? { id, message } : null);
+    return false;
   };
 
   const active = (accounts ?? []).filter(isActive);
@@ -177,7 +251,9 @@ export function AccountsScreen() {
     <AccountRow
       key={account.id}
       account={account}
+      inUse={inUse?.has(account.id)}
       error={rowError?.id === account.id ? rowError.message : null}
+      onSave={(patch) => act(account.id, () => updateAccount(user.db, account.id, patch))}
       onArchive={() => void act(account.id, () => archiveAccount(user.db, account.id))}
       onUnarchive={() => void act(account.id, () => unarchiveAccount(user.db, account.id))}
       onDelete={() => void act(account.id, () => deleteAccount(user.db, account.id))}

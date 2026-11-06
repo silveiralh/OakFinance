@@ -2114,6 +2114,8 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `accounts.nameRequired` | Informe o nome da conta. |
 | `accounts.nameTooLong` | Use até 40 caracteres. |
 | `accounts.hasTransactions` | Esta conta tem lançamentos. Arquive para tirá-la do lançamento rápido sem perder o histórico. |
+| `accounts.edit` / `.cancel` | Editar / Cancelar |
+| `accounts.archivedTag` | {nome} · arquivada |
 
 **Cartões (S03)**
 
@@ -2132,6 +2134,10 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `cards.empty` | Nenhum cartão cadastrado |
 | `cards.duplicate` | Você já tem um cartão com esse nome |
 | `cards.emptyHint` | Cadastre um cartão para acompanhar faturas e parcelas. |
+| `cards.archived` | Cartões arquivados |
+| `cards.archivedTag` | {nome} · arquivado |
+| `cards.willMove.one` | 1 item pode mudar de fatura |
+| `cards.willMove.many` | {n} itens podem mudar de fatura |
 | `invoice.closesIn` | Fecha em {data} ({n} dias) |
 | `invoice.closesToday` | Fecha hoje |
 | `invoice.closesDue` | Fecha em {fecha} · Vence em {vence} |

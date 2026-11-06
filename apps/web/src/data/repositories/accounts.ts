@@ -155,6 +155,20 @@ export async function accountUsage(db: OakDb, id: string): Promise<number> {
   return own + counterpart;
 }
 
+/** US-11: a conta tem lançamento, recorrência ou é a conta que paga um cartão vivo; aí só arquivar. */
+export async function accountInUse(db: OakDb, id: string): Promise<boolean> {
+  if ((await accountUsage(db, id)) > 0) {
+    return true;
+  }
+  const recurrences = await db.recurrences
+    .filter((r) => r.deleted_at === null && r.account_id === id)
+    .count();
+  const cards = await db.cards
+    .filter((c) => c.deleted_at === null && c.payment_account_id === id)
+    .count();
+  return recurrences + cards > 0;
+}
+
 /** Arquivar: some do seletor e do lançamento rápido, mantém histórico e totais (RN-07). */
 export async function archiveAccount(
   db: OakDb,
@@ -190,13 +204,13 @@ export async function unarchiveAccount(
   return saveRow(db, 'accounts', { ...current, archived_at: null }, { nowMs });
 }
 
-/** Excluir só sem lançamentos (RN-07); com lançamentos, `ACCOUNT_HAS_TRANSACTIONS` (a tela oferece arquivar). */
+/** Excluir só sem uso (RN-07, US-11); com uso, `ACCOUNT_HAS_TRANSACTIONS` (a tela oferece arquivar). */
 export async function deleteAccount(
   db: OakDb,
   id: string,
   { nowMs = Date.now() } = {},
 ): Promise<AccountResult> {
-  if ((await accountUsage(db, id)) > 0) {
+  if (await accountInUse(db, id)) {
     return err({ code: 'ACCOUNT_HAS_TRANSACTIONS', message: id });
   }
   return deleteRow(db, 'accounts', id, { nowMs });

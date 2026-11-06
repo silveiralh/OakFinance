@@ -26,6 +26,7 @@ import {
   loadHistory,
   restoredRow,
 } from './history';
+import { accountLabel, cardLabel } from './list';
 import { methodLabel, toRow } from './TransactionsScreen';
 
 type Tx = LocalRow<'transactions'>;
@@ -155,12 +156,12 @@ export function TransactionDetailScreen({
     : undefined;
   const row = toRow(tx, category, today as Parameters<typeof toRow>[2]);
   const status = statusText(row.state);
-  const account = tx.account_id ? names.accounts.get(tx.account_id) : undefined;
-  const card = tx.card_id ? names.cards.get(tx.card_id) : undefined;
+  const account = tx.account_id ? accountLabel(data.accounts, tx.account_id) : undefined;
+  const card = tx.card_id ? cardLabel(data.cards, tx.card_id) : undefined;
   const destination = tx.counterpart_account_id
-    ? names.accounts.get(tx.counterpart_account_id)
+    ? accountLabel(data.accounts, tx.counterpart_account_id)
     : tx.counterpart_card_id
-      ? names.cards.get(tx.counterpart_card_id)
+      ? cardLabel(data.cards, tx.counterpart_card_id)
       : undefined;
   const invoice = data.invoice;
   const origin = ORIGIN_KEY[tx.source];

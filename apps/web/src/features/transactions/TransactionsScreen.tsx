@@ -346,7 +346,15 @@ export function TransactionsScreen({
               onChange={(v) => set({ accountId: v || null })}
               options={[
                 { value: '', label: t('list.filter.any') },
-                ...(data?.accounts ?? []).map((a) => ({ value: a.id, label: a.name })),
+                ...(data?.accounts ?? []).map((a) => ({
+                  value: a.id,
+                  label:
+                    a.archived_at === null
+                      ? a.name
+                      : t('closing_day' in a ? 'cards.archivedTag' : 'accounts.archivedTag', {
+                          nome: a.name,
+                        }),
+                })),
               ]}
             />
             <Select

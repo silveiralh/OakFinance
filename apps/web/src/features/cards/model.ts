@@ -15,11 +15,12 @@ import {
   invoicePeriod,
   invoiceStatus,
   invoiceTotals,
+  reassignCardItems,
   type Tx,
   type YearMonth,
 } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
-import { txToRow } from '../../data/mappers';
+import { txFromRow, txToRow } from '../../data/mappers';
 import { buildInvoice } from '../quick-entry/model';
 
 type InvoiceRow = LocalRow<'invoices'>;
@@ -316,4 +317,66 @@ export function buildPayment(input: PaymentInput): TxRow {
     invoice_pinned: true,
     source: 'manual',
   };
+}
+
+export interface CardChangePlan {
+  /** Itens que mudam de fatura (a prévia "{n} itens podem mudar de fatura"). */
+  count: number;
+  /** Faturas a gravar antes dos itens: as abertas e futuras com as datas novas e as que passam a receber itens. */
+  invoices: InvoiceRow[];
+  /** Itens com a fatura nova. */
+  transactions: TxRow[];
+}
+
+/**
+ * RN-17 (US-11): ao mudar fechamento, vencimento ou a regra do dia do fechamento, só os itens de faturas abertas
+ * e futuras, sem `invoice_pinned`, são recalculados pela RN-12. Faturas fechadas, vencidas e pagas não mudam;
+ * datas informadas (RN-19) também não.
+ */
+export function planCardChange(
+  oldCard: Card,
+  newCard: Card,
+  invoiceRows: readonly InvoiceRow[],
+  txRows: readonly TxRow[],
+  today: ISODate,
+  userId: string,
+  nowIso: string,
+): CardChangePlan {
+  const own = invoiceRows.filter((r) => r.card_id === oldCard.id && r.deleted_at === null);
+  const overrides = overridesOf(own);
+  const rows = txRows.filter((r) => r.card_id === oldCard.id);
+  const txs = rows.flatMap((row) => {
+    try {
+      return [txFromRow(row)];
+    } catch {
+      return [];
+    }
+  });
+  const moves = reassignCardItems(oldCard, newCard, txs, today, overrides);
+  const invoices = new Map<string, InvoiceRow>();
+  for (const row of own) {
+    const month = row.reference_month.slice(0, 7) as YearMonth;
+    if (row.is_manual_dates || today > invoicePeriod(oldCard, month, overrides).periodEnd) {
+      continue;
+    }
+    const next = invoicePeriod(newCard, month, overrides);
+    if (next.closingDate !== row.closing_date || next.dueDate !== row.due_date) {
+      invoices.set(row.id, { ...row, closing_date: next.closingDate, due_date: next.dueDate });
+    }
+  }
+  const known = new Set(own.map((r) => r.id));
+  for (const move of moves) {
+    if (!known.has(move.toInvoiceId) && !invoices.has(move.toInvoiceId)) {
+      invoices.set(
+        move.toInvoiceId,
+        buildInvoice(invoicePeriod(newCard, move.toReferenceMonth, overrides), userId, nowIso),
+      );
+    }
+  }
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  const transactions = moves.flatMap((move) => {
+    const row = byId.get(move.txId);
+    return row ? [{ ...row, invoice_id: move.toInvoiceId }] : [];
+  });
+  return { count: moves.length, invoices: [...invoices.values()], transactions };
 }
