@@ -2,14 +2,17 @@ import { Navigate, Outlet, useLocation } from 'react-router';
 import { useAuth } from './auth';
 import { Splash } from './Splash';
 
-/** Telas do app: sem sessão, vai para as boas-vindas (UX §2.2, S00 → ON01). */
+/** Telas do app: sem sessão, vai para as boas-vindas (UX §2.2, S00 → ON01); depois do "Sair", para o login. */
 export function RequireSession() {
-  const { status } = useAuth();
+  const { status, signedOutByUser } = useAuth();
   const location = useLocation();
   if (status === 'loading') {
     return <Splash />;
   }
   if (status !== 'signedIn') {
+    if (signedOutByUser) {
+      return <Navigate to="/entrar" replace />;
+    }
     return <Navigate to="/boas-vindas" replace state={{ from: location.pathname }} />;
   }
   return <Outlet />;

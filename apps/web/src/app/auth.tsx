@@ -31,6 +31,8 @@ export interface AuthValue {
   /** `discard`: sai mesmo com alterações na fila. `send`: sincroniza antes; devolve `false` se sobrou fila. */
   signOut(mode: 'send' | 'discard'): Promise<boolean>;
   pending(): Promise<number>;
+  /** `true` depois do "Sair" (S02): a guarda leva ao `/entrar`, e não às boas-vindas. */
+  signedOutByUser?: boolean;
 }
 
 /** Exportado para os testes de componente montarem uma sessão fixa. */
@@ -94,6 +96,7 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
     };
   }, [client]);
   const [user, setUser] = useState<UserSession | null>(null);
+  const [signedOutByUser, setSignedOutByUser] = useState(false);
 
   useEffect(() => {
     if (!client) {
@@ -114,6 +117,9 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
         return;
       }
       current = next;
+      if (userId) {
+        setSignedOutByUser(false);
+      }
       setUser(next);
       setStatus(userId ? 'signedIn' : 'signedOut');
     };
@@ -194,6 +200,8 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
           return false;
         }
       }
+      // o `signOut` do cliente dispara o onAuthStateChange, que pode tirar a sessão antes de quem chamou navegar
+      setSignedOutByUser(true);
       user.db.close();
       await deleteUserDb(user.userId);
       await client.auth.signOut({ scope: 'local' });
@@ -205,8 +213,16 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
   );
 
   const value = useMemo<AuthValue>(
-    () => ({ status, user, client: client ?? null, signInWithGoogle, signOut, pending }),
-    [status, user, client, signInWithGoogle, signOut, pending],
+    () => ({
+      status,
+      user,
+      client: client ?? null,
+      signInWithGoogle,
+      signOut,
+      pending,
+      signedOutByUser,
+    }),
+    [status, user, client, signInWithGoogle, signOut, pending, signedOutByUser],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
