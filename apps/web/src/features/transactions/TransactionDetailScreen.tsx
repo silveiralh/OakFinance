@@ -5,6 +5,7 @@ import { History, Pencil, Receipt, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { useValuesHidden } from '../../app/values';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { deleteRow, restoreRow, saveRow } from '../../data/repositories/rows';
@@ -58,6 +59,7 @@ export function TransactionDetailScreen({
   const navigate = useNavigate();
   const showToast = useToast();
   const online = useOnline();
+  const hidden = useValuesHidden();
   const data = useLive(
     user
       ? async () => {
@@ -86,8 +88,9 @@ export function TransactionDetailScreen({
       accounts: new Map((data?.accounts ?? []).map((a) => [a.id, a.name])),
       cards: new Map((data?.cards ?? []).map((c) => [c.id, c.name])),
       method: methodLabel,
+      hidden,
     }),
-    [data?.categories, data?.accounts, data?.cards],
+    [data?.categories, data?.accounts, data?.cards, hidden],
   );
 
   const [history, setHistory] = useState<HistoryState>({ kind: 'loading' });
