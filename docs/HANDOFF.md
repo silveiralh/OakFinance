@@ -26,12 +26,13 @@
 - Conciliação I (T-020): `reconciliation.ts` com candidatos e janelas da RN-66, decisão da RN-67 (1:1, empate, aproximado), RN-68 e duplicidade entre fontes da RN-72; chaves da RN-65.
 - Conciliação II (T-021): fatura do banco (RN-19, `invoiceForImported`), parcelas importadas (RN-69: `installmentMarkerOf`, `linkImportedInstallment`, `importedInstallmentPlan` com "importada parcialmente"), recorrência variável pelo termo (RN-70 no `reconcile`/`planMerge`, `matchPatternFor`), pagamento de fatura, "Pagamento recebido" ignorado e transferência sugerida (RN-71: `detectInvoicePayments`, `invoicePaymentPatch`, `detectIgnoredCardCredits`, `detectInternalTransfers`).
 - Importação OFX/CSV (T-022): `imports/ofx.ts` (SGML 1.02 do BB e XML 2.x, Windows-1252/UTF-8, `[-3:BRT]` sem converter para UTC, vírgula decimal, limites de 5 MB e 5.000 transações), `imports/csv.ts` (presets Nubank provisórios, `sniffCsvProfile`, `mapCsvRows` com erros por linha) e fixtures sintéticas em `packages/domain/test/fixtures/`.
+- Lembretes (T-024): `notifications.ts` com `dueNotifications` para os 9 tipos (RN-86..RN-94), textos do UX 6.7, `hideValues`, janela de 15 min, silêncio (`deliverAt`/`stillDue`) e resumo semanal com a versão curta; `settings.ts` com `ProfileSettings` e padrões. **F2 (domínio) concluída.**
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
-- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022 e T-023. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023 e T-024. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
-- CI: `ci.yml` verde em `main` (último merge: T-021, PR #29). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
+- CI: `ci.yml` verde em `main` (último merge: T-022, PR #30). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
 - Deploy: `deploy.yml` roda em cada push em `main` e termina com aviso e sucesso enquanto as variáveis do Supabase estão vazias (SETUP-05/09). Backup, keepalive e preview também pulam com aviso. O deploy real começa na T-036.
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Ainda não rodou.
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
@@ -40,7 +41,8 @@
 
 ## 3. Próximos passos
 
-- **Próximas tarefas: T-024 (lembretes) e T-025 (tokens, i18n e marca).**
+- **Próxima tarefa: T-025 (tokens, fontes, ambiente, i18n e marca), início da F3 (design system).**
+- Lembretes: o `reminders-tick` (T-064) ainda precisa aplicar o teto de 3 push por dia, agrupar vencimentos do mesmo dia (UX 6.7, #4) e usar `deliverAt`/`stillDue` para o silêncio; o domínio entrega um aviso por item. Passe `labels` (nomes de cartões e categorias), `loggedOn` (datas locais de `created_at` dos lançamentos manuais), `categoryLimits` e `connections`.
 - Importação: os presets Nubank e as fixtures são sintéticos e provisórios; quando o SETUP-14 chegar, a sessão da T-085/T-087 gera fixtures anonimizadas dos arquivos reais e confirma os presets. `ofxToImportRows` passa o valor com sinal para `importedDedupKey` (um estorno com o mesmo FITID, data e valor não colide com a compra). A tokenização do CSV (papaparse) e a decodificação do CSV por `encoding` ficam no app.
 - RN-71: as stopwords da RN-58 apagam "CARTAO", "NU", "PAGAMENTO" e "RECEBIDO"; por isso a detecção de pagamento de fatura usa a normalização da RN-57 sem as etapas 4–5. Para reduzir falso positivo ("COMPRA CARTAO" no débito), a sugestão só sai quando há fatura fechada/vencida/parcial cuja janela (fechamento ≤ data ≤ vencimento + 5) contém a data.
 - RN-69: sem o mês da fatura do banco, `linkImportedInstallment` aceita a data original da compra (±3 dias) ou o mês da parcela de −1 a +3; quem chamar deve preencher `ReconItem.invoiceMonth` e `firstInvoiceMonth` sempre que souber, para valer o ±1 estrito.
@@ -130,3 +132,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 06/11/2026 | T-020 | PR #28 | done | conciliação: US-48, RN-65..RN-68 e RN-72 |
 | 06/11/2026 | T-021 | PR #29 | done | conciliação II: US-50, RN-19, RN-69..RN-71 |
 | 06/11/2026 | T-022 | PR #30 | done | importação OFX/CSV: US-52, US-53, RN-65, RN-75, RN-76; fixtures sintéticas |
+| 06/11/2026 | T-024 | PR #NN | done | lembretes devidos: US-39..US-43, RN-86..RN-94; ProfileSettings |
