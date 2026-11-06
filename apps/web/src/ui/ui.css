@@ -551,3 +551,214 @@
 .toast {
   padding: var(--space-3) var(--space-4);
 }
+
+/* ---------- AmountInput e NumericKeypad (5.8) ---------- */
+.amount {
+  display: grid;
+  gap: var(--space-2);
+}
+.amount-input {
+  width: 100%;
+  min-height: var(--touch-min);
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+  font-feature-settings: var(--font-numeric-features);
+  text-align: right;
+  caret-color: var(--text-link);
+}
+.amount[data-size="compact"] .amount-input {
+  font-size: var(--font-size-heading);
+}
+.amount-input[data-empty="true"] {
+  color: var(--text-tertiary);
+}
+.amount-input:focus-visible {
+  border-radius: var(--radius-sm);
+}
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(64px, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.key {
+  min-width: 64px;
+  min-height: 56px;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.key:active {
+  background: var(--surface-pressed);
+}
+
+/* ---------- Chips (5.10–5.13) ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+.chip[data-selected="true"] {
+  background: var(--status-info-bg);
+  border: 2px solid var(--_band, var(--text-link));
+}
+.chip[data-band="needs"] {
+  --_band: var(--band-needs);
+}
+.chip[data-band="wants"] {
+  --_band: var(--band-wants);
+}
+.chip[data-band="savings"] {
+  --_band: var(--band-savings);
+}
+.chip[data-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.chip:has(input:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+.chip-row,
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.chip-group {
+  display: grid;
+  margin-top: var(--space-4);
+}
+.chip-group-title {
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+.chip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.date-native {
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.installments {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* ---------- PaymentMethodPicker (5.11) ---------- */
+.method-list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.method-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.method-row[data-selected="true"] {
+  background: var(--status-info-bg);
+}
+.method-row:has(input:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+.method-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.method-seal {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+}
+.method-text {
+  display: grid;
+}
+
+/* ---------- BottomSheet (5.20) e Dialog (5.21) ---------- */
+.sheet {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  color: var(--text-primary);
+  overflow-y: auto;
+  z-index: var(--z-sheet);
+}
+.sheet[data-variant="dialog"] {
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(100% - 2 * var(--gutter), 480px);
+  border-radius: var(--radius-xl);
+  z-index: var(--z-dialog);
+}
+.sheet::backdrop {
+  background: var(--scrim);
+}
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--border-strong);
+}
+.sheet[data-variant="dialog"] .sheet-handle {
+  display: none;
+}
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.sheet-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title);
+}
+.dialog-description {
+  color: var(--text-secondary);
+}
+.dialog-actions {
+  display: grid;
+  gap: var(--space-2);
+}

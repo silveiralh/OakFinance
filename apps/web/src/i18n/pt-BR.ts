@@ -211,7 +211,8 @@ export type MessageKey = keyof typeof ptBR;
 
 /**
  * Textos de acessibilidade e de estado dos componentes, definidos no inventário da UX §5 (não na §6.4):
- * MoneyText (5.7), Skeleton (5.26), FAB (5.3) e Banner/Toast (5.22, 5.23).
+ * MoneyText (5.7), Skeleton (5.26), FAB (5.3), Banner/Toast (5.22, 5.23) e os componentes de entrada (5.8–5.13,
+ * 5.20, 5.21).
  */
 export const uiText = {
   hiddenValue: 'Valor oculto',
@@ -224,6 +225,28 @@ export const uiText = {
   close: 'Fechar',
   clear: 'Limpar',
   saved: 'Salvo',
+  amount: 'Valor',
+  keypad: 'Teclado numérico',
+  backspace: 'Apagar',
+  today: 'Hoje',
+  yesterday: 'Ontem',
+  pickDate: 'Escolher',
+  cashPayment: 'À vista',
+  more: 'Mais',
+  total: 'Total',
+  installment: 'Parcela',
+  suggested: 'sugerida',
+  cancel: 'Cancelar',
+  search: 'Buscar',
+  recent: 'Recentes',
+  createCategory: 'Criar categoria',
+  category: 'Categoria',
+  paymentMethod: 'Meio de pagamento',
+  installments: 'Parcelas',
+  date: 'Data',
+  bandNeeds: 'Necessidades',
+  bandWants: 'Desejos',
+  bandSavings: 'Poupança',
 } as const;
 
 /** Texto da chave com os placeholders preenchidos; placeholder sem valor fica como está. */
