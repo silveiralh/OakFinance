@@ -136,4 +136,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 06/11/2026 | T-021 | PR #29 | done | conciliação II: US-50, RN-19, RN-69..RN-71 |
 | 06/11/2026 | T-022 | PR #30 | done | importação OFX/CSV: US-52, US-53, RN-65, RN-75, RN-76; fixtures sintéticas |
 | 06/11/2026 | T-024 | PR #31 | done | lembretes devidos: US-39..US-43, RN-86..RN-94; ProfileSettings |
-| 06/11/2026 | T-025 | PR #NN | done | tokens, fontes, ambiente (D-013), i18n e marca; contraste da §4.3 por teste |
+| 06/11/2026 | T-025 | PR #32 | done | tokens, fontes, ambiente (D-013), i18n e marca; contraste da §4.3 por teste |
