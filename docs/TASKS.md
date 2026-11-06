@@ -98,7 +98,7 @@ flowchart LR
 | T-033 | Motor de sync | T-032 | done |
 | T-034 | Login Google, allowlist e sessão | T-033 | done |
 | T-035 | Seeds no primeiro login e isolamento | T-034, T-019 | done |
-| T-036 | Primeiro deploy staging e produção | T-030, T-034 | blocked: aguarda cliente — SETUP-05..09, SETUP-12 |
+| T-036 | Primeiro deploy staging e produção | T-030, T-034 | done |
 | T-037 | Boas-vindas e instalação guiada | T-030, T-034 | done |
 | T-038 | Contas | T-035 | done |
 | T-039 | Cartões com prévia da fatura | T-038, T-013 | done |
@@ -684,7 +684,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-036 — Primeiro deploy staging e produção
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-05..09, SETUP-12 (Supabase, Google, Cloudflare, Environments, backup) | S1 | P | US-05 | — | T-030, T-034 | sim — SETUP-05..09, SETUP-12 |
+| done | S1 | P | US-05 | — | T-030, T-034 | sim — SETUP-05..09, SETUP-12 |
 
 **Escopo:** acionar o `deploy.yml` com as vars e secrets já existentes; `e2e/smoke.spec.ts` contra a URL de produção; `_headers` com o host real vindo de variável; HANDOFF com as instruções do SETUP-10 e o checklist de aparelho do M1.
 

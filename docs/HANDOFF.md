@@ -46,13 +46,13 @@
 - Outro tipo e rascunho (T-042): no Q01, "Mais detalhes" → Transferência entre contas (De/Para, destino ≠ origem, sem cartão; `kind = 'transfer'` com a categoria de sistema `transferencia-entre-contas`) e Estorno no cartão (`kind = 'refund'`, só meios de crédito, na fatura da data); rascunho do Q01 em `kv` `draft:quick` (via `data/drafts.ts`) por até 24 h, oferecido ao reabrir com "Rascunho recuperado." / "Descartar" (G17). D-020.
 - Lista de lançamentos (T-043): `features/transactions/list.ts` (mês, `fold` sem acento, `queryAmount` "45,90" → 4590, chips e painel Filtros combinados, `groupByDay` do mais recente, `monthSummary` Entradas/Saídas/Guardado, `filteredTotal`, `visibleWindow`) e `TransactionsScreen.tsx` (T01: ‹ mês ›, resumo, busca, chips + Filtros com "Total filtrado", grupos Hoje/Ontem/data com totais, só as linhas visíveis desenhadas, DotsThree → Editar (`?editar=`) / Excluir com Desfazer, vazios da US-63). D-021.
 - Redesign (T-100, D-023): visual menta e lima no lugar do Aero — `tokens.css` reescrito (mesmos nomes semânticos), `.glass` virou card sólido branco (sem desfoque), pílulas, barra de abas flutuante preta, Nunito (`@fontsource-variable/nunito`), Lucide (`lucide-react`) no lugar da Phosphor (tipo `AppIcon` em `ui/types.ts`; `features/quick-entry/icons.ts` traduz os nomes salvos nas categorias), marca e ícone do app recoloridos, ON01 em tela lima, Início provisório (`features/dashboard/HomeOverview.tsx`: cartão do mês, atalhos e últimos lançamentos). A UX §4.0 descreve o visual; o resto da §4 vale com as regras da §4.0.
-- Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
-- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-027, T-028, T-029, T-030, T-031, T-032, T-033, T-034, T-035, T-037, T-038, T-039, T-040, T-041, T-042, T-043 e T-100. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Primeiro deploy (T-036): o `deploy.yml` publica a cada push em `main` (backup cifrado → staging → produção → smoke). Produção em **https://oakfinance.pages.dev** (endereço público do SETUP-08). O smoke do app publicado é `pnpm smoke:remote` (`scripts/smoke-remote.ts`, D-024): por HTTP confere o shell em `/`, `/boas-vindas` e `/lancamentos`, a CSP com o Supabase real por https e sem o local, o manifest e o `sw.js`, com 4 tentativas de 15 s. Marco atual: M0. O próximo é o M1 (T-045, T-050 + SETUP-10).
+- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020, T-021, T-022, T-023, T-024, T-025, T-026, T-027, T-028, T-029, T-030, T-031, T-032, T-033, T-034, T-035, T-037, T-038, T-039, T-040, T-041, T-042, T-043, T-100 e T-036. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
-- CI: `ci.yml` verde em `main` (último merge: T-100, PR #53). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
-- Deploy: `deploy.yml` roda em cada push em `main` e termina com aviso e sucesso enquanto as variáveis do Supabase estão vazias (SETUP-05/09). Backup, keepalive e preview também pulam com aviso. O deploy real começa na T-036.
+- CI: `ci.yml` verde em `main` (último merge: T-036, PR #55). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
+- Deploy: `deploy.yml` verde em `main` desde 06/11 (issue #38 resolvida pelo cliente com os secrets do SETUP-09). Keepalive: a 1ª execução manual (06/11) falhou só pelo tick da T-064, corrigido no PR #54; a próxima, agendada para 11:37 UTC, deve passar (as sessões não conseguem disparar workflows: `dispatches` dá 403).
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Em 06/11 falhou (issue #51) por `pnpm audit` (qs, glob, minimatch: corrigidos com overrides no `pnpm-workspace.yaml`) e por keepalive vermelho (tick da T-064 ainda inexistente: corrigido em `ops-check.ts`).
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
 - Infra do job `db`: em 06/11 o `supabase start` falhou uma vez por limite de download do Docker Hub ("toomanyrequests") e porta 54322 ocupada; sem re-execução pela API (403), só um novo commit real refaz o run.
@@ -110,16 +110,16 @@
 |---|---|---|
 | SETUP-01 a SETUP-03 (repositório público, opções, credencial sem admin) | agora | operação segura das sessões |
 | SETUP-04 ruleset | feito em 05/11 | T-007 (done) |
-| SETUP-05 a SETUP-09, SETUP-12 (Supabase, Google, Cloudflare, Environments, backup) | até a T-036 (~dia 6) | T-036 |
-| SETUP-10 allowlist, Vault, hook, secrets das funções | depois da T-036 | M1 (login real) |
+| SETUP-05 a SETUP-09, SETUP-12 (Supabase, Google, Cloudflare, Environments, backup) | feito em 06/11 | T-036 (done) |
+| **SETUP-10 allowlist, Vault, hook, secrets das funções** | **agora** (migrações já aplicadas em staging e produção) | M1 (login real) |
 | SETUP-11 VAPID | depois da T-064 | M2 (push real) |
 | SETUP-13 Pluggy e Meu Pluggy (trial de 15 dias) | quando a T-077 estiver `done` | T-083, M3 |
 | SETUP-14 arquivos reais anonimizáveis (canal privado) | antes da S4 | T-085, T-087, T-090 |
 | SETUP-15 licença; SETUP-16 decisões pendentes | antes da T-099 | T-099 |
 
 - Conferido pela API em 06/11: SETUP-01, 02 e 04 feitos (só squash, auto-merge e exclusão automática de branch ligados; issue #2 reaberta com 01–04 marcados). SETUP-03 substituído pela D-012 (as sessões herdam o admin do dono; valem as salvaguardas).
-- **T-036 `blocked: aguarda cliente — SETUP-05..09, SETUP-12`** (marcada em 06/11). Volta a `todo` quando a issue #2 tiver esses itens marcados.
-- **Issue #38 `regressão: deploy` (06/11):** não é bug de código. As variables do Supabase já existem (o deploy parou de pular), mas o job `staging` falhou com `SUPABASE_ACCESS_TOKEN ausente`. Falta cadastrar no Environment os secrets da tech §9.8 (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_*_DB_PASSWORD` etc., SETUP-09) e re-executar o `deploy`. Rótulo `needs-owner`; as sessões não mexem nela até lá.
+- **SETUP-10 é o próximo passo do cliente:** as migrações 01–08 já foram aplicadas pelo deploy em staging e produção. Ordem: (1) SQL Editor com `app.allowed_emails` e os dois `vault.create_secret`; (2) hook *Before User Created* → `public.hook_before_user_created` (só depois do 1); (3) secrets das Edge Functions `APP_ORIGIN` = `https://oakfinance.pages.dev` e, no staging, `APP_PREVIEW_ORIGIN_SUFFIX` = `.oakfinance.pages.dev`; (4) testar nos dois celulares (§6). Detalhes em `docs/SETUP.md`.
+- Issue #38 (`regressão: deploy`) fechada pelo cliente em 06/11; issue #51 (`regressão: nightly`) fechada pelo PR #54.
 
 ## 5. Riscos conhecidos
 
@@ -138,7 +138,7 @@
 
 - Visual D-023 (T-100): no iPhone e no Android, conferir a barra de abas flutuante acima do indicador de início (área segura), a fonte Nunito carregando offline, os ícones Lucide nítidos e o ícone novo do app (preto com "OF" lima) na Tela de Início depois de reinstalar.
 
-Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, da T-030: instalar no Android (Chrome) e no iPhone (Compartilhar → Adicionar à Tela de Início), ícone e nome "OakFinance" na tela inicial, abrir em modo avião depois do primeiro acesso e o aviso "Nova versão disponível." depois de um deploy; da T-034: entrar com Google no iPhone instalado na Tela de Início e no Android (o retorno precisa voltar ao app, R5), e abrir sem rede depois do login sem ver a tela de entrada; da T-037: no iPhone, conferir se os passos do guia batem com a posição do botão Compartilhar da versão do iOS instalada, e no Android, se o "Instalar app" abre o diálogo nativo do Chrome.
+**M1 (depois do SETUP-10), em https://oakfinance.pages.dev:** entrar com Google nos dois aparelhos (só os 2 e-mails da allowlist; um terceiro vê "Este app é de uso privado."), instalar, lançar uma despesa em modo avião, reabrir sem rede e ver o lançamento sincronizar ao voltar a rede, e conferir que um usuário não vê nada do outro. Entram também, da T-030: instalar no Android (Chrome) e no iPhone (Compartilhar → Adicionar à Tela de Início), ícone e nome "OakFinance" na tela inicial, abrir em modo avião depois do primeiro acesso e o aviso "Nova versão disponível." depois de um deploy; da T-034: entrar com Google no iPhone instalado na Tela de Início e no Android (o retorno precisa voltar ao app, R5), e abrir sem rede depois do login sem ver a tela de entrada; da T-037: no iPhone, conferir se os passos do guia batem com a posição do botão Compartilhar da versão do iOS instalada, e no Android, se o "Instalar app" abre o diálogo nativo do Chrome.
 
 ## 7. Histórico
 
@@ -192,3 +192,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, 
 | 06/11/2026 | T-100 | PR #52 | decisão | D-022: redesign com a nova referência do cliente (paleta clara, Lucide); telas T-044..T-050 bloqueadas até a T-100 |
 | 06/11/2026 | T-100 | PR #53 | done | redesign D-023 com a referência do cliente: menta e lima, Lucide, Nunito, barra flutuante, ON01 lima e Início provisório; contraste refeito (4,5:1 também direto na menta); snapshot do styleguide regerado |
 | 06/11/2026 | — | PR #54 | fix | issue #51 (nightly): overrides de qs, glob e minimatch para o `pnpm audit`; keepalive não reprova o tick antes da T-064 |
+| 06/11/2026 | T-036 | PR #55 | done | deploy verde em staging e produção (https://oakfinance.pages.dev); smoke remoto por HTTP (D-024); SETUP-10 liberado para o cliente |
