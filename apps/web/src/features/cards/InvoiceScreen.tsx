@@ -8,8 +8,8 @@ import {
   todayIn,
   type YearMonth,
 } from '@oakfinance/domain';
-import { ChevronLeft, ChevronRight, CreditCard, Receipt } from 'lucide-react';
-import { useMemo } from 'react';
+import { ChevronLeft, ChevronRight, CreditCard, Receipt, Wallet } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, useValuesHidden } from '../../app/values';
@@ -18,6 +18,7 @@ import { t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import {
   Badge,
+  Button,
   EmptyState,
   GlassCard,
   IconButton,
@@ -29,7 +30,8 @@ import { groupByDay } from '../transactions/list';
 import { dayLabel, toRow } from '../transactions/TransactionsScreen';
 import { invoiceStateLine } from './CardsScreen';
 import { useCardsData, useEnsureCardData } from './data';
-import { invoiceView, overridesOf } from './model';
+import { cardOverview, invoiceView, overridesOf, payableInvoices } from './model';
+import { PaymentSheet } from './PaymentSheet';
 
 const dm = (d: string) => `${d.slice(8, 10)}/${d.slice(5, 7)}`;
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -47,6 +49,19 @@ export function InvoiceScreen({
   useEnsureCardData(user, data, today);
   const cardRow = data?.cards.find((c) => c.id === cartaoId);
   const month = (MONTH.test(mes) ? mes : today.slice(0, 7)) as YearMonth;
+  const [paying, setPaying] = useState(false);
+  const overview = useMemo(
+    () =>
+      cardRow && data
+        ? cardOverview(
+            cardFromRow(cardRow),
+            data.txs,
+            data.invoices.filter((i) => i.card_id === cardRow.id),
+            today,
+          )
+        : null,
+    [cardRow, data, today],
+  );
   const view = useMemo(
     () =>
       cardRow && data
@@ -90,6 +105,14 @@ export function InvoiceScreen({
     );
   }
   const badge = invoiceBadge(view.status, view.daysToDue);
+  const payViews = [
+    ...(overview ? [...overview.previous, overview.current] : []),
+    ...(overview?.previous.some((v) => v.period.id === view.period.id) ||
+    overview?.current.period.id === view.period.id
+      ? []
+      : [view]),
+  ];
+  const payable = payableInvoices(payViews);
   const rows = view.items.flatMap((tx) => {
     const row = rowsById.get(tx.id);
     return row ? [row] : [];
@@ -127,6 +150,27 @@ export function InvoiceScreen({
           {view.status === 'future' && <p className="detail-note">{t('card.future.note')}</p>}
         </div>
       </GlassCard>
+      {payable.length > 0 && user && (
+        <>
+          <div className="invoice-pay">
+            <Button fullWidth iconStart={Wallet} onClick={() => setPaying(true)}>
+              {t('card.pay.cta')}
+            </Button>
+          </div>
+          <PaymentSheet
+            open={paying}
+            onClose={() => setPaying(false)}
+            user={user}
+            card={cardRow}
+            accounts={data.accounts}
+            categories={data.categories}
+            invoices={data.invoices}
+            views={payViews}
+            today={today}
+            hidden={hidden}
+          />
+        </>
+      )}
       {rows.length === 0 ? (
         <EmptyState
           icon={Receipt}

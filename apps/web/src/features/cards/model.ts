@@ -265,3 +265,55 @@ export function movedRow(row: TxRow, target: InvoicePeriod): TxRow {
 export function canMove(view: InvoiceView | null): boolean {
   return view !== null && view.status !== 'paid';
 }
+
+/** Faturas que podem receber pagamento: com saldo em aberto, da mais antiga para a mais nova. */
+export function payableInvoices(views: readonly InvoiceView[]): InvoiceView[] {
+  return views
+    .filter((v) => v.remainingCents > 0 && v.status !== 'future')
+    .sort((a, b) => (a.period.referenceMonth < b.period.referenceMonth ? -1 : 1));
+}
+
+/** RN-16: a fechada/vencida (ou parcial já fechada) mais antiga não paga; senão a aberta. */
+export function defaultPaymentTarget(views: readonly InvoiceView[]): InvoiceView | null {
+  const payable = payableInvoices(views);
+  return (
+    payable.find(
+      (v) => v.status === 'closed' || v.status === 'overdue' || v.status === 'partial',
+    ) ??
+    payable.find((v) => v.status === 'open') ??
+    payable[0] ??
+    null
+  );
+}
+
+export interface PaymentInput {
+  id: string;
+  userId: string;
+  cardId: string;
+  accountId: string;
+  invoice: InvoicePeriod;
+  amountCents: number;
+  today: ISODate;
+  nowIso: string;
+  categoryId: string | null;
+  description: string;
+}
+
+/** Pagamento de fatura (RN-16): transferência da conta para o cartão, apontando a fatura paga. Não é despesa. */
+export function buildPayment(input: PaymentInput): TxRow {
+  return {
+    ...blankTx(input.id, input.userId, input.nowIso),
+    kind: 'transfer',
+    amount_cents: input.amountCents,
+    occurred_on: input.today,
+    description: input.description,
+    category_id: input.categoryId,
+    category_source: input.categoryId ? 'default' : 'none',
+    payment_method: 'transfer',
+    account_id: input.accountId,
+    counterpart_card_id: input.cardId,
+    invoice_id: input.invoice.id,
+    invoice_pinned: true,
+    source: 'manual',
+  };
+}

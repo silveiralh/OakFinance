@@ -336,6 +336,14 @@ export const ptBR = {
   'detail.moveHint':
     'Escolha a fatura. O item fica fixo nela, mesmo se o fechamento do cartão mudar.',
   'detail.moved': 'Lançamento movido para a fatura de {mês}.',
+  'pay.amount': 'Valor do pagamento',
+  'pay.from': 'Conta de origem',
+  'pay.invoice': 'Fatura',
+  'pay.invoiceOption': '{mês} · {valor} em aberto',
+  'pay.description': 'Pagamento da fatura de {mês}',
+  'pay.noAccount': 'Cadastre uma conta para registrar o pagamento.',
+  'pay.missingAmount': 'Informe o valor do pagamento.',
+  'pay.over': 'Acima do total: a diferença vira saldo credor na próxima fatura.',
   'conn.connect': 'Conectar banco',
   'conn.explain':
     'A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos.',
