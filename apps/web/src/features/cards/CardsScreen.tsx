@@ -52,7 +52,8 @@ export function CardsScreen({
   const hidden = useValuesHidden();
   const data = useCardsData(user);
   useEnsureCardData(user, data, today);
-  const [selected, setSelected] = useState(0);
+  // seleção pelo id do cartão: a lista pode mudar de ordem quando o sync traz outro cartão
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const overviews = useMemo(
     () =>
       (data?.cards ?? []).map((row) => ({
@@ -86,7 +87,9 @@ export function CardsScreen({
       </section>
     );
   }
-  const index = Math.min(selected, overviews.length - 1);
+  const found = overviews.findIndex((o) => o.row.id === selectedId);
+  const index = found >= 0 ? found : 0;
+  const select = (i: number) => setSelectedId(overviews[i]?.row.id ?? null);
   const active = overviews[index];
   if (!active) {
     return null;
@@ -127,7 +130,7 @@ export function CardsScreen({
               {...(o.limitCents !== null && o.usedCents !== null
                 ? { limitCents: o.limitCents, usedCents: Math.max(0, o.usedCents) }
                 : {})}
-              onPress={() => setSelected(i)}
+              onPress={() => select(i)}
               data-testid={`card-${card.id}`}
             />
           </section>
@@ -138,12 +141,12 @@ export function CardsScreen({
           <IconButton
             icon={ChevronLeft}
             label={t('invoice.prevCard')}
-            onClick={() => setSelected(Math.max(0, index - 1))}
+            onClick={() => select(Math.max(0, index - 1))}
           />
           <IconButton
             icon={ChevronRight}
             label={t('invoice.nextCard')}
-            onClick={() => setSelected(Math.min(overviews.length - 1, index + 1))}
+            onClick={() => select(Math.min(overviews.length - 1, index + 1))}
           />
         </div>
       )}

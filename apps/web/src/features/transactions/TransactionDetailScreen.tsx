@@ -16,6 +16,7 @@ import { useOnline } from '../../lib/online';
 import { Button, Dialog, EmptyState, GlassCard, MoneyText, Skeleton, useToast } from '../../ui';
 import { movedRow } from '../cards/model';
 import { movePlan } from '../cards/move';
+import { SeriesActions } from '../installments/SeriesActions';
 import { buildInvoice } from '../quick-entry/model';
 import {
   describeHistory,
@@ -283,13 +284,22 @@ export function TransactionDetailScreen({
         </dl>
       </GlassCard>
       <div className="detail-actions">
-        <Button
-          variant="secondary"
-          iconStart={Pencil}
-          onClick={() => void navigate(`?editar=${tx.id}`)}
-        >
-          {t('list.edit')}
-        </Button>
+        {tx.series_id ? (
+          <SeriesActions
+            user={user}
+            tx={tx}
+            categories={data.categories}
+            today={today as ISODate}
+          />
+        ) : (
+          <Button
+            variant="secondary"
+            iconStart={Pencil}
+            onClick={() => void navigate(`?editar=${tx.id}`)}
+          >
+            {t('list.edit')}
+          </Button>
+        )}
         {move?.allowed && (
           <Button variant="secondary" iconStart={ArrowRightLeft} onClick={() => setMoving(true)}>
             {t('tx.move')}

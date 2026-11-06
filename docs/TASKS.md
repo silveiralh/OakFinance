@@ -115,7 +115,7 @@ flowchart LR
 | T-050 | Salário como receita fixa | T-041, T-015 | done |
 | T-051 | Editar e arquivar contas e cartões | T-047 | done |
 | T-052 | Compra parcelada | T-048, T-014 | done |
-| T-053 | Editar e cancelar parcelada | T-052 | todo |
+| T-053 | Editar e cancelar parcelada | T-052 | done |
 | T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | todo |
 | T-055 | Editar, pular e encerrar recorrências | T-054 | todo |
 | T-056 | Regras que aprendem | T-044, T-049 | todo |
@@ -886,7 +886,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-053 — Editar e cancelar parcelada
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-21, US-14 | RN-24, RN-25 | T-052 | não |
+| done | S2 | M | US-21, US-14 | RN-24, RN-25 | T-052 | não |
 
 **Escopo:** escopos "Toda a compra" e "Só esta parcela"; regeneração, ou `INSTALLMENTS_LOCKED` com o texto da RN-24; Cancelar parcelas restantes; Apagar a compra inteira com dupla confirmação; sem exclusão de parcela isolada.
 

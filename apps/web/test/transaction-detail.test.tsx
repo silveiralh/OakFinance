@@ -144,12 +144,12 @@ describe('T02 — detalhe do lançamento (US-13, US-14)', () => {
     await waitFor(() => expect(router.state.location.search).toBe('?editar=l1'));
   });
 
-  it('RN-25: parcela e ocorrência de recorrência não mostram Excluir (T-053/T-055)', async () => {
+  it('RN-25: ocorrência de recorrência não mostra Excluir (T-055); parcela usa as opções da série (T-053)', async () => {
     expect(isStandalone(tx('a', { series_id: null, recurrence_id: null }))).toBe(true);
     expect(isStandalone(tx('a', { series_id: 's', recurrence_id: null }))).toBe(false);
     expect(isStandalone(tx('a', { series_id: null, recurrence_id: 'r' }))).toBe(false);
     const auth = fakeAuth('signedIn');
-    await seed(auth, { series_id: 's1', installment_number: 1, installment_count: 10 });
+    await seed(auth, { recurrence_id: 'r1', recurrence_date: '2026-11-05' });
     await setup({ ...auth, client: historyClient([]) });
     expect(await screen.findByRole('button', { name: 'Editar' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Excluir' })).toBeNull();
