@@ -95,7 +95,7 @@ flowchart LR
 | T-030 | PWA instalável e Service Worker | T-029 | done |
 | T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | done |
 | T-032 | Outbox, repositórios e relógio híbrido | T-031 | done |
-| T-033 | Motor de sync | T-032 | todo |
+| T-033 | Motor de sync | T-032 | done |
 | T-034 | Login Google, allowlist e sessão | T-033 | todo |
 | T-035 | Seeds no primeiro login e isolamento | T-034, T-019 | todo |
 | T-036 | Primeiro deploy staging e produção | T-030, T-034 | todo |
@@ -641,7 +641,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-033 — Motor de sync
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-04 | RN-96..RN-100 | T-032 | não |
+| done | S1 | M | US-04 | RN-96..RN-100 | T-032 | não |
 
 **Escopo:**
 - `sync/engine.ts`, `push.ts` e `pull.ts`: Web Locks, lotes de 200 × 10, backoff 5 s/15 s/1 min/5 min ±20%;
