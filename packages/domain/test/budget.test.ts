@@ -4,6 +4,7 @@ import {
   bucketBudget,
   budgetMonthOf,
   categoryBudgets,
+  categoryConsumption,
   isPredicted,
   type MonthInput,
   monthlyIncome,
@@ -281,6 +282,22 @@ describe('50/30/20 (RN-44, RN-45, RN-41, RN-04)', () => {
       level: 'warning',
     });
     expect(result.savings).toMatchObject({ targetCents: 40000, spentCents: 30000, level: 'ok' });
+  });
+
+  it('RN-45: categoryConsumption separa "já foi" e "vai sair" por categoria, com a mesma soma das faixas', () => {
+    const txs = [
+      tx({ amountCents: 10000 }),
+      tx({ amountCents: 2000, kind: 'refund' }),
+      tx({ amountCents: 7000, occurredOn: '2026-11-25' }),
+      tx({ categoryId: 'lazer', amountCents: 50000 }),
+      tx({ categoryId: null, amountCents: 900 }),
+    ];
+    const byCategory = categoryConsumption(input({ txs }));
+    expect(byCategory.get('mercado')).toEqual({ spentCents: 8000, committedCents: 7000 });
+    expect(byCategory.get('lazer')).toEqual({ spentCents: 50000, committedCents: 0 });
+    expect(byCategory.get('')).toEqual({ spentCents: 900, committedCents: 0 });
+    const needs = bucketBudget(input({ txs }), config, 100000).needs;
+    expect(needs.spentCents + needs.committedCents).toBe(15000);
   });
 
   it('RN-04: transferências e pagamentos de fatura nunca contam; cancelados e duplicados também não', () => {

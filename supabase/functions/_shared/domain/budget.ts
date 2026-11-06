@@ -310,6 +310,21 @@ export function bucketBudget(
   return out;
 }
 
+/**
+ * Consumo por categoria no mês orçamentário (RN-45), separado em "já foi" (efetivadas) e "vai sair" (previstas e
+ * ocorrências projetadas). Chave '' = sem categoria. Base das barras por categoria da P01.
+ */
+export function categoryConsumption(
+  input: MonthInput,
+): Map<string, { spentCents: Cents; committedCents: Cents }> {
+  const { spent, committed } = consumption(input);
+  const out = new Map<string, { spentCents: Cents; committedCents: Cents }>();
+  for (const id of new Set([...spent.keys(), ...committed.keys()])) {
+    out.set(id, { spentCents: spent.get(id) ?? 0, committedCents: committed.get(id) ?? 0 });
+  }
+  return out;
+}
+
 /** RN-41: grupo "Sem faixa" (categoria 'none', como "A classificar", ou sem categoria). */
 export function unbucketed(input: MonthInput): {
   count: number;

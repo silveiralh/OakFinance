@@ -201,7 +201,8 @@ export function outflowsBetween(
   );
 }
 
-export function homeModel(rows: HomeRows, today: ISODate): HomeModel {
+/** Mês de hoje, preferências do cálculo (S06), percentuais do orçamento e a entrada do domínio. */
+export function monthContext(rows: HomeRows, today: ISODate) {
   const month = today.slice(0, 7) as YearMonth;
   const settings = resolveProfileSettings(rows.profile?.settings ?? {});
   const config = settings.spendable;
@@ -223,6 +224,11 @@ export function homeModel(rows: HomeRows, today: ISODate): HomeModel {
     config.cardAttribution,
     config.includeRestrictedAccounts,
   );
+  return { month, settings, config, budget, input };
+}
+
+export function homeModel(rows: HomeRows, today: ISODate): HomeModel {
+  const { month, config, budget, input } = monthContext(rows, today);
   const spendable = spendableThisMonth(input, budget, config);
   const last = clampDay(month, daysInMonth(month));
   const firstOfMonth = clampDay(month, 1);

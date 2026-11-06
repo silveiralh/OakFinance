@@ -2019,6 +2019,21 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `budget.over` | {valor} acima do planejado |
 | `budget.adjust` | Ajustar percentuais |
 | `budget.sumError` | Os percentuais somam {x}%. Ajuste para totalizar 100%. |
+| `budget.income` | Renda do mês |
+| `budget.line` | {gasto} de {meta} · {p}% |
+| `budget.saved` | Poupado {valor} de {meta} |
+| `budget.spent` | Já foi {valor} |
+| `budget.committed` | Vai sair {valor} |
+| `budget.limitLine` | {gasto} de {limite} |
+| `budget.noIncome` | Cadastre sua renda para dividir o orçamento do mês |
+| `budget.unbucketed.title` | Sem faixa |
+| `budget.unbucketed.count` | {n} lançamentos para classificar |
+| `budget.unbucketed.one` | 1 lançamento para classificar |
+| `budget.unbucketed.cta` | Classificar |
+| `budget.toast.category` | {categoria} atingiu {p}% do limite |
+| `budget.toast.bucket` | {faixa} atingiu {p}% do planejado |
+| `budget.toast.over` | {nome} acima do planejado |
+| `categories.limit` | Limite mensal (opcional) |
 | `reserve.goalHint` | Meta sugerida: 6× a média mensal de Necessidades ({valor}). |
 | `reserve.goalNoData` | Estimativa provisória, recalculada com seus gastos. |
 | `reserve.suggestionChanged` | Sugestão atualizada: {valor}. Usar? |

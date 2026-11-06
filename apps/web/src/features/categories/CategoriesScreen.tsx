@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
+import { categoryLimit, setCategoryLimit } from '../../data/repositories/budgets';
 import {
   BUCKETS,
   type Bucket,
@@ -20,6 +21,7 @@ import {
 } from '../../data/repositories/categories';
 import { iconText, type MessageKey, t, uiText } from '../../i18n/pt-BR';
 import {
+  AmountInput,
   BottomSheet,
   Button,
   Dialog,
@@ -69,6 +71,8 @@ interface Draft {
   bucket: Bucket;
   kind: string;
   originalBucket: string | null;
+  /** US-32: limite mensal em centavos (0 = sem limite). */
+  limitCents: number;
 }
 
 export function CategoriesScreen() {
@@ -76,6 +80,7 @@ export function CategoriesScreen() {
   const navigate = useNavigate();
   const showToast = useToast();
   const categories = useLive(user ? () => user.db.categories.toArray() : null, [user]);
+  const budgets = useLive(user ? () => user.db.budgets.toArray() : null, [user]);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmBand, setConfirmBand] = useState(false);
@@ -100,6 +105,7 @@ export function CategoriesScreen() {
               : 'needs',
             kind: row.kind,
             originalBucket: row.bucket,
+            limitCents: categoryLimit(budgets ?? [], row.id)?.limit_cents ?? 0,
           }
         : {
             id: null,
@@ -108,6 +114,7 @@ export function CategoriesScreen() {
             bucket: 'needs',
             kind: 'expense',
             originalBucket: null,
+            limitCents: 0,
           },
     );
   };
@@ -131,6 +138,10 @@ export function CategoriesScreen() {
       const problem = (result.error as { problem?: CategoryNameProblem }).problem;
       setError(problem ? t(NAME_ERROR[problem]) : t('categories.locked'));
       return;
+    }
+    const savedId = result.value?.id ?? draft.id;
+    if (draft.kind === 'expense' && savedId) {
+      await setCategoryLimit(user.db, user.userId, savedId, draft.limitCents);
     }
     user.engine.notifyWrite();
     setDraft(null);
@@ -286,6 +297,15 @@ export function CategoriesScreen() {
                 value={draft.bucket}
                 onChange={(bucket) => setDraft({ ...draft, bucket: bucket as Bucket })}
                 options={BUCKETS.map((b) => ({ value: b, label: BAND_LABEL[b] }))}
+              />
+            )}
+            {draft.kind === 'expense' && (
+              <AmountInput
+                size="compact"
+                label={t('categories.limit')}
+                value={draft.limitCents}
+                onChange={(limitCents) => setDraft({ ...draft, limitCents })}
+                data-testid="category-limit"
               />
             )}
             <Button fullWidth onClick={save}>

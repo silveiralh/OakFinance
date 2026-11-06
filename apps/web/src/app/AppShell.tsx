@@ -15,6 +15,7 @@ import {
   TopBar,
 } from '../ui';
 import { AutoPosts } from './AutoPosts';
+import { BudgetAlerts } from './BudgetAlerts';
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
@@ -103,6 +104,7 @@ export function AppShell() {
       <WipedDialog />
       <ValuesFromProfile />
       <AutoPosts />
+      <BudgetAlerts />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}
