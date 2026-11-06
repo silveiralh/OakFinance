@@ -32,6 +32,11 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
   ] as [string, string]);
 
   await page.goto('/');
+  // a preferência vai para a conta: uma tentativa anterior pode ter deixado os valores ocultos
+  const reveal = page.getByRole('button', { name: 'Mostrar valores' });
+  if (await reveal.isVisible()) {
+    await reveal.click();
+  }
   await expect(page.getByTestId('home-out')).toHaveText(MONEY);
   const eye = page.getByRole('button', { name: 'Ocultar valores' });
   await expect(eye).toHaveAttribute('aria-pressed', 'false');
@@ -47,7 +52,7 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
   for (const path of ['/lancamentos', `/lancamentos/${id}`, '/cartoes', '/planejar']) {
     await page.goto(path);
     await expect(page.getByTestId('app-shell')).toBeVisible();
-    await expect(page.locator('main')).not.toBeEmpty();
+    await expect(page.locator('main [data-screen]')).toBeAttached();
     await noMoney(page, path);
   }
 
