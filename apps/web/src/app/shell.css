@@ -267,10 +267,6 @@
   margin: 0;
   font-weight: var(--font-weight-semibold);
 }
-.list-scroll {
-  max-height: 70vh;
-  overflow-y: auto;
-}
 .list-day {
   display: flex;
   justify-content: space-between;
@@ -279,6 +275,7 @@
   color: var(--text-secondary);
 }
 .list-chips {
+  min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;

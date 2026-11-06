@@ -8,7 +8,7 @@ import {
   type YearMonth,
 } from '@oakfinance/domain';
 import { CaretLeft, CaretRight, MagnifyingGlass, Receipt } from '@phosphor-icons/react';
-import { type UIEvent, useMemo, useState } from 'react';
+import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -76,6 +76,32 @@ const BANDS = [
 /** Altura de uma entrada da lista virtualizada (cabeçalho do dia ou linha), em px. */
 const ROW_HEIGHT = 72;
 const VIEWPORT = 720;
+
+/** Quanto da lista já passou pelo topo da janela (a página rola, não um contêiner interno), lido a cada quadro. */
+function useListScroll(ref: RefObject<HTMLDivElement | null>): number {
+  const [offset, setOffset] = useState(0);
+  useEffect(() => {
+    let frame = 0;
+    const read = () => {
+      frame = 0;
+      const top = ref.current?.getBoundingClientRect().top ?? 0;
+      setOffset(Math.max(0, Math.round(-top)));
+    };
+    const onScroll = () => {
+      if (frame === 0) {
+        frame = requestAnimationFrame(read);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (frame !== 0) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, [ref]);
+  return offset;
+}
 
 function signed(cents: number): string {
   if (cents < 0) {
@@ -166,7 +192,8 @@ export function TransactionsScreen({
   const [filters, setFilters] = useState<ListFilters>(NO_FILTERS);
   const [panel, setPanel] = useState(false);
   const [acting, setActing] = useState<Tx | null>(null);
-  const [scrollTop, setScrollTop] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+  const scrollTop = useListScroll(listRef);
   const { from, to } = monthRange(month);
   const data = useLive(
     user
@@ -347,11 +374,7 @@ export function TransactionsScreen({
           description=""
         />
       ) : (
-        <div
-          className="list-scroll"
-          data-testid="list-scroll"
-          onScroll={(event: UIEvent<HTMLDivElement>) => setScrollTop(event.currentTarget.scrollTop)}
-        >
+        <div ref={listRef} className="list-rows" data-testid="list-rows">
           <div style={{ height: windowed.start * ROW_HEIGHT }} aria-hidden="true" />
           {entries.slice(windowed.start, windowed.end).map((entry) =>
             entry.type === 'day' ? (
