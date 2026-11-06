@@ -7,7 +7,9 @@ import {
   Plugs,
   Plus,
 } from '@phosphor-icons/react';
+import { lazy, Suspense, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate, useNavigation } from 'react-router';
+import { markQuickEntryStart } from '../features/quick-entry/clock';
 import { shellText, uiText } from '../i18n/pt-BR';
 import {
   AppBackdrop,
@@ -25,6 +27,14 @@ import { StorageBanners } from './StorageBanners';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
 import { UpdatePrompt } from './UpdatePrompt';
 import { useCurrentScreen, useDocumentTitle } from './useScreen';
+
+const QuickEntryHost = lazy(() =>
+  import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.QuickEntryHost })),
+);
+const FabMenu = lazy(() =>
+  import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.FabMenu })),
+);
+
 import './shell.css';
 
 interface NavItem extends TabItem {
@@ -83,7 +93,11 @@ export function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const navigation = useNavigation();
-  const openQuickEntry = () => navigate(quickEntryHref(location.pathname, location.search));
+  const [menuOpen, setMenuOpen] = useState(false);
+  const openQuickEntry = () => {
+    markQuickEntryStart();
+    void navigate(quickEntryHref(location.pathname, location.search));
+  };
   const title = screen ? shellText.screens[screen] : shellText.appName;
   return (
     <ToastProvider>
@@ -124,8 +138,22 @@ export function AppShell() {
           items={TAB_ITEMS}
           activeKey={nav ?? ''}
           onNavigate={(href) => navigate(href)}
-          center={<FAB onPress={openQuickEntry} />}
+          center={<FAB onPress={openQuickEntry} onLongPress={() => setMenuOpen(true)} />}
         />
+        <Suspense fallback={null}>
+          <QuickEntryHost />
+          {menuOpen && (
+            <FabMenu
+              open
+              onClose={() => setMenuOpen(false)}
+              onPick={(href) => {
+                setMenuOpen(false);
+                markQuickEntryStart();
+                void navigate(href.startsWith('?') ? `${location.pathname}${href}` : href);
+              }}
+            />
+          )}
+        </Suspense>
       </div>
     </ToastProvider>
   );

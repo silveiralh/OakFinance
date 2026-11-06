@@ -19,6 +19,10 @@ export const CONTEXT_KEYS = [
   'pages',
   'rows',
   'duration_ms',
+  // RN-104: lancamento_salvo {duracao_ms, offline, origem}
+  'duracao_ms',
+  'offline',
+  'origem',
 ] as const;
 
 export type ContextKey = (typeof CONTEXT_KEYS)[number];

@@ -4,6 +4,7 @@ import type { LocalRow } from '../../data/db';
 import { newId } from '../../data/ids';
 import { saveRow } from '../../data/repositories/rows';
 import { pendingCount } from '../../data/sync/outbox';
+import { applyUpdate } from '../../lib/sw-update';
 import type { UserSession } from '../auth';
 
 declare global {
@@ -16,6 +17,8 @@ declare global {
       accountNames(): Promise<string[]>;
       counts(): Promise<Record<string, number>>;
       syncNow(): Promise<boolean>;
+      /** Simula o toque em "Atualizar" do G07 (o toast fica inerte atrás do Q01 modal). */
+      applyUpdate(): void;
     };
   }
 }
@@ -64,6 +67,7 @@ export function installE2eHooks(user: UserSession): () => void {
       rejected: await user.db.outbox.where('state').equals('rejected').count(),
     }),
     syncNow: async () => (await user.engine.syncNow()).ok,
+    applyUpdate,
   };
   return () => {
     delete window.__oakE2E;
