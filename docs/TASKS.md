@@ -125,7 +125,7 @@ flowchart LR
 | T-060 | Reserva de emergência | T-058, T-018 | done |
 | T-061 | Ajustes do cálculo (S06) | T-059 | done |
 | T-062 | Central de avisos (H02) | T-045 | done |
-| T-063 | Ativar notificações push | T-062, T-030 | todo |
+| T-063 | Ativar notificações push | T-062, T-030 | done |
 | T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | todo |
 | T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | todo |
 | T-066 | Exportar lançamentos em CSV | T-043 | todo |
@@ -1000,7 +1000,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-063 — Ativar notificações push
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-38 | RN-86, RN-103 | T-062, T-030 | não |
+| done | S2 | M | US-38 | RN-86, RN-103 | T-062, T-030 | não |
 
 **Escopo:**
 - detecção de suporte; iPhone fora do modo instalado mostra o guia; `requestPermission` só em toque;
