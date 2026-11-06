@@ -76,6 +76,7 @@
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
 - Infra do job `db`: em 06/11 o `supabase start` falhou uma vez por limite de download do Docker Hub ("toomanyrequests") e porta 54322 ocupada; sem re-execução pela API (403), só um novo commit real refaz o run.
 - E2E instável: o passo "navegadores do Playwright" expira em 20 min em cerca de 1 a cada 3 runs (apt lento no runner). A sessão não consegue re-executar runs; o run volta a rodar no próximo push real (rebase). A correção definitiva é o PR #15 (imagem `mcr.microsoft.com/playwright`), com `needs-owner` porque mexe em `.github/**`.
+- E15 (`sw.spec.ts`, desktop) falhou uma vez no PR #79 esperando o `controllerchange` depois do `applyUpdate()` (passou na repetição, o que reprova o shard); nada do SW mudou na T-062. Se voltar a acontecer, vale esperar o novo SW chegar a `waiting` antes do `applyUpdate()`.
 - Ruleset de `main`: ativo desde 05/11 (SETUP-04). Todo merge exige os 8 checks verdes e a branch atualizada.
 
 ## 3. Próximos passos
