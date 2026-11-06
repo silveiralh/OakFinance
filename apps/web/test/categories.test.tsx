@@ -3,6 +3,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AuthContext, type AuthValue } from '../src/app/auth';
 import type { LocalRow, OakDb } from '../src/data/db';
+import { categoryLimit } from '../src/data/repositories/budgets';
 import {
   categoryNameProblem,
   categoryUsage,
@@ -93,6 +94,23 @@ describe('categories (US-27, RN-39..RN-42)', () => {
     expect(
       within(await screen.findByTestId('categories-wants')).getByText('Pets'),
     ).toBeInTheDocument();
+  });
+
+  it('US-32: a folha da categoria de despesa grava o limite mensal (R$ 400,00) em budgets', async () => {
+    const { auth, db } = await seeded();
+    mount(auth);
+    const wants = await screen.findByTestId('categories-wants');
+    fireEvent.click(within(wants).getByRole('button', { name: 'Restaurantes e delivery' }));
+    const sheet = await screen.findByTestId('category-sheet');
+    const input = within(sheet).getByRole('textbox', { name: 'Limite mensal (opcional)' });
+    for (const d of '40000') {
+      fireEvent.keyDown(input, { key: d });
+    }
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Salvar' }));
+    const restaurantes = await bySlug(db, 'restaurantes-delivery');
+    await waitFor(async () =>
+      expect(categoryLimit(await db.budgets.toArray(), restaurantes.id)?.limit_cents).toBe(40000),
+    );
   });
 
   it('US-27: excluir "Viagens" com 4 lançamentos pede o destino e move lançamentos, recorrências e regras', async () => {

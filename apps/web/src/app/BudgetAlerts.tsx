@@ -1,7 +1,7 @@
 // RN-92: ao cruzar 80% ou 100% de Necessidades, Desejos ou do limite de uma categoria, o aparelho onde a mudança
 // aconteceu mostra um toast e grava o aviso local (`notices`, id v5 da mesma dedupe_key do reminders-tick). Uma vez
 // por (faixa ou categoria, limiar, mês): o que já estava cruzado quando a sessão abriu só vira aviso, sem toast.
-import { type DueNotification, noticeId } from '@oakfinance/domain';
+import { type DueNotification, type ISODate, noticeId } from '@oakfinance/domain';
 import { useEffect, useRef } from 'react';
 import { useLive } from '../data/live';
 import { saveRow } from '../data/repositories/rows';
@@ -41,11 +41,11 @@ export function alertToast(alert: DueNotification, view: BudgetView): string | n
     : t('budget.toast.category', { categoria: name, p });
 }
 
-export function BudgetAlerts() {
+export function BudgetAlerts({ today: fixedToday }: { today?: ISODate } = {}) {
   const { user } = useAuth();
   const showToast = useToast();
   const hidden = useValuesHidden();
-  const today = useToday();
+  const today = useToday(fixedToday);
   const data = useLive(
     user
       ? async () => ({
