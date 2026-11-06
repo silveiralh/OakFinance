@@ -2253,6 +2253,8 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `fixed.ended` | Recorrência encerrada. |
 | `fixed.updated` | Valor atualizado. |
 | `fixed.until` | até {data} |
+| `detail.changeCategory` | Mudar categoria |
+| `rules.applied` | {n} lançamentos atualizados. |
 | `future.empty` | Nenhum valor comprometido nos próximos meses. |
 | `future.emptyHint` | Compras parceladas e contas fixas aparecem aqui. |
 | `future.table` | Ver como tabela |
