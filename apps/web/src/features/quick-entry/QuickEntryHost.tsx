@@ -9,10 +9,13 @@ const QuickEntrySheet = lazy(() =>
   import('./QuickEntrySheet').then((m) => ({ default: m.QuickEntrySheet })),
 );
 
-/** URL sem o `?novo=` (fecha o Q01 sem empilhar histórico). */
+export const EDIT_PARAM = 'editar';
+
+/** URL sem o `?novo=`/`?editar=` (fecha o Q01 sem empilhar histórico). */
 export function withoutQuickEntry(pathname: string, search: string): string {
   const params = new URLSearchParams(search);
   params.delete(QUICK_ENTRY_PARAM);
+  params.delete(EDIT_PARAM);
   const rest = params.toString();
   return rest ? `${pathname}?${rest}` : pathname;
 }

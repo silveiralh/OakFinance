@@ -142,8 +142,10 @@ export function AuthProvider({ children, client: injected, autoSync = true }: Au
       seeded = true;
       void import('../data/seeds')
         .then((m) => m.ensureSeeds(user.db, user.userId))
-        .then((result) => {
-          if (result.ok && result.value > 0) {
+        .then(async (result) => {
+          // RN-05: despesa agendada cuja data chegou vira efetivada na abertura do app
+          const promoted = await (await import('../data/scheduled')).promoteDueExpenses(user.db);
+          if ((result.ok && result.value > 0) || promoted > 0) {
             user.engine.notifyWrite();
           }
         });

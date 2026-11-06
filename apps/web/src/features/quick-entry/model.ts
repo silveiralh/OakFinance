@@ -1,7 +1,8 @@
 // Regras puras do lançamento rápido (Q01, US-12, US-17): sugestões de categoria, meios de pagamento a partir das
 // contas e cartões, o que falta para lançar e a linha da despesa.
-import { addDays, type ISODate } from '@oakfinance/domain';
+import { addDays, type CategoryRule, categorize, diffDays, type ISODate } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
+import { categoryFromRow } from '../../data/mappers';
 import { accountMethods } from '../../data/repositories/accounts';
 import { type MessageKey, t } from '../../i18n/pt-BR';
 import type { MethodKind, PaymentMethodOption } from '../../ui';
@@ -144,6 +145,74 @@ export function missingReason(amountCents: number, categoryId: string | null): s
   return null;
 }
 
+export type QuickKind = 'expense' | 'income';
+
+/** Categorias de receita do seletor. */
+export function incomeCategories(categories: readonly Category[]): Category[] {
+  return categories.filter(
+    (c) => c.kind === 'income' && !c.is_system && c.archived_at === null && c.deleted_at === null,
+  );
+}
+
+/**
+ * Status ao criar (RN-05, RN-33): despesa com data ≤ hoje é efetivada e futura fica prevista ("agendada");
+ * receita "Já caiu? Sim" é recebida, "Não" fica prevista (A receber ou Prevista pelo "Contar antes de receber").
+ */
+export function statusFor(
+  kind: QuickKind,
+  date: ISODate,
+  today: ISODate,
+  received: boolean,
+): Tx['status'] {
+  if (kind === 'income') {
+    return received && date <= today ? 'posted' : 'pending';
+  }
+  return date <= today ? 'posted' : 'pending';
+}
+
+export const FAR_DATE_DAYS = 60;
+
+/** Mais de 60 dias antes ou depois de hoje pede confirmação (RN-06). */
+export function isFarDate(date: ISODate, today: ISODate): boolean {
+  return Math.abs(diffDays(today, date)) > FAR_DATE_DAYS;
+}
+
+export function ruleFromRow(row: LocalRow<'category_rules'>): CategoryRule {
+  return {
+    id: row.id,
+    matchField: row.match_field as CategoryRule['matchField'],
+    matchType: row.match_type as CategoryRule['matchType'],
+    pattern: row.pattern,
+    categoryId: row.category_id,
+    accountId: row.account_id,
+    cardId: row.card_id,
+    paymentMethod: row.payment_method as CategoryRule['paymentMethod'],
+    source: row.source as CategoryRule['source'],
+    priority: row.priority,
+    hits: row.hits,
+    lastHitAt: row.last_hit_at,
+    enabled: row.enabled,
+  };
+}
+
+/** Categoria sugerida pela descrição (RN-61), ou `null`. Nunca sobrescreve a escolhida: quem chama decide. */
+export function suggestFromDescription(
+  description: string,
+  kind: QuickKind,
+  rules: readonly LocalRow<'category_rules'>[],
+  categories: readonly Category[],
+): string | null {
+  if (description.trim().length < 2) {
+    return null;
+  }
+  const result = categorize(
+    { description, kind },
+    rules.filter((r) => r.deleted_at === null).map(ruleFromRow),
+    categories.filter((c) => c.deleted_at === null).map(categoryFromRow),
+  );
+  return result?.categoryId ?? null;
+}
+
 export interface ExpenseInput {
   id: string;
   userId: string;
@@ -153,21 +222,26 @@ export interface ExpenseInput {
   occurredOn: ISODate;
   invoiceId: string | null;
   nowIso: string;
+  kind?: QuickKind;
+  status?: Tx['status'];
+  description?: string | null;
+  notes?: string | null;
+  countBeforeReceived?: boolean;
 }
 
-/** Despesa efetivada de hoje (US-12): linha completa no formato do Postgres. */
+/** Despesa (padrão: efetivada) ou receita, linha completa no formato do Postgres (US-12, US-13, US-24). */
 export function buildExpense(input: ExpenseInput): Tx {
   return {
     id: input.id,
     user_id: input.userId,
-    kind: 'expense',
-    status: 'posted',
+    kind: input.kind ?? 'expense',
+    status: input.status ?? 'posted',
     amount_cents: input.amountCents,
     occurred_on: input.occurredOn,
     occurred_at: input.nowIso,
-    description: null,
+    description: input.description?.trim() ? input.description.trim().slice(0, 120) : null,
     description_raw: null,
-    notes: null,
+    notes: input.notes?.trim() ? input.notes.trim().slice(0, 500) : null,
     category_id: input.categoryId,
     category_source: 'manual',
     category_rule_id: null,
@@ -185,7 +259,7 @@ export function buildExpense(input: ExpenseInput): Tx {
     recurrence_date: null,
     goal_id: null,
     income_expected: false,
-    count_before_received: false,
+    count_before_received: input.countBeforeReceived ?? false,
     source: 'manual',
     external_id: null,
     external_meta: null,
@@ -237,4 +311,16 @@ export function buildInvoice(
     server_version: 0,
     device_id: null,
   };
+}
+
+/** Receitas avulsas não confirmadas com data já passada (RN-34): o aviso "Confirmar {descrição}". */
+export function overdueIncomes(rows: readonly Tx[], today: ISODate): Tx[] {
+  return rows.filter(
+    (row) =>
+      row.kind === 'income' &&
+      row.status === 'pending' &&
+      row.deleted_at === null &&
+      row.recurrence_id === null &&
+      row.occurred_on < today,
+  );
 }
