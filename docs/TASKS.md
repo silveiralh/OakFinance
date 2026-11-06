@@ -82,7 +82,7 @@ flowchart LR
 | T-017 | Domínio: Disponível para gastar | T-016 | done |
 | T-018 | Domínio: reserva | T-016 | done |
 | T-019 | Domínio: categorização e seeds | T-012 | done |
-| T-020 | Domínio: conciliação I | T-013, T-015 | todo |
+| T-020 | Domínio: conciliação I | T-013, T-015 | done |
 | T-021 | Domínio: conciliação II | T-020, T-014 | todo |
 | T-022 | Domínio: importação OFX/CSV | T-020 | todo |
 | T-023 | Domínio: QR da NFC-e | T-012 | done |
@@ -477,7 +477,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-020 — Domínio: conciliação I
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-48 | RN-65..RN-68, RN-72 | T-013, T-015 | não |
+| done | S1 | M | US-48 | RN-65..RN-68, RN-72 | T-013, T-015 | não |
 
 **Escopo:** `reconcile`, `planMerge` e `importedDedupKey` em `reconciliation.ts` (§5.9).
 

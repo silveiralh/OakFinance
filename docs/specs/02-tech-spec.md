@@ -2680,3 +2680,4 @@ Uma linha por PR que mude a API pública de `packages/domain` ou as migrações 
 | 05/11/2026 | T-023 | PR #22 | domínio | `nfce/qr.ts`: `parseNfceQr`, `accessKeyCheckDigit` (§5.10) e, além da spec, `isNfceHostAllowed`, `NFCE_UF_PR` e `NFCE_PR_HOST_SUFFIX` para a allowlist da RN-82 |
 | 05/11/2026 | T-017 | PR #24 | domínio | `spendable.ts` (§5.6): `spendableThisMonth`, `monthStatus`, `daysLeftInMonth`, `restrictedBalances` e `DEFAULT_SPENDABLE_CONFIG` |
 | 05/11/2026 | T-018 | PR #25 | domínio | `reserve.ts` (§5.7): `monthlyNeedsHistory`, `suggestedReserveTarget` e `reserveProgress` |
+| 06/11/2026 | T-020 | PR #28 | domínio | `reconciliation.ts` (§5.9): `reconcile`, `planMerge`, `importedDedupKey`; além da spec, `ReconItem.paymentMethod?`/`cancelled?`, `DEFAULT_RECON_OPTIONS`, `directionOf`, `matchWindowDays` e o namespace fixo `NS_IMPORT_ROW` |

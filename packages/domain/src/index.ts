@@ -9,6 +9,7 @@ export * from './installments.ts';
 export * from './invoices.ts';
 export * from './money.ts';
 export * from './nfce/qr.ts';
+export * from './reconciliation.ts';
 export * from './recurrence.ts';
 export * from './reserve.ts';
 export * from './spendable.ts';
