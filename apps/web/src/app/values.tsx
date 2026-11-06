@@ -56,10 +56,10 @@ function useProfile(): Profile | undefined | null {
 export function HideValuesButton() {
   const { user } = useAuth();
   const hidden = useValuesHidden();
-  const profile = useProfile();
   const toggle = async () => {
     const next = !hidden;
     setEnvironmentPrefs({ values: next ? 'hidden' : 'shown' });
+    const profile = user ? await user.db.profiles.toCollection().first() : undefined;
     if (user && profile) {
       const result = await saveRow(user.db, 'profiles', {
         ...profile,

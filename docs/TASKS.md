@@ -108,7 +108,7 @@ flowchart LR
 | T-043 | Lista de lançamentos | T-041 | done |
 | T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | done |
 | T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | done |
-| T-046 | Ocultar valores | T-043 | todo |
+| T-046 | Ocultar valores | T-043 | done |
 | T-047 | Cartões e faturas (C01/C02) | T-040 | todo |
 | T-048 | Pagamento de fatura e saldo credor | T-047 | todo |
 | T-049 | Categorias | T-035 | todo |
@@ -804,7 +804,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-046 — Ocultar valores
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-57 | RN-103 | T-043 | não |
+| done | S1 | P | US-57 | RN-103 | T-043 | não |
 
 **Escopo:** botão olho com `aria-pressed`; `data-values`; "R$ ••••" e "Valor oculto" para leitor de tela; preferência em `profiles.settings.hideValues` e no aparelho; valor em digitação continua visível.
 
