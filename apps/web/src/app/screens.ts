@@ -104,6 +104,11 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
     load: () => import('../features/accounts/screens').then((m) => m.AccountsScreen),
   },
   {
+    path: '/ajustes/categorias',
+    handle: { screen: 'S04', nav: 'settings' },
+    load: () => import('../features/categories/screens').then((m) => m.CategoriesScreen),
+  },
+  {
     path: '/ajustes/conexoes',
     handle: { screen: 'I01', nav: 'connections' },
     load: () => connections().then((m) => m.ConnectionsScreen),
