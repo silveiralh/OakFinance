@@ -14,6 +14,10 @@ async function synced(page: Page) {
   await expect
     .poll(() => page.evaluate(() => window.__oakE2E?.syncNow()), { timeout: 20_000 })
     .toBe(true);
+  // a fila precisa zerar (sem rejeitadas) antes de fechar o aparelho que gravou
+  await expect
+    .poll(() => page.evaluate(() => window.__oakE2E?.counts()), { timeout: 20_000 })
+    .toMatchObject({ pending: 0, rejected: 0 });
 }
 
 test('E18: notices — aviso de outro aparelho aparece no sino, abre a tela certa, fica lido e funciona offline', async ({
@@ -43,11 +47,19 @@ test('E18: notices — aviso de outro aparelho aparece no sino, abre a tela cert
   await synced(tick);
   await other.close();
 
-  await synced(page);
   await page.goto('/');
   await hooks(page);
   const bell = page.getByTestId('notices-bell');
-  await expect(bell).toHaveAccessibleName(/^Avisos, [1-9]\d* não lidos$/);
+  // o pull traz o aviso do outro aparelho
+  await expect
+    .poll(
+      async () => {
+        await page.evaluate(() => window.__oakE2E?.syncNow());
+        return bell.getAttribute('aria-label');
+      },
+      { timeout: 30_000 },
+    )
+    .toMatch(/^Avisos, [1-9]\d* não lidos$/);
   await bell.click();
   await expect(page).toHaveURL('/avisos');
   const item = page.getByTestId(`notice-${id}`);
