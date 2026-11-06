@@ -1,8 +1,28 @@
-// Conciliação e deduplicação (tech §5.9; RN-65..RN-68, RN-72). Regras determinísticas, sem pontuação.
+// Conciliação e deduplicação (tech §5.9; RN-19, RN-65..RN-72). Regras determinísticas, sem pontuação.
 import { v5 } from 'uuid';
-import { diffDays } from './dates.ts';
+import { merchantKey, normalizeDescription, tokenPrefixMatch } from './categorization.ts';
+import { addMonths, clampDay, diffDays, monthOf, parseISODate } from './dates.ts';
 import { DomainError } from './errors.ts';
-import type { Cents, ISODate, PaymentMethod, ReviewState, TxKind, TxSource } from './types.ts';
+import { type InstallmentPlanInput, MAX_INSTALLMENTS, MIN_INSTALLMENTS } from './installments.ts';
+import {
+  type InvoiceDates,
+  type InvoicePeriod,
+  type InvoiceStatus,
+  type InvoiceTotals,
+  invoiceForPurchase,
+  invoicePeriod,
+} from './invoices.ts';
+import type {
+  Card,
+  Cents,
+  ISODate,
+  PaymentMethod,
+  ReviewState,
+  Tx,
+  TxKind,
+  TxSource,
+  YearMonth,
+} from './types.ts';
 
 export interface ReconItem {
   id: string;
@@ -22,6 +42,12 @@ export interface ReconItem {
   paymentMethod?: PaymentMethod | null;
   /** `status = 'cancelled'` nunca é candidato (RN-66). */
   cancelled?: boolean;
+  /** Ocorrência de recorrência com valor variável (RN-70). */
+  isVariableAmount?: boolean;
+  /** `recurrences.match_pattern` ("termo de conciliação", RN-70), já normalizado pela RN-57. */
+  matchPattern?: string | null;
+  /** Mês da fatura informado pelo banco (RN-19) ou calculado pelo chamador; usado na RN-69. */
+  invoiceMonth?: YearMonth | null;
 }
 
 export interface ReconOptions {
@@ -244,6 +270,34 @@ function decide(
     };
   }
 
+  // RN-70: recorrência com valor variável casa pelo termo de conciliação dentro de J (5 dias).
+  const normalized = normalizeDescription(t.description ?? '');
+  const variable = pool
+    .filter(
+      (l) =>
+        l.source === 'recurrence' &&
+        l.isVariableAmount === true &&
+        typeof l.matchPattern === 'string' &&
+        tokenPrefixMatch(l.matchPattern, normalized) &&
+        Math.abs(diffDays(l.occurredOn, t.occurredOn)) <= matchWindowDays(t, l, opts),
+    )
+    .map((l) => ({ l, gap: Math.abs(diffDays(l.occurredOn, t.occurredOn)) }))
+    .sort((a, b) => a.gap - b.gap);
+  const nearest = variable[0];
+  if (nearest) {
+    const tied = variable.filter((c) => c.gap === nearest.gap);
+    if (tied.length === 1) {
+      claimed.add(nearest.l.id);
+      return { importedId: t.id, action: 'auto_merge', matchId: nearest.l.id };
+    }
+    return {
+      importedId: t.id,
+      action: 'suggest',
+      matchIds: tied.map((c) => c.l.id).sort(),
+      reason: 'tie',
+    };
+  }
+
   // RN-67.3: aproximado dentro de J + 2 dias → "É o mesmo?".
   const approx = pool
     .filter(
@@ -285,7 +339,8 @@ export interface MergePlan {
 
 /**
  * RN-68: o manual mantém categoria, descrição, notas e data; recebe a descrição do banco só se vazia;
- * aceito por aproximação → valor do banco; fatura informada pelo banco prevalece (RN-19).
+ * aceito por aproximação ou recorrência de valor variável (RN-70) → valor do banco; fatura informada pelo banco
+ * prevalece (RN-19).
  */
 export function planMerge(
   imported: ReconItem,
@@ -296,7 +351,9 @@ export function planMerge(
   if ((manual.description ?? '').trim() === '' && (imported.description ?? '').trim() !== '') {
     manualPatch.description = imported.description ?? '';
   }
-  if (opts.approx && imported.amountCents !== manual.amountCents) {
+  // RN-70: na recorrência de valor variável, a ocorrência assume o valor do banco.
+  const variable = manual.source === 'recurrence' && manual.isVariableAmount === true;
+  if ((opts.approx || variable) && imported.amountCents !== manual.amountCents) {
     manualPatch.amountCents = imported.amountCents;
   }
   if (opts.bankInvoiceId) {
@@ -349,4 +406,384 @@ export function importedDedupKey(
     parts.ordinal,
   ].join('|');
   return v5(name, NS_IMPORT_ROW);
+}
+
+// ─── RN-19: fatura informada pelo banco ──────────────────────────────────────────────────────────
+
+/**
+ * RN-19: se o banco informa a fatura (mês do vencimento), o item vai para ela com `invoicePinned`, mesmo que a
+ * RN-12 dê outro resultado; sem referência, vale a RN-12.
+ */
+export function invoiceForImported(
+  card: Card,
+  occurredOn: ISODate,
+  bankReferenceMonth: YearMonth | null,
+  overrides: readonly InvoiceDates[] = [],
+): { invoice: InvoicePeriod; invoicePinned: boolean } {
+  if (bankReferenceMonth !== null) {
+    return { invoice: invoicePeriod(card, bankReferenceMonth, overrides), invoicePinned: true };
+  }
+  return { invoice: invoiceForPurchase(card, occurredOn, overrides), invoicePinned: false };
+}
+
+// ─── RN-69: parcelas importadas ──────────────────────────────────────────────────────────────────
+
+/** Regex literal da RN-69. */
+export const INSTALLMENT_MARKER_RE = /\b(\d{1,2})\s*\/\s*(\d{1,2})\b/g;
+
+export interface InstallmentMarker {
+  number: number;
+  count: number;
+}
+
+function validMarker(k: number, n: number): InstallmentMarker | null {
+  // 1 ≤ k ≤ n ≤ 48 (RN-69); "1/1" não é série (mínimo de 2 parcelas, RN-20).
+  return Number.isInteger(k) &&
+    Number.isInteger(n) &&
+    k >= 1 &&
+    k <= n &&
+    n >= MIN_INSTALLMENTS &&
+    n <= MAX_INSTALLMENTS
+    ? { number: k, count: n }
+    : null;
+}
+
+function markerInText(
+  text: string,
+): (InstallmentMarker & { index: number; length: number }) | null {
+  let found: (InstallmentMarker & { index: number; length: number }) | null = null;
+  // o último k/n válido vence: bancos põem a parcela no fim ("05/11 LOJA X 02/10")
+  for (const m of text.matchAll(INSTALLMENT_MARKER_RE)) {
+    const marker = validMarker(Number(m[1]), Number(m[2]));
+    if (marker) {
+      found = { ...marker, index: m.index, length: m[0].length };
+    }
+  }
+  return found;
+}
+
+/** RN-69: metadado de parcela do agregador; na falta dele, o padrão `k/n` da descrição. */
+export function installmentMarkerOf(
+  item: Pick<ReconItem, 'description' | 'installmentNumber' | 'installmentCount'>,
+): InstallmentMarker | null {
+  if (item.installmentNumber !== null && item.installmentCount !== null) {
+    return validMarker(item.installmentNumber, item.installmentCount);
+  }
+  const found = markerInText(item.description ?? '');
+  return found ? { number: found.number, count: found.count } : null;
+}
+
+function monthsBetween(a: YearMonth, b: YearMonth): number {
+  const pa = parseISODate(`${a}-01`);
+  const pb = parseISODate(`${b}-01`);
+  return pb.year * 12 + pb.month - (pa.year * 12 + pa.month);
+}
+
+export interface ImportedSeriesCandidate {
+  id: string;
+  cardId: string | null;
+  count: number;
+  totalCents: Cents;
+  purchaseDate: ISODate;
+  /** Mês da fatura da 1ª parcela (F1), quando conhecido. */
+  firstInvoiceMonth?: YearMonth | null;
+  firstInstallmentCents?: Cents | null;
+}
+
+function installmentValue(plan: ImportedSeriesCandidate, k: number): Cents | null {
+  if (!Number.isSafeInteger(plan.totalCents) || plan.totalCents < plan.count) {
+    return null;
+  }
+  const first = plan.firstInstallmentCents ?? null;
+  if (first !== null) {
+    if (k === 1) {
+      return first;
+    }
+    const rest = plan.totalCents - first;
+    if (rest < plan.count - 1) {
+      return null;
+    }
+    const base = Math.floor(rest / (plan.count - 1));
+    return k === 2 ? rest - base * (plan.count - 2) : base;
+  }
+  const base = Math.floor(plan.totalCents / plan.count);
+  return k === 1 ? plan.totalCents - base * (plan.count - 1) : base; // RN-21: resto na 1ª
+}
+
+/**
+ * Distância (em meses) entre a fatura da parcela k da série e a da transação; `null` fora da tolerância.
+ * Com F1 e o mês da fatura do banco: ±1 (RN-69). Sem eles: o banco pode repetir a data da compra (até 3 dias) ou
+ * mandar a data do lançamento da parcela; F1 fica entre o mês da compra e o 2º seguinte, daí −1..+3 meses.
+ */
+function seriesGap(imported: ReconItem, plan: ImportedSeriesCandidate, k: number): number | null {
+  const bankMonth = imported.invoiceMonth ?? null;
+  if (bankMonth !== null && plan.firstInvoiceMonth) {
+    const gap = Math.abs(monthsBetween(addMonths(plan.firstInvoiceMonth, k - 1), bankMonth));
+    return gap <= 1 ? gap : null;
+  }
+  if (Math.abs(diffDays(plan.purchaseDate, imported.occurredOn)) <= 3) {
+    return 0;
+  }
+  const expected = addMonths(monthOf(plan.purchaseDate), k - 1);
+  const gap = monthsBetween(expected, bankMonth ?? monthOf(imported.occurredOn));
+  return gap >= -1 && gap <= 3 ? Math.abs(gap) : null;
+}
+
+/**
+ * RN-69 (1º item): série do mesmo cartão, mesmo n, com a parcela k de valor exato (tolerância R$ 0,01) na mesma
+ * fatura ±1. A parcela a conciliar é `installmentTxId(seriesId, k)`. Várias séries → menor distância de fatura,
+ * menor diferença de valor, compra mais recente.
+ */
+export function linkImportedInstallment(
+  imported: ReconItem,
+  plans: readonly ImportedSeriesCandidate[],
+): { seriesId: string } | null {
+  const marker = installmentMarkerOf(imported);
+  if (marker === null || imported.cardId === null) {
+    return null;
+  }
+  const k = marker.number;
+  const ranked = plans
+    .filter((p) => p.cardId === imported.cardId && p.count === marker.count)
+    .map((p) => {
+      const value = installmentValue(p, k);
+      const diff =
+        value === null ? Number.POSITIVE_INFINITY : Math.abs(value - imported.amountCents);
+      return { p, diff, gap: diff <= 1 ? seriesGap(imported, p, k) : null };
+    })
+    .filter((c): c is { p: ImportedSeriesCandidate; diff: number; gap: number } => c.gap !== null)
+    .sort(
+      (a, b) =>
+        a.gap - b.gap ||
+        a.diff - b.diff ||
+        (a.p.purchaseDate > b.p.purchaseDate ? -1 : a.p.purchaseDate < b.p.purchaseDate ? 1 : 0) ||
+        (a.p.id < b.p.id ? -1 : 1),
+    );
+  const best = ranked[0];
+  return best ? { seriesId: best.p.id } : null;
+}
+
+export interface ImportedInstallmentPlan extends InstallmentPlanInput {
+  /** k > 1: as parcelas anteriores não são criadas (selo "importada parcialmente", RN-69). */
+  partiallyImported: boolean;
+}
+
+function shiftMonths(d: ISODate, n: number): ISODate {
+  return clampDay(addMonths(monthOf(d), n), parseISODate(d).day);
+}
+
+/**
+ * RN-69 (2º e 3º itens): sem série, cria o plano da série a partir da parcela k. k = 1 → série completa;
+ * k > 1 → parcelas k..n ("importada parcialmente"). Total = valor × n, ou o total do agregador pela RN-21.
+ * A data da compra recua k − 1 meses para a parcela k cair na fatura da transação (RN-22).
+ */
+export function importedInstallmentPlan(
+  imported: ReconItem,
+  seriesId: string,
+  opts: { totalCents?: Cents | null; categoryId?: string | null; purchaseDate?: ISODate } = {},
+): ImportedInstallmentPlan | null {
+  const marker = installmentMarkerOf(imported);
+  if (marker === null || (imported.cardId === null && imported.accountId === null)) {
+    return null;
+  }
+  const { number: k, count: n } = marker;
+  const fromBank = opts.totalCents ?? null;
+  const totalCents =
+    fromBank !== null && Number.isSafeInteger(fromBank) && fromBank >= n
+      ? fromBank
+      : imported.amountCents * n;
+  const raw = imported.description ?? '';
+  const inText = markerInText(raw);
+  const description =
+    (inText ? `${raw.slice(0, inText.index)} ${raw.slice(inText.index + inText.length)}` : raw)
+      .replace(/\s+/g, ' ')
+      .trim() || raw.trim();
+  const anchor = shiftMonths(imported.occurredOn, -(k - 1));
+  const card = imported.cardId !== null;
+  return {
+    seriesId,
+    cardId: card ? imported.cardId : null,
+    accountId: card ? null : imported.accountId,
+    purchaseDate: opts.purchaseDate ?? anchor,
+    ...(card ? {} : { firstDueOn: anchor }),
+    totalCents,
+    count: n,
+    startInstallment: k,
+    description,
+    categoryId: opts.categoryId ?? null,
+    partiallyImported: k > 1,
+  };
+}
+
+// ─── RN-71: pagamento de fatura, créditos no cartão e transferências ─────────────────────────────
+
+/** Termos da RN-71 (1º item). */
+export const INVOICE_PAYMENT_TERMS: readonly string[] = [
+  'FATURA',
+  'NUBANK',
+  'NU PAGAMENTOS',
+  'CARTAO',
+  'OUROCARD',
+];
+/** Termos da RN-71 (2º item). */
+export const CARD_PAYMENT_RECEIVED_TERMS: readonly string[] = [
+  'PAGAMENTO RECEBIDO',
+  'PAGAMENTO EFETUADO',
+];
+
+/**
+ * Normalização da RN-57 (etapas 1–3 e 6) sem tirar stopwords nem tokens com dígito: as stopwords da RN-58
+ * apagariam justamente "CARTAO", "NU", "PAGAMENTO" e "RECEBIDO".
+ */
+function plainText(raw: string | null): string {
+  return ` ${(raw ?? '')
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .replace(/[^A-Z0-9]+/g, ' ')
+    .trim()} `;
+}
+
+function hasTerm(raw: string | null, terms: readonly string[]): boolean {
+  const text = plainText(raw);
+  return terms.some((term) => text.includes(` ${term} `));
+}
+
+function aliveTx(tx: Tx): boolean {
+  return tx.deletedAt === null && tx.status !== 'cancelled';
+}
+
+const PAYABLE: ReadonlySet<InvoiceStatus> = new Set(['closed', 'overdue', 'partial']);
+
+export type PayableInvoice = InvoicePeriod & { totals: InvoiceTotals; status: InvoiceStatus };
+
+/**
+ * RN-71 (1º item): saída na conta com valor igual ao total ou ao saldo de uma fatura closed/overdue/partial, com
+ * fechamento ≤ data ≤ vencimento + 5 → pagamento automático; descrição com FATURA/NUBANK/NU PAGAMENTOS/CARTAO/
+ * OUROCARD → pagamento automático se o valor for exato, senão sugestão ("Pagamento da fatura de <mês>?").
+ * Com a descrição, o valor exato vale também depois do vencimento + 5 (fatura vencida); a sugestão só aponta
+ * fatura cuja janela contém a data. Duas faturas com o mesmo valor exato → sugestão.
+ */
+export function detectInvoicePayments(
+  imported: readonly Tx[],
+  invoices: readonly PayableInvoice[],
+): Array<{ txId: string; invoiceId: string; auto: boolean }> {
+  const payable = invoices.filter((inv) => PAYABLE.has(inv.status));
+  const result: Array<{ txId: string; invoiceId: string; auto: boolean }> = [];
+  for (const tx of imported) {
+    if (!aliveTx(tx) || tx.kind !== 'expense' || tx.accountId === null || tx.cardId !== null) {
+      continue;
+    }
+    const d = tx.occurredOn;
+    const termed = hasTerm(tx.description, INVOICE_PAYMENT_TERMS);
+    const inWindow = (inv: PayableInvoice) => inv.closingDate <= d && diffDays(inv.dueDate, d) <= 5;
+    const exact = (inv: PayableInvoice) => {
+      const total = inv.totals.chargesCents - inv.totals.creditsCents;
+      return tx.amountCents === total || tx.amountCents === inv.totals.balanceCents;
+    };
+    const rank = (a: PayableInvoice, b: PayableInvoice) =>
+      Number(inWindow(b)) - Number(inWindow(a)) ||
+      Math.abs(diffDays(a.dueDate, d)) - Math.abs(diffDays(b.dueDate, d)) ||
+      (a.id < b.id ? -1 : 1);
+    const exactHits = payable
+      .filter((inv) => exact(inv) && (inWindow(inv) || (termed && inv.closingDate <= d)))
+      .sort(rank);
+    const first = exactHits[0];
+    if (first) {
+      result.push({ txId: tx.id, invoiceId: first.id, auto: exactHits.length === 1 });
+      continue;
+    }
+    if (termed) {
+      const near = payable.filter(inWindow).sort(rank)[0];
+      if (near) {
+        result.push({ txId: tx.id, invoiceId: near.id, auto: false });
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Efeito da RN-71 (1º item) no lançamento: vira transferência para o cartão na fatura paga, sem categoria
+ * (não conta como despesa). Sugestão fica `suggested` (não conta até a decisão).
+ */
+export function invoicePaymentPatch(
+  match: { invoiceId: string; auto: boolean },
+  invoice: Pick<InvoicePeriod, 'id' | 'cardId'>,
+): Pick<Tx, 'kind' | 'counterpartCardId' | 'invoiceId' | 'categoryId' | 'reviewState'> {
+  if (match.invoiceId !== invoice.id) {
+    throw new DomainError('INVALID_ARGUMENT', 'fatura diferente da detectada');
+  }
+  return {
+    kind: 'transfer',
+    counterpartCardId: invoice.cardId,
+    invoiceId: invoice.id,
+    categoryId: null,
+    reviewState: match.auto ? 'ok' : 'suggested',
+  };
+}
+
+/**
+ * RN-71 (2º item): entrada no cartão "Pagamento recebido"/"PAGAMENTO EFETUADO" → `ignored` (o pagamento já é a
+ * saída da conta corrente). Devolve os ids.
+ */
+export function detectIgnoredCardCredits(imported: readonly Tx[]): string[] {
+  return imported
+    .filter(
+      (tx) =>
+        aliveTx(tx) &&
+        tx.cardId !== null &&
+        (tx.kind === 'income' || tx.kind === 'refund') &&
+        hasTerm(tx.description, CARD_PAYMENT_RECEIVED_TERMS),
+    )
+    .map((tx) => tx.id);
+}
+
+/**
+ * RN-71 (3º item): saída numa conta e entrada do mesmo valor em OUTRA conta do usuário, |Δdata| ≤ janela →
+ * sugestão de transferência. Pareamento 1:1 em ordem de data, pela menor |Δdata|.
+ */
+export function detectInternalTransfers(
+  txs: readonly Tx[],
+  opts: { windowDays: number } = { windowDays: 1 },
+): Array<{ outId: string; inId: string }> {
+  const usable = (tx: Tx) =>
+    aliveTx(tx) &&
+    tx.accountId !== null &&
+    tx.cardId === null &&
+    tx.duplicateOf === null &&
+    tx.reviewState !== 'merged' &&
+    tx.reviewState !== 'ignored';
+  const byDate = (a: Tx, b: Tx) =>
+    a.occurredOn < b.occurredOn ? -1 : a.occurredOn > b.occurredOn ? 1 : a.id < b.id ? -1 : 1;
+  const outs = txs.filter((tx) => usable(tx) && tx.kind === 'expense').sort(byDate);
+  const ins = txs.filter((tx) => usable(tx) && tx.kind === 'income').sort(byDate);
+  const used = new Set<string>();
+  const pairs: Array<{ outId: string; inId: string }> = [];
+  for (const out of outs) {
+    const match = ins
+      .filter(
+        (inc) =>
+          !used.has(inc.id) &&
+          inc.accountId !== out.accountId &&
+          inc.amountCents === out.amountCents &&
+          Math.abs(diffDays(out.occurredOn, inc.occurredOn)) <= opts.windowDays,
+      )
+      .sort(
+        (a, b) =>
+          Math.abs(diffDays(out.occurredOn, a.occurredOn)) -
+            Math.abs(diffDays(out.occurredOn, b.occurredOn)) || byDate(a, b),
+      )[0];
+    if (match) {
+      used.add(match.id);
+      pairs.push({ outId: out.id, inId: match.id });
+    }
+  }
+  return pairs;
+}
+
+/** RN-70: termo de conciliação gravado na 1ª conciliação manual aceita (2 primeiros tokens, RN-62). */
+export function matchPatternFor(description: string | null): string | null {
+  const key = merchantKey(normalizeDescription(description ?? ''));
+  return key === '' ? null : key;
 }
