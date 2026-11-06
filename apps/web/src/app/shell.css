@@ -1032,7 +1032,7 @@ body:has(.screen-welcome) .backdrop {
   display: grid;
   gap: var(--space-2);
   padding: var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--surface-solid-3);
 }
 .reserve-suggestion p {

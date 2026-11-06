@@ -122,7 +122,7 @@ flowchart LR
 | T-057 | Gerenciar regras (I06) | T-056 | done |
 | T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | done |
 | T-059 | Orçamento 50/30/20 e limites | T-058 | done |
-| T-060 | Reserva de emergência | T-058, T-018 | todo |
+| T-060 | Reserva de emergência | T-058, T-018 | done |
 | T-061 | Ajustes do cálculo (S06) | T-059 | todo |
 | T-062 | Central de avisos (H02) | T-045 | todo |
 | T-063 | Ativar notificações push | T-062, T-030 | todo |
@@ -967,7 +967,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-060 — Reserva de emergência
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-33, US-65 | RN-36, RN-52..RN-56 | T-058, T-018 | não |
+| done | S2 | M | US-33, US-65 | RN-36, RN-52..RN-56 | T-058, T-018 | não |
 
 **Escopo:** P02 (GoalProgress, projeção, sugestão ou meta manual, "Sugestão atualizada", editar o valor já guardado); Q01 em modo Guardar; Registrar uso da reserva (receita com `goal_id`); progresso negativo; aviso único "Reserva de emergência completa" (notice) e `achieved_at`; feedbacks da US-65.
 
