@@ -109,7 +109,7 @@ flowchart LR
 | T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | done |
 | T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | done |
 | T-046 | Ocultar valores | T-043 | done |
-| T-047 | Cartões e faturas (C01/C02) | T-040 | todo |
+| T-047 | Cartões e faturas (C01/C02) | T-040 | done |
 | T-048 | Pagamento de fatura e saldo credor | T-047 | todo |
 | T-049 | Categorias | T-035 | todo |
 | T-050 | Salário como receita fixa | T-041, T-015 | todo |
@@ -815,7 +815,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-047 — Cartões e faturas (C01/C02)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-17, US-18 | RN-10..RN-15, RN-18 | T-040 | não |
+| done | S1 | M | US-17, US-18 | RN-10..RN-15, RN-18 | T-040 | não |
 
 **Escopo:**
 - C01: carrossel de InvoiceCard, próximas 3 faturas, limite usado;

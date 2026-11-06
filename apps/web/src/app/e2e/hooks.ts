@@ -1,10 +1,13 @@
 // Só no build E2E (VITE_E2E=1): ganchos para o Playwright criar alterações locais antes de existir a tela de
 // lançamento (E20). Nunca entra no bundle de produção (import dinâmico atrás da constante).
-import { todayIn } from '@oakfinance/domain';
+import { invoiceForPurchase, todayIn } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
 import { newId } from '../../data/ids';
+import { cardFromRow } from '../../data/mappers';
+import { createCard } from '../../data/repositories/cards';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { pendingCount } from '../../data/sync/outbox';
+import { buildInvoice } from '../../features/quick-entry/model';
 import { applyUpdate } from '../../lib/sw-update';
 import type { UserSession } from '../auth';
 
@@ -23,6 +26,10 @@ declare global {
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
       setAmount(id: string, cents: number): Promise<void>;
       amountOf(id: string): Promise<number | null>;
+      /** Cartão (S03) com fechamento e vencimento. */
+      addCard(name: string, closingDay: number, dueDay: number): Promise<string>;
+      /** Compra à vista de hoje no cartão, na fatura da RN-12 (cria a fatura se faltar). */
+      addCardExpense(cardId: string, cents: number, description: string): Promise<string>;
       /** Exclusão lógica, como o Excluir da T01/T02. */
       remove(id: string): Promise<void>;
       /** Valor e exclusão da linha local (`null` se não existe). */
@@ -132,6 +139,46 @@ export function installE2eHooks(user: UserSession): () => void {
       user.engine.notifyWrite();
     },
     amountOf: async (id: string) => (await user.db.transactions.get(id))?.amount_cents ?? null,
+    async addCard(name: string, closingDay: number, dueDay: number) {
+      const id = newId();
+      const result = await createCard(user.db, user.userId, { name, closingDay, dueDay }, { id });
+      if (!result.ok) {
+        throw new Error('cartão inválido');
+      }
+      user.engine.notifyWrite();
+      return id;
+    },
+    async addCardExpense(cardId: string, cents: number, description: string) {
+      const card = await user.db.cards.get(cardId);
+      if (!card) {
+        throw new Error('cartão não encontrado');
+      }
+      const today = todayIn('America/Sao_Paulo', new Date());
+      const period = invoiceForPurchase(cardFromRow(card), today);
+      const now = new Date().toISOString();
+      if (!(await user.db.invoices.get(period.id))) {
+        await saveRow(user.db, 'invoices', buildInvoice(period, user.userId, now));
+      }
+      const id = newId();
+      await saveRow(user.db, 'transactions', {
+        ...EXPENSE_DEFAULTS,
+        tags: [],
+        id,
+        user_id: user.userId,
+        amount_cents: cents,
+        occurred_on: today,
+        description,
+        account_id: null,
+        card_id: cardId,
+        invoice_id: period.id,
+        payment_method: 'credit',
+        created_at: now,
+        updated_at: now,
+        client_updated_at: now,
+      });
+      user.engine.notifyWrite();
+      return id;
+    },
     async remove(id: string) {
       await deleteRow(user.db, 'transactions', id);
       user.engine.notifyWrite();
