@@ -209,7 +209,10 @@ export function describeChanges(
   }
   const other = Object.keys({ ...before, ...after }).some(
     (column) =>
-      !compared.has(column) && !IGNORED.has(column) && !same(before[column], after[column]),
+      !compared.has(column) &&
+      !IGNORED.has(column) &&
+      !column.startsWith('_') &&
+      !same(before[column], after[column]),
   );
   if (other || lines.length === 0) {
     lines.push(t('history.changed.other'));

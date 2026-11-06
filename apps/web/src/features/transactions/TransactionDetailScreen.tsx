@@ -83,13 +83,18 @@ export function TransactionDetailScreen({
             accounts: await user.db.accounts.toArray(),
             cards: await user.db.cards.toArray(),
             invoice: tx?.invoice_id ? ((await user.db.invoices.get(tx.invoice_id)) ?? null) : null,
-            device: await deviceId(user.db),
           };
         }
       : null,
     [user, id],
   );
   const tx = data?.tx ?? null;
+  const [device, setDevice] = useState<string | null>(null);
+  useEffect(() => {
+    if (user) {
+      void deviceId(user.db).then(setDevice);
+    }
+  }, [user]);
   const names: HistoryNames = useMemo(
     () => ({
       categories: new Map((data?.categories ?? []).map((c) => [c.id, c.name])),
@@ -186,7 +191,7 @@ export function TransactionDetailScreen({
   };
 
   const items =
-    history.kind === 'ready' ? describeHistory(history.entries, tx, data.device, names, today) : [];
+    history.kind === 'ready' ? describeHistory(history.entries, tx, device, names, today) : [];
   const empty = t('detail.empty');
 
   const pairs: [MessageKey, string][] = [
