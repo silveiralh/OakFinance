@@ -39,7 +39,7 @@
 
 ## 2. Estado do CI e do deploy
 
-- CI: `ci.yml` verde em `main` (último merge: T-031, PR #38). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
+- CI: `ci.yml` verde em `main` (último merge: T-031, PR #39). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
 - Deploy: `deploy.yml` roda em cada push em `main` e termina com aviso e sucesso enquanto as variáveis do Supabase estão vazias (SETUP-05/09). Backup, keepalive e preview também pulam com aviso. O deploy real começa na T-036.
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Ainda não rodou.
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
@@ -154,4 +154,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, 
 | 06/11/2026 | T-028 | PR #35 | done | componentes de dados, /__styleguide e snapshot visual dos tokens |
 | 06/11/2026 | T-029 | PR #36 | done | AppShell, rotas lazy da UX §3, G09 com código, env (zod) e `_headers` com a CSP aplicada também no E2E |
 | 06/11/2026 | T-030 | PR #37 | done | PWA: manifest, SW com push/notificationclick testados, G07 sem recarregar com o Q01 aberto, E15 e abertura offline no E2E |
-| 06/11/2026 | T-031 | PR #38 | done | Dexie v1 literal, zod gerado de db-types, mappers, filtros de leitura e G11/G12 com fake-indexeddb |
+| 06/11/2026 | T-031 | PR #39 | done | Dexie v1 literal, zod gerado de db-types, mappers, filtros de leitura e G11/G12 com fake-indexeddb |
