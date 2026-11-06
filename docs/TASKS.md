@@ -77,10 +77,8 @@ flowchart LR
 | T-012 | Domínio base | T-007 | done |
 | T-013 | Domínio: faturas | T-012 | done |
 | T-014 | Domínio: parcelas | T-013 | done |
-| T-014 | Domínio: parcelas | T-013 | todo |
-| T-015 | Domínio: recorrências | T-013 | todo |
 | T-015 | Domínio: recorrências | T-013 | done |
-| T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | todo |
+| T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | done |
 | T-017 | Domínio: Disponível para gastar | T-016 | todo |
 | T-018 | Domínio: reserva | T-016 | todo |
 | T-019 | Domínio: categorização e seeds | T-012 | done |
@@ -420,7 +418,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-016 — Domínio: renda e 50/30/20
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-23, US-24, US-31, US-32 | RN-32..RN-46 | T-014, T-015 | não |
+| done | S1 | M | US-23, US-24, US-31, US-32 | RN-32..RN-46 | T-014, T-015 | não |
 
 **Escopo:** `budget.ts` (§5.5).
 
