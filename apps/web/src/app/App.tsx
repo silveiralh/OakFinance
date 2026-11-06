@@ -1,9 +1,21 @@
 import { useState } from 'react';
 import { RouterProvider } from 'react-router';
+import { AuthContext, AuthProvider, type AuthValue } from './auth';
 import { createAppRouter } from './routes';
 
-/** Raiz do app: roteador do navegador (SPA). Guarda de auth e provedores de dados chegam na T-031/T-034. */
-export function App({ router: injected }: { router?: ReturnType<typeof createAppRouter> } = {}) {
+export interface AppProps {
+  router?: ReturnType<typeof createAppRouter>;
+  /** Sessão fixa (testes de componente); padrão: a do Supabase. */
+  auth?: AuthValue;
+}
+
+/** Raiz do app: sessão (Supabase) e roteador do navegador (SPA). */
+export function App({ router: injected, auth }: AppProps = {}) {
   const [router] = useState(() => injected ?? createAppRouter());
-  return <RouterProvider router={router} />;
+  const routes = <RouterProvider router={router} />;
+  return auth ? (
+    <AuthContext.Provider value={auth}>{routes}</AuthContext.Provider>
+  ) : (
+    <AuthProvider>{routes}</AuthProvider>
+  );
 }

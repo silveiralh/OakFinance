@@ -18,6 +18,19 @@ export const FORBIDDEN_IN_DIST = [
   'data-e2e-login',
 ] as const;
 
+/**
+ * Padrão de cada item proibido. A chave secreta do Supabase é procurada pelo formato da chave (o mesmo da regra
+ * `supabase-secret-key` do `.gitleaks.toml`), porque o próprio supabase-js testa o prefixo
+ * (`key.startsWith('sb_secret_')`) para não mandar chave nova como Bearer (D-014). Os demais são literais.
+ */
+export const FORBIDDEN_PATTERNS: Readonly<Record<(typeof FORBIDDEN_IN_DIST)[number], RegExp>> = {
+  sb_secret_: /sb_secret_[A-Za-z0-9_-]{16,}/,
+  service_role: /service_role/,
+  PLUGGY_: /PLUGGY_/,
+  VAPID_PRIVATE: /VAPID_PRIVATE/,
+  'data-e2e-login': /data-e2e-login/,
+};
+
 export const INITIAL_JS_BUDGET = 250 * 1024;
 export const PRECACHE_BUDGET = 3 * 1024 * 1024;
 
@@ -42,7 +55,7 @@ export function scanForbidden(dist: string): string[] {
     }
     const text = readFileSync(file, 'utf8');
     for (const needle of FORBIDDEN_IN_DIST) {
-      if (text.includes(needle)) {
+      if (FORBIDDEN_PATTERNS[needle].test(text)) {
         problems.push(`${relative(dist, file)} contém "${needle}"`);
       }
     }

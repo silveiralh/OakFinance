@@ -13,10 +13,12 @@ import { SPLASH_PROGRESS_DELAY_MS, Splash } from '../src/app/Splash';
 import {
   installScreen,
   ONBOARDING_SCREENS,
+  PUBLIC_SCREENS,
   resolveScreen,
   SHELL_SCREENS,
 } from '../src/app/screens';
 import { documentTitle, type ScreenId, shellText } from '../src/i18n/pt-BR';
+import { fakeAuth } from './auth-fixture';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ux = readFileSync(join(here, '../../../docs/specs/03-ux-design-system.md'), 'utf8');
@@ -40,9 +42,9 @@ function routerPath(uxPath: string): string {
   return uxPath.replace(':aaaa-mm', ':mes').replace(/\?.*$/, '');
 }
 
-function renderAt(path: string, routes: RouteObject[] = appRoutes()) {
+function renderAt(path: string, routes: RouteObject[] = appRoutes(), auth = fakeAuth()) {
   const router = createMemoryRouter(routes, { initialEntries: [path] });
-  render(<App router={router} />);
+  render(<App router={router} auth={auth} />);
   return router;
 }
 
@@ -55,8 +57,8 @@ describe('rotas do UX §2.1 e §3', () => {
 
   it('cada tela com rota na UX §3 está na tabela, com o mesmo caminho e o mesmo nome', () => {
     const table = new Map<string, string>();
-    for (const route of [...SHELL_SCREENS, ...ONBOARDING_SCREENS]) {
-      if (typeof route.handle.screen === 'string') {
+    for (const route of [...SHELL_SCREENS, ...PUBLIC_SCREENS, ...ONBOARDING_SCREENS]) {
+      if (typeof route.handle.screen === 'string' && route.path !== '/auth/callback') {
         table.set(route.handle.screen, route.path);
       }
     }
@@ -86,7 +88,7 @@ describe('rotas do UX §2.1 e §3', () => {
   });
 
   it('todas as telas carregam sob demanda (lazy) um componente', async () => {
-    for (const route of [...SHELL_SCREENS, ...ONBOARDING_SCREENS]) {
+    for (const route of [...SHELL_SCREENS, ...PUBLIC_SCREENS, ...ONBOARDING_SCREENS]) {
       expect(typeof (await route.load()), route.path).toBe('function');
     }
   });
@@ -132,7 +134,8 @@ describe('rotas do UX §2.1 e §3', () => {
     ['/boas-vindas/reserva', 'ON07b'],
     ['/boas-vindas/pronto', 'ON08'],
   ] as const)('%s abre %s no onboarding, sem abas', async (path, id) => {
-    renderAt(path);
+    const isPublic = ['ON01', 'ON02a', 'ON02b', 'ON03'].includes(id);
+    renderAt(path, appRoutes(), fakeAuth(isPublic ? 'signedOut' : 'signedIn'));
     expect(await screen.findByTestId(`screen-${id}`)).toBeInTheDocument();
     expect(screen.queryByTestId('app-shell')).not.toBeInTheDocument();
     expect(screen.getByRole('main')).toHaveAttribute('id', 'conteudo');
@@ -228,7 +231,7 @@ function Boom(): never {
 describe('G09: erro de tela (US-64)', () => {
   function routesWithBoom(): RouteObject[] {
     const routes = appRoutes();
-    const shell = routes[0]?.children?.[0];
+    const shell = routes[0]?.children?.[0]?.children?.[0]; // raiz → RequireSession → AppShell
     shell?.children?.[0]?.children?.push({
       path: '/quebra',
       handle: { screen: 'T01' },

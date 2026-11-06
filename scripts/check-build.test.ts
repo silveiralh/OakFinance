@@ -71,11 +71,19 @@ describe('check-build', () => {
   it.each(['sb_secret_', 'service_role', 'PLUGGY_', 'VAPID_PRIVATE', 'data-e2e-login'])(
     'reprova "%s" em dist/',
     (needle) => {
-      write('assets/chunk.js', `const x = "${needle}abc";`);
+      write('assets/chunk.js', `const x = "${needle}abcdefghijklmnopqrstu";`);
       expect(scanForbidden(dist)).toEqual([`assets/chunk.js contém "${needle}"`]);
       expect(main(dist)).toBe(1);
     },
   );
+
+  it('D-014: o teste de prefixo do supabase-js não é chave; chave curta também não', () => {
+    write(
+      'assets/chunk.js',
+      'const rx=e=>e.startsWith(`sb_publishable_`)||e.startsWith(`sb_secret_`);const y="sb_secret_curta";',
+    );
+    expect(scanForbidden(dist)).toEqual([]);
+  });
 
   it('lê scripts iniciais do index.html', () => {
     expect(

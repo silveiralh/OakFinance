@@ -1,6 +1,6 @@
-// Variáveis públicas do build (tech §9.8), validadas com zod. Só entram aqui valores públicos por natureza:
-// nenhum segredo chega ao front (tech §7.1).
-import { z } from 'zod';
+// Variáveis públicas do build (tech §9.8), validadas com zod (`zod/mini`, para caber no bundle inicial). Só
+// entram aqui valores públicos por natureza: nenhum segredo chega ao front (tech §7.1).
+import * as z from 'zod/mini';
 
 declare global {
   /** Versão do app (package.json + SHA curto do commit no CI), definida no vite.config.ts. */
@@ -13,23 +13,33 @@ export type AppEnvName = (typeof APP_ENVS)[number];
 /** Supabase local (CLI), usado nos ambientes `local` e no E2E quando o build não recebe a URL. */
 export const LOCAL_SUPABASE_URL = 'http://127.0.0.1:54321';
 
-const blankToUndefined = (value: unknown) =>
-  typeof value === 'string' && value.trim() === '' ? undefined : value;
+const KEYS = [
+  'VITE_APP_ENV',
+  'VITE_SUPABASE_URL',
+  'VITE_SUPABASE_PUBLISHABLE_KEY',
+  'VITE_VAPID_PUBLIC_KEY',
+  'VITE_E2E',
+] as const;
 
-const optionalText = z.preprocess(blankToUndefined, z.string().trim().optional());
+/** Texto vazio (variável do CI ainda não configurada) conta como ausente; o resto é aparado. */
+function normalize(raw: Readonly<Record<string, unknown>>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of KEYS) {
+    const value = raw[key];
+    const text = typeof value === 'string' ? value.trim() : value;
+    if (text !== undefined && text !== '') {
+      out[key] = text;
+    }
+  }
+  return out;
+}
 
 const RawEnv = z.object({
-  VITE_APP_ENV: z.preprocess(blankToUndefined, z.enum(APP_ENVS).default('local')),
-  VITE_SUPABASE_URL: z.preprocess(blankToUndefined, z.url({ protocol: /^https?$/ }).optional()),
-  VITE_SUPABASE_PUBLISHABLE_KEY: optionalText,
-  VITE_VAPID_PUBLIC_KEY: z.preprocess(
-    blankToUndefined,
-    z
-      .string()
-      .regex(/^[A-Za-z0-9_-]{80,100}$/, 'VITE_VAPID_PUBLIC_KEY deve ser base64url')
-      .optional(),
-  ),
-  VITE_E2E: optionalText,
+  VITE_APP_ENV: z._default(z.enum(APP_ENVS), 'local'),
+  VITE_SUPABASE_URL: z.optional(z.url({ protocol: /^https?$/ })),
+  VITE_SUPABASE_PUBLISHABLE_KEY: z.optional(z.string()),
+  VITE_VAPID_PUBLIC_KEY: z.optional(z.string().check(z.regex(/^[A-Za-z0-9_-]{80,100}$/))),
+  VITE_E2E: z.optional(z.string()),
 });
 
 export interface AppEnv {
@@ -50,7 +60,7 @@ export class EnvError extends Error {
  * obrigatórias e a URL precisa ser https.
  */
 export function parseEnv(raw: Readonly<Record<string, unknown>>, version = '0.0.0-dev'): AppEnv {
-  const parsed = RawEnv.safeParse(raw);
+  const parsed = RawEnv.safeParse(normalize(raw));
   if (!parsed.success) {
     throw new EnvError(
       `Ambiente inválido: ${parsed.error.issues.map((issue) => issue.path.join('.')).join(', ')}`,

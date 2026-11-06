@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures/base';
+import { expect, login, test } from './fixtures/base';
 
 // T-029: AppShell, rotas e CSP. O `vite preview` serve o `_headers` gerado no build (tech §7.1), então a CSP é a
 // de produção (sem `upgrade-insecure-requests`/HSTS, que exigem TLS) e a fixture base reprova qualquer violação.
@@ -6,6 +6,7 @@ import { expect, test } from './fixtures/base';
 test('E14: a CSP de produção é servida e nenhuma tela viola a política ao navegar', async ({
   page,
 }) => {
+  await login(page);
   const response = await page.goto('/');
   const csp = response?.headers()['content-security-policy'] ?? '';
   expect(csp).toContain("default-src 'self'");
@@ -30,6 +31,7 @@ test('E14: a CSP de produção é servida e nenhuma tela viola a política ao na
 });
 
 test('US-62: landmarks da moldura e link direto servido pelo fallback do SPA', async ({ page }) => {
+  await login(page);
   await page.goto('/cartoes/c1/fatura/2026-11');
   await expect(page).toHaveTitle('Fatura do mês · OakFinance');
   await expect(page.getByRole('banner')).toBeVisible();
@@ -45,6 +47,7 @@ test('US-62: landmarks da moldura e link direto servido pelo fallback do SPA', a
 test('o + abre o lançamento rápido como sheet sobre a tela atual (?novo=despesa)', async ({
   page,
 }) => {
+  await login(page);
   await page.goto('/lancamentos');
   await page.getByRole('button', { name: 'Novo lançamento' }).click();
   await expect(page).toHaveURL('/lancamentos?novo=despesa');
@@ -53,6 +56,7 @@ test('o + abre o lançamento rápido como sheet sobre a tela atual (?novo=despes
 test('US-64: G09 mostra "Tentar novamente" e o código do erro, sem perder a moldura', async ({
   page,
 }) => {
+  await login(page);
   await page.goto('/__erro');
   const alert = page.getByRole('alert');
   await expect(alert).toContainText('Não foi possível carregar esta tela.');
