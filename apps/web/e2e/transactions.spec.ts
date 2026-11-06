@@ -5,17 +5,15 @@ import { expect, login, test } from './fixtures/base';
 test('US-15: a lista abre no mês atual, filtra por chip e a busca sem resultado mostra o vazio', async ({
   page,
 }) => {
-  page.on('pageerror', (error) => console.log(`[T01] pageerror ${error.message}`));
-  page.on('console', (message) => console.log(`[T01] console ${message.type()} ${message.text()}`));
   await login(page, 'e2e-a@example.test');
   await page.goto('/lancamentos');
   await expect(page.getByTestId('screen-T01')).toBeVisible();
-  // Diagnóstico da T01 no WebKit: quadros, tamanho do documento e posição do chip em quadros seguidos.
+  // A T01 continua desenhando (no WebKit ela chegou a parar os quadros): quadros, tamanho do documento e posição do chip em quadros seguidos.
   const probe = await page.evaluate(
     () =>
       new Promise<string>((resolve) => {
         const samples: string[] = [];
-        const chip = document.querySelector('.list-chips button');
+        const chip = document.querySelector('.list-chip');
         let n = 0;
         const tick = () => {
           const r = chip?.getBoundingClientRect();
@@ -33,7 +31,7 @@ test('US-15: a lista abre no mês atual, filtra por chip e a busca sem resultado
         setTimeout(() => resolve(`sem quadros (${n}): ${samples.join(' | ')}`), 3000);
       }),
   );
-  console.log(`[T01] ${test.info().project.name} ${probe}`);
+  expect(probe, 'a T01 precisa desenhar quadros').not.toMatch(/^sem quadros/);
   await expect(page.getByTestId('list-summary')).toContainText('Entradas');
   const expenses = page.getByRole('button', { name: 'Despesas', exact: true });
   await expenses.click();

@@ -287,29 +287,31 @@ export function TransactionsScreen({
         onChange={(query) => set({ query })}
         prefixIcon={MagnifyingGlass}
       />
-      <fieldset className="quick-chips list-chips">
+      <fieldset className="list-chips">
         <legend className="sr-only">{t('list.filters')}</legend>
-        {CHIPS.map((chip) => (
+        <div className="quick-chips">
+          {CHIPS.map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              className="chip list-chip"
+              data-selected={filters.chip === chip}
+              aria-pressed={filters.chip === chip}
+              onClick={() => set({ chip })}
+            >
+              {t(CHIP_LABEL[chip])}
+            </button>
+          ))}
           <button
-            key={chip}
             type="button"
-            className="chip glass"
-            data-level="1"
-            aria-pressed={filters.chip === chip}
-            onClick={() => set({ chip })}
+            className="chip list-chip"
+            data-selected={panel}
+            aria-expanded={panel}
+            onClick={() => setPanel((open) => !open)}
           >
-            {t(CHIP_LABEL[chip])}
+            {t('list.filters')}
           </button>
-        ))}
-        <button
-          type="button"
-          className="chip glass"
-          data-level="1"
-          aria-expanded={panel}
-          onClick={() => setPanel((open) => !open)}
-        >
-          {t('list.filters')}
-        </button>
+        </div>
       </fieldset>
       {panel && (
         <GlassCard level={2} data-testid="list-panel">

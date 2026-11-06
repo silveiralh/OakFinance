@@ -274,6 +274,10 @@
   font-size: var(--font-size-caption);
   color: var(--text-secondary);
 }
+.list-chip {
+  border: 1px solid var(--border-strong);
+  background: transparent;
+}
 .list-chips {
   min-width: 0;
   margin: 0;
