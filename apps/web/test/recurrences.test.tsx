@@ -150,7 +150,7 @@ describe('recurrences — receita fixa (US-23, RN-26..RN-28, RN-32)', () => {
     ]);
     expect(ra?.id).toBe(id);
     expect(rb?.id).toBe(id);
-    expect(rb?.client_updated_at > (ra?.client_updated_at ?? '')).toBe(true);
+    expect((rb?.client_updated_at ?? '') > (ra?.client_updated_at ?? '')).toBe(true);
     // confirmar de novo no mesmo aparelho atualiza a mesma linha
     await skipOccurrence(a.user?.db as never, USER, rec, '2026-12-05');
     expect(await a.user?.db.transactions.where('recurrence_id').equals('rec-salario').count()).toBe(

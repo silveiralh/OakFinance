@@ -112,7 +112,7 @@ flowchart LR
 | T-047 | Cartões e faturas (C01/C02) | T-040 | done |
 | T-048 | Pagamento de fatura e saldo credor | T-047 | done |
 | T-049 | Categorias | T-035 | done |
-| T-050 | Salário como receita fixa | T-041, T-015 | todo |
+| T-050 | Salário como receita fixa | T-041, T-015 | done |
 | T-051 | Editar e arquivar contas e cartões | T-047 | todo |
 | T-052 | Compra parcelada | T-048, T-014 | todo |
 | T-053 | Editar e cancelar parcelada | T-052 | todo |
@@ -851,7 +851,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-050 — Salário como receita fixa
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-23 | RN-26..RN-28, RN-32, RN-34, RN-38 | T-041, T-015 | não |
+| done | S1 | M | US-23 | RN-26..RN-28, RN-32, RN-34, RN-38 | T-041, T-015 | não |
 
 **Escopo:** receita fixa em S05 e em "Repetir todo mês" do Q01; projeção; confirmar com valor real (R$ 4.870,00); "Não recebi este mês" (cancelada); idempotência v5 entre dois aparelhos (teste de integração).
 
