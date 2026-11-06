@@ -94,7 +94,7 @@ flowchart LR
 | T-029 | AppShell, rotas e CSP | T-028 | done |
 | T-030 | PWA instalável e Service Worker | T-029 | done |
 | T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | done |
-| T-032 | Outbox, repositórios e relógio híbrido | T-031 | todo |
+| T-032 | Outbox, repositórios e relógio híbrido | T-031 | done |
 | T-033 | Motor de sync | T-032 | todo |
 | T-034 | Login Google, allowlist e sessão | T-033 | todo |
 | T-035 | Seeds no primeiro login e isolamento | T-034, T-019 | todo |
@@ -630,7 +630,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-032 — Outbox, repositórios e relógio híbrido
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-04 | RN-95, RN-97, RN-99 | T-031 | não |
+| done | S1 | M | US-04 | RN-95, RN-97, RN-99 | T-031 | não |
 
 **Escopo:** `sync/outbox.ts` (coalescência, `inflight`), `repositories/*` (gravação na mesma transação Dexie, cascata cartão → faturas e transações, série → parcelas, recibo → itens), `sync/clock.ts` (`hlcNow`) e `device_id` v7.
 
