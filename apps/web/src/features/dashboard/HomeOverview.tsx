@@ -1,15 +1,9 @@
 // H01 — Início (UX §3 H01, US-30): herói "Disponível para gastar" (RN-47..RN-50) no cartão preto da D-023, atalhos,
 // Próximos 7 dias, 50/30/20, Reserva, Conferir e os últimos lançamentos. Tudo calculado com os dados locais a cada
 // mudança (RN-51); à meia-noite de São Paulo o dia (e na virada, o mês) muda sem recarregar (RN-48).
-import {
-  formatBRL,
-  type ISODate,
-  reserveProgress,
-  todayIn,
-  type YearMonth,
-} from '@oakfinance/domain';
+import { formatBRL, type ISODate, reserveProgress, type YearMonth } from '@oakfinance/domain';
 import { ArrowDownLeft, ArrowUpRight, ChevronRight, Landmark, List, Plus } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, useValuesHidden } from '../../app/values';
@@ -17,6 +11,7 @@ import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
 import { shellText, t, uiText } from '../../i18n/pt-BR';
+import { useToday } from '../../lib/useToday';
 import { EmptyState, PaceIndicator, TransactionRow } from '../../ui';
 import { MONTH_NAMES, monthTitle } from '../transactions/list';
 import { toRow } from '../transactions/TransactionsScreen';
@@ -28,31 +23,9 @@ import {
   ReviewCard,
   UpcomingCard,
 } from './HomeCards';
-import { dayPeriod, firstName, type HomeRows, homeModel, msUntilNextDay, TIME_ZONE } from './model';
+import { dayPeriod, firstName, type HomeRows, homeModel } from './model';
 
 const RECENT = 3;
-
-/** Data de hoje no fuso do cliente, trocada à meia-noite (virada do dia e do mês). */
-export function useToday(fixed?: ISODate): ISODate {
-  const [today, setToday] = useState(() => fixed ?? todayIn(TIME_ZONE, new Date()));
-  useEffect(() => {
-    if (fixed) {
-      setToday(fixed);
-      return;
-    }
-    let timer: ReturnType<typeof setTimeout>;
-    const schedule = () => {
-      timer = setTimeout(() => {
-        setToday(todayIn(TIME_ZONE, new Date()));
-        schedule();
-      }, msUntilNextDay(new Date()) + 50);
-    };
-    setToday(todayIn(TIME_ZONE, new Date()));
-    schedule();
-    return () => clearTimeout(timer);
-  }, [fixed]);
-  return today;
-}
 
 function monthName(month: YearMonth): string {
   return MONTH_NAMES[Number(month.slice(5, 7)) - 1] ?? '';

@@ -121,7 +121,7 @@ flowchart LR
 | T-056 | Regras que aprendem | T-044, T-049 | done |
 | T-057 | Gerenciar regras (I06) | T-056 | done |
 | T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | done |
-| T-059 | Orçamento 50/30/20 e limites | T-058 | todo |
+| T-059 | Orçamento 50/30/20 e limites | T-058 | done |
 | T-060 | Reserva de emergência | T-058, T-018 | todo |
 | T-061 | Ajustes do cálculo (S06) | T-059 | todo |
 | T-062 | Central de avisos (H02) | T-045 | todo |
@@ -956,7 +956,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-059 — Orçamento 50/30/20 e limites
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-31, US-32 | RN-41, RN-43..RN-45, RN-92 | T-058 | não |
+| done | S2 | M | US-31, US-32 | RN-41, RN-43..RN-45, RN-92 | T-058 | não |
 
 **Escopo:** P01 com BudgetRing e legenda em tabela; "já foi" e "vai sair"; grupo Sem faixa; Poupança "Poupado … de …"; limites por categoria (`budgets` com `scope = 'category'`); toast de 80% e 100% no aparelho, uma vez por mês, gerando também um `notice` local.
 
