@@ -19,6 +19,7 @@
     "test:db": "supabase db reset && supabase test db && scripts/test-int.sh",
     "test:fn": "rm -rf coverage/fn && deno test -A --config supabase/functions/deno.json --coverage=coverage/fn supabase/functions && deno coverage coverage/fn --lcov --output=coverage/fn.lcov && node scripts/check-fn-coverage.ts coverage/fn.lcov",
     "db:types": "scripts/gen-db-types.sh",
+    "db:schemas": "node scripts/gen-schemas.ts",
     "build": "pnpm --filter @oakfinance/web build",
     "e2e": "pnpm --filter @oakfinance/web e2e",
     "vendor": "node scripts/vendor-shared.ts",

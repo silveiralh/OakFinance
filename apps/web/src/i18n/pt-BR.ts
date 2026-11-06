@@ -274,7 +274,7 @@ export const uiText = {
 
 /**
  * Textos da moldura do app: abas e barra lateral (UX §2.1), landmarks e link de pular (UX §3.0), erro de tela G09
- * (UX §3 G e §6.6), nova versão G07 (UX §3 G) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
+ * (UX §3 G e §6.6), nova versão G07 e armazenamento G11/G12 (UX §3 G) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
  * O `<title>` de cada rota é "{Tela} · OakFinance" (UX §4.11.1).
  */
 export const shellText = {
@@ -293,6 +293,8 @@ export const shellText = {
   screenErrorDescription: 'Seus dados estão seguros.',
   retry: 'Tentar novamente',
   updateAvailable: 'Nova versão disponível.',
+  storageFull: 'O armazenamento do aparelho está cheio. Libere espaço para continuar lançando.',
+  storageBlocked: 'Este navegador bloqueou o armazenamento local. Abra pelo app instalado.',
   update: 'Atualizar',
   screens: {
     ON01: 'Boas-vindas',

@@ -22,6 +22,14 @@
   z-index: var(--z-content);
   min-height: 100dvh;
 }
+.shell-banners {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--gutter);
+}
+.shell-banners:empty {
+  display: none;
+}
 .shell-main {
   /* zona segura: nada fica escondido atrás das abas (UX §4.8) */
   padding: var(--space-4) var(--gutter) calc(64px + env(safe-area-inset-bottom) + var(--space-6));
