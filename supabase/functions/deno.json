@@ -6,7 +6,9 @@
     "noImplicitOverride": true
   },
   "imports": {
-    "uuid": "npm:uuid@14.0.3"
+    "uuid": "npm:uuid@14.0.3",
+    "web-push": "npm:web-push@3.6.7",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.119.0"
   },
   "lint": {
     "rules": {

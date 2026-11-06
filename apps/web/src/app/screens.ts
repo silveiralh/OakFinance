@@ -119,6 +119,11 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
     load: () => import('../features/settings/CalcSettingsScreen').then((m) => m.CalcSettingsScreen),
   },
   {
+    path: '/ajustes/lembretes',
+    handle: { screen: 'S07', nav: 'settings' },
+    load: () => import('../features/settings/RemindersScreen').then((m) => m.RemindersScreen),
+  },
+  {
     path: '/ajustes/regras',
     handle: { screen: 'I06', nav: 'settings' },
     load: () => import('../features/rules/screens').then((m) => m.RulesScreen),

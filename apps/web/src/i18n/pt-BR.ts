@@ -70,6 +70,25 @@ export const ptBR = {
   'notices.readAll': 'Marcar todos como lidos',
   'notices.bell': 'Avisos, {n} não lidos',
   'notices.unread': 'Não lido',
+  'push.status.on': 'Lembretes ativos neste aparelho.',
+  'push.status.off': 'Lembretes desativados neste aparelho.',
+  'push.status.unsupported': 'Este navegador não recebe notificações.',
+  'push.status.unconfigured': 'As notificações ainda não estão disponíveis.',
+  'push.status.expired':
+    'Os lembretes deste aparelho pararam. Ative de novo para voltar a recebê-los.',
+  'push.denied.android':
+    'Notificações bloqueadas. Para reativar, toque no cadeado ao lado do endereço › Permissões › Notificações, ou abra Configurações do Android › Apps › Chrome › Notificações.',
+  'push.denied.ios':
+    'Notificações bloqueadas. No iPhone, abra Ajustes › Notificações › OakFinance e ative Permitir Notificações.',
+  'push.denied.desktop':
+    'Notificações bloqueadas. Para reativar, clique no cadeado ao lado do endereço e permita as notificações.',
+  'push.central': 'Os avisos continuam na central.',
+  'push.installCta': 'Ver como instalar',
+  'push.test': 'Enviar notificação de teste',
+  'push.testSent': 'Notificação de teste enviada.',
+  'push.testFailed': 'Não foi possível enviar a notificação de teste.',
+  'push.activated': 'Lembretes ativados.',
+  'push.disable': 'Desativar neste aparelho',
   'home.upcoming.title': 'Próximos 7 dias',
   'home.upcoming.empty': 'Nenhum vencimento nos próximos 7 dias.',
   'home.budget.title': 'Orçamento 50/30/20',
@@ -733,6 +752,7 @@ export const shellText = {
     S04: 'Categorias',
     S05: 'Renda e contas fixas',
     S06: 'Disponível para gastar e orçamento',
+    S07: 'Lembretes',
     I06: 'Regras',
   },
 } as const;

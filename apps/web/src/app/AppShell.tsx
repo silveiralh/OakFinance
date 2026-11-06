@@ -32,6 +32,8 @@ const QuickEntryHost = lazy(() =>
 const BudgetAlerts = lazy(() =>
   import('./BudgetAlerts').then((m) => ({ default: m.BudgetAlerts })),
 );
+// tech §6.4.2: renova a inscrição de push ao abrir (fora do bundle inicial)
+const PushKeeper = lazy(() => import('./PushKeeper').then((m) => ({ default: m.PushKeeper })));
 const FabMenu = lazy(() =>
   import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.FabMenu })),
 );
@@ -110,6 +112,7 @@ export function AppShell() {
       <AutoPosts />
       <Suspense fallback={null}>
         <BudgetAlerts />
+        <PushKeeper />
       </Suspense>
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">

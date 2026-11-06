@@ -1189,6 +1189,33 @@ body:has(.screen-welcome) .backdrop {
   background: var(--status-info-fg);
 }
 
+/* T-063: S07 Lembretes */
+.reminders {
+  display: grid;
+  gap: var(--space-4);
+}
+.reminders-status {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+}
+.reminders-status p {
+  margin: 0;
+}
+.reminders-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.reminders-hint {
+  color: var(--text-secondary);
+  font-size: var(--font-size-label);
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {
