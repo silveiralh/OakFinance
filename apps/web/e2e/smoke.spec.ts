@@ -1,9 +1,9 @@
 import { expect, test } from './fixtures/base';
 
 test('US-03: a casca do app abre com a marca tipográfica', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/boas-vindas');
   await expect(page.getByRole('heading', { level: 1, name: 'OakFinance' })).toBeVisible();
-  await expect(page).toHaveTitle('OakFinance');
+  await expect(page).toHaveTitle('Boas-vindas · OakFinance');
 });
 
 test('as datas do navegador seguem o fuso America/Sao_Paulo', async ({ page }) => {

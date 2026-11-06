@@ -1,0 +1,154 @@
+/* Moldura do app (UX §3.0, §2.1 e §4.8). Só tokens; os componentes (TopBar, TabBar, FAB) ficam em ui/ui.css.
+   As regras que mudam componentes levam o prefixo `.shell`, porque este arquivo pode entrar antes do ui.css. */
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--surface-solid-3);
+  color: var(--text-primary);
+  transform: translateY(-200%);
+}
+.skip-link:focus-visible {
+  transform: none;
+  box-shadow: var(--focus-ring);
+}
+
+.shell-column {
+  position: relative;
+  z-index: var(--z-content);
+  min-height: 100dvh;
+}
+.shell-main {
+  /* zona segura: nada fica escondido atrás das abas (UX §4.8) */
+  padding: var(--space-4) var(--gutter) calc(64px + env(safe-area-inset-bottom) + var(--space-6));
+  outline: none;
+}
+.shell-main[aria-busy="true"] {
+  cursor: progress;
+}
+.shell .shell-tabbar {
+  /* `.glass` (base.css) põe position: relative; a barra de abas fica fixa embaixo */
+  position: fixed;
+}
+.shell .shell-tabbar .tab-center {
+  margin-top: -12px;
+}
+
+.shell-sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .shell .shell-tabbar {
+    display: none;
+  }
+  .shell .shell-sidebar {
+    position: fixed;
+    inset: var(--space-4) auto var(--space-4) var(--space-4);
+    z-index: var(--z-tabbar);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    width: 248px;
+    padding: var(--space-6) var(--space-4);
+  }
+  .shell-sidebar ul {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .shell-side-logo {
+    margin-left: var(--space-2);
+  }
+  .shell-side-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--touch-min);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-pill);
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  .shell-side-link:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  .shell-side-link[aria-current="page"] {
+    /* forma além da cor: pílula de vidro e texto 600 */
+    background: var(--glass-1-bg);
+    box-shadow: var(--glass-highlight);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+  .shell-column {
+    margin-left: calc(248px + 2 * var(--space-4));
+  }
+  .shell-main {
+    max-width: 1200px;
+    padding: var(--space-6) var(--space-6) var(--space-12);
+  }
+}
+
+@media (hover: hover) and (min-width: 1024px) {
+  .shell-side-link:hover {
+    color: var(--text-primary);
+  }
+}
+
+.screen {
+  display: grid;
+  gap: var(--space-4);
+}
+.screen-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title);
+}
+.screen-welcome .screen-title {
+  font-size: var(--font-size-display);
+}
+
+.screen-error {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-10);
+}
+.screen-error-code {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+
+.onboarding {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  align-content: center;
+  max-width: 600px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--space-6) var(--gutter);
+}
+
+.splash {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-4);
+  min-height: 100dvh;
+}
+.splash > :not(.backdrop) {
+  position: relative;
+  z-index: var(--z-content);
+}
+.splash-progress {
+  width: 160px;
+}
