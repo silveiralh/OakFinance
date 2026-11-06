@@ -16,13 +16,14 @@
 - Cron e sync no banco (T-011): migração 07 (`invoke_function`, `enqueue_pluggy_sync`, `purge` que pula pais com filho vivo e grava `job_runs`, 5 jobs do cron) e `ops_health()`; pgTAP `040-purge`; testes de integração `apps/web/test/integration/sync-db.int.test.ts` (usuários reais pela Admin API, rodam no `pnpm test:db` via `scripts/test-int.sh`).
 - Domínio base (T-012): `types`, `money`, `dates`, `ids` (namespaces v5 fixos) e `DomainError` em `packages/domain`, com testes de propriedade (fast-check, 200 execuções) e cobertura 100/97; cópia em `supabase/functions/_shared/domain` com `uuid` no import map do Deno.
 - Faturas (T-013): `packages/domain/src/invoices.ts` com os 9 casos da RN-12, os 6 exemplos da §5.2, status da RN-14, saldo credor da RN-15 e recálculo da RN-17/RN-18.
-- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-019 e T-023. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019 e T-023. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 - Parcelas (T-014): `installments.ts` com a RN-21 (resto na 1ª), RN-22 (parcela k em F1 + k − 1), carnê na conta, `startInstallment`, RN-24 (`INSTALLMENTS_LOCKED`) e RN-25 (cancelar restantes).
 - Recorrências (T-015): `recurrence.ts` com mensal/semanal/anual (dia 31 e 29/02 pela RN-03), `maxOccurrences` desde o início, projeção até M+12, materialização idempotente com fatura (RN-29) e confirmações automáticas vencidas (RN-28).
 - Orçamento (T-016): `budget.ts` com renda do mês (RN-32..RN-38), mês de orçamento pela RN-46, metas 50/30/20 (RN-44), "já foi"/"vai sair" (RN-45), "Sem faixa" e limiares (RN-92).
 - Categorização e seeds (T-019): `categorization.ts` (RN-57..RN-64) e `defaults.ts` (lista da RN-40, 32 regras da RN-64, lembretes, orçamento e reserva padrão).
 - QR da NFC-e (T-023): `nfce/qr.ts` com `parseNfceQr` (v2/v3, online e contingência), DV módulo 11 e allowlist `*.fazenda.pr.gov.br` (`isNfceHostAllowed`).
 - Disponível para gastar (T-017): `spendable.ts` com a fórmula da RN-47, valor por dia, selo da RN-50 e recálculo de 5.000 lançamentos em menos de 200 ms (RN-51).
+- Reserva (T-018): `reserve.ts` com a meta sugerida da RN-52, progresso e resgates (RN-55/RN-56) e ETA pelos aportes.
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
 
 ## 2. Estado do CI e do deploy
@@ -35,6 +36,7 @@
 
 ## 3. Próximos passos
 
+- **Próximas tarefas: T-017 (PR aberto), T-020, T-025, depois T-021, T-022 e T-024.**
 - **Próximas tarefas: T-018 (PR aberto), T-020, T-025, depois T-021, T-022 e T-024.**
 - **Próximas tarefas: T-016, T-017, T-018 (código pronto em branches locais), depois T-020..T-022, T-024, T-025.**
 - **Próximas tarefas: T-017, T-018 (código pronto em branches locais), T-020, T-025, depois T-021, T-022 e T-024.**
@@ -118,3 +120,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-016 | PR #23 | done | renda do mês, 50/30/20 e limiares |
 | 05/11/2026 | T-023 | PR #22 | done | QR da NFC-e v2/v3, DV módulo 11 e allowlist de hosts |
 | 05/11/2026 | T-017 | PR #24 | done | Disponível para gastar (RN-47..RN-51), US-30 e US-34 |
+| 05/11/2026 | T-018 | PR #25 | done | reserva: meta sugerida, progresso e ETA (RN-52..RN-56) |

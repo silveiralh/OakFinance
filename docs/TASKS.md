@@ -80,7 +80,7 @@ flowchart LR
 | T-015 | Domínio: recorrências | T-013 | done |
 | T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | done |
 | T-017 | Domínio: Disponível para gastar | T-016 | done |
-| T-018 | Domínio: reserva | T-016 | todo |
+| T-018 | Domínio: reserva | T-016 | done |
 | T-019 | Domínio: categorização e seeds | T-012 | done |
 | T-020 | Domínio: conciliação I | T-013, T-015 | todo |
 | T-021 | Domínio: conciliação II | T-020, T-014 | todo |
@@ -450,7 +450,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-018 — Domínio: reserva
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-33 | RN-52..RN-56 | T-016 | não |
+| done | S1 | P | US-33 | RN-52..RN-56 | T-016 | não |
 
 **Escopo:** `reserve.ts` (§5.7).
 
