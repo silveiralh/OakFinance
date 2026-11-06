@@ -1055,6 +1055,79 @@ body:has(.screen-welcome) .backdrop {
   min-height: 48px;
 }
 
+/* T-061: S06 Ajustes do cálculo */
+.calc {
+  display: grid;
+  gap: var(--space-4);
+}
+.calc-preview,
+.calc-group {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+.calc-preview p,
+.calc-group p {
+  margin: 0;
+}
+.calc-preview-line {
+  font-size: var(--font-size-body);
+}
+.calc-preview-line strong {
+  font-size: var(--font-size-heading);
+}
+.calc-preview-day,
+.calc-group-title {
+  color: var(--text-secondary);
+  font-size: var(--font-size-label);
+}
+.calc-group-title {
+  font-weight: var(--font-weight-semibold);
+}
+.calc-percents {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.calc-percents legend {
+  padding: 0;
+  font-weight: var(--font-weight-semibold);
+}
+.calc-slider {
+  display: grid;
+  gap: var(--space-1);
+}
+.calc-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-label);
+}
+.calc-slider-value {
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.calc-slider input {
+  width: 100%;
+  min-height: var(--touch-min);
+  accent-color: var(--text-primary);
+}
+.calc-slider input:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.calc-warning {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  padding: var(--space-3);
+  border-radius: 12px;
+  background: var(--status-warning-bg);
+  color: var(--status-warning-fg);
+  font-size: var(--font-size-label);
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {

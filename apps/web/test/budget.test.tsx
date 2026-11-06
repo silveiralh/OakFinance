@@ -168,6 +168,14 @@ describe('P01 — Orçamento 50/30/20 (US-31)', () => {
     expect(screen.queryByTestId('budget-category-moradia')).toBeNull();
   });
 
+  it('US-34: "Ajustar percentuais" leva à S06 (/ajustes/calculo)', async () => {
+    await renderBudget(rows([income(580000)]));
+    expect(screen.getByRole('link', { name: 'Ajustar percentuais' })).toHaveAttribute(
+      'href',
+      '/ajustes/calculo',
+    );
+  });
+
   it('US-31: faixa ≥ 80% avisa "Restam … até o limite" e acima de 100% "… acima do planejado"', async () => {
     await renderBudget(
       rows([income(100000), spend('m', 'mercado', 42000), spend('l', 'lazer', 32000)]),

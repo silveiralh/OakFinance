@@ -114,6 +114,11 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
     load: () => import('../features/recurrences/screens').then((m) => m.IncomeScreen),
   },
   {
+    path: '/ajustes/calculo',
+    handle: { screen: 'S06', nav: 'settings' },
+    load: () => import('../features/settings/screens').then((m) => m.CalcScreen),
+  },
+  {
     path: '/ajustes/regras',
     handle: { screen: 'I06', nav: 'settings' },
     load: () => import('../features/rules/screens').then((m) => m.RulesScreen),

@@ -128,7 +128,11 @@ export function FormulaSheet({
             <Amount text={formatBRL(model.spendable.availableCents)} hidden={hidden} />
           </span>
         </p>
-        <p className="home-formula-footer">{t('home.formula.footer')}</p>
+        <p className="home-formula-footer">
+          <Link to="/ajustes/calculo" onClick={onClose} data-testid="home-formula-adjust">
+            {t('home.formula.footer')}
+          </Link>
+        </p>
       </div>
     </BottomSheet>
   );

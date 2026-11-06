@@ -4,6 +4,8 @@ import { shellText } from '../../i18n/pt-BR';
 import { Button } from '../../ui';
 import { SignOutAction } from './SignOut';
 
+export { CalcScreen } from './CalcScreen';
+
 /** S01: a lista de ajustes chega depois; por enquanto só o "Sair" (S02, RN-100). */
 export function SettingsScreen() {
   return (
@@ -28,6 +30,9 @@ function SettingsLinks() {
       </Button>
       <Button variant="secondary" onClick={() => void navigate('/ajustes/renda')}>
         {shellText.screens.S05}
+      </Button>
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/calculo')}>
+        {shellText.screens.S06}
       </Button>
     </>
   );
