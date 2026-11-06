@@ -2223,6 +2223,14 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `cards.archived` | Cartões arquivados |
 | `cards.updated` | Cartão atualizado. |
 | `accounts.archivedBadge` | arquivada |
+| `series.edit` | Editar compra parcelada |
+| `series.scope` | Aplicar a |
+| `series.total` | Valor total |
+| `series.count` | Número de parcelas |
+| `series.save` | Salvar alterações |
+| `series.cancelled` | Parcelas restantes canceladas. |
+| `series.deleted` | Compra apagada. |
+| `series.confirmDelete` | Apagar mesmo assim |
 
 **Conexões, importação, nota, conferência**
 
