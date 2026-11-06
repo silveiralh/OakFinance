@@ -1997,6 +1997,23 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `quick.missing.destination` | Escolha a conta de destino |
 | `quick.draft.restored` | Rascunho recuperado. |
 | `quick.draft.discard` | Descartar |
+
+**Lançamentos (T01)**
+
+| Chave | Texto |
+|---|---|
+| `list.filter.all` / `.expense` / `.income` / `.cards` / `.pix` / `.cash` / `.vouchers` / `.review` / `.forecast` / `.late` | Todos / Despesas / Receitas / Cartões / Pix / Dinheiro / VR/VA / Para conferir / Previstas / Atrasadas |
+| `list.filters` | Filtros |
+| `list.filter.account` / `.band` / `.category` / `.status` | Conta / Faixa / Categoria / Status |
+| `list.filter.any` | Todas |
+| `list.filteredTotal` | Total filtrado: {valor} |
+| `list.search` | Buscar lançamentos |
+| `list.prevMonth` / `.nextMonth` | Mês anterior / Próximo mês |
+| `list.today` / `.yesterday` | Hoje / Ontem |
+| `list.empty` | Nenhum lançamento em {mês} |
+| `list.noResult` | Nenhum resultado para "{termo}" |
+| `list.edit` / `.delete` | Editar / Excluir |
+| `list.actionsHint` | O que fazer com este lançamento? |
 | `accounts.methods` | Formas: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |
