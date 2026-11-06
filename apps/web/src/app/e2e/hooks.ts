@@ -7,6 +7,7 @@ import { cardFromRow } from '../../data/mappers';
 import { createCard } from '../../data/repositories/cards';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { pendingCount } from '../../data/sync/outbox';
+import { installmentRows, saveInstallmentPurchase } from '../../features/quick-entry/installments';
 import { buildInvoice } from '../../features/quick-entry/model';
 import { applyUpdate } from '../../lib/sw-update';
 import type { UserSession } from '../auth';
@@ -30,6 +31,13 @@ declare global {
       addCard(name: string, closingDay: number, dueDay: number): Promise<string>;
       /** Compra à vista de hoje no cartão, na fatura da RN-12 (cria a fatura se faltar). */
       addCardExpense(cardId: string, cents: number, description: string): Promise<string>;
+      /** Compra parcelada de hoje no cartão (plano, faturas e parcelas, como o Q01). Devolve o id da série. */
+      addCardInstallments(
+        cardId: string,
+        cents: number,
+        count: number,
+        description: string,
+      ): Promise<string>;
       /** Exclusão lógica, como o Excluir da T01/T02. */
       remove(id: string): Promise<void>;
       /** Valor e exclusão da linha local (`null` se não existe). */
@@ -178,6 +186,44 @@ export function installE2eHooks(user: UserSession): () => void {
       });
       user.engine.notifyWrite();
       return id;
+    },
+    async addCardInstallments(cardId: string, cents: number, count: number, description: string) {
+      const card = await user.db.cards.get(cardId);
+      if (!card) {
+        throw new Error('cartão não encontrado');
+      }
+      const today = todayIn('America/Sao_Paulo', new Date());
+      const now = new Date().toISOString();
+      const seriesId = newId();
+      const rows = installmentRows({
+        seriesId,
+        userId: user.userId,
+        card,
+        invoices: await user.db.invoices.where('card_id').equals(cardId).toArray(),
+        base: {
+          ...EXPENSE_DEFAULTS,
+          tags: [],
+          id: seriesId,
+          user_id: user.userId,
+          amount_cents: cents,
+          occurred_on: today,
+          description,
+          account_id: null,
+          card_id: cardId,
+          payment_method: 'credit',
+          created_at: now,
+          updated_at: now,
+          client_updated_at: now,
+        },
+        amountCents: cents,
+        count,
+        mode: 'total',
+        purchaseDate: today,
+        nowIso: now,
+      });
+      await saveInstallmentPurchase(user.db, rows);
+      user.engine.notifyWrite();
+      return seriesId;
     },
     async remove(id: string) {
       await deleteRow(user.db, 'transactions', id);
