@@ -10,6 +10,7 @@ import {
   initialScripts,
   main,
   precacheBytes,
+  REQUIRE_PWA,
   scanForbidden,
 } from './check-build.ts';
 
@@ -56,7 +57,9 @@ afterEach(() => {
 });
 
 describe('check-build', () => {
-  it('build limpo passa', () => {
+  it('build limpo passa (com o PWA exigido desde a T-030)', () => {
+    expect(REQUIRE_PWA).toBe(true);
+    validPwa();
     expect(checkBuild(dist)).toEqual([]);
     expect(main(dist)).toBe(0);
   });
@@ -135,6 +138,16 @@ describe('check-build', () => {
     expect(checkPwa(dist)).toContain('manifest.webmanifest não é JSON válido');
     rmSync(join(dist, 'manifest.webmanifest'));
     expect(checkPwa(dist)).toContain('manifest.webmanifest ausente');
+  });
+
+  it('precache no formato JSON do Workbox ("url":"…") também é somado', () => {
+    validPwa();
+    write('assets/a.js', 'x'.repeat(10));
+    write(
+      'sw.js',
+      'precacheAndRoute([{"revision":"abc","url":"assets/a.js"},{"revision":null,"url":"falta.js"}])',
+    );
+    expect(precacheBytes(dist)).toBe(10);
   });
 
   it('precache acima de 3 MB reprova', () => {

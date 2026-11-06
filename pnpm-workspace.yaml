@@ -1,3 +1,7 @@
 packages:
   - apps/*
   - packages/*
+
+# glob 11 (workbox-build) traz um aviso de descontinuação com e-mail no lockfile, que o job secrets reprova (T-030)
+overrides:
+  workbox-build>glob: 13.0.7
