@@ -4,6 +4,7 @@ import { formatBRL, type ISODate, todayIn, type YearMonth } from '@oakfinance/do
 import { ArrowDownLeft, ArrowUpRight, ChevronRight, Landmark, List, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { Amount, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
 import { shellText, t, uiText } from '../../i18n/pt-BR';
 import { TransactionRow } from '../../ui';
@@ -19,6 +20,7 @@ export function HomeOverview({
 }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const hidden = useValuesHidden();
   const month = today.slice(0, 7) as YearMonth;
   const { from, to } = monthRange(month);
   const data = useLive(
@@ -63,16 +65,20 @@ export function HomeOverview({
         </div>
         <p className="home-card-label">{t('list.summary.out')}</p>
         <p className="home-card-value money" data-testid="home-out">
-          {formatBRL(summary?.outCents ?? 0)}
+          <Amount text={formatBRL(summary?.outCents ?? 0)} hidden={hidden} />
         </p>
         <dl className="home-card-stats">
           <div>
             <dt>{t('list.summary.in')}</dt>
-            <dd className="money">{formatBRL(summary?.inCents ?? 0)}</dd>
+            <dd className="money">
+              <Amount text={formatBRL(summary?.inCents ?? 0)} hidden={hidden} />
+            </dd>
           </div>
           <div>
             <dt>{t('list.summary.saved')}</dt>
-            <dd className="money">{formatBRL(summary?.savedCents ?? 0)}</dd>
+            <dd className="money">
+              <Amount text={formatBRL(summary?.savedCents ?? 0)} hidden={hidden} />
+            </dd>
           </div>
         </dl>
       </section>

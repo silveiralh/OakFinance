@@ -21,6 +21,7 @@ import { ShellSyncBadge, SyncBanners, WipedDialog } from './SyncStatus';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
 import { UpdatePrompt } from './UpdatePrompt';
 import { useCurrentScreen, useDocumentTitle } from './useScreen';
+import { HideValuesButton, ValuesFromProfile } from './values';
 
 const QuickEntryHost = lazy(() =>
   import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.QuickEntryHost })),
@@ -99,6 +100,7 @@ export function AppShell() {
       <SessionExpired />
       <RemoteEditsToast />
       <WipedDialog />
+      <ValuesFromProfile />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}
@@ -121,7 +123,12 @@ export function AppShell() {
           <TopBar
             title={title}
             transparentUntilScroll={screen === 'H01'}
-            trailing={<ShellSyncBadge />}
+            trailing={
+              <>
+                {screen === 'H01' && <HideValuesButton />}
+                <ShellSyncBadge />
+              </>
+            }
           />
           <StorageBanners />
           <SyncBanners />

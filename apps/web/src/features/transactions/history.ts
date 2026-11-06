@@ -1,7 +1,7 @@
 // Histórico do lançamento na T02 (RN-97, RN-98): lê `get_row_history` (online), descreve cada versão
 // ("Categoria alterada de Lazer para Mercado · ontem 18:02 · neste aparelho") e monta a linha de "Restaurar esta
 // versão". O servidor grava a versão substituída (`old_row`) e, no conflito, a escrita perdedora (`rejected_row`).
-import { formatBRL, type ISODate } from '@oakfinance/domain';
+import { formatBRL, HIDDEN_AMOUNT, type ISODate } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
 import { MapperError, parseRow } from '../../data/mappers';
 import { type MessageKey, t, uiText } from '../../i18n/pt-BR';
@@ -78,6 +78,8 @@ export interface HistoryNames {
   accounts: ReadonlyMap<string, string>;
   cards: ReadonlyMap<string, string>;
   method(value: string | null): string;
+  /** Ocultar valores (RN-103): valores viram "R$ ••••". */
+  hidden?: boolean;
 }
 
 const KIND_KEY: Readonly<Record<string, MessageKey>> = {
@@ -167,7 +169,10 @@ function display(field: Field, value: unknown, names: HistoryNames): string {
   }
   switch (field) {
     case 'amount_cents':
-      return typeof value === 'number' ? formatBRL(value) : t('detail.empty');
+      if (typeof value !== 'number') {
+        return t('detail.empty');
+      }
+      return names.hidden ? HIDDEN_AMOUNT : formatBRL(value);
     case 'occurred_on':
       return typeof value === 'string' ? formatDateBR(value as ISODate) : t('detail.empty');
     case 'category_id':

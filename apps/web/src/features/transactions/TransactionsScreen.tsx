@@ -11,6 +11,7 @@ import { ChevronLeft, ChevronRight, Receipt, Search } from 'lucide-react';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { deleteRow, restoreRow } from '../../data/repositories/rows';
@@ -204,6 +205,7 @@ export function TransactionsScreen({
   const { user } = useAuth();
   const navigate = useNavigate();
   const showToast = useToast();
+  const hidden = useValuesHidden();
   const [month, setMonth] = useState<YearMonth>(today.slice(0, 7) as YearMonth);
   const [filters, setFilters] = useState<ListFilters>(NO_FILTERS);
   const [panel, setPanel] = useState(false);
@@ -285,15 +287,21 @@ export function TransactionsScreen({
         <dl className="list-summary" data-testid="list-summary">
           <div>
             <dt>{t('list.summary.in')}</dt>
-            <dd>{formatBRL(summary.inCents)}</dd>
+            <dd>
+              <Amount text={formatBRL(summary.inCents)} hidden={hidden} />
+            </dd>
           </div>
           <div>
             <dt>{t('list.summary.out')}</dt>
-            <dd>{formatBRL(summary.outCents)}</dd>
+            <dd>
+              <Amount text={formatBRL(summary.outCents)} hidden={hidden} />
+            </dd>
           </div>
           <div>
             <dt>{t('list.summary.saved')}</dt>
-            <dd>{formatBRL(summary.savedCents)}</dd>
+            <dd>
+              <Amount text={formatBRL(summary.savedCents)} hidden={hidden} />
+            </dd>
           </div>
         </dl>
       </GlassCard>
@@ -378,7 +386,7 @@ export function TransactionsScreen({
       )}
       {narrowed && (
         <p className="list-total" data-testid="list-total" aria-live="polite">
-          {t('list.filteredTotal', { valor: signed(filteredTotal(filtered)) })}
+          {t('list.filteredTotal', { valor: maskMoney(signed(filteredTotal(filtered)), hidden) })}
         </p>
       )}
       {data && entries.length === 0 ? (
@@ -399,12 +407,15 @@ export function TransactionsScreen({
               <h3 key={`d-${entry.group.date}`} className="list-day" data-testid="list-day">
                 <span>{dayLabel(entry.group.date, today)}</span>
                 <span className="list-day-total">
-                  {[
-                    entry.group.inCents ? `+${formatBRL(entry.group.inCents)}` : '',
-                    entry.group.outCents ? `${MINUS_SIGN}${formatBRL(entry.group.outCents)}` : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' · ')}
+                  <Amount
+                    text={[
+                      entry.group.inCents ? `+${formatBRL(entry.group.inCents)}` : '',
+                      entry.group.outCents ? `${MINUS_SIGN}${formatBRL(entry.group.outCents)}` : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                    hidden={hidden}
+                  />
                 </span>
               </h3>
             ) : (
