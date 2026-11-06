@@ -23,8 +23,9 @@
 - Reserva (T-018): `reserve.ts` com a meta sugerida da RN-52, progresso e resgates (RN-55/RN-56) e ETA pelos aportes.
 - Categorização e seeds (T-019): `categorization.ts` (RN-57..RN-64) e `defaults.ts` (lista da RN-40, 32 regras da RN-64, lembretes, orçamento e reserva padrão).
 - QR da NFC-e (T-023): `nfce/qr.ts` com `parseNfceQr` (v2/v3, online e contingência), DV módulo 11 e allowlist `*.fazenda.pr.gov.br` (`isNfceHostAllowed`).
+- Conciliação I (T-020): `reconciliation.ts` com candidatos e janelas da RN-66, decisão da RN-67 (1:1, empate, aproximado), RN-68 e duplicidade entre fontes da RN-72; chaves da RN-65.
 - Ainda não há deploy real. Marco atual: M0. O próximo é o M1 (T-036, T-037, T-045, T-050 + SETUP-10).
-- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019 e T-023. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
+- Últimas tarefas concluídas: T-010, T-011, T-012, T-013, T-014, T-015, T-016, T-017, T-018, T-019, T-020 e T-023. **F1 (banco) concluída.** Marco M0 atingido (portão ativo) na T-007. Conferido em 05/11 às 21:13 UTC (ruleset `main`, id 26649999): enforcement `active` na branch padrão; PR obrigatório (0 aprovações); checks `guard`, `secrets`, `lint-types`, `unit`, `db`, `fn`, `e2e`, `build` com branch atualizada (strict); histórico linear; bloqueio de force-push e de exclusão; bypass só para o papel *Repository admin* em modo *pull request* (nenhuma credencial de sessão).
 
 ## 2. Estado do CI e do deploy
 
@@ -37,7 +38,7 @@
 
 ## 3. Próximos passos
 
-- **Próximas tarefas: T-020 (conciliação I) e T-025 (tokens, i18n e marca); depois T-021, T-022 e T-024.** T-012 a T-019 e T-023 estão em `main`: a F2 (domínio) segue pela conciliação, importação e lembretes.
+- **Próximas tarefas: T-021 (conciliação II), T-022 (OFX/CSV), T-024 (lembretes) e T-025 (tokens, i18n e marca).**
 - Integração: a Admin API do Auth **não** passa pelo hook `before_user_created`; para testar a allowlist use o cadastro público (`auth.signUp`).
 - `keepalive.yml`: o `ops_health` acusa "reminders-tick nunca rodou" até a função existir (T-064); o keepalive só roda depois do SETUP-05/09.
 - O guard trata qualquer "truncate" em migração como DDL destrutivo, inclusive `revoke … truncate` (falso positivo; contornado com `revoke all` + `grant` em D-009). Sugestão ao dono: afinar a regra em `scripts/ci-guard.ts` (caminho protegido).
@@ -121,3 +122,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-018 | PR #25 | done | reserva: meta sugerida, progresso e ETA (RN-52..RN-56) |
 | 06/11/2026 | T-047 | PR #26 | decisão | D-011: vencimento no dia útil seguinte quando cairia no fechamento (decisão do cliente) |
 | 06/11/2026 | T-007 | PR #27 | decisão | D-012: SETUP-03 substituído por salvaguardas (decisão do cliente) |
+| 06/11/2026 | T-020 | PR #28 | done | conciliação: US-48, RN-65..RN-68 e RN-72 |
