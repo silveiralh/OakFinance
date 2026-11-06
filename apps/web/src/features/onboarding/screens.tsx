@@ -19,10 +19,6 @@ export function InstallScreen() {
   return <ScreenStub screen={installScreen(params)} standalone />;
 }
 
-export function LoginScreen() {
-  return <ScreenStub screen="ON03" standalone />;
-}
-
 export function OnbRemindersScreen() {
   return <ScreenStub screen="ON04" standalone />;
 }
@@ -46,3 +42,6 @@ export function OnbReserveScreen() {
 export function OnbDoneScreen() {
   return <ScreenStub screen="ON08" standalone />;
 }
+
+export { AuthCallback } from './AuthCallback';
+export { LoginScreen } from './LoginScreen';

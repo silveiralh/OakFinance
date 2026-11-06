@@ -274,7 +274,7 @@ export const uiText = {
 
 /**
  * Textos da moldura do app: abas e barra lateral (UX §2.1), landmarks e link de pular (UX §3.0), erro de tela G09
- * (UX §3 G e §6.6), nova versão G07 e armazenamento G11/G12 (UX §3 G) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
+ * (UX §3 G e §6.6), nova versão G07, armazenamento G11/G12, sessão G05/G14/G16 (UX §3 G), estados do ON03 (UX §3 ON03, §6.6) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
  * O `<title>` de cada rota é "{Tela} · OakFinance" (UX §4.11.1).
  */
 export const shellText = {
@@ -295,6 +295,20 @@ export const shellText = {
   updateAvailable: 'Nova versão disponível.',
   storageFull: 'O armazenamento do aparelho está cheio. Libere espaço para continuar lançando.',
   storageBlocked: 'Este navegador bloqueou o armazenamento local. Abra pelo app instalado.',
+  signingIn: 'Entrando…',
+  loginFailed: 'Não foi possível entrar com o Google. Verifique a conexão e tente novamente.',
+  firstAccessOffline: 'Sem conexão. O primeiro acesso precisa de internet.',
+  privateTitle: 'Este app é de uso privado.',
+  privateDescription: 'Esta conta Google não tem acesso.',
+  otherAccount: 'Entrar com outra conta',
+  sessionExpiredTitle: 'Sua sessão expirou.',
+  sessionExpiredDescription: 'Entre novamente para sincronizar. Nenhum lançamento foi perdido.',
+  signInGoogle: 'Entrar com Google',
+  signOut: 'Sair',
+  pendingOnSignOut: 'Há {n} alterações que ainda não foram para a nuvem.',
+  signOutWipes: 'Ao sair, os dados locais deste aparelho são apagados.',
+  sendAndSignOut: 'Enviar e sair',
+  discardAndSignOut: 'Sair e descartar',
   update: 'Atualizar',
   screens: {
     ON01: 'Boas-vindas',

@@ -20,6 +20,7 @@ import {
   ToastProvider,
   TopBar,
 } from '../ui';
+import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
 import { UpdatePrompt } from './UpdatePrompt';
@@ -87,6 +88,7 @@ export function AppShell() {
   return (
     <ToastProvider>
       <UpdatePrompt />
+      <SessionExpired />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}

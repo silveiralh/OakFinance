@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, test } from './fixtures/base';
+import { expect, login, test } from './fixtures/base';
 
 // T-030: PWA e Service Worker. O Playwright só controla Service Worker no Chromium (android e desktop); no WebKit
 // (iphone) estes cenários conferem o que dá para conferir sem SW: manifest, ícones e a meta do iPhone.
@@ -52,10 +52,11 @@ test('US-03: depois do primeiro acesso, o app abre sem rede em menos de 1,5 s', 
   browserName,
 }) => {
   if (browserName !== 'chromium') {
-    await page.goto('/');
+    await login(page);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Início');
     return;
   }
+  await login(page);
   await controlledBySw(page, '/');
   await context.setOffline(true);
   const started = Date.now();
@@ -74,10 +75,12 @@ test('E15: nova versão → "Atualizar" → recarrega sem perder o lançamento e
   browserName,
 }) => {
   if (browserName !== 'chromium') {
+    await login(page);
     await page.goto('/lancamentos');
     await expect(page.getByText('Nova versão disponível.')).toHaveCount(0);
     return;
   }
+  await login(page);
   await controlledBySw(page, '/lancamentos');
   // o vite preview devolve um sw.js com outros bytes para este contexto (cookie), como num deploy novo
   await context.addCookies([{ name: 'oak-sw-bump', value: '1', url: 'http://localhost:4173' }]);

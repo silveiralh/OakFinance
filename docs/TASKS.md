@@ -96,7 +96,7 @@ flowchart LR
 | T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | done |
 | T-032 | Outbox, repositórios e relógio híbrido | T-031 | done |
 | T-033 | Motor de sync | T-032 | done |
-| T-034 | Login Google, allowlist e sessão | T-033 | todo |
+| T-034 | Login Google, allowlist e sessão | T-033 | done |
 | T-035 | Seeds no primeiro login e isolamento | T-034, T-019 | todo |
 | T-036 | Primeiro deploy staging e produção | T-030, T-034 | todo |
 | T-037 | Boas-vindas e instalação guiada | T-030, T-034 | todo |
@@ -656,7 +656,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-034 — Login Google, allowlist e sessão
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-01, US-02 | RN-100, RN-101 | T-033 | não |
+| done | S1 | M | US-01, US-02 | RN-100, RN-101 | T-033 | não |
 
 **Escopo:**
 - `lib/supabase.ts` (PKCE, `persistSession`), ON03, `/auth/callback`, guarda de rota;

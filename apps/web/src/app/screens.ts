@@ -125,8 +125,8 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
   },
 ];
 
-/** Onboarding (UX §2.3): telas cheias, sem abas. */
-export const ONBOARDING_SCREENS: readonly ScreenRoute[] = [
+/** Antes do login (UX §2.3): com sessão, vão direto ao Início. */
+export const PUBLIC_SCREENS: readonly ScreenRoute[] = [
   {
     path: '/boas-vindas',
     handle: { screen: 'ON01' },
@@ -142,6 +142,15 @@ export const ONBOARDING_SCREENS: readonly ScreenRoute[] = [
     handle: { screen: 'ON03' },
     load: () => onboarding().then((m) => m.LoginScreen),
   },
+  {
+    path: '/auth/callback',
+    handle: { screen: 'ON03' },
+    load: () => onboarding().then((m) => m.AuthCallback),
+  },
+];
+
+/** Onboarding depois do login (UX §2.3): telas cheias, sem abas. */
+export const ONBOARDING_SCREENS: readonly ScreenRoute[] = [
   {
     path: '/boas-vindas/lembretes',
     handle: { screen: 'ON04' },

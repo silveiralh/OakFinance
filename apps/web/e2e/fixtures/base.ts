@@ -1,4 +1,4 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
 
 declare global {
   interface Window {
@@ -34,3 +34,16 @@ export const test = base.extend<{ cspGuard: undefined }>({
 });
 
 export { expect };
+
+/**
+ * Entra pelo formulário de teste do build E2E (Supabase local com e-mail e senha, tech §8.4). O usuário é da
+ * allowlist de teste do `seed.sql`; na primeira vez o formulário cria a conta.
+ */
+export async function login(page: Page, email = 'e2e-a@example.test') {
+  await page.goto('/entrar');
+  const form = page.locator('form[data-e2e-login]');
+  await form.locator('input[type="email"]').fill(email);
+  await form.getByRole('button', { name: 'Entrar (teste)' }).click();
+  await expect(page).toHaveURL('/');
+  await expect(page.getByTestId('app-shell')).toBeVisible();
+}
