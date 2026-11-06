@@ -2,6 +2,10 @@
 // entram aqui valores públicos por natureza: nenhum segredo chega ao front (tech §7.1).
 import * as z from 'zod/mini';
 
+// Sem JIT: a CSP (tech §7.1) não tem 'unsafe-eval', e a sonda de `new Function` do zod gera
+// `securitypolicyviolation` (E14). Vale para todo o app (configuração global do núcleo do zod).
+z.config({ jitless: true });
+
 declare global {
   /** Versão do app (package.json + SHA curto do commit no CI), definida no vite.config.ts. */
   const __APP_VERSION__: string;

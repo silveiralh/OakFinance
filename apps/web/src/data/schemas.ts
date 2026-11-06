@@ -2,6 +2,9 @@
 import { z } from 'zod';
 import type { Json } from './db-types';
 
+// Sem JIT: a CSP não tem 'unsafe-eval' (tech §7.1, E14).
+z.config({ jitless: true });
+
 const json: z.ZodType<Json> = z.lazy(() =>
   z.union([
     z.string(),
