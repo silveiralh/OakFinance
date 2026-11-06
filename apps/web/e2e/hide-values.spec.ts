@@ -31,11 +31,15 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
     `Olho ${stamp}`,
   ] as [string, string]);
 
+  // a preferência vai para a conta: sincroniza e, se uma tentativa anterior deixou oculto, volta a mostrar
+  await expect
+    .poll(() => page.evaluate(() => window.__oakE2E?.syncNow()), { timeout: 20_000 })
+    .toBe(true);
   await page.goto('/');
-  // a preferência vai para a conta: uma tentativa anterior pode ter deixado os valores ocultos
-  const reveal = page.getByRole('button', { name: 'Mostrar valores' });
-  if (await reveal.isVisible()) {
-    await reveal.click();
+  const toggle = page.getByTestId('hide-values');
+  await expect(toggle).toBeVisible();
+  if ((await toggle.getAttribute('aria-pressed')) === 'true') {
+    await toggle.click();
   }
   await expect(page.getByTestId('home-out')).toHaveText(MONEY);
   const eye = page.getByRole('button', { name: 'Ocultar valores' });
