@@ -101,7 +101,7 @@ flowchart LR
 | T-036 | Primeiro deploy staging e produção | T-030, T-034 | blocked: aguarda cliente — SETUP-05..09, SETUP-12 |
 | T-037 | Boas-vindas e instalação guiada | T-030, T-034 | done |
 | T-038 | Contas | T-035 | done |
-| T-039 | Cartões com prévia da fatura | T-038, T-013 | todo |
+| T-039 | Cartões com prévia da fatura | T-038, T-013 | done |
 | T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | todo |
 | T-041 | Mais detalhes, edição e receita variável | T-040 | todo |
 | T-042 | Transferência, estorno e rascunho | T-041 | todo |
@@ -718,7 +718,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-039 — Cartões com prévia da fatura
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-10 | RN-09..RN-12 | T-038, T-013 | não |
+| done | S1 | P | US-10 | RN-09..RN-12 | T-038, T-013 | não |
 
 **Escopo:** S03 cartões: fechamento e vencimento 1–31 ("Escolha um dia entre 1 e 31"); switch da regra do dia do fechamento; prévia "Compras de hoje vão para a fatura de dez/2026, que vence em 10/12/2026"; nota do dia 31; aviso quando fechamento = vencimento; conta que paga.
 
