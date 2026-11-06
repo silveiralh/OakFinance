@@ -30,6 +30,7 @@ import {
   TextField,
   useToast,
 } from '../../ui';
+import { ExpensesSection } from './ExpensesSection';
 import {
   buildFixedIncome,
   confirmOccurrence,
@@ -71,14 +72,24 @@ export function occurrenceText(
   tx: LocalRow<'transactions'> | undefined,
   today: ISODate,
   hidden: boolean,
+  opts: { kind?: 'income' | 'expense'; approxCents?: number | null } = {},
 ): string {
-  const valor = maskMoney(formatBRL(occ.amountCents), hidden);
+  const expense = opts.kind === 'expense';
   if (tx?.status === 'cancelled') {
-    return t('fixed.skipped', { mês: monthLabel(monthOf(occ.date)) });
+    return t(expense ? 'fixed.skippedMonth' : 'fixed.skipped', {
+      mês: monthLabel(monthOf(occ.date)),
+    });
   }
   if (tx) {
-    return t('fixed.received', { data: formatDateBR(occ.date), valor });
+    const valor = maskMoney(formatBRL(tx.amount_cents), hidden);
+    return t(expense ? 'fixed.paid' : 'fixed.received', { data: formatDateBR(occ.date), valor });
   }
+  // RN-31: valor variável aparece como "≈ R$ X" (última efetivada ou o cadastrado)
+  const amount = maskMoney(formatBRL(opts.approxCents ?? occ.amountCents), hidden);
+  const valor =
+    opts.approxCents !== undefined && opts.approxCents !== null
+      ? t('fixed.approx', { valor: amount })
+      : amount;
   return occ.date < today
     ? t('fixed.late', { data: formatDateBR(occ.date), valor })
     : t('fixed.expected', { data: formatDateBR(occ.date), valor });
@@ -281,6 +292,7 @@ export function IncomeScreen({
           );
         })
       )}
+      <ExpensesSection user={user} today={today} />
       <BottomSheet
         open={draft !== null}
         onClose={() => setDraft(null)}

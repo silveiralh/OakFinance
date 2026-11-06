@@ -29,7 +29,12 @@ import {
   TextField,
   useToast,
 } from '../../ui';
-import { buildFixedIncome, confirmOccurrence, recurrenceFromRow } from '../recurrences/model';
+import {
+  buildFixedExpense,
+  buildFixedIncome,
+  confirmOccurrence,
+  recurrenceFromRow,
+} from '../recurrences/model';
 import { quickEntryElapsed, resetQuickEntryClock } from './clock';
 import { categoryIcon } from './icons';
 import {
@@ -330,34 +335,55 @@ export function QuickEntrySheet({
       : { ...fresh, category_source: categoryByRule ? 'rule' : 'manual' };
     // "Repetir todo mês" na receita (US-23): cria a receita fixa no dia da data; se já caiu, este lançamento é a
     // ocorrência dessa data (id v5); se não caiu, a ocorrência fica projetada e conta na Base (RN-32)
-    if (repeat && income && !editing && method?.accountId) {
+    if (
+      repeat &&
+      !parcelled &&
+      !editing &&
+      (income || mode === 'expense') &&
+      (method?.accountId || card)
+    ) {
       const name =
         description.trim() ||
         data?.categories.find((c) => c.id === categoryId)?.name ||
-        t('quick.type.income');
-      const rec = buildFixedIncome({
-        userId: user.userId,
-        description: name,
-        amountCents: amount,
-        dayOfMonth: Number(date.slice(8, 10)),
-        accountId: method.accountId,
-        categoryId,
-        startOn: date,
-        nowIso,
-      });
+        t(income ? 'quick.type.income' : 'quick.type.expense');
+      const day = Number(date.slice(8, 10));
+      const rec = income
+        ? buildFixedIncome({
+            userId: user.userId,
+            description: name,
+            amountCents: amount,
+            dayOfMonth: day,
+            accountId: method?.accountId ?? '',
+            categoryId,
+            startOn: date,
+            nowIso,
+          })
+        : buildFixedExpense({
+            userId: user.userId,
+            description: name,
+            amountCents: amount,
+            dayOfMonth: day,
+            accountId: card ? null : (method?.accountId ?? null),
+            cardId: card?.id ?? null,
+            categoryId,
+            variable: false,
+            startOn: date,
+            nowIso,
+          });
       const recResult = await saveRow(user.db, 'recurrences', rec);
       if (!recResult.ok) {
         return;
       }
       const domainRec = recurrenceFromRow(rec);
-      if (received === 'yes' && domainRec) {
+      // receita: só se já caiu; despesa: se a data já chegou (a ocorrência futura fica projetada)
+      if (domainRec && (income ? received === 'yes' : date <= today)) {
         await confirmOccurrence(user.db, user.userId, domainRec, date, amount);
       }
       setSaved(true);
       await clearDraft(user.db, DRAFT_KEY);
       user.engine.notifyWrite();
       resetQuickEntryClock();
-      toast({ message: t('fixed.saved') });
+      toast({ message: t(income ? 'fixed.saved' : 'fixed.expenseSaved') });
       onClose();
       return;
     }
@@ -608,7 +634,7 @@ export function QuickEntrySheet({
             />
             <DateChip label={t('quick.date')} value={date} onChange={setDate} today={today} />
             <TextField label={t('quick.notes')} value={notes} onChange={setNotes} />
-            {!editing && income && (
+            {!editing && (income || mode === 'expense') && count === 1 && (
               <Switch label={t('quick.repeat')} checked={repeat} onChange={setRepeat} />
             )}
             {!editing && mode === 'expense' && (

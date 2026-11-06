@@ -116,7 +116,7 @@ flowchart LR
 | T-051 | Editar e arquivar contas e cartões | T-047 | done |
 | T-052 | Compra parcelada | T-048, T-014 | done |
 | T-053 | Editar e cancelar parcelada | T-052 | done |
-| T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | todo |
+| T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | done |
 | T-055 | Editar, pular e encerrar recorrências | T-054 | todo |
 | T-056 | Regras que aprendem | T-044, T-049 | todo |
 | T-057 | Gerenciar regras (I06) | T-056 | todo |
@@ -897,7 +897,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-054 — Contas fixas, assinaturas e Futuro
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-25 | RN-26..RN-29, RN-31 | T-050, T-047 | não |
+| done | S2 | M | US-25 | RN-26..RN-29, RN-31 | T-050, T-047 | não |
 
 **Escopo:** "Repetir todo mês" para despesa (valor variável; confirmação automática ligada por padrão no cartão); S05; "≈ R$ X" pelo último efetivado; "atrasada" a partir de D+1; confirmar valor real; ocorrência no cartão vai para a fatura; P03 Futuro (12 meses, com tabela alternativa).
 

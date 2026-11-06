@@ -8,10 +8,8 @@ export function ReserveScreen() {
   return <ScreenStub screen="P02" />;
 }
 
-export function FutureScreen() {
-  return <ScreenStub screen="P03" />;
-}
-
 export function CloseMonthScreen() {
   return <ScreenStub screen="P04" />;
 }
+
+export { FutureScreen } from './FutureScreen';

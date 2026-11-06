@@ -411,6 +411,51 @@ body:has(.screen-welcome) .backdrop {
   background: var(--accent);
   color: var(--on-accent);
 }
+.future-bars {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.future-bars > li {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+  gap: var(--space-2);
+}
+.future-bar {
+  display: flex;
+  height: 16px;
+  border-radius: var(--radius-xs);
+  background: var(--surface-inset);
+  overflow: hidden;
+}
+.future-seg[data-kind="installment"] {
+  background: var(--text-primary);
+}
+.future-seg[data-kind="fixed"] {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--accent),
+    var(--accent) 4px,
+    var(--accent-pressed) 4px,
+    var(--accent-pressed) 8px
+  );
+}
+.future-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.future-table th,
+.future-table td {
+  padding: var(--space-1);
+  text-align: end;
+}
+.future-table th:first-child {
+  text-align: start;
+}
 .detail-hero {
   display: grid;
   gap: var(--space-1);
