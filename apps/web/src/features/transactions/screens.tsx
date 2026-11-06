@@ -1,7 +1,2 @@
-import { ScreenStub } from '../../app/ScreenStub';
-
+export { TransactionDetailScreen } from './TransactionDetailScreen';
 export { TransactionsScreen } from './TransactionsScreen';
-
-export function TransactionDetailScreen() {
-  return <ScreenStub screen="T02" />;
-}

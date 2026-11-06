@@ -416,7 +416,7 @@ export function TransactionsScreen({
                   entry.tx.category_id ? categories.get(entry.tx.category_id) : undefined,
                   today,
                 )}
-                onPress={() => void navigate(`?editar=${entry.tx.id}`)}
+                onPress={() => void navigate(`/lancamentos/${entry.tx.id}`)}
                 onActions={() => setActing(entry.tx)}
               />
             ),

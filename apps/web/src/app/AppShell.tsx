@@ -14,6 +14,7 @@ import {
   ToastProvider,
   TopBar,
 } from '../ui';
+import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
@@ -95,6 +96,7 @@ export function AppShell() {
     <ToastProvider>
       <UpdatePrompt />
       <SessionExpired />
+      <RemoteEditsToast />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}

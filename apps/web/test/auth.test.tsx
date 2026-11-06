@@ -337,6 +337,8 @@ describe('G05 e G16 (UX §3 G, US-01)', () => {
       consecutiveFailures: 0,
       showErrorBanner: false,
       lastSyncAt: null,
+      remoteEdits: 0,
+      remoteEditsSeq: 0,
     });
     mount(<SessionExpired />, auth);
     expect(await screen.findByText('Sua sessão expirou.')).toBeInTheDocument();

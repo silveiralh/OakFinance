@@ -37,6 +37,10 @@ export interface SyncSnapshot {
   /** G04: falhou 3 vezes seguidas. */
   showErrorBanner: boolean;
   lastSyncAt: string | null;
+  /** G06: quantos lançamentos o último pull trouxe editados em outro aparelho. */
+  remoteEdits: number;
+  /** Sobe a cada pull com `remoteEdits > 0` (o toast do G06 aparece uma vez por pull). */
+  remoteEditsSeq: number;
 }
 
 export interface LockManagerLike {
@@ -109,6 +113,8 @@ export class SyncEngine {
     consecutiveFailures: 0,
     showErrorBanner: false,
     lastSyncAt: null,
+    remoteEdits: 0,
+    remoteEditsSeq: 0,
   };
 
   constructor(options: SyncEngineOptions) {
@@ -192,7 +198,7 @@ export class SyncEngine {
     for (const rejected of push.rejected) {
       await this.event('warn', 'sync.rejected', { table: rejected.table, reason: rejected.code });
     }
-    const failure = push.failure ?? (await this.pullAndClean());
+    const failure = push.failure ?? (await this.pullAndClean(device));
     if (failure) {
       const failures = this.snapshot.consecutiveFailures + 1;
       this.set({
@@ -218,8 +224,14 @@ export class SyncEngine {
     return { ran: true, ok: true, failure: null };
   }
 
-  private async pullAndClean() {
-    const pull = await pullChanges(this.db, this.transport, this.now);
+  private async pullAndClean(device: string) {
+    const pull = await pullChanges(this.db, this.transport, this.now, device);
+    if (pull.remoteEdits > 0) {
+      this.set({
+        remoteEdits: pull.remoteEdits,
+        remoteEditsSeq: this.snapshot.remoteEditsSeq + 1,
+      });
+    }
     if (!pull.failure) {
       await purgeLocalTombstones(this.db, this.now());
     }
