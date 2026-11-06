@@ -18,6 +18,7 @@ import { movedRow } from '../cards/model';
 import { movePlan } from '../cards/move';
 import { SeriesActions } from '../installments/SeriesActions';
 import { buildInvoice } from '../quick-entry/model';
+import { CategoryCorrection } from '../rules/CategoryCorrection';
 import {
   describeHistory,
   type HistoryClient,
@@ -299,6 +300,9 @@ export function TransactionDetailScreen({
           >
             {t('list.edit')}
           </Button>
+        )}
+        {tx.kind !== 'transfer' && (
+          <CategoryCorrection user={user} tx={tx} categories={data.categories} />
         )}
         {move?.allowed && (
           <Button variant="secondary" iconStart={ArrowRightLeft} onClick={() => setMoving(true)}>

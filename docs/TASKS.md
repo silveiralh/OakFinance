@@ -118,7 +118,7 @@ flowchart LR
 | T-053 | Editar e cancelar parcelada | T-052 | done |
 | T-054 | Contas fixas, assinaturas e Futuro | T-050, T-047 | done |
 | T-055 | Editar, pular e encerrar recorrências | T-054 | done |
-| T-056 | Regras que aprendem | T-044, T-049 | todo |
+| T-056 | Regras que aprendem | T-044, T-049 | done |
 | T-057 | Gerenciar regras (I06) | T-056 | todo |
 | T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | todo |
 | T-059 | Orçamento 50/30/20 e limites | T-058 | todo |
@@ -919,7 +919,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-056 — Regras que aprendem
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-28 | RN-57..RN-63 | T-044, T-049 | não |
+| done | S2 | M | US-28 | RN-57..RN-63 | T-044, T-049 | não |
 
 **Escopo:** `learnFromCorrection` ao mudar a categoria; toast "Regra criada: '{termo}' → {categoria}" (8 s, Desfazer e Editar); "Aplicar a mais N parecidos"; `hits` e `last_hit_at`; sugestão marcada no Q01 quando a confiança é alta.
 
