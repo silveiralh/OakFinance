@@ -7,6 +7,7 @@ export * from './ids.ts';
 export * from './installments.ts';
 export * from './invoices.ts';
 export * from './money.ts';
+export * from './nfce/qr.ts';
 export * from './recurrence.ts';
 export type * from './types.ts';
 
