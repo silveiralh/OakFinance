@@ -1,7 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
-import { initStorage } from './data/storage';
+import { initStorage, requestPersistence } from './data/storage';
+import { captureInstallEvents } from './lib/platform';
 import { registerServiceWorker } from './lib/sw-update';
 import './styles/base.css';
 
@@ -9,6 +10,9 @@ const root = document.getElementById('root');
 if (!root) {
   throw new Error('Elemento #root ausente em index.html');
 }
+
+// O Chrome dispara `beforeinstallprompt` cedo: captura antes do primeiro render. Instalou → persist() (UX §2.3)
+captureInstallEvents(window, () => void requestPersistence());
 
 async function boot(container: HTMLElement) {
   let page = <App />;

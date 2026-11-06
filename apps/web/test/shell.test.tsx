@@ -13,6 +13,7 @@ import { SPLASH_PROGRESS_DELAY_MS, Splash } from '../src/app/Splash';
 import {
   installScreen,
   ONBOARDING_SCREENS,
+  OPEN_SCREENS,
   PUBLIC_SCREENS,
   resolveScreen,
   SHELL_SCREENS,
@@ -88,7 +89,12 @@ describe('rotas do UX §2.1 e §3', () => {
   });
 
   it('todas as telas carregam sob demanda (lazy) um componente', async () => {
-    for (const route of [...SHELL_SCREENS, ...PUBLIC_SCREENS, ...ONBOARDING_SCREENS]) {
+    for (const route of [
+      ...SHELL_SCREENS,
+      ...PUBLIC_SCREENS,
+      ...OPEN_SCREENS,
+      ...ONBOARDING_SCREENS,
+    ]) {
       expect(typeof (await route.load()), route.path).toBe('function');
     }
   });

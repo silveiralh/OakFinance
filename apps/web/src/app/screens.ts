@@ -133,11 +133,6 @@ export const PUBLIC_SCREENS: readonly ScreenRoute[] = [
     load: () => onboarding().then((m) => m.WelcomeScreen),
   },
   {
-    path: '/instalar',
-    handle: { screen: installScreen },
-    load: () => onboarding().then((m) => m.InstallScreen),
-  },
-  {
     path: '/entrar',
     handle: { screen: 'ON03' },
     load: () => onboarding().then((m) => m.LoginScreen),
@@ -146,6 +141,15 @@ export const PUBLIC_SCREENS: readonly ScreenRoute[] = [
     path: '/auth/callback',
     handle: { screen: 'ON03' },
     load: () => onboarding().then((m) => m.AuthCallback),
+  },
+];
+
+/** Instalação (ON02a/b/c): antes do login no iPhone e depois dele no Android (UX §2.3), então sem guarda. */
+export const OPEN_SCREENS: readonly ScreenRoute[] = [
+  {
+    path: '/instalar',
+    handle: { screen: installScreen },
+    load: () => onboarding().then((m) => m.InstallScreen),
   },
 ];
 

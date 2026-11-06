@@ -99,7 +99,7 @@ flowchart LR
 | T-034 | Login Google, allowlist e sessão | T-033 | done |
 | T-035 | Seeds no primeiro login e isolamento | T-034, T-019 | done |
 | T-036 | Primeiro deploy staging e produção | T-030, T-034 | blocked: aguarda cliente — SETUP-05..09, SETUP-12 |
-| T-037 | Boas-vindas e instalação guiada | T-030, T-034 | todo |
+| T-037 | Boas-vindas e instalação guiada | T-030, T-034 | done |
 | T-038 | Contas | T-035 | todo |
 | T-039 | Cartões com prévia da fatura | T-038, T-013 | todo |
 | T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | todo |
@@ -696,7 +696,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-037 — Boas-vindas e instalação guiada
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-06, US-07 | RN-86 | T-030, T-034 | não |
+| done | S1 | M | US-06, US-07 | RN-86 | T-030, T-034 | não |
 
 **Escopo:** ON01, ON02a/b/c com as variantes do InstallGuide; detecção de `isIOS`/`standalone`; no iPhone o guia vem antes do login; "Continuar no navegador por enquanto" + card no Início; `beforeinstallprompt`/`appinstalled`; `persist()` após instalar; texto para iOS < 16.4; "Abra este link no Safari" com Copiar link.
 

@@ -160,3 +160,16 @@
 .splash-progress {
   width: 160px;
 }
+
+.welcome-features {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.welcome-features li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
