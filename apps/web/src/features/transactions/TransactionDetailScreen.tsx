@@ -90,9 +90,15 @@ export function TransactionDetailScreen({
   const [device, setDevice] = useState<string | null>(null);
   const [moving, setMoving] = useState(false);
   useEffect(() => {
-    if (user) {
-      void deviceId(user.db).then(setDevice);
+    if (!user) {
+      return;
     }
+    // sem setState depois de desmontar (a transação do Dexie pode terminar depois)
+    let alive = true;
+    void deviceId(user.db).then((id) => alive && setDevice(id));
+    return () => {
+      alive = false;
+    };
   }, [user]);
   const names: HistoryNames = useMemo(
     () => ({
