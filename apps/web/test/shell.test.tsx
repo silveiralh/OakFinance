@@ -74,16 +74,20 @@ describe('rotas do UX §2.1 e §3', () => {
     }
     // subtelas de Configurações (tabela da UX §3 S01, rotas definidas em D-016): nome igual ao da tabela
     const subscreens = new Map(
-      [...ux.matchAll(/^\| (S\d\d) \| ([^|]+) \|/gm)].map((m) => [m[1] ?? '', (m[2] ?? '').trim()]),
+      [...ux.matchAll(/^\| (S\d\d|I06) \| ([^|]+) \|/gm)].map((m) => [
+        m[1] ?? '',
+        (m[2] ?? '').trim(),
+      ]),
     );
     const extra = Object.keys(shellText.screens).filter((id) => !spec.has(id));
-    expect(extra).toEqual(['S03', 'S04', 'S05']);
+    expect(extra).toEqual(['S03', 'S04', 'S05', 'I06']);
     for (const id of extra) {
       expect(shellText.screens[id as ScreenId], id).toBe(subscreens.get(id));
     }
     expect(table.get('S03')).toBe('/ajustes/contas');
     expect(table.get('S04')).toBe('/ajustes/categorias');
     expect(table.get('S05')).toBe('/ajustes/renda');
+    expect(table.get('I06')).toBe('/ajustes/regras');
     expect(
       Object.keys(shellText.screens)
         .filter((id) => spec.has(id))

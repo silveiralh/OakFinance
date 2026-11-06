@@ -2255,6 +2255,22 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `fixed.until` | até {data} |
 | `detail.changeCategory` | Mudar categoria |
 | `rules.applied` | {n} lançamentos atualizados. |
+| `rules.new` | Nova regra |
+| `rules.edit` | Editar regra |
+| `rules.pattern` | Termo |
+| `rules.preview` | Casaria com {n} lançamentos dos últimos 90 dias |
+| `rules.empty` | Nenhuma regra criada |
+| `rules.emptyHint` | Corrija a categoria de um lançamento e o app cria a regra. |
+| `rules.source.default` | Padrão |
+| `rules.source.learned` | Aprendida |
+| `rules.source.manual` | Manual |
+| `rules.hits` | {n} acertos |
+| `rules.lastHit` | último uso {data} |
+| `rules.never` | sem uso |
+| `rules.delete` | Apagar |
+| `rules.deleted` | Regra apagada. |
+| `rules.saved` | Regra salva. |
+| `rules.patternShort` | Use pelo menos 4 caracteres. |
 | `future.empty` | Nenhum valor comprometido nos próximos meses. |
 | `future.emptyHint` | Compras parceladas e contas fixas aparecem aqui. |
 | `future.table` | Ver como tabela |

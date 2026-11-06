@@ -2,6 +2,7 @@
 // faixa com aviso, arquivar, excluir pedindo destino quando há uso; categorias de sistema bloqueadas.
 import { Lock, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
@@ -72,6 +73,7 @@ interface Draft {
 
 export function CategoriesScreen() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const showToast = useToast();
   const categories = useLive(user ? () => user.db.categories.toArray() : null, [user]);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -207,6 +209,9 @@ export function CategoriesScreen() {
       <div className="detail-actions">
         <Button iconStart={Plus} onClick={() => open(null)}>
           {t('categories.new')}
+        </Button>
+        <Button variant="ghost" onClick={() => void navigate('/ajustes/regras')}>
+          {t('categories.rules')}
         </Button>
       </div>
       {groups.bands.map(({ bucket, rows }) => (
