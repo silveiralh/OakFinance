@@ -209,6 +209,23 @@ export const ptBR = {
 
 export type MessageKey = keyof typeof ptBR;
 
+/**
+ * Textos de acessibilidade e de estado dos componentes, definidos no inventário da UX §5 (não na §6.4):
+ * MoneyText (5.7), Skeleton (5.26), FAB (5.3) e Banner/Toast (5.22, 5.23).
+ */
+export const uiText = {
+  hiddenValue: 'Valor oculto',
+  incomeOf: 'Receita de',
+  expenseOf: 'Despesa de',
+  savingOf: 'Guardado',
+  transferOf: 'Transferência de',
+  loading: 'Carregando',
+  newEntry: 'Novo lançamento',
+  close: 'Fechar',
+  clear: 'Limpar',
+  saved: 'Salvo',
+} as const;
+
 /** Texto da chave com os placeholders preenchidos; placeholder sem valor fica como está. */
 export function t(key: MessageKey, values: Readonly<Record<string, string | number>> = {}): string {
   return ptBR[key].replace(/\{([^{}]+)\}/g, (whole, name: string) =>

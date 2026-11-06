@@ -88,7 +88,7 @@ flowchart LR
 | T-023 | Domínio: QR da NFC-e | T-012 | done |
 | T-024 | Domínio: lembretes devidos | T-017, T-018 | done |
 | T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | done |
-| T-026 | Componentes de base | T-025 | todo |
+| T-026 | Componentes de base | T-025 | done |
 | T-027 | Componentes de entrada | T-026, T-012 | todo |
 | T-028 | Componentes de dados e styleguide | T-027 | todo |
 | T-029 | AppShell, rotas e CSP | T-028 | todo |
@@ -554,7 +554,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-026 — Componentes de base
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-62 | — | T-025 | não |
+| done | S1 | M | US-62 | — | T-025 | não |
 
 **Escopo:** UX §5.1–5.7 e §5.14, §5.22–5.26, §5.34, §5.35: Button, IconButton, FAB, GlassCard, AppBackdrop, Badge, MoneyText, TextField/Select/Switch, SegmentedControl, Skeleton, EmptyState, Banner, Toast (fila; 4 s, ou 8 s com ação) e BrandLogo.
 
