@@ -88,7 +88,7 @@ export function CardsScreen({
     );
   }
   const found = overviews.findIndex((o) => o.row.id === selectedId);
-  const index = found >= 0 ? found : 0;
+  const index = Math.max(found, 0);
   const select = (i: number) => setSelectedId(overviews[i]?.row.id ?? null);
   const active = overviews[index];
   if (!active) {

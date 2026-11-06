@@ -2,8 +2,11 @@
 // ocorrência vira lançamento com id v5 (recorrência, data) ao confirmar (valor real) ou "Não recebi este mês"
 // (cancelada, sai da Base). Dois aparelhos que confirmam a mesma ocorrência gravam a mesma linha (RN-97 decide).
 import {
+  type Card,
   clampDay,
+  dueAutoPosts,
   type ISODate,
+  invoiceForPurchase,
   materializeOccurrence,
   monthOf,
   type ProjectedOccurrence,
@@ -14,8 +17,9 @@ import {
 } from '@oakfinance/domain';
 import type { LocalRow, OakDb } from '../../data/db';
 import { newId } from '../../data/ids';
-import { txToRow } from '../../data/mappers';
+import { cardFromRow, txToRow } from '../../data/mappers';
 import { saveRow } from '../../data/repositories/rows';
+import { buildInvoice } from '../quick-entry/model';
 
 type RecurrenceRow = LocalRow<'recurrences'>;
 type TxRow = LocalRow<'transactions'>;
@@ -181,8 +185,8 @@ function blankTx(id: string, userId: string, nowIso: string): TxRow {
 }
 
 /**
- * Lançamento da ocorrência (id v5): confirmada com o valor real (efetivada) ou "Não recebi este mês" (cancelada).
- * Se a linha já existe (outro aparelho, edição), a mesma linha é atualizada.
+ * Lançamento da ocorrência (id v5): confirmada com o valor real (efetivada) ou "Não recebi/Pular este mês" (cancelada).
+ * No cartão, vai para a fatura da data (RN-29). Se a linha já existe (outro aparelho, edição), ela é atualizada.
  */
 export function occurrenceRow(
   rec: Recurrence,
@@ -191,11 +195,12 @@ export function occurrenceRow(
   existing: TxRow | undefined,
   userId: string,
   nowIso: string,
+  card: Card | null = null,
 ): TxRow {
   const tx = materializeOccurrence(
     rec,
     date,
-    null,
+    card,
     [],
     outcome.status === 'posted' ? outcome.amountCents : rec.amountCents,
   );
@@ -206,7 +211,35 @@ export function occurrenceRow(
   };
 }
 
-export async function confirmOccurrence(
+/** Grava a ocorrência (e a fatura do cartão, se faltar) com o resultado escolhido. */
+async function writeOccurrence(
+  db: OakDb,
+  userId: string,
+  rec: Recurrence,
+  date: ISODate,
+  outcome: { status: 'posted'; amountCents: number } | { status: 'cancelled' },
+  nowMs: number,
+) {
+  const cardRow = rec.cardId ? await db.cards.get(rec.cardId) : undefined;
+  const card = cardRow ? cardFromRow(cardRow) : null;
+  const nowIso = new Date(nowMs).toISOString();
+  if (card) {
+    const period = invoiceForPurchase(card, date);
+    if (!(await db.invoices.get(period.id))) {
+      await saveRow(db, 'invoices', buildInvoice(period, userId, nowIso), { nowMs });
+    }
+  }
+  const id = materializeOccurrence(rec, date, card).id;
+  const existing = await db.transactions.get(id);
+  return saveRow(
+    db,
+    'transactions',
+    occurrenceRow(rec, date, outcome, existing, userId, nowIso, card),
+    { nowMs },
+  );
+}
+
+export function confirmOccurrence(
   db: OakDb,
   userId: string,
   rec: Recurrence,
@@ -214,43 +247,97 @@ export async function confirmOccurrence(
   amountCents: number,
   nowMs: number = Date.now(),
 ) {
-  const id = materializeOccurrence(rec, date, null).id;
-  const existing = await db.transactions.get(id);
-  return saveRow(
-    db,
-    'transactions',
-    occurrenceRow(
-      rec,
-      date,
-      { status: 'posted', amountCents },
-      existing,
-      userId,
-      new Date(nowMs).toISOString(),
-    ),
-    { nowMs },
-  );
+  return writeOccurrence(db, userId, rec, date, { status: 'posted', amountCents }, nowMs);
 }
 
-export async function skipOccurrence(
+export function skipOccurrence(
   db: OakDb,
   userId: string,
   rec: Recurrence,
   date: ISODate,
   nowMs: number = Date.now(),
 ) {
-  const id = materializeOccurrence(rec, date, null).id;
-  const existing = await db.transactions.get(id);
-  return saveRow(
-    db,
-    'transactions',
-    occurrenceRow(
-      rec,
-      date,
-      { status: 'cancelled' },
-      existing,
-      userId,
-      new Date(nowMs).toISOString(),
-    ),
-    { nowMs },
-  );
+  return writeOccurrence(db, userId, rec, date, { status: 'cancelled' }, nowMs);
+}
+
+/** RN-31: "≈ R$ X", com X = valor da última ocorrência efetivada (ou o cadastrado). */
+export function approxAmount(rec: Recurrence, txs: readonly Tx[]): number {
+  const last = txs
+    .filter(
+      (t) =>
+        t.recurrenceId === rec.id &&
+        t.deletedAt === null &&
+        t.status === 'posted' &&
+        t.recurrenceDate !== null,
+    )
+    .sort((a, b) => ((a.recurrenceDate ?? '') < (b.recurrenceDate ?? '') ? 1 : -1))[0];
+  return last?.amountCents ?? rec.amountCents;
+}
+
+export interface FixedExpenseInput {
+  userId: string;
+  description: string;
+  amountCents: number;
+  dayOfMonth: number;
+  /** Conta (Pix) ou cartão (crédito): só um. */
+  accountId: string | null;
+  cardId: string | null;
+  categoryId: string | null;
+  variable: boolean;
+  /** RN-26: padrão ligado no cartão (assinaturas) e desligado nos meios imediatos. */
+  autoPost?: boolean;
+  startOn: ISODate;
+  nowIso: string;
+  id?: string;
+}
+
+/** Conta fixa ou assinatura mensal (RN-26). */
+export function buildFixedExpense(input: FixedExpenseInput): RecurrenceRow {
+  return {
+    ...buildFixedIncome({
+      userId: input.userId,
+      description: input.description,
+      amountCents: input.amountCents,
+      dayOfMonth: input.dayOfMonth,
+      accountId: input.accountId ?? '',
+      categoryId: input.categoryId,
+      startOn: input.startOn,
+      nowIso: input.nowIso,
+      ...(input.id ? { id: input.id } : {}),
+    }),
+    kind: 'expense',
+    is_fixed_income: false,
+    account_id: input.accountId,
+    card_id: input.cardId,
+    payment_method: input.cardId ? 'credit' : 'pix',
+    is_variable_amount: input.variable,
+    auto_post: input.autoPost ?? input.cardId !== null,
+  };
+}
+
+/** RN-28: ocorrências com confirmação automática vencidas e ainda sem lançamento. */
+export async function runAutoPosts(
+  db: OakDb,
+  userId: string,
+  recs: readonly Recurrence[],
+  txs: readonly Tx[],
+  today: ISODate,
+  nowMs: number = Date.now(),
+): Promise<number> {
+  let n = 0;
+  for (const due of dueAutoPosts(recs, txs, today)) {
+    const rec = recs.find((r) => r.id === due.recurrenceId);
+    if (rec) {
+      const result = await confirmOccurrence(
+        db,
+        userId,
+        rec,
+        due.date,
+        approxAmount(rec, txs),
+        nowMs,
+      );
+      n += result.ok ? 1 : 0;
+    }
+  }
+  return n;
 }
