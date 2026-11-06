@@ -20,6 +20,7 @@ import {
   ToastProvider,
   TopBar,
 } from '../ui';
+import { StorageBanners } from './StorageBanners';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
 import { UpdatePrompt } from './UpdatePrompt';
 import { useCurrentScreen, useDocumentTitle } from './useScreen';
@@ -106,6 +107,7 @@ export function AppShell() {
         </nav>
         <div className="shell-column">
           <TopBar title={title} transparentUntilScroll={screen === 'H01'} />
+          <StorageBanners />
           <main
             id="conteudo"
             className="shell-main"

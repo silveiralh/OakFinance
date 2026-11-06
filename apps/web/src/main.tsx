@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
+import { initStorage } from './data/storage';
 import { registerServiceWorker } from './lib/sw-update';
 import './styles/base.css';
 
@@ -19,6 +20,8 @@ async function boot(container: HTMLElement) {
   createRoot(container).render(<StrictMode>{page}</StrictMode>);
   // Depois do primeiro render: o SW não disputa a rede com o carregamento do shell
   void registerServiceWorker();
+  // IndexedDB utilizável? Sem ele, modo só online com o G12 (US-64)
+  void initStorage();
 }
 
 void boot(root);

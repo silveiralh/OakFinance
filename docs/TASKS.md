@@ -93,7 +93,7 @@ flowchart LR
 | T-028 | Componentes de dados e styleguide | T-027 | done |
 | T-029 | AppShell, rotas e CSP | T-028 | done |
 | T-030 | PWA instalável e Service Worker | T-029 | done |
-| T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | todo |
+| T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | done |
 | T-032 | Outbox, repositórios e relógio híbrido | T-031 | todo |
 | T-033 | Motor de sync | T-032 | todo |
 | T-034 | Login Google, allowlist e sessão | T-033 | todo |
@@ -619,7 +619,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-031 — Dexie, mappers e erros de armazenamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-04, US-64 | RN-95, RN-100 | T-011, T-029 | não |
+| done | S1 | M | US-04, US-64 | RN-95, RN-100 | T-011, T-029 | não |
 
 **Escopo:** `data/db.ts` (§4.2), `schemas.ts` (zod a partir de `db-types`), `mappers.ts`, `storage.persist()` e `estimate()`, `QuotaExceededError` → G11 (rascunho preservado), IndexedDB indisponível → G12 (modo só online).
 
