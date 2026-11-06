@@ -104,7 +104,7 @@ flowchart LR
 | T-039 | Cartões com prévia da fatura | T-038, T-013 | done |
 | T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | done |
 | T-041 | Mais detalhes, edição e receita variável | T-040 | done |
-| T-042 | Transferência, estorno e rascunho | T-041 | todo |
+| T-042 | Transferência, estorno e rascunho | T-041 | done |
 | T-043 | Lista de lançamentos | T-041 | todo |
 | T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | todo |
 | T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | todo |
@@ -759,7 +759,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-042 — Transferência, estorno e rascunho
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-16, US-22, US-64 | RN-04, RN-08, RN-37 | T-041 | não |
+| done | S1 | P | US-16, US-22, US-64 | RN-04, RN-08, RN-37 | T-041 | não |
 
 **Escopo:** "Outro tipo": transferência (origem ≠ destino, sem cartão como destino) e estorno no cartão (fatura da data, reduz a categoria); rascunho em `kv` por 24 h com G17; "Descartar este lançamento?".
 

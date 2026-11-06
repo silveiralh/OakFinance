@@ -2,6 +2,7 @@ import { dayMonth, invoiceForPurchase, monthLabel, todayIn } from '@oakfinance/d
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
+import { clearDraft, loadDraft, saveDraft } from '../../data/drafts';
 import { newId } from '../../data/ids';
 import { useLive } from '../../data/live';
 import { cardFromRow } from '../../data/mappers';
@@ -21,6 +22,7 @@ import {
   Dialog,
   PaymentMethodPicker,
   SegmentedControl,
+  Select,
   Switch,
   TextField,
   useToast,
@@ -31,6 +33,7 @@ import {
   buildExpense,
   buildInvoice,
   buildMethods,
+  DRAFT_KEY,
   expenseCategories,
   incomeCategories,
   isFarDate,
@@ -39,6 +42,9 @@ import {
   statusFor,
   suggestCategories,
   suggestFromDescription,
+  transferAccounts,
+  transferMissing,
+  usableDraft,
 } from './model';
 
 export const LAST_METHOD_KEY = 'quick.lastMethod';
@@ -100,6 +106,9 @@ export function QuickEntrySheet({
   const [date, setDate] = useState(today);
   const [received, setReceived] = useState<'yes' | 'no'>('yes');
   const [countBefore, setCountBefore] = useState(false);
+  const [fromId, setFromId] = useState<string | null>(null);
+  const [toId, setToId] = useState<string | null>(null);
+  const draftChecked = useRef(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const [asking, setAsking] = useState(false);
@@ -131,15 +140,76 @@ export function QuickEntrySheet({
     }
   }, [editing, today]);
 
+  // G17: rascunho guardado por até 24 h; ao abrir de novo, é oferecido com "Descartar"
+  useEffect(() => {
+    if (!user || editId || draftChecked.current) {
+      return;
+    }
+    draftChecked.current = true;
+    void loadDraft(user.db, DRAFT_KEY).then((value) => {
+      const draft = usableDraft(value, Date.now());
+      if (!draft) {
+        return;
+      }
+      setMode(draft.mode);
+      setAmount(draft.amount);
+      setCategoryId(draft.categoryId);
+      setDescription(draft.description);
+      setNotes(draft.notes);
+      setDate(draft.date);
+      toast({
+        message: t('quick.draft.restored'),
+        tone: 'info',
+        action: {
+          label: t('quick.draft.discard'),
+          onPress: () => {
+            void clearDraft(user.db, DRAFT_KEY);
+            setAmount(0);
+            setCategoryId(null);
+            setDescription('');
+            setNotes('');
+            setDate(today);
+          },
+        },
+      });
+    });
+  }, [user, editId, toast, today]);
+
+  useEffect(() => {
+    if (!user || editId || saved || !draftChecked.current || amount === 0) {
+      return;
+    }
+    void saveDraft(user.db, DRAFT_KEY, {
+      savedAt: Date.now(),
+      mode,
+      amount,
+      categoryId,
+      description,
+      notes,
+      date,
+    });
+  }, [user, editId, saved, mode, amount, categoryId, description, notes, date]);
+
   const income = mode === 'income';
+  const transfer = mode === 'transfer';
+  const refund = mode === 'refund';
   const allMethods = useMemo(() => buildMethods(data?.accounts ?? [], data?.cards ?? []), [data]);
-  const methods = income ? allMethods.filter((m) => m.kind !== 'credit') : allMethods;
+  const methods = income
+    ? allMethods.filter((m) => m.kind !== 'credit')
+    : refund
+      ? allMethods.filter((m) => m.kind === 'credit')
+      : allMethods;
+  const transferable = transferAccounts(data?.accounts ?? []);
+  const origin = fromId ?? transferable[0]?.id ?? null;
+  const transferCategory =
+    data?.categories.find((c) => c.slug === 'transferencia-entre-contas' && c.deleted_at === null)
+      ?.id ?? null;
   const suggestions = useMemo(
     () =>
-      income
+      mode === 'income'
         ? incomeCategories(data?.categories ?? []).slice(0, 5)
         : suggestCategories(data?.categories ?? [], data?.recent ?? [], today),
-    [data, today, income],
+    [data, today, mode],
   );
   const pickerCategories = useMemo(
     () =>
@@ -153,7 +223,9 @@ export function QuickEntrySheet({
   const method = methods.find((m) => m.id === (methodId ?? lastMethod)) ?? methods[0] ?? null;
   const card = method?.cardId ? data?.cards.find((c) => c.id === method.cardId) : undefined;
   const invoice = card ? invoiceForPurchase(cardFromRow(card), date) : null;
-  const missing = missingReason(amount, categoryId);
+  const missing = transfer
+    ? transferMissing(amount, origin, toId)
+    : missingReason(amount, categoryId);
   const pickedOutside = categoryId && !suggestions.some((c) => c.id === categoryId);
   const pickedChip = pickedOutside ? pickerCategories.find((c) => c.id === categoryId) : undefined;
   const status = statusFor(mode, date, today, received === 'yes');
@@ -185,21 +257,33 @@ export function QuickEntrySheet({
   };
 
   const save = async () => {
-    if (missing || !method || !categoryId) {
+    if (transfer) {
+      if (missing || !origin || !toId) {
+        return;
+      }
+    } else if (missing || !method || !categoryId) {
       return;
     }
     const nowIso = new Date().toISOString();
     if (invoice && card && !(await user.db.invoices.get(invoice.id))) {
       await saveRow(user.db, 'invoices', buildInvoice(invoice, user.userId, nowIso));
     }
+    const transferMethod = {
+      id: `transfer:${origin}`,
+      kind: 'account' as const,
+      label: '',
+      accountId: origin,
+      paymentMethod: 'transfer' as const,
+    };
     const fresh = buildExpense({
       id: editing?.id ?? newId(),
       userId: user.userId,
       amountCents: amount,
-      categoryId,
-      method,
+      categoryId: transfer ? (transferCategory ?? '') : (categoryId ?? ''),
+      method: transfer ? transferMethod : (method ?? transferMethod),
       occurredOn: date,
-      invoiceId: invoice?.id ?? null,
+      invoiceId: transfer ? null : (invoice?.id ?? null),
+      counterpartAccountId: transfer ? toId : null,
       nowIso,
       kind: mode,
       status,
@@ -224,6 +308,7 @@ export function QuickEntrySheet({
           card_id: fresh.card_id,
           invoice_id: fresh.invoice_id,
           count_before_received: fresh.count_before_received,
+          counterpart_account_id: fresh.counterpart_account_id,
         }
       : { ...fresh, category_source: categoryByRule ? 'rule' : 'manual' };
     const result = await saveRow(user.db, 'transactions', row);
@@ -231,7 +316,10 @@ export function QuickEntrySheet({
       return;
     }
     setSaved(true);
-    await writeLocal(() => user.db.kv.put({ key: LAST_METHOD_KEY, value: method.id }));
+    await clearDraft(user.db, DRAFT_KEY);
+    if (!transfer && !refund && method) {
+      await writeLocal(() => user.db.kv.put({ key: LAST_METHOD_KEY, value: method.id }));
+    }
     user.engine.notifyWrite();
     const offline = typeof navigator !== 'undefined' && !navigator.onLine;
     if (!editing) {
@@ -288,7 +376,7 @@ export function QuickEntrySheet({
       data-testid="quick-entry"
     >
       <div className="quick-entry">
-        {!editing && (
+        {!editing && (mode === 'expense' || mode === 'income') && (
           <SegmentedControl
             label={t('quick.title')}
             value={mode}
@@ -300,31 +388,67 @@ export function QuickEntrySheet({
           />
         )}
         <AmountInput value={amount} onChange={setAmount} autoFocus />
-        <div className="quick-chips" role="radiogroup" aria-label={t('quick.type.expense')}>
-          {suggestions.map((c) => (
-            <CategoryChip
-              key={c.id}
-              name="quick-category"
-              category={chip(c)}
-              selected={categoryId === c.id}
-              suggested={categoryId === c.id && categoryByRule}
-              onPress={() => pick(c.id)}
+        {(transfer || refund) && (
+          <div className="quick-other">
+            <p className="account-name">{transfer ? t('quick.transfer') : t('quick.refund')}</p>
+            <Button variant="ghost" size="sm" onClick={() => changeMode('expense')}>
+              {t('quick.type.expense')}
+            </Button>
+          </div>
+        )}
+        {transfer && (
+          <>
+            <Select
+              label={t('quick.from')}
+              value={origin ?? ''}
+              onChange={(value) => {
+                setFromId(value);
+                if (value === toId) {
+                  setToId(null);
+                }
+              }}
+              options={transferable.map((a) => ({ value: a.id, label: a.name }))}
             />
-          ))}
-          {pickedChip && (
-            <CategoryChip
-              name="quick-category"
-              category={pickedChip}
-              selected
-              suggested={categoryByRule}
-              onPress={() => setPickerOpen(true)}
+            <Select
+              label={t('quick.to')}
+              value={toId ?? ''}
+              onChange={(value) => setToId(value || null)}
+              options={[
+                { value: '', label: t('cards.noPayer') },
+                ...transferable
+                  .filter((a) => a.id !== origin)
+                  .map((a) => ({ value: a.id, label: a.name })),
+              ]}
             />
-          )}
-          <Button variant="ghost" size="sm" onClick={() => setPickerOpen(true)}>
-            {uiText.more}
-          </Button>
-        </div>
-        {method && (
+          </>
+        )}
+        {!transfer && (
+          <div className="quick-chips" role="radiogroup" aria-label={t('quick.type.expense')}>
+            {suggestions.map((c) => (
+              <CategoryChip
+                key={c.id}
+                name="quick-category"
+                category={chip(c)}
+                selected={categoryId === c.id}
+                suggested={categoryId === c.id && categoryByRule}
+                onPress={() => pick(c.id)}
+              />
+            ))}
+            {pickedChip && (
+              <CategoryChip
+                name="quick-category"
+                category={pickedChip}
+                selected
+                suggested={categoryByRule}
+                onPress={() => setPickerOpen(true)}
+              />
+            )}
+            <Button variant="ghost" size="sm" onClick={() => setPickerOpen(true)}>
+              {uiText.more}
+            </Button>
+          </div>
+        )}
+        {!transfer && method && (
           <PaymentMethodPicker
             methods={methods}
             value={method.id}
@@ -377,6 +501,17 @@ export function QuickEntrySheet({
             />
             <DateChip label={t('quick.date')} value={date} onChange={setDate} today={today} />
             <TextField label={t('quick.notes')} value={notes} onChange={setNotes} />
+            {!editing && mode === 'expense' && (
+              <fieldset className="quick-other">
+                <legend className="sr-only">{t('quick.otherType')}</legend>
+                <Button variant="secondary" size="sm" onClick={() => changeMode('transfer')}>
+                  {t('quick.transfer')}
+                </Button>
+                <Button variant="secondary" size="sm" onClick={() => changeMode('refund')}>
+                  {t('quick.refund')}
+                </Button>
+              </fieldset>
+            )}
           </div>
         )}
         {!income && status === 'pending' && (
@@ -424,6 +559,7 @@ export function QuickEntrySheet({
         tone="danger"
         onConfirm={() => {
           setAsking(false);
+          void clearDraft(user.db, DRAFT_KEY);
           answer.current?.(true);
         }}
         onCancel={() => {

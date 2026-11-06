@@ -223,3 +223,17 @@
   display: grid;
   gap: var(--space-2);
 }
+
+.quick-other {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.quick-details {
+  display: grid;
+  gap: var(--space-3);
+}
