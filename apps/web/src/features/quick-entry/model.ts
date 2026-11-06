@@ -135,12 +135,20 @@ export function buildMethods(
 }
 
 /** O que falta para lançar (UX §3 Q01, US-12): primeiro o valor, depois a categoria. */
-export function missingReason(amountCents: number, categoryId: string | null): string | null {
+export function missingReason(
+  amountCents: number,
+  categoryId: string | null,
+  hasMethod = true,
+): string | null {
   if (amountCents <= 0) {
     return t('quick.missing.amount');
   }
   if (!categoryId) {
     return t('quick.missing.category');
+  }
+  // issue #71: sem conta nem cartão não há forma de pagamento; o botão diz o que falta em vez de falhar calado
+  if (!hasMethod) {
+    return t('quick.missing.method');
   }
   return null;
 }

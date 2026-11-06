@@ -89,6 +89,7 @@ export const ptBR = {
   'quick.cta.save': 'Guardar',
   'quick.missing.amount': 'Informe o valor',
   'quick.missing.category': 'Escolha a categoria',
+  'quick.missing.method': 'Cadastre uma conta ou um cartão primeiro',
   'quick.missing.installments': 'O total precisa ter pelo menos 1 centavo por parcela',
   'quick.more': 'Mais detalhes',
   'quick.invoiceHint': 'Entra na fatura de {mês}, vence {data}',
