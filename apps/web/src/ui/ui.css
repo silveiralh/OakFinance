@@ -762,3 +762,401 @@
   display: grid;
   gap: var(--space-2);
 }
+
+/* ---------- PaceIndicator (5.6) ---------- */
+.pace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-medium);
+  transition: opacity var(--motion-duration-base) var(--motion-ease-standard);
+}
+.pace-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.pace[data-tone="success"] {
+  color: var(--status-success-fg);
+}
+.pace[data-tone="warning"] {
+  color: var(--status-warning-fg);
+}
+.pace[data-tone="danger"] {
+  color: var(--status-danger-fg);
+}
+.pace[data-tone="info"] {
+  color: var(--status-info-fg);
+}
+
+/* ---------- ProgressBar, BudgetRing, GoalProgress (5.15–5.17) ---------- */
+.progress {
+  position: relative;
+  display: flex;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--band-track);
+  overflow: hidden;
+}
+.progress[data-size="xs"] {
+  height: 4px;
+}
+.progress[data-size="md"] {
+  height: 8px;
+}
+.progress[data-no-goal="true"] {
+  background: repeating-linear-gradient(90deg, var(--band-track) 0 6px, transparent 6px 12px);
+}
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--_fill, var(--status-info-fg));
+  transition: width var(--motion-duration-slow) var(--motion-ease-standard);
+}
+.progress[data-tone="band-needs"] {
+  --_fill: var(--band-needs);
+}
+.progress[data-tone="band-wants"] {
+  --_fill: var(--band-wants);
+}
+.progress[data-tone="band-savings"] {
+  --_fill: var(--band-savings);
+}
+.progress-excess {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--status-danger-fill) 0 3px,
+    transparent 3px 6px
+  );
+}
+.progress[data-indeterminate="true"] .progress-fill {
+  width: 30%;
+  animation: slide 1.4s linear infinite;
+}
+:root[data-motion="reduced"] .progress[data-indeterminate="true"] .progress-fill {
+  animation: none;
+}
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+.progress-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border-strong);
+}
+.ring {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+.ring-arc {
+  transition: stroke-dasharray var(--motion-duration-slow) var(--motion-ease-standard);
+}
+.ring-center,
+.goal-center {
+  position: absolute;
+  top: 0;
+  display: grid;
+  place-items: center;
+  height: var(--_size, 240px);
+  width: var(--_size, 240px);
+}
+.ring[data-size="sm"] .ring-center {
+  --_size: 96px;
+}
+.ring-legend {
+  border-collapse: collapse;
+  font-size: var(--font-size-label);
+}
+.ring-legend th,
+.ring-legend td {
+  padding: var(--space-1) var(--space-2);
+  text-align: left;
+}
+.goal-ring {
+  position: relative;
+  display: inline-grid;
+}
+.goal-ring .goal-center {
+  --_size: 100%;
+  inset: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-bold);
+}
+.goal-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-2);
+}
+.goal-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ---------- InvoiceCard (5.18) ---------- */
+.invoice-card {
+  position: relative;
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-5) var(--space-5) 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  color: var(--white);
+  text-align: left;
+  font: inherit;
+  overflow: hidden;
+  background: var(--_card, var(--grad-card-aqua));
+  box-shadow: var(--shadow-2);
+}
+.invoice-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.12), transparent 40%);
+  pointer-events: none;
+}
+.invoice-card[data-brand="grass"] {
+  --_card: var(--grad-card-grass);
+}
+.invoice-card[data-brand="violet"] {
+  --_card: var(--grad-card-violet);
+}
+.invoice-card[data-brand="night"] {
+  --_card: var(--grad-card-night);
+}
+.invoice-card[data-brand="coral"] {
+  --_card: var(--grad-card-coral);
+}
+.invoice-card[data-brand="graphite"] {
+  --_card: var(--grad-card-graphite);
+}
+.invoice-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+.invoice-name,
+.invoice-total {
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+}
+.invoice-dates {
+  margin: 0 calc(-1 * var(--space-5));
+  padding: var(--space-2) var(--space-5);
+  background: rgb(0 0 0 / 0.25);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ---------- TransactionRow (5.19) ---------- */
+.tx-row {
+  display: flex;
+  align-items: center;
+}
+.tx-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: 0 var(--space-2);
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tx-row[data-density="compact"] .tx-main {
+  min-height: 56px;
+}
+.tx-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-inset);
+  color: var(--_band, var(--text-secondary));
+}
+.tx-icon[data-band="needs"] {
+  --_band: var(--band-needs);
+}
+.tx-icon[data-band="wants"] {
+  --_band: var(--band-wants);
+}
+.tx-icon[data-band="savings"] {
+  --_band: var(--band-savings);
+}
+.tx-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.tx-title {
+  font-weight: var(--font-weight-semibold);
+}
+.tx-meta {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+.tx-seals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.tx-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+.tx-seal[data-seal="forecast"] {
+  outline: 1px dashed var(--border-strong);
+  border-radius: var(--radius-xs);
+  padding: 0 var(--space-1);
+}
+.tx-seal[data-seal="late"],
+.tx-seal[data-seal="sync"] {
+  color: var(--status-warning-fg);
+}
+.tx-amount[data-cancelled="true"] {
+  text-decoration: line-through;
+}
+
+/* ---------- SyncBadge (5.24) ---------- */
+.sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--touch-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: var(--font-size-label);
+  cursor: pointer;
+}
+.sync-badge[data-state="error"] {
+  color: var(--status-warning-fg);
+}
+.sync-badge [data-spin="true"] {
+  animation: spin 1s linear infinite;
+}
+:root[data-motion="reduced"] .sync-badge [data-spin="true"] {
+  animation: none;
+}
+
+/* ---------- TopBar e TabBar (5.33) ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-topbar);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 56px;
+  padding: 0 var(--gutter);
+  background: var(--glass-3-bg);
+  backdrop-filter: blur(var(--glass-3-blur));
+}
+.topbar[data-transparent="true"] {
+  background: transparent;
+  backdrop-filter: none;
+}
+.topbar-title {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--font-size-title);
+}
+.tabbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: var(--z-tabbar);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--space-1) var(--space-2) calc(var(--space-1) + env(safe-area-inset-bottom));
+  border-radius: 0;
+}
+.tab {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+.tab-label {
+  font-size: var(--font-size-caption);
+}
+.tab[aria-current="page"] {
+  color: var(--text-primary);
+}
+.tab[aria-current="page"] .tab-label {
+  font-weight: var(--font-weight-semibold);
+}
+.tab-pill {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 2px var(--space-4);
+  border-radius: var(--radius-pill);
+}
+.tab[aria-current="page"] .tab-pill {
+  background: var(--glass-1-bg);
+  box-shadow: var(--glass-highlight);
+}
+.tab-badge {
+  position: absolute;
+  top: -4px;
+  right: 4px;
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--status-danger-fill);
+  color: var(--white);
+  font-size: 11px;
+}
+
+/* ---------- InstallGuide (5.27) ---------- */
+.install {
+  display: grid;
+  gap: var(--space-3);
+}
+.install-steps {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: var(--space-5);
+}
+.install-pointer {
+  color: var(--text-link);
+  justify-self: center;
+}

@@ -90,7 +90,7 @@ flowchart LR
 | T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | done |
 | T-026 | Componentes de base | T-025 | done |
 | T-027 | Componentes de entrada | T-026, T-012 | done |
-| T-028 | Componentes de dados e styleguide | T-027 | todo |
+| T-028 | Componentes de dados e styleguide | T-027 | done |
 | T-029 | AppShell, rotas e CSP | T-028 | todo |
 | T-030 | PWA instalável e Service Worker | T-029 | todo |
 | T-031 | Dexie, mappers e erros de armazenamento | T-011, T-029 | todo |
@@ -576,7 +576,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-028 — Componentes de dados e styleguide
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-62, US-65 | RN-50 | T-027 | não |
+| done | S1 | M | US-62, US-65 | RN-50 | T-027 | não |
 
 **Escopo:** PaceIndicator, BudgetRing, ProgressBar, GoalProgress, InvoiceCard/InvoiceMini, TransactionRow, SyncBadge, TopBar/TabBar e InstallGuide; rota `/__styleguide` só no build E2E; snapshot visual inicial dos tokens (`maxDiffPixelRatio: 0.01`). Atualizar esse snapshot depois exige `needs-owner`.
 
