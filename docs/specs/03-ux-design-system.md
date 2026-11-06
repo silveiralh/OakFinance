@@ -1919,6 +1919,8 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `home.hero.adjust` | Ver onde ajustar |
 | `home.futureCard` | No cartão para os próximos meses: {valor} |
 | `notices.title` / `.empty` / `.readAll` | Avisos / Nenhum aviso / Marcar todos como lidos |
+| `notices.bell` | Avisos, {n} não lidos |
+| `notices.unread` | Não lido |
 | `home.upcoming.title` | Próximos 7 dias |
 | `home.upcoming.empty` | Nenhum vencimento nos próximos 7 dias. |
 | `home.budget.title` | Orçamento 50/30/20 |

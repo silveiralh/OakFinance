@@ -124,7 +124,7 @@ flowchart LR
 | T-059 | Orçamento 50/30/20 e limites | T-058 | done |
 | T-060 | Reserva de emergência | T-058, T-018 | done |
 | T-061 | Ajustes do cálculo (S06) | T-059 | done |
-| T-062 | Central de avisos (H02) | T-045 | todo |
+| T-062 | Central de avisos (H02) | T-045 | done |
 | T-063 | Ativar notificações push | T-062, T-030 | todo |
 | T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | todo |
 | T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | todo |
@@ -989,7 +989,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-062 — Central de avisos (H02)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-37 | RN-86 | T-045 | não |
+| done | S2 | P | US-37 | RN-86 | T-045 | não |
 
 **Escopo:** H02; sino com contador de não lidos; notices locais com id v5; marcar lido e marcar todos; funcionamento offline.
 

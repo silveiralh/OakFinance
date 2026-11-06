@@ -1,4 +1,3 @@
-import { ScreenStub } from '../../app/ScreenStub';
 import { RejectedBanner } from '../../app/SyncStatus';
 import { HomeOverview } from './HomeOverview';
 import { IncomeToConfirm } from './IncomeToConfirm';
@@ -17,6 +16,4 @@ export function HomeScreen() {
   );
 }
 
-export function NoticesScreen() {
-  return <ScreenStub screen="H02" />;
-}
+export { NoticesScreen } from '../notices/NoticesScreen';

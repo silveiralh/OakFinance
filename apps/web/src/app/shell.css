@@ -1101,6 +1101,94 @@ body:has(.screen-welcome) .backdrop {
   font-weight: var(--font-weight-bold);
 }
 
+/* T-062: H02 Central de avisos e sino */
+.notices-bell {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  color: var(--text-primary);
+}
+.notices-bell:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.notices-count {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-dark);
+  color: var(--on-dark);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+  line-height: 20px;
+  text-align: center;
+}
+.notices {
+  display: grid;
+  gap: var(--space-3);
+}
+.notices-list {
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  list-style: none;
+}
+.notice {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-3) 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.notice:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+.notices-list li + li {
+  border-top: 1px solid var(--border-subtle);
+}
+.notice-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.notice-text {
+  display: grid;
+  gap: 2px;
+}
+.notice-title {
+  font-weight: var(--font-weight-bold);
+}
+.notice-body,
+.notice-when {
+  color: var(--text-secondary);
+  font-size: var(--font-size-label);
+}
+.notice-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--status-info-fg);
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {
