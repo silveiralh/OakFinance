@@ -88,6 +88,21 @@ export const NO_FILTERS: ListFilters = {
   query: '',
 };
 
+/** Filtro inicial pela URL (linhas do H01-S, RN-49): `?filtro=<chip>` e `?faixa=<needs|wants|savings>`. */
+export function filtersFromParams(params: URLSearchParams): ListFilters {
+  const chip = params.get('filtro');
+  const band = params.get('faixa');
+  const bands = ['needs', 'wants', 'savings'];
+  if (!(chip && (CHIPS as readonly string[]).includes(chip)) && !(band && bands.includes(band))) {
+    return NO_FILTERS;
+  }
+  return {
+    ...NO_FILTERS,
+    chip: chip && (CHIPS as readonly string[]).includes(chip) ? (chip as Chip) : 'all',
+    band: band && bands.includes(band) ? band : null,
+  };
+}
+
 function chipMatches(tx: Tx, chip: Chip, today: ISODate): boolean {
   switch (chip) {
     case 'all':

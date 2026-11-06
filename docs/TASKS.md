@@ -120,7 +120,7 @@ flowchart LR
 | T-055 | Editar, pular e encerrar recorrências | T-054 | done |
 | T-056 | Regras que aprendem | T-044, T-049 | done |
 | T-057 | Gerenciar regras (I06) | T-056 | done |
-| T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | todo |
+| T-058 | Painel Disponível para gastar | T-017, T-054, T-048 | done |
 | T-059 | Orçamento 50/30/20 e limites | T-058 | todo |
 | T-060 | Reserva de emergência | T-058, T-018 | todo |
 | T-061 | Ajustes do cálculo (S06) | T-059 | todo |
@@ -941,7 +941,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-058 — Painel Disponível para gastar
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-30 | RN-44, RN-46..RN-51 | T-017, T-054, T-048 | não |
+| done | S2 | M | US-30 | RN-44, RN-46..RN-51 | T-017, T-054, T-048 | não |
 
 **Escopo:**
 - H01: herói, valor por dia, PaceIndicator, linha "No cartão para os próximos meses", card Próximos 7 dias, cards de 50/30/20, Reserva, Conferir e últimos lançamentos, cards de configuração pendente, saudação pelo fuso;

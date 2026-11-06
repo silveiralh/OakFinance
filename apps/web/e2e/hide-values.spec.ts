@@ -42,7 +42,7 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
   if ((await toggle.getAttribute('aria-pressed')) === 'true') {
     await toggle.click();
   }
-  await expect(page.getByTestId('home-out')).toHaveText(MONEY);
+  await expect(page.getByTestId('home-hero-money')).toHaveText(MONEY);
   const eye = page.getByRole('button', { name: 'Ocultar valores' });
   await expect(eye).toHaveAttribute('aria-pressed', 'false');
   await eye.click();
@@ -51,7 +51,7 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
     'true',
   );
   await expect(page.locator('html')).toHaveAttribute('data-values', 'hidden');
-  await expect(page.getByTestId('home-out')).toContainText('R$ ••••');
+  await expect(page.getByTestId('home-hero-money')).toContainText('R$ ••••');
   await noMoney(page, '/');
 
   for (const path of ['/lancamentos', `/lancamentos/${id}`, '/cartoes', '/planejar']) {
@@ -64,7 +64,7 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
   // lembrado neste aparelho depois de recarregar
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-values', 'hidden');
-  await expect(page.getByTestId('home-out')).toContainText('R$ ••••');
+  await expect(page.getByTestId('home-hero-money')).toContainText('R$ ••••');
 
   // o valor em digitação continua visível
   await page.goto('/?novo=despesa');
