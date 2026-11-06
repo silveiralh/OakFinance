@@ -6,6 +6,7 @@ import { ScreenError } from './ScreenError';
 import { Splash } from './Splash';
 import {
   ONBOARDING_SCREENS,
+  OPEN_SCREENS,
   PLAN_INDEX,
   PUBLIC_SCREENS,
   type ScreenRoute,
@@ -75,6 +76,10 @@ export function appRoutes(): RouteObject[] {
               children: [{ ErrorBoundary: ScreenError, children: PUBLIC_SCREENS.map(toRoute) }],
             },
           ],
+        },
+        {
+          Component: OnboardingLayout,
+          children: [{ ErrorBoundary: ScreenError, children: OPEN_SCREENS.map(toRoute) }],
         },
         { path: '*', element: <Navigate to="/" replace /> },
       ],

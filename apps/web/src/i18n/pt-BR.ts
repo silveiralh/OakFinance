@@ -274,7 +274,7 @@ export const uiText = {
 
 /**
  * Textos da moldura do app: abas e barra lateral (UX §2.1), landmarks e link de pular (UX §3.0), erro de tela G09
- * (UX §3 G e §6.6), nova versão G07, armazenamento G11/G12, sessão G05/G14/G16 (UX §3 G), estados do ON03 (UX §3 ON03, §6.6) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
+ * (UX §3 G e §6.6), nova versão G07, armazenamento G11/G12, sessão G05/G14/G16 (UX §3 G), estados do ON03 (UX §3 ON03, §6.6), ON02c (UX §3) e iOS antigo (PRD US-06) e o nome de cada tela, igual ao título da seção dela na UX §3 (sem o trecho entre parênteses).
  * O `<title>` de cada rota é "{Tela} · OakFinance" (UX §4.11.1).
  */
 export const shellText = {
@@ -305,6 +305,9 @@ export const shellText = {
   sessionExpiredDescription: 'Entre novamente para sincronizar. Nenhum lançamento foi perdido.',
   signInGoogle: 'Entrar com Google',
   signOut: 'Sair',
+  installDesktopBody: 'Instale no computador para analisar o mês em uma tela maior.',
+  installDesktopCta: 'Instalar',
+  oldIosNoPush: 'Neste iOS os lembretes não chegam como notificação; você os verá dentro do app',
   pendingOnSignOut: 'Há {n} alterações que ainda não foram para a nuvem.',
   signOutWipes: 'Ao sair, os dados locais deste aparelho são apagados.',
   sendAndSignOut: 'Enviar e sair',

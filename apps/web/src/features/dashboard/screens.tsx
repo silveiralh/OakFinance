@@ -1,7 +1,13 @@
 import { ScreenStub } from '../../app/ScreenStub';
+import { InstallCard } from './InstallCard';
 
 export function HomeScreen() {
-  return <ScreenStub screen="H01" />;
+  return (
+    <>
+      <InstallCard />
+      <ScreenStub screen="H01" />
+    </>
+  );
 }
 
 export function NoticesScreen() {
