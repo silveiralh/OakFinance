@@ -14,6 +14,8 @@ declare global {
       addAccount(name: string): Promise<string>;
       pending(): Promise<number>;
       accountNames(): Promise<string[]>;
+      counts(): Promise<Record<string, number>>;
+      syncNow(): Promise<boolean>;
     };
   }
 }
@@ -51,6 +53,17 @@ export function installE2eHooks(user: UserSession): () => void {
     },
     pending: () => pendingCount(user.db),
     accountNames: async () => (await user.db.accounts.toArray()).map((row) => row.name),
+    counts: async () => ({
+      categories: await user.db.categories.count(),
+      category_rules: await user.db.category_rules.count(),
+      reminders: await user.db.reminders.count(),
+      budgets: await user.db.budgets.count(),
+      goals: await user.db.goals.count(),
+      transactions: await user.db.transactions.count(),
+      pending: await pendingCount(user.db),
+      rejected: await user.db.outbox.where('state').equals('rejected').count(),
+    }),
+    syncNow: async () => (await user.engine.syncNow()).ok,
   };
   return () => {
     delete window.__oakE2E;
