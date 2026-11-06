@@ -89,7 +89,7 @@ flowchart LR
 | T-024 | Domínio: lembretes devidos | T-017, T-018 | done |
 | T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | done |
 | T-026 | Componentes de base | T-025 | done |
-| T-027 | Componentes de entrada | T-026, T-012 | todo |
+| T-027 | Componentes de entrada | T-026, T-012 | done |
 | T-028 | Componentes de dados e styleguide | T-027 | todo |
 | T-029 | AppShell, rotas e CSP | T-028 | todo |
 | T-030 | PWA instalável e Service Worker | T-029 | todo |
@@ -565,7 +565,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-027 — Componentes de entrada
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-12, US-20 | RN-01, RN-20 | T-026, T-012 | não |
+| done | S1 | M | US-12, US-20 | RN-01, RN-20 | T-026, T-012 | não |
 
 **Escopo:** AmountInput (estilo caixa eletrônico, máximo 99999999, colar "R$ 1.234,56"), NumericKeypad, CategoryChip/CategoryPicker, PaymentMethodPicker, InstallmentStepper (até 48, Total/Parcela), DateChip, BottomSheet (`<dialog>`, foco preso, `confirmClose`) e Dialog.
 
