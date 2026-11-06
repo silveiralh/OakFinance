@@ -86,7 +86,7 @@ flowchart LR
 | T-021 | Domínio: conciliação II | T-020, T-014 | done |
 | T-022 | Domínio: importação OFX/CSV | T-020 | done |
 | T-023 | Domínio: QR da NFC-e | T-012 | done |
-| T-024 | Domínio: lembretes devidos | T-017, T-018 | todo |
+| T-024 | Domínio: lembretes devidos | T-017, T-018 | done |
 | T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | todo |
 | T-026 | Componentes de base | T-025 | todo |
 | T-027 | Componentes de entrada | T-026, T-012 | todo |
@@ -521,7 +521,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-024 — Domínio: lembretes devidos
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-39..US-43 | RN-86..RN-94 | T-017, T-018 | não |
+| done | S1 | M | US-39..US-43 | RN-86..RN-94 | T-017, T-018 | não |
 
 **Escopo:** `notifications.ts` (§5.11), `ProfileSettings` com padrões.
 
