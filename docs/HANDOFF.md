@@ -59,7 +59,7 @@
 
 ## 2. Estado do CI e do deploy
 
-- CI: `ci.yml` verde em `main` (último merge: T-051, PR #65; E03, E06, E13 e US-18 passam nos 3 projetos). Em 06/11 o `unit` falhou duas vezes com "window is not defined" depois do fim do `test/shell.test.tsx`: o `deviceId(...).then(setDevice)` da T02 chamava setState depois de desmontar (corrigido na T-047 com a guarda `alive`). Efeito assíncrono em tela precisa dessa guarda. Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
+- CI: `ci.yml` verde em `main` (último merge: T-051, PR #67; E03, E06, E13 e US-18 passam nos 3 projetos). Em 06/11 o `unit` falhou duas vezes com "window is not defined" depois do fim do `test/shell.test.tsx`: o `deviceId(...).then(setDevice)` da T02 chamava setState depois de desmontar (corrigido na T-047 com a guarda `alive`). Efeito assíncrono em tela precisa dessa guarda. Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
 - Deploy: `deploy.yml` verde em `main` desde 06/11 (issue #38 resolvida pelo cliente com os secrets do SETUP-09). Keepalive: a 1ª execução manual (06/11) falhou só pelo tick da T-064, corrigido no PR #54; a próxima, agendada para 11:37 UTC, deve passar (as sessões não conseguem disparar workflows: `dispatches` dá 403).
 - Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Em 06/11 falhou (issue #51) por `pnpm audit` (qs, glob, minimatch: corrigidos com overrides no `pnpm-workspace.yaml`) e por keepalive vermelho (tick da T-064 ainda inexistente: corrigido em `ops-check.ts`).
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
@@ -215,4 +215,4 @@
 | 06/11/2026 | T-048 | PR #62 | done | Registrar pagamento na C02 (total, parcial e acima do total com saldo credor); E04 à vista (D-030) |
 | 06/11/2026 | T-049 | PR #63 | done | S04: faixas, criar/editar com ícone, trocar faixa com aviso, arquivar, excluir com destino; sistema bloqueado (D-031) |
 | 06/11/2026 | T-050 | PR #64 | done | S05 com receitas fixas (confirmar com valor real, não recebi), Repetir todo mês no Q01, integração com dois aparelhos (D-032) |
-| 06/11/2026 | T-051 | PR #65 | done | S03: editar contas e cartões com a prévia "{n} itens podem mudar de fatura" (RN-17), Excluir só sem uso, cartões arquivados com Desarquivar, selo "arquivada" na T02/T01 (D-033) |
+| 06/11/2026 | T-051 | PR #67 | done | S03: editar contas e cartões com a prévia "{n} itens podem mudar de fatura" (RN-17), Excluir só sem uso, cartões arquivados com Desarquivar, selo "arquivada" na T02/T01 (D-033) |
