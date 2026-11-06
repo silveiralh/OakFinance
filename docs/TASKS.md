@@ -77,8 +77,6 @@ flowchart LR
 | T-012 | Domínio base | T-007 | done |
 | T-013 | Domínio: faturas | T-012 | done |
 | T-014 | Domínio: parcelas | T-013 | done |
-| T-014 | Domínio: parcelas | T-013 | todo |
-| T-015 | Domínio: recorrências | T-013 | todo |
 | T-015 | Domínio: recorrências | T-013 | done |
 | T-016 | Domínio: renda e 50/30/20 | T-014, T-015 | done |
 | T-017 | Domínio: Disponível para gastar | T-016 | todo |
