@@ -1,7 +1,7 @@
 // T02 — Detalhe do lançamento (US-13, US-14, RN-97..RN-99): valor, `<dl>` com os dados, Editar (Q01 em modo
 // edição), Excluir com "Desfazer" por 8 s e o Histórico do servidor (online), com "Restaurar esta versão".
-import { monthLabel, todayIn, type YearMonth } from '@oakfinance/domain';
-import { History, Pencil, Receipt, Trash2 } from 'lucide-react';
+import { type ISODate, monthLabel, todayIn, type YearMonth } from '@oakfinance/domain';
+import { ArrowRightLeft, History, Pencil, Receipt, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -13,7 +13,10 @@ import { deviceId } from '../../data/sync/clock';
 import { type MessageKey, t, uiText } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { useOnline } from '../../lib/online';
-import { Button, EmptyState, GlassCard, MoneyText, Skeleton, useToast } from '../../ui';
+import { Button, Dialog, EmptyState, GlassCard, MoneyText, Skeleton, useToast } from '../../ui';
+import { movedRow } from '../cards/model';
+import { movePlan } from '../cards/move';
+import { buildInvoice } from '../quick-entry/model';
 import {
   describeHistory,
   type HistoryClient,
@@ -70,6 +73,14 @@ export function TransactionDetailScreen({
             accounts: await user.db.accounts.toArray(),
             cards: await user.db.cards.toArray(),
             invoice: tx?.invoice_id ? ((await user.db.invoices.get(tx.invoice_id)) ?? null) : null,
+            cardInvoices: tx?.card_id
+              ? await user.db.invoices.where('card_id').equals(tx.card_id).toArray()
+              : [],
+            cardTxs: tx?.card_id
+              ? (await user.db.transactions.toArray()).filter(
+                  (r) => r.card_id === tx.card_id || r.counterpart_card_id === tx.card_id,
+                )
+              : [],
           };
         }
       : null,
@@ -77,10 +88,17 @@ export function TransactionDetailScreen({
   );
   const tx = data?.tx ?? null;
   const [device, setDevice] = useState<string | null>(null);
+  const [moving, setMoving] = useState(false);
   useEffect(() => {
-    if (user) {
-      void deviceId(user.db).then(setDevice);
+    if (!user) {
+      return;
     }
+    // sem setState depois de desmontar (a transação do Dexie pode terminar depois)
+    let alive = true;
+    void deviceId(user.db).then((id) => alive && setDevice(id));
+    return () => {
+      alive = false;
+    };
   }, [user]);
   const names: HistoryNames = useMemo(
     () => ({
@@ -146,6 +164,32 @@ export function TransactionDetailScreen({
       : undefined;
   const invoice = data.invoice;
   const origin = ORIGIN_KEY[tx.source];
+
+  const cardRow = tx.card_id ? data.cards.find((c) => c.id === tx.card_id) : undefined;
+  const move = cardRow
+    ? movePlan(cardRow, tx, data.cardTxs, data.cardInvoices, today as ISODate)
+    : null;
+
+  const moveTo = async (targetId: string) => {
+    setMoving(false);
+    const target = move?.targets.find((p) => p.id === targetId);
+    if (!target) {
+      return;
+    }
+    if (!(await user.db.invoices.get(target.id))) {
+      await saveRow(
+        user.db,
+        'invoices',
+        buildInvoice(target, user.userId, new Date().toISOString()),
+      );
+    }
+    const result = await saveRow(user.db, 'transactions', movedRow(tx, target));
+    if (!result.ok) {
+      return;
+    }
+    user.engine.notifyWrite();
+    showToast({ message: t('detail.moved', { mês: monthLabel(target.referenceMonth) }) });
+  };
 
   const remove = async () => {
     const result = await deleteRow(user.db, 'transactions', tx.id);
@@ -241,12 +285,29 @@ export function TransactionDetailScreen({
         >
           {t('list.edit')}
         </Button>
+        {move?.allowed && (
+          <Button variant="secondary" iconStart={ArrowRightLeft} onClick={() => setMoving(true)}>
+            {t('tx.move')}
+          </Button>
+        )}
         {isStandalone(tx) && (
           <Button variant="danger" iconStart={Trash2} onClick={() => void remove()}>
             {t('list.delete')}
           </Button>
         )}
       </div>
+      <Dialog
+        open={moving}
+        title={t('tx.move')}
+        description={t('detail.moveHint')}
+        options={(move?.targets ?? []).map((p) => ({
+          value: p.id,
+          label: t('detail.moveTo', { mês: monthLabel(p.referenceMonth) }),
+        }))}
+        onChoose={(value) => void moveTo(value)}
+        onCancel={() => setMoving(false)}
+        data-testid="move-dialog"
+      />
       <GlassCard level={1} title={t('history.title')} headingLevel={2}>
         <div className="detail-history" data-testid="detail-history" aria-live="polite">
           {history.kind === 'offline' && <p className="detail-note">{t('history.offline')}</p>}
