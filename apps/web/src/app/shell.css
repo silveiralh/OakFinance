@@ -998,6 +998,63 @@ body:has(.screen-welcome) .backdrop {
   font-weight: var(--font-weight-semibold);
 }
 
+/* T-060: P02 Reserva de emergência */
+.reserve {
+  display: grid;
+  gap: var(--space-4);
+}
+.reserve-summary {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+.reserve-line {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+.reserve-hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-label);
+}
+.reserve-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.reserve-goal {
+  display: grid;
+  gap: var(--space-3);
+}
+.reserve-suggestion {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-solid-3);
+}
+.reserve-suggestion p {
+  margin: 0;
+}
+.reserve-history h2 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--font-size-heading);
+}
+.reserve-history ul {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  list-style: none;
+}
+.reserve-history li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  min-height: 48px;
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {
