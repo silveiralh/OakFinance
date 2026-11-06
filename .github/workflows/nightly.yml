@@ -29,18 +29,22 @@ jobs:
         with:
           version: ${{ env.SUPABASE_CLI_VERSION }}
       - run: supabase start
-      - name: navegadores do Playwright
-        # Uma tentativa só, com prazo longo: o espelho de apt do runner às vezes fica lento
-        # (o WebKit puxa ~180 pacotes) e matar a tentativa no meio só desperdiça o download.
-        timeout-minutes: 20
-        run: |
-          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "60";\nAcquire::https::Timeout "60";\n' \
-            | sudo tee /etc/apt/apt.conf.d/99oakfinance-retries > /dev/null
-          pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit
-      - name: playwright (3 projetos, 3 repetições)
+      - name: build do E2E
+        run: pnpm --filter @oakfinance/web build:e2e
+      - name: playwright (3 projetos, 3 repetições) na imagem oficial
+        timeout-minutes: 45
         env:
-          CI: "true"
-        run: pnpm --filter @oakfinance/web e2e --repeat-each=3
+          PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.64.1-noble
+        run: |
+          docker pull --quiet "$PLAYWRIGHT_IMAGE"
+          docker run --rm --network host --ipc host \
+            --user "$(id -u):$(id -g)" \
+            -e CI=true -e HOME="$HOME" -e PATH="$PATH" \
+            -v /opt/hostedtoolcache:/opt/hostedtoolcache:ro \
+            -v "$HOME:$HOME" \
+            -w "$GITHUB_WORKSPACE/apps/web" \
+            "$PLAYWRIGHT_IMAGE" \
+            pnpm exec playwright test --repeat-each=3
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

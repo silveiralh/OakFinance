@@ -142,18 +142,26 @@ jobs:
           version: ${{ env.SUPABASE_CLI_VERSION }}
       - name: supabase start
         run: supabase start
-      - name: navegadores do Playwright
-        # Uma tentativa só, com prazo longo: o espelho de apt do runner às vezes fica lento
-        # (o WebKit puxa ~180 pacotes) e matar a tentativa no meio só desperdiça o download.
-        timeout-minutes: 20
-        run: |
-          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "60";\nAcquire::https::Timeout "60";\n' \
-            | sudo tee /etc/apt/apt.conf.d/99oakfinance-retries > /dev/null
-          pnpm --filter @oakfinance/web exec playwright install --with-deps chromium webkit
+      # Os navegadores e as dependências de sistema vêm da imagem oficial do Playwright (mesma versão do
+      # @playwright/test): o apt do runner travou várias vezes baixando os ~180 pacotes do WebKit.
+      # Node, pnpm, Deno e node_modules vêm do runner (montados); a rede é a do host (Supabase local).
+      - name: build do E2E
+        run: pnpm --filter @oakfinance/web build:e2e
       - name: playwright (android, iphone, desktop)
+        timeout-minutes: 15
         env:
-          CI: "true"
-        run: pnpm --filter @oakfinance/web e2e --shard=${{ matrix.shard }}/3
+          SHARD: ${{ matrix.shard }}
+          PLAYWRIGHT_IMAGE: mcr.microsoft.com/playwright:v1.64.1-noble
+        run: |
+          docker pull --quiet "$PLAYWRIGHT_IMAGE"
+          docker run --rm --network host --ipc host \
+            --user "$(id -u):$(id -g)" \
+            -e CI=true -e HOME="$HOME" -e PATH="$PATH" \
+            -v /opt/hostedtoolcache:/opt/hostedtoolcache:ro \
+            -v "$HOME:$HOME" \
+            -w "$GITHUB_WORKSPACE/apps/web" \
+            "$PLAYWRIGHT_IMAGE" \
+            pnpm exec playwright test --shard="$SHARD/3"
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
