@@ -2,6 +2,9 @@ packages:
   - apps/*
   - packages/*
 
-# glob 11 (workbox-build) traz um aviso de descontinuação com e-mail no lockfile, que o job secrets reprova (T-030)
+# glob 11 (workbox-build) traz um aviso de descontinuação com e-mail no lockfile, que o job secrets reprova (T-030).
+# glob 14.0.4 e minimatch 11 (workbox-build, Stryker) e qs 6.17 corrigem os avisos do `pnpm audit` do nightly (issue #51).
 overrides:
-  workbox-build>glob: 13.0.7
+  workbox-build>glob: 14.0.4
+  typed-rest-client>qs: 6.17.1
+  "@stryker-mutator/core>minimatch": 11.0.5

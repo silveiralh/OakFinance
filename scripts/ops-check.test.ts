@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { evaluateHealth, type Fetcher, rpcUrl, run } from './ops-check.ts';
+import { evaluateHealth, type Fetcher, REMINDERS_TICK_LIVE, rpcUrl, run } from './ops-check.ts';
 
 const env = { SUPABASE_URL: 'https://ref.example.test/', SUPABASE_KEY: 'chave-de-teste' };
 
@@ -61,10 +61,28 @@ describe('ops-check', () => {
     expect((await exec('health', fetcher(200, []))).code).toBe(1);
   });
 
-  it('evaluateHealth: tick nunca rodou', () => {
-    expect(evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: null })).toEqual([
-      'reminders-tick nunca rodou',
-    ]);
+  it('evaluateHealth: tick nunca rodou ou atrasado, com a função no ar', () => {
+    expect(
+      evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: null }, { tickLive: true }),
+    ).toEqual(['reminders-tick nunca rodou']);
+    expect(
+      evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: 90 }, { tickLive: true }),
+    ).toEqual(['último reminders-tick há 90 min']);
+  });
+
+  it('regressão #51: antes da T-064 o tick ausente não reprova o keepalive', async () => {
+    expect(REMINDERS_TICK_LIVE).toBe(false);
+    expect(evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: null })).toEqual([]);
+    const ok = await exec(
+      'health',
+      fetcher(200, [{ job_errors_24h: 0, reminders_tick_age_minutes: null }]),
+    );
+    expect(ok).toMatchObject({ code: 0, lines: ['health: ok'] });
+    const jobs = await exec(
+      'health',
+      fetcher(200, [{ job_errors_24h: 1, reminders_tick_age_minutes: null }]),
+    );
+    expect(jobs.code).toBe(1);
   });
 
   it('modo inválido e variáveis ausentes', async () => {

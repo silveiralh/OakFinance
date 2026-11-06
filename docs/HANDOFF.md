@@ -53,7 +53,7 @@
 
 - CI: `ci.yml` verde em `main` (último merge: T-100, PR #53). Roda em todo PR (inclusive `edited`) e em push em `main`; o check `e2e` agrega os jobs `e2e-shard (1/3..3/3)`.
 - Deploy: `deploy.yml` roda em cada push em `main` e termina com aviso e sucesso enquanto as variáveis do Supabase estão vazias (SETUP-05/09). Backup, keepalive e preview também pulam com aviso. O deploy real começa na T-036.
-- Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Ainda não rodou.
+- Nightly: 04:13 BRT; abre issue `regressão: nightly` se falhar. Em 06/11 falhou (issue #51) por `pnpm audit` (qs, glob, minimatch: corrigidos com overrides no `pnpm-workspace.yaml`) e por keepalive vermelho (tick da T-064 ainda inexistente: corrigido em `ops-check.ts`).
 - Dependabot: abriu o PR #7 (actions) e as atualizações npm falharam no próprio Dependabot. O guard reprova esses PRs (sem `T-xxx`, e o de actions mexe em `.github/**`): ficam para o dono.
 - Infra do job `db`: em 06/11 o `supabase start` falhou uma vez por limite de download do Docker Hub ("toomanyrequests") e porta 54322 ocupada; sem re-execução pela API (403), só um novo commit real refaz o run.
 - E2E instável: o passo "navegadores do Playwright" expira em 20 min em cerca de 1 a cada 3 runs (apt lento no runner). A sessão não consegue re-executar runs; o run volta a rodar no próximo push real (rebase). A correção definitiva é o PR #15 (imagem `mcr.microsoft.com/playwright`), com `needs-owner` porque mexe em `.github/**`.
@@ -84,7 +84,7 @@
 - RN-71: as stopwords da RN-58 apagam "CARTAO", "NU", "PAGAMENTO" e "RECEBIDO"; por isso a detecção de pagamento de fatura usa a normalização da RN-57 sem as etapas 4–5. Para reduzir falso positivo ("COMPRA CARTAO" no débito), a sugestão só sai quando há fatura fechada/vencida/parcial cuja janela (fechamento ≤ data ≤ vencimento + 5) contém a data.
 - RN-69: sem o mês da fatura do banco, `linkImportedInstallment` aceita a data original da compra (±3 dias) ou o mês da parcela de −1 a +3; quem chamar deve preencher `ReconItem.invoiceMonth` e `firstInvoiceMonth` sempre que souber, para valer o ±1 estrito.
 - Integração: a Admin API do Auth **não** passa pelo hook `before_user_created`; para testar a allowlist use o cadastro público (`auth.signUp`).
-- `keepalive.yml`: o `ops_health` acusa "reminders-tick nunca rodou" até a função existir (T-064); o keepalive só roda depois do SETUP-05/09.
+- `keepalive.yml`: o `ops_health` acusa "reminders-tick nunca rodou" até a função existir (T-064). Desde a correção da issue #51, `scripts/ops-check.ts` ignora o tick enquanto `REMINDERS_TICK_LIVE = false`; a T-064 passa para `true`. O nightly exige um keepalive verde nas últimas 48 h.
 - O guard trata qualquer "truncate" em migração como DDL destrutivo, inclusive `revoke … truncate` (falso positivo; contornado com `revoke all` + `grant` em D-009). Sugestão ao dono: afinar a regra em `scripts/ci-guard.ts` (caminho protegido).
 - pgTAP: funções auxiliares de teste vão em `pg_temp` (`create function pg_temp.x(...)`, chamadas como `pg_temp.x(...)`); para voltar a postgres no meio do teste, `reset role`.
 - Tipos do banco: `supabase gen types` não roda no ambiente da sessão. Quando a migração mudar, o `scripts/gen-db-types.sh --check` do job `db` falha e imprime o arquivo inteiro entre `----- INICIO db-types.ts -----` e `----- FIM db-types.ts -----`; baixe o log do job (`gh api repos/silveiralh/OakFinance/actions/jobs/<id>/logs`), tire o prefixo de data de cada linha e grave em `apps/web/src/data/db-types.ts`. Isso gasta uma rodada de CI.
@@ -191,3 +191,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5); entram nele, 
 | 06/11/2026 | T-043 | PR #50 | done | T01: mês, resumo, chips + Filtros com total, busca sem acento e por valor (< 300 ms com 5.000), grupos por dia, janela virtual, Excluir com Desfazer; D-021; 3 rodadas no E2E do WebKit (quadros parados por chips de vidro em fieldset flex) |
 | 06/11/2026 | T-100 | PR #52 | decisão | D-022: redesign com a nova referência do cliente (paleta clara, Lucide); telas T-044..T-050 bloqueadas até a T-100 |
 | 06/11/2026 | T-100 | PR #53 | done | redesign D-023 com a referência do cliente: menta e lima, Lucide, Nunito, barra flutuante, ON01 lima e Início provisório; contraste refeito (4,5:1 também direto na menta); snapshot do styleguide regerado |
+| 06/11/2026 | — | PR #54 | fix | issue #51 (nightly): overrides de qs, glob e minimatch para o `pnpm audit`; keepalive não reprova o tick antes da T-064 |

@@ -25,10 +25,23 @@ export async function callRpc(fetcher: Fetcher, baseUrl: string, key: string, fn
   });
 }
 
-export function evaluateHealth(health: Health): string[] {
+/**
+ * A função `reminders-tick` só existe a partir da T-064. Antes disso o cron não tem o que chamar e o
+ * `ops_health` sempre diz "nunca rodou", o que deixava o keepalive vermelho todo dia (issue #51). A T-064
+ * passa esta constante para `true` junto com o deploy da função.
+ */
+export const REMINDERS_TICK_LIVE = false;
+
+export function evaluateHealth(
+  health: Health,
+  { tickLive = REMINDERS_TICK_LIVE }: { tickLive?: boolean } = {},
+): string[] {
   const problems: string[] = [];
   if (health.job_errors_24h > 0) {
     problems.push(`${health.job_errors_24h} job_runs com erro nas últimas 24 h`);
+  }
+  if (!tickLive) {
+    return problems;
   }
   if (health.reminders_tick_age_minutes === null) {
     problems.push('reminders-tick nunca rodou');
