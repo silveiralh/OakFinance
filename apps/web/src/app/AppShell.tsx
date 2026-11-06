@@ -17,6 +17,7 @@ import {
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
+import { ShellSyncBadge, SyncBanners, WipedDialog } from './SyncStatus';
 import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
 import { UpdatePrompt } from './UpdatePrompt';
 import { useCurrentScreen, useDocumentTitle } from './useScreen';
@@ -97,6 +98,7 @@ export function AppShell() {
       <UpdatePrompt />
       <SessionExpired />
       <RemoteEditsToast />
+      <WipedDialog />
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">
           {shellText.skipToContent}
@@ -116,8 +118,13 @@ export function AppShell() {
           </ul>
         </nav>
         <div className="shell-column">
-          <TopBar title={title} transparentUntilScroll={screen === 'H01'} />
+          <TopBar
+            title={title}
+            transparentUntilScroll={screen === 'H01'}
+            trailing={<ShellSyncBadge />}
+          />
           <StorageBanners />
+          <SyncBanners />
           <main
             id="conteudo"
             className="shell-main"

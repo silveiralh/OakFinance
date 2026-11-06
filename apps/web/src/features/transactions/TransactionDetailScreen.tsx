@@ -11,6 +11,7 @@ import { deleteRow, restoreRow, saveRow } from '../../data/repositories/rows';
 import { deviceId } from '../../data/sync/clock';
 import { type MessageKey, t, uiText } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
+import { useOnline } from '../../lib/online';
 import { Button, EmptyState, GlassCard, MoneyText, Skeleton, useToast } from '../../ui';
 import {
   describeHistory,
@@ -35,22 +36,6 @@ const ORIGIN_KEY: Readonly<Record<string, MessageKey>> = {
   installment: 'detail.origin.installment',
   system: 'detail.origin.system',
 };
-
-function useOnline(): boolean {
-  const [online, setOnline] = useState(() =>
-    typeof navigator === 'undefined' ? true : navigator.onLine,
-  );
-  useEffect(() => {
-    const update = () => setOnline(navigator.onLine);
-    window.addEventListener('online', update);
-    window.addEventListener('offline', update);
-    return () => {
-      window.removeEventListener('online', update);
-      window.removeEventListener('offline', update);
-    };
-  }, []);
-  return online;
-}
 
 /** Lançamento avulso: sem série de parcelas e sem recorrência (exclusões de série ficam para T-053/T-055). */
 export function isStandalone(tx: Tx): boolean {
