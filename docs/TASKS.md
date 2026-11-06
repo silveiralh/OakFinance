@@ -83,7 +83,7 @@ flowchart LR
 | T-018 | Domínio: reserva | T-016 | done |
 | T-019 | Domínio: categorização e seeds | T-012 | done |
 | T-020 | Domínio: conciliação I | T-013, T-015 | done |
-| T-021 | Domínio: conciliação II | T-020, T-014 | todo |
+| T-021 | Domínio: conciliação II | T-020, T-014 | done |
 | T-022 | Domínio: importação OFX/CSV | T-020 | todo |
 | T-023 | Domínio: QR da NFC-e | T-012 | done |
 | T-024 | Domínio: lembretes devidos | T-017, T-018 | todo |
@@ -488,7 +488,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-021 — Domínio: conciliação II
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-50 | RN-19, RN-69..RN-71 | T-020, T-014 | não |
+| done | S1 | M | US-50 | RN-19, RN-69..RN-71 | T-020, T-014 | não |
 
 **Escopo:** `detectInvoicePayments`, `detectInternalTransfers` e `linkImportedInstallment`.
 
