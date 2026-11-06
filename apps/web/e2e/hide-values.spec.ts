@@ -67,11 +67,12 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
 
   // o valor em digitação continua visível
   await page.goto('/?novo=despesa');
-  const keypad = page.getByRole('group', { name: 'Teclado numérico' });
-  await keypad.getByRole('button', { name: '1', exact: true }).click();
-  await keypad.getByRole('button', { name: '2', exact: true }).click();
-  await keypad.getByRole('button', { name: '3', exact: true }).click();
-  await expect(page.getByRole('dialog')).toContainText('R$ 1,23');
+  const amount = page.getByRole('dialog').locator('.amount-input');
+  await expect(amount).toBeVisible();
+  for (const digit of ['1', '2', '3']) {
+    await amount.press(digit);
+  }
+  await expect(amount).toHaveValue('R$ 1,23');
 
   // volta a mostrar para não afetar os outros testes deste usuário
   await page.goto('/');
