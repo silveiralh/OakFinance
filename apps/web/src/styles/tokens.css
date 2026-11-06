@@ -401,7 +401,6 @@ body {
 :focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
-  border-radius: inherit;
 }
 .money,
 [data-money] {

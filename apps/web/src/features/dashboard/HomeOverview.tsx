@@ -89,7 +89,7 @@ export function HomeOverview({
           </Link>
         ))}
       </nav>
-      {data && data.recent.length > 0 && (
+      {data && (
         <section className="home-recent" aria-labelledby="home-recent">
           <div className="home-section-head">
             <h2 id="home-recent">{t('home.recent')}</h2>
@@ -99,6 +99,9 @@ export function HomeOverview({
             </Link>
           </div>
           <div className="glass home-recent-list">
+            {data.recent.length === 0 && (
+              <p className="home-recent-empty">{t('list.empty', { mês: monthTitle(month) })}</p>
+            )}
             {data.recent.map((tx) => (
               <TransactionRow
                 key={tx.id}
