@@ -79,7 +79,7 @@
 
 ## 5. Riscos conhecidos
 
-- **Cartão com F < V e fevereiro curto** (ex.: fecha 28, vence 29): pela RN-10/RN-11 a fatura de fevereiro vence no mesmo dia em que fecha, e o check `closing_date < due_date` da tabela `invoices` recusaria a linha. Precisa de decisão do PO (ex.: vencer no 1º dia útil seguinte) antes de a UI criar faturas (T-047).
+- **Cartão com F < V e fevereiro curto:** decidido em D-011 (06/11): quando o vencimento cairia no dia do fechamento ou antes, ele passa para o primeiro dia útil seguinte. Falta implementar em `invoices.ts` (com teste citando a RN-10/RN-11) antes ou junto da T-047.
 
 - **R14 vazamento em repositório público:** qualquer segredo ou dado real commitado fica no histórico para sempre. Se acontecer, registre aqui e peça ao cliente para girar a credencial na hora.
 - **Autobloqueio do guard:** o PR do próprio guard (T-006) precisa do modo bootstrap; arquivo protegido esquecido no bootstrap vira `needs-owner`.
@@ -120,3 +120,4 @@ Vazio. A T-036 e a T-045 preenchem o checklist do M1 (tech §8.5).
 | 05/11/2026 | T-023 | PR #22 | done | QR da NFC-e v2/v3, DV módulo 11 e allowlist de hosts |
 | 05/11/2026 | T-017 | PR #24 | done | Disponível para gastar (RN-47..RN-51), US-30 e US-34 |
 | 05/11/2026 | T-018 | PR #25 | done | reserva: meta sugerida, progresso e ETA (RN-52..RN-56) |
+| 06/11/2026 | T-047 | PR #26 | decisão | D-011: vencimento no dia útil seguinte quando cairia no fechamento (decisão do cliente) |
