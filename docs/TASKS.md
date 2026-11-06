@@ -84,7 +84,7 @@ flowchart LR
 | T-019 | Domínio: categorização e seeds | T-012 | done |
 | T-020 | Domínio: conciliação I | T-013, T-015 | done |
 | T-021 | Domínio: conciliação II | T-020, T-014 | done |
-| T-022 | Domínio: importação OFX/CSV | T-020 | todo |
+| T-022 | Domínio: importação OFX/CSV | T-020 | done |
 | T-023 | Domínio: QR da NFC-e | T-012 | done |
 | T-024 | Domínio: lembretes devidos | T-017, T-018 | todo |
 | T-025 | Tokens, fontes, ambiente, i18n e marca | T-007 | todo |
@@ -499,7 +499,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-022 — Domínio: importação OFX/CSV
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-52, US-53 | RN-65, RN-75, RN-76 | T-020 | não |
+| done | S1 | M | US-52, US-53 | RN-65, RN-75, RN-76 | T-020 | não |
 
 **Escopo:** `imports/ofx.ts` e `imports/csv.ts` (§5.10). Fixtures **sintéticas** em `packages/domain/test/fixtures/` com README: SGML 1252, XML 2.x, FITID repetido, `[-3:BRT]`, vírgula decimal e CSV Nubank provisório.
 
