@@ -13,6 +13,7 @@ export interface CardsData {
   invoices: LocalRow<'invoices'>[];
   txRows: LocalRow<'transactions'>[];
   categories: LocalRow<'categories'>[];
+  accounts: LocalRow<'accounts'>[];
   txs: Tx[];
 }
 
@@ -29,6 +30,7 @@ export function useCardsData(user: UserSession | null): CardsData | undefined {
             (r) => r.card_id !== null || r.counterpart_card_id !== null,
           ),
           categories: await user.db.categories.toArray(),
+          accounts: await user.db.accounts.toArray(),
         })
       : null,
     [user],

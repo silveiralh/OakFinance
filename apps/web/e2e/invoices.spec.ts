@@ -60,3 +60,38 @@ test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o 
   await page.goBack();
   await expect(page.getByText('Nenhuma compra nesta fatura.')).toBeVisible();
 });
+
+test('E04: invoices — compra à vista no cartão e "Registrar pagamento" deixam a fatura paga', async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+  await login(page, 'e2e-a@example.test');
+  await hooks(page);
+  const stamp = Date.now();
+  const accountName = `Conta pagamento ${stamp}`;
+  await page.evaluate((n) => window.__oakE2E?.addAccount(n), accountName);
+  const name = `Cartão pago ${stamp % 100_000}`;
+  const card = await page.evaluate(([n]) => window.__oakE2E?.addCard(n, 3, 10) ?? '', [name] as [
+    string,
+  ]);
+  const id = await page.evaluate(([c, d]) => window.__oakE2E?.addCardExpense(c, 12_000, d) ?? '', [
+    card,
+    `Compra paga ${stamp}`,
+  ] as [string, string]);
+
+  await page.goto('/cartoes');
+  await page
+    .locator('[aria-roledescription="cartão"]', { hasText: name })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'Ver fatura' }).click();
+  await expect(page.getByTestId(`tx-${id}`)).toBeVisible();
+  await page.getByRole('button', { name: 'Registrar pagamento' }).click();
+  const sheet = page.getByTestId('pay-sheet');
+  await expect(sheet.getByLabel('Valor do pagamento')).toHaveValue('R$ 120,00');
+  await sheet.getByLabel('Conta de origem').selectOption({ label: accountName });
+  await sheet.getByRole('button', { name: 'Registrar pagamento' }).click();
+  await expect(page.getByText(/^Pagamento da fatura de .+ registrado\.$/)).toBeVisible();
+  await expect(page.getByTestId('invoice-head')).toContainText('Paga');
+  await expect(page.getByRole('button', { name: 'Registrar pagamento' })).toHaveCount(0);
+});

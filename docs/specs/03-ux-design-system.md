@@ -2153,6 +2153,14 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `detail.moveTo` | Mover para a fatura de {mês} |
 | `detail.moveHint` | Escolha a fatura. O item fica fixo nela, mesmo se o fechamento do cartão mudar. |
 | `detail.moved` | Lançamento movido para a fatura de {mês}. |
+| `pay.amount` | Valor do pagamento |
+| `pay.from` | Conta de origem |
+| `pay.invoice` | Fatura |
+| `pay.invoiceOption` | {mês} · {valor} em aberto |
+| `pay.description` | Pagamento da fatura de {mês} |
+| `pay.noAccount` | Cadastre uma conta para registrar o pagamento. |
+| `pay.missingAmount` | Informe o valor do pagamento. |
+| `pay.over` | Acima do total: a diferença vira saldo credor na próxima fatura. |
 
 **Conexões, importação, nota, conferência**
 

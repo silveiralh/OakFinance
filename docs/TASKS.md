@@ -110,7 +110,7 @@ flowchart LR
 | T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | done |
 | T-046 | Ocultar valores | T-043 | done |
 | T-047 | Cartões e faturas (C01/C02) | T-040 | done |
-| T-048 | Pagamento de fatura e saldo credor | T-047 | todo |
+| T-048 | Pagamento de fatura e saldo credor | T-047 | done |
 | T-049 | Categorias | T-035 | todo |
 | T-050 | Salário como receita fixa | T-041, T-015 | todo |
 | T-051 | Editar e arquivar contas e cartões | T-047 | todo |
@@ -829,7 +829,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-048 — Pagamento de fatura e saldo credor
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | P | US-19 | RN-14..RN-16 | T-047 | não |
+| done | S1 | P | US-19 | RN-14..RN-16 | T-047 | não |
 
 **Escopo:** Registrar pagamento (transfer com `counterpart_card_id`; valor = saldo; fatura padrão = fechada ou vencida mais antiga); parcial "R$ 700,00 em aberto"; pagamento acima do total gera saldo credor idempotente; toast "Pagamento da fatura de {mês} registrado.".
 
