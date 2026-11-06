@@ -237,3 +237,49 @@
   display: grid;
   gap: var(--space-3);
 }
+
+.list-month {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.list-month-title {
+  margin: 0;
+  font-size: var(--font-size-title);
+}
+.list-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin: 0;
+}
+.list-summary dt {
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.list-summary dd {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.list-total {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+.list-scroll {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.list-day {
+  display: flex;
+  justify-content: space-between;
+  margin: var(--space-3) 0 var(--space-1);
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+.list-chips {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}

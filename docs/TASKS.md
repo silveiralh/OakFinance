@@ -105,7 +105,7 @@ flowchart LR
 | T-040 | Lançamento rápido de despesa | T-039, T-019, T-027 | done |
 | T-041 | Mais detalhes, edição e receita variável | T-040 | done |
 | T-042 | Transferência, estorno e rascunho | T-041 | done |
-| T-043 | Lista de lançamentos | T-041 | todo |
+| T-043 | Lista de lançamentos | T-041 | done |
 | T-044 | Detalhe, exclusão com desfazer e histórico | T-043 | todo |
 | T-045 | Offline ponta a ponta e estados de sync | T-044, T-030 | todo |
 | T-046 | Ocultar valores | T-043 | todo |
@@ -770,7 +770,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-043 — Lista de lançamentos
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S1 | M | US-15 | RN-05, RN-74 | T-041 | não |
+| done | S1 | M | US-15 | RN-05, RN-74 | T-041 | não |
 
 **Escopo:** T01: seletor de mês; resumo Entradas/Saídas/Guardado; grupos por dia com totais; chips de filtro + painel Filtros (conta, faixa, categoria, status) com total filtrado; busca sem acento e por valor ("45,90"); virtualização; selos do TransactionRow; deslize com alternativa `DotsThree`.
 
