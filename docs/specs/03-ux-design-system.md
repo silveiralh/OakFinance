@@ -2401,6 +2401,35 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `future.total` | Total |
 | `future.every` | todo dia {dia} |
 
+**Análise do mês (P01 no computador)**
+
+| Chave | Texto |
+|---|---|
+| `analysis.title` | Análise do mês |
+| `analysis.month` | Mês da análise |
+| `analysis.byCategory` | Gastos por categoria |
+| `analysis.bands` | Faixas e metas |
+| `analysis.daily` | Gasto acumulado por dia |
+| `analysis.actual` | Gasto |
+| `analysis.ideal` | Ritmo ideal |
+| `analysis.compare` | Comparação com o mês anterior |
+| `analysis.top` | 10 maiores gastos |
+| `analysis.table` | Ver como tabela |
+| `analysis.chart` | Ver como gráfico |
+| `analysis.empty` | Nenhum gasto neste mês. |
+| `analysis.noCategory` | Sem categoria |
+| `analysis.col.category` | Categoria |
+| `analysis.col.band` | Faixa |
+| `analysis.col.spent` | Gasto |
+| `analysis.col.target` | Meta |
+| `analysis.col.day` | Dia |
+| `analysis.col.current` | Este mês |
+| `analysis.col.previous` | Mês anterior |
+| `analysis.col.diff` | Diferença |
+| `analysis.col.date` | Data |
+| `analysis.col.description` | Descrição |
+| `analysis.col.amount` | Valor |
+
 **Aparência (S08)**
 
 | Chave | Texto |

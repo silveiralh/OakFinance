@@ -12,6 +12,7 @@ import { useToday } from '../../lib/useToday';
 import { BudgetRing, EmptyState, GlassCard, ProgressBar } from '../../ui';
 import { loadHomeRows } from '../dashboard/data';
 import { BAND_NAME, type BandView, budgetView, type CategoryLine } from './budget';
+import { MonthAnalysis, useWide } from './MonthAnalysis';
 
 const TONE = { needs: 'band-needs', wants: 'band-wants', savings: 'band-savings' } as const;
 
@@ -144,6 +145,7 @@ function BandCard({
 export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const wide = useWide();
   const hidden = useValuesHidden();
   const today = useToday(fixedToday);
   const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
@@ -226,6 +228,7 @@ export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
       <Link to="/ajustes/calculo" className="budget-adjust">
         {t('budget.adjust')}
       </Link>
+      {wide && <MonthAnalysis rows={data} today={today} />}
     </section>
   );
 }
