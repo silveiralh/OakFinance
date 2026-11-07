@@ -2475,6 +2475,26 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `restore.done` | Backup restaurado. |
 | `restore.summary` | Restaurado: {tx} lançamentos, {contas} contas, {cartoes} cartões, {categorias} categorias e {outros} outros itens. |
 
+**Fechar o mês (P04)**
+
+| Chave | Texto |
+|---|---|
+| `close.title` | Fechar {mes} |
+| `close.suggested` | {n} lançamentos para conferir |
+| `close.unreviewed` | {n} importados não revisados |
+| `close.unclassified` | {n} lançamentos em A classificar |
+| `close.invoice` | Fatura {cartao} com {valor} em aberto |
+| `close.confirmInvoice` | Confirmar saldo em aberto |
+| `close.ready` | Nenhuma pendência. O mês pode ser fechado. |
+| `close.cta` | Fechar mês |
+| `close.blocked` | Resolva as pendências para fechar o mês. |
+| `close.closed` | {mes} fechado em {data}. |
+| `close.reopen` | Reabrir para revisão |
+| `close.done` | {mes} fechado. |
+| `close.reopened` | {mes} aberto para revisão. |
+| `close.editClosed` | {mes} já foi fechado. Salvar mesmo assim? |
+| `close.saveAnyway` | Salvar mesmo assim |
+
 **Diagnóstico (S11)**
 
 | Chave | Texto |

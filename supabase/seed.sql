@@ -11,5 +11,9 @@ insert into app.allowed_emails (email) values
   -- conferência de importados (I05, T-079): um usuário por projeto, para os contadores não se misturarem
   ('e2e-inbox-android@example.test'),
   ('e2e-inbox-iphone@example.test'),
-  ('e2e-inbox-desktop@example.test')
+  ('e2e-inbox-desktop@example.test'),
+  -- fechar o mês (P04, T-082): idem
+  ('e2e-close-android@example.test'),
+  ('e2e-close-iphone@example.test'),
+  ('e2e-close-desktop@example.test')
 on conflict do nothing;
