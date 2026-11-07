@@ -7,9 +7,10 @@ const CSV = 'Dt;Hist;Vlr\n03/11/2026;MERCADO EXEMPLO;-45,90\n04/11/2026;SALARIO 
 test('E08: CSV desconhecido pelo assistente de colunas, com o perfil salvo para a conta', async ({
   page,
 }, info) => {
-  await login(page, `e2e-import-${info.project.name}@example.test`);
+  await login(page, `e2e-csv-${info.project.name}@example.test`);
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
-  const name = `Conta E08 ${info.project.name}`;
+  // conta nova a cada tentativa (uma repetição não encontra a importação da anterior)
+  const name = `Conta E08 ${info.project.name} ${Date.now()}`;
   await page.evaluate((n) => window.__oakE2E?.addAccount(n), name);
   const file = (suffix: string) => ({
     name: `banco-${suffix}.csv`,

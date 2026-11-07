@@ -2592,6 +2592,16 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `nfce.noCamera` | Sem acesso à câmera. Escolha uma foto da nota ou digite a chave de acesso. |
 | `nfce.offline` | Nota salva. Os itens serão buscados quando a conexão voltar. |
 | `nfce.sefazDown` | Não foi possível carregar os detalhes da nota. Complete o valor para continuar. |
+| `nfce.invalid` | Este QR code não é de uma nota fiscal (NFC-e). Digite a chave de acesso ou tente outra nota. |
+| `nfce.repeated` | Essa nota já foi lida em {data}. |
+| `nfce.viewTx` | Ver lançamento |
+| `nfce.attached` | Itens da nota adicionados ao lançamento de {valor}. |
+| `nfce.retry` | Tentar ler a nota de novo |
+| `nfce.pendingBadge` | Aguardando nota |
+| `nfce.found` | Nota encontrada: {loja}, {valor} |
+| `nfce.cameraIntro` | A câmera é usada só para ler o QR code da nota. Nenhuma foto é guardada. |
+| `nfce.openCamera` | Abrir câmera |
+| `nfce.items` | Itens da nota ({n}) |
 | `review.count` | {n} para conferir |
 | `review.manual` / `.imported` | Lançado por você / Recebido do banco |
 | `review.same` / `.different` / `.ignore` | É o mesmo / São diferentes / Ignorar |

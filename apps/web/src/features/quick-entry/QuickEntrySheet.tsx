@@ -5,6 +5,7 @@ import {
   todayIn,
   type YearMonth,
 } from '@oakfinance/domain';
+import { ReceiptText } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -21,6 +22,7 @@ import { formatDateBR } from '../../lib/format';
 import { track, trackUsage } from '../../lib/telemetry';
 import {
   AmountInput,
+  Badge,
   BottomSheet,
   Button,
   CategoryChip,
@@ -37,6 +39,7 @@ import {
   useToast,
 } from '../../ui';
 import { isMonthClosed, monthTitle, reopenMonth } from '../budget/closing';
+import type { NfceDraft } from '../nfce/model';
 import {
   buildFixedExpense,
   buildFixedIncome,
@@ -89,6 +92,16 @@ export interface QuickEntrySheetProps {
   mode?: QuickKind;
   /** Edição de um lançamento existente (`?editar=<id>`, US-13). */
   editId?: string | null;
+  /** I04 (T-089): Q01 pré-preenchido pela nota, com o selo "Dados da nota fiscal" (UX §3 Q01). */
+  nfce?: QuickEntryNfce | null;
+}
+
+/** Dados da nota que pré-preenchem o Q01; o lançamento salvo fica ligado à nota (`source = 'nfce'`). */
+export interface QuickEntryNfce {
+  receiptId: string;
+  issuerCnpj: string | null;
+  issuerName: string | null;
+  draft: NfceDraft;
 }
 
 /**
@@ -100,6 +113,7 @@ export function QuickEntrySheet({
   today = todayIn('America/Sao_Paulo', new Date()),
   mode: initialMode = 'expense',
   editId = null,
+  nfce = null,
 }: QuickEntrySheetProps) {
   const { user } = useAuth();
   const toast = useToast();
@@ -122,18 +136,18 @@ export function QuickEntrySheet({
   // RN-104: lancamento_iniciado, uma vez por abertura do Q01 para um lançamento novo.
   useEffect(() => {
     if (user && editId === null) {
-      void trackUsage(user.db, 'lancamento_iniciado', { origem: 'manual' });
+      void trackUsage(user.db, 'lancamento_iniciado', { origem: nfce ? 'nfce' : 'manual' });
     }
-  }, [user, editId]);
+  }, [user, editId, nfce]);
   const [mode, setMode] = useState<QuickKind>(initialMode);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState(nfce?.draft.amountCents ?? 0);
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [categoryByRule, setCategoryByRule] = useState(false);
   const [methodId, setMethodId] = useState<string | null>(null);
-  const [details, setDetails] = useState(false);
-  const [description, setDescription] = useState('');
+  const [details, setDetails] = useState(nfce !== null);
+  const [description, setDescription] = useState(nfce?.draft.description ?? '');
   const [notes, setNotes] = useState('');
-  const [date, setDate] = useState(today);
+  const [date, setDate] = useState<string>(nfce?.draft.occurredOn ?? today);
   const [received, setReceived] = useState<'yes' | 'no'>('yes');
   const [countBefore, setCountBefore] = useState(false);
   const [repeat, setRepeat] = useState(false);
@@ -176,7 +190,7 @@ export function QuickEntrySheet({
 
   // G17: rascunho guardado por até 24 h; ao abrir de novo, é oferecido com "Descartar"
   useEffect(() => {
-    if (!user || editId || draftChecked.current) {
+    if (!user || editId || nfce || draftChecked.current) {
       return;
     }
     draftChecked.current = true;
@@ -207,7 +221,7 @@ export function QuickEntrySheet({
         },
       });
     });
-  }, [user, editId, toast, today]);
+  }, [user, editId, toast, today, nfce]);
 
   useEffect(() => {
     if (!user || editId || saved || !draftChecked.current || amount === 0) {
@@ -349,7 +363,16 @@ export function QuickEntrySheet({
           count_before_received: fresh.count_before_received,
           counterpart_account_id: fresh.counterpart_account_id,
         }
-      : { ...fresh, category_source: categoryByRule ? 'rule' : 'manual' };
+      : {
+          ...fresh,
+          category_source: categoryByRule ? 'rule' : 'manual',
+          ...(nfce && {
+            source: 'nfce',
+            nfce_receipt_id: nfce.receiptId,
+            merchant_cnpj: nfce.issuerCnpj,
+            merchant_name: nfce.issuerName,
+          }),
+        };
     // "Repetir todo mês" na receita (US-23): cria a receita fixa no dia da data; se já caiu, este lançamento é a
     // ocorrência dessa data (id v5); se não caiu, a ocorrência fica projetada e conta na Base (RN-32)
     if (
@@ -434,7 +457,7 @@ export function QuickEntrySheet({
         context: {
           ...(elapsed !== null && { duracao_ms: elapsed }),
           offline: typeof navigator !== 'undefined' && !navigator.onLine,
-          origem: 'manual',
+          origem: nfce ? 'nfce' : 'manual',
         },
       });
       resetQuickEntryClock();
@@ -465,7 +488,11 @@ export function QuickEntrySheet({
       const elapsed = quickEntryElapsed();
       void track(user.db, {
         code: 'usage.lancamento_salvo',
-        context: { ...(elapsed !== null && { duracao_ms: elapsed }), offline, origem: 'manual' },
+        context: {
+          ...(elapsed !== null && { duracao_ms: elapsed }),
+          offline,
+          origem: nfce ? 'nfce' : 'manual',
+        },
       });
     }
     resetQuickEntryClock();
@@ -524,6 +551,14 @@ export function QuickEntrySheet({
       data-testid="quick-entry"
     >
       <div className="quick-entry">
+        {nfce && !editing && (
+          <Badge
+            tone="info"
+            icon={ReceiptText}
+            label={t('quick.fromNote')}
+            data-testid="quick-from-note"
+          />
+        )}
         {!editing && (mode === 'expense' || mode === 'income') && (
           <SegmentedControl
             label={t('quick.title')}

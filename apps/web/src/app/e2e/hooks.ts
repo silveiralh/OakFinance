@@ -18,6 +18,8 @@ declare global {
       userId: string;
       dbName: string;
       addAccount(name: string): Promise<string>;
+      /** Estado da nota NFC-e com a chave dada (E09, T-089), ou `null` se não foi lida. */
+      nfceStatus(accessKey: string): Promise<string | null>;
       pending(): Promise<number>;
       accountNames(): Promise<string[]>;
       counts(): Promise<Record<string, number>>;
@@ -107,6 +109,12 @@ export function installE2eHooks(user: UserSession): () => void {
   window.__oakE2E = {
     userId: user.userId,
     dbName: user.db.name,
+    async nfceStatus(accessKey: string) {
+      const receipt = (await user.db.nfce_receipts.toArray()).find(
+        (r) => r.access_key === accessKey && r.deleted_at === null,
+      );
+      return receipt?.parse_status ?? null;
+    },
     async addAccount(name: string) {
       const id = newId();
       const row = {

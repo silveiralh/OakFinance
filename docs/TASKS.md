@@ -151,7 +151,7 @@ flowchart LR
 | T-086 | Importar CSV | T-084 | done |
 | T-087 | Presets Nubank confirmados | T-086 | blocked: aguarda cliente — SETUP-14 (arquivos reais) |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | done |
-| T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | todo |
+| T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | done |
 | T-090 | Parser da NFC-e com páginas reais | T-089 | todo |
 | T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | todo |
 | T-092 | Alertas de limite e resumo semanal | T-091, T-059 | todo |
@@ -1303,7 +1303,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-089 — Leitor de QR e fluxo da nota
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-54, US-55 | RN-83..RN-85 | T-088, T-078 | não |
+| done | S4 | M | US-54, US-55 | RN-83..RN-85 | T-088, T-078 | não |
 
 **Escopo:**
 - I04 com QRScanner (BarcodeDetector ou ponyfill com `.wasm` self-hosted no precache), foto, digitar a chave, colar o link, câmera negada;
