@@ -66,6 +66,7 @@ function mount(auth: AuthValue, ui: React.ReactNode) {
     [
       { path: '/', element: ui },
       { path: '/ajustes', element: <p>ajustes</p> },
+      { path: '/ajustes/diagnostico', element: <p>diagnóstico</p> },
     ],
     { initialEntries: ['/'] },
   );
@@ -191,7 +192,7 @@ describe('banners de sync (UX §3 G, US-64)', () => {
     expect(screen.queryByTestId('g08-recovering')).toBeNull();
   });
 
-  it('G15: rejeitadas no Início com "Ver detalhes" levando às Configurações', async () => {
+  it('G15: rejeitadas no Início com "Ver detalhes" levando ao Diagnóstico (S11)', async () => {
     expect(rejectedText(1)).toBe('1 alteração não sincronizou.');
     expect(rejectedText(2)).toBe('2 alterações não sincronizaram.');
     const auth = fakeAuth('signedIn');
@@ -200,7 +201,7 @@ describe('banners de sync (UX §3 G, US-64)', () => {
     expect(screen.queryByTestId('g15')).toBeNull();
     emit({ rejected: 1 });
     fireEvent.click(screen.getByRole('button', { name: 'Ver detalhes' }));
-    await waitFor(() => expect(router.state.location.pathname).toBe('/ajustes'));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/ajustes/diagnostico'));
   });
 });
 

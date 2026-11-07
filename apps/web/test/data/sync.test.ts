@@ -501,8 +501,14 @@ describe('motor (tech §4.5 e §4.8, RN-96..RN-99)', () => {
     expect(result).toEqual({ ran: true, ok: true, failure: null });
     expect(server.calls.map((c) => c.name)).toEqual(['sync_push', 'sync_pull', 'log_events']);
     expect(e.getSnapshot()).toMatchObject({ phase: 'done', pending: 0, consecutiveFailures: 0 });
-    expect(server.events).toEqual([expect.objectContaining({ code: 'sync.done', level: 'info' })]);
+    expect(server.events).toEqual([
+      expect.objectContaining({ code: 'sync.done', level: 'info' }),
+      expect.objectContaining({ code: 'usage.sync_ok', level: 'info', context: {} }),
+    ]);
     expect((await db.kv.get(TELEMETRY_KEY))?.value).toEqual([]);
+    // S11: último envio e recebimento
+    expect((await db.sync_state.get('last_push_at'))?.value).toEqual(expect.any(String));
+    expect((await db.sync_state.get('last_pull_at'))?.value).toEqual(expect.any(String));
   });
 
   it('RN-96: falhas seguidas aplicam o backoff e, na 3ª, ligam o G04; sucesso zera', async () => {

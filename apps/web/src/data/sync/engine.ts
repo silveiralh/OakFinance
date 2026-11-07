@@ -207,7 +207,13 @@ export class SyncEngine {
     for (const rejected of push.rejected) {
       await this.event('warn', 'sync.rejected', { table: rejected.table, reason: rejected.code });
     }
+    if (!push.failure) {
+      await this.stamp('last_push_at');
+    }
     const failure = push.failure ?? (await this.pullAndClean(device));
+    if (!failure) {
+      await this.stamp('last_pull_at');
+    }
     if (failure) {
       const failures = this.snapshot.consecutiveFailures + 1;
       this.set({
@@ -215,6 +221,7 @@ export class SyncEngine {
         consecutiveFailures: failures,
       });
       await this.event('error', 'sync.failed', { reason: failure.code, attempts: failures });
+      await this.event('info', 'usage.sync_falha', { codigo: failure.code });
       return { ran: true, ok: false, failure: failure.kind };
     }
     this.set({
@@ -229,6 +236,7 @@ export class SyncEngine {
       rejected: push.rejected.length,
       duration_ms: this.now() - started,
     });
+    await this.event('info', 'usage.sync_ok', {});
     await flushTelemetry(this.db, this.transport);
     return { ran: true, ok: true, failure: null };
   }
@@ -253,6 +261,15 @@ export class SyncEngine {
       await purgeLocalTombstones(this.db, this.now());
     }
     return pull.failure;
+  }
+
+  /** Último envio/recebimento sem falha (`sync_state`, mostrado no Diagnóstico S11). */
+  private async stamp(key: 'last_push_at' | 'last_pull_at') {
+    try {
+      await this.db.sync_state.put({ key, value: new Date(this.now()).toISOString() });
+    } catch {
+      // só informativo
+    }
   }
 
   private event(level: 'info' | 'warn' | 'error', code: string, context: Record<string, unknown>) {

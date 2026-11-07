@@ -119,3 +119,46 @@ export function pendingCount(db: OakDb): Promise<number> {
 export function rejectedEntries(db: OakDb): Promise<OutboxEntry[]> {
   return db.outbox.where('state').equals('rejected').sortBy('seq');
 }
+
+/**
+ * "Tentar de novo" (S11): a rejeitada volta para a fila com `mutation_id` novo, porque o servidor guarda a
+ * rejeitada como vista e um reenvio com o mesmo id viraria `duplicate` (tech §4.7). Devolve `false` se não achou.
+ */
+export async function retryRejected(
+  db: OakDb,
+  mutationId: string,
+  createId: () => string = newId,
+): Promise<boolean> {
+  return db.transaction('rw', db.outbox, async () => {
+    const entry = await db.outbox.where('mutation_id').equals(mutationId).first();
+    if (entry?.seq === undefined || entry.state !== 'rejected') {
+      return false;
+    }
+    const { last_error: _dropped, ...rest } = entry;
+    await db.outbox.put({ ...rest, mutation_id: createId(), state: 'queued', attempts: 0 });
+    return true;
+  });
+}
+
+/**
+ * "Descartar e restaurar do servidor" (S11): tira a rejeitada da fila, apaga a cópia local da linha (se não houver
+ * outra alteração dela na fila) e volta o cursor a 0, para o próximo pull trazer de novo a versão do servidor.
+ */
+export async function discardRejected(db: OakDb, mutationId: string): Promise<boolean> {
+  return db.transaction('rw', [...db.tables], async () => {
+    const entry = await db.outbox.where('mutation_id').equals(mutationId).first();
+    if (entry?.seq === undefined || entry.state !== 'rejected') {
+      return false;
+    }
+    await db.outbox.delete(entry.seq);
+    const others = await db.outbox
+      .where('[table+row_id]')
+      .equals([entry.table, entry.row_id])
+      .count();
+    if (others === 0) {
+      await db.table(entry.table).delete(entry.row_id);
+    }
+    await db.sync_state.put({ key: 'cursor', value: 0 });
+    return true;
+  });
+}

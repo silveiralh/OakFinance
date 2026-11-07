@@ -133,7 +133,7 @@ flowchart LR
 | T-068 | Tema escuro e reduzir movimento | T-029 | done |
 | T-069 | Análise do mês no computador | T-059 | done |
 | T-070 | Backup e restauração | T-066 | done |
-| T-071 | Diagnóstico, telemetria e saída | T-045 | todo |
+| T-071 | Diagnóstico, telemetria e saída | T-045 | done |
 | T-072 | Conector Pluggy e mock | T-011, T-019 | todo |
 | T-073 | Conectar e vincular item | T-072 | todo |
 | T-074 | Sincronização pluggy-sync | T-073, T-013 | todo |
@@ -1092,7 +1092,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-071 — Diagnóstico, telemetria e saída
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-64, US-05 | RN-104 | T-045 | não |
+| done | S2 | P | US-64, US-05 | RN-104 | T-045 | não |
 
 **Escopo:** S11 (§7.3), com alterações rejeitadas e as ações Tentar de novo (novo `mutation_id`) e Descartar e restaurar; eventos da RN-104 sem valores (allowlist no `telemetry.ts`); `window.onerror`.
 

@@ -14,6 +14,7 @@ import {
   ToastProvider,
   TopBar,
 } from '../ui';
+import { AppTelemetry } from './AppTelemetry';
 import { AutoPosts } from './AutoPosts';
 import { NoticesBell } from './NoticesBell';
 import { OnboardingGate } from './OnboardingGate';
@@ -105,6 +106,7 @@ export function AppShell() {
   const title = screen ? shellText.screens[screen] : shellText.appName;
   return (
     <ToastProvider>
+      <AppTelemetry />
       <UpdatePrompt />
       <SessionExpired />
       <RemoteEditsToast />

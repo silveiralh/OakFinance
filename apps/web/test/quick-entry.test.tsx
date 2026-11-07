@@ -182,7 +182,7 @@ describe('Q01 tela (US-12, US-17)', () => {
       code: string;
       context: Record<string, unknown>;
     }>;
-    const event = events.find((e) => e.code === 'lancamento_salvo');
+    const event = events.find((e) => e.code === 'usage.lancamento_salvo');
     expect(event?.context).toMatchObject({ offline: false, origem: 'manual' });
     expect(Number(event?.context.duracao_ms)).toBeGreaterThanOrEqual(2_000);
     expect(JSON.stringify(events)).not.toContain('4590');

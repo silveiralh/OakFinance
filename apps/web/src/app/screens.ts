@@ -134,6 +134,11 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
     load: () => import('../features/settings/DataScreen').then((m) => m.DataScreen),
   },
   {
+    path: '/ajustes/diagnostico',
+    handle: { screen: 'S11', nav: 'settings' },
+    load: () => import('../features/settings/DiagnosticsScreen').then((m) => m.DiagnosticsScreen),
+  },
+  {
     path: '/ajustes/regras',
     handle: { screen: 'I06', nav: 'settings' },
     load: () => import('../features/rules/screens').then((m) => m.RulesScreen),
