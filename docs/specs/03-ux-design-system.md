@@ -2401,6 +2401,19 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `future.total` | Total |
 | `future.every` | todo dia {dia} |
 
+**Dados e privacidade (S10)**
+
+| Chave | Texto |
+|---|---|
+| `export.title` | Exportar lançamentos (CSV) |
+| `export.hint` | Arquivo para Excel ou Google Planilhas com os lançamentos do período. |
+| `export.from` | De |
+| `export.to` | Até |
+| `export.cta` | Exportar CSV |
+| `export.empty` | Não há lançamentos nesse período |
+| `export.inverted` | O mês final precisa ser igual ou depois do inicial. |
+| `export.done` | Arquivo gerado. |
+
 **Conexões, importação, nota, conferência**
 
 | Chave | Texto |
