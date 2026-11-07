@@ -144,7 +144,7 @@ flowchart LR
 | T-079 | Conferir importados (I05) | T-078, T-056 | done |
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | done |
 | T-081 | Desfazer conciliação | T-079 | done |
-| T-082 | Fechar o mês (P04) | T-079, T-059 | todo |
+| T-082 | Fechar o mês (P04) | T-079, T-059 | done |
 | T-083 | Validação real da Pluggy | T-077 | todo |
 | T-084 | Importar OFX | T-022, T-078 | todo |
 | T-085 | OFX real do BB anonimizado | T-084 | todo |
@@ -1220,7 +1220,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-082 — Fechar o mês (P04)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-36 | RN-77 | T-079, T-059 | não |
+| done | S3 | M | US-36 | RN-77 | T-079, T-059 | não |
 
 **Escopo:** checklist do P04; `month_closings` com snapshot; evento `mes_fechado`; Reabrir para revisão; "{Mês} já foi fechado. Salvar mesmo assim?" no T02 e no Q01.
 

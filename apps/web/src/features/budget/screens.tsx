@@ -1,9 +1,4 @@
-import { ScreenStub } from '../../app/ScreenStub';
-
-export function CloseMonthScreen() {
-  return <ScreenStub screen="P04" />;
-}
-
 export { BudgetScreen } from './BudgetScreen';
+export { CloseMonthScreen } from './CloseMonthScreen';
 export { FutureScreen } from './FutureScreen';
 export { ReserveScreen } from './ReserveScreen';

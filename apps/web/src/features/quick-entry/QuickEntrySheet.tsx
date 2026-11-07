@@ -1,4 +1,10 @@
-import { dayMonth, invoiceForPurchase, monthLabel, todayIn } from '@oakfinance/domain';
+import {
+  dayMonth,
+  invoiceForPurchase,
+  monthLabel,
+  todayIn,
+  type YearMonth,
+} from '@oakfinance/domain';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -30,6 +36,7 @@ import {
   TextField,
   useToast,
 } from '../../ui';
+import { isMonthClosed, monthTitle, reopenMonth } from '../budget/closing';
 import {
   buildFixedExpense,
   buildFixedIncome,
@@ -106,6 +113,7 @@ export function QuickEntrySheet({
           recent: await user.db.transactions.toArray(),
           lastMethod: (await user.db.kv.get(LAST_METHOD_KEY))?.value,
           editing: editId ? await user.db.transactions.get(editId) : undefined,
+          closings: await user.db.month_closings.toArray(),
         })
       : null,
     [user, editId],
@@ -138,6 +146,7 @@ export function QuickEntrySheet({
   const [saved, setSaved] = useState(false);
   const [asking, setAsking] = useState(false);
   const [confirmFar, setConfirmFar] = useState(false);
+  const [confirmClosed, setConfirmClosed] = useState(false);
   const answer = useRef<((discard: boolean) => void) | null>(null);
   const loaded = useRef(false);
 
@@ -482,7 +491,16 @@ export function QuickEntrySheet({
     onClose();
   };
 
-  const submit = () => {
+  // RN-77/US-36: editar um lançamento de um mês já fechado pede confirmação e reabre o mês para revisão
+  const closedMonth =
+    editing && data && isMonthClosed(data.closings, editing.occurred_on.slice(0, 7) as YearMonth)
+      ? (editing.occurred_on.slice(0, 7) as YearMonth)
+      : null;
+  const submit = (closedOk = false) => {
+    if (closedMonth && !closedOk) {
+      setConfirmClosed(true);
+      return;
+    }
     if (isFarDate(date, today)) {
       setConfirmFar(true);
       return;
@@ -677,7 +695,7 @@ export function QuickEntrySheet({
           confirmed={saved}
           disabled={missing !== null}
           disabledReason={missing ?? ''}
-          onClick={submit}
+          onClick={() => submit()}
           data-testid="quick-submit"
         >
           {editing ? t('quick.edit.save') : t('quick.cta')}
@@ -692,6 +710,21 @@ export function QuickEntrySheet({
           pick(id);
           setPickerOpen(false);
         }}
+      />
+      <Dialog
+        open={confirmClosed}
+        title={closedMonth ? t('close.editClosed', { mes: monthTitle(closedMonth) }) : ''}
+        description=""
+        confirmLabel={t('close.saveAnyway')}
+        onConfirm={() => {
+          setConfirmClosed(false);
+          if (closedMonth) {
+            void reopenMonth(user.db, user.userId, closedMonth);
+          }
+          submit(true);
+        }}
+        onCancel={() => setConfirmClosed(false)}
+        data-testid="closed-month-dialog"
       />
       <Dialog
         open={confirmFar}
