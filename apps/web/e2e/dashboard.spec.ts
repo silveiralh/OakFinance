@@ -60,3 +60,32 @@ test('E02: dashboard — uma despesa lançada sem rede diminui o "Disponível pa
 
   await page.context().setOffline(false);
 });
+
+/** "Você já gastou R$ 1.234,56 este mês" → 123456. */
+function spentCents(text: string): number {
+  const m = /R\$\s?([\d.]+),(\d{2})/.exec(text);
+  return m ? Number(m[1]?.replace(/\./g, '')) * 100 + Number(m[2]) : Number.NaN;
+}
+
+test('E17: sem renda, o painel pede a renda e mostra quanto já foi gasto, que sobe no valor exato', async ({
+  page,
+}, info) => {
+  test.setTimeout(90_000);
+  // usuário que nunca recebe renda (seed.sql): o estado "sem renda" vale também nas repetições do nightly
+  await login(page, `e2e-dash-${info.project.name}@example.test`);
+  await hooks(page);
+  const account = await page.evaluate(
+    (n) => window.__oakE2E?.addAccount(n) ?? '',
+    `Conta sem renda ${Date.now()}`,
+  );
+  await page.goto('/');
+  await hooks(page);
+  const hero = page.getByTestId('home-hero');
+  await expect(hero.getByText('Cadastre sua renda para ver quanto pode gastar')).toBeVisible();
+  await expect(hero).not.toHaveAttribute('data-available', /.+/);
+  const money = page.getByTestId('home-hero-money');
+  await expect(money).toHaveText(/^Você já gastou R\$ [\d.]+,\d{2} este mês$/);
+  const before = spentCents((await money.textContent()) ?? '');
+  await page.evaluate((a) => window.__oakE2E?.addExpense(a, 4590, 'Sem renda'), account);
+  await expect.poll(async () => spentCents((await money.textContent()) ?? '')).toBe(before + 4590);
+});
