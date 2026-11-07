@@ -5,6 +5,7 @@
 set -euo pipefail
 
 ref="${1:?informe o project ref}"
+IMPORT_MAP="supabase/functions/deno.json"
 : "${SUPABASE_ACCESS_TOKEN:?SUPABASE_ACCESS_TOKEN ausente}"
 : "${SUPABASE_DB_PASSWORD:?SUPABASE_DB_PASSWORD ausente}"
 
@@ -23,5 +24,7 @@ if [ "${#functions[@]}" -eq 0 ]; then
   echo "functions: nenhuma função para publicar"
 else
   echo "functions: publicando ${functions[*]}"
-  supabase functions deploy "${functions[@]}" --remote="$ref" --use-api --yes
+  # O bundle server-side (--use-api) só lê deno.json dentro da pasta de cada função; o import map
+  # único fica em supabase/functions/deno.json (tech §2), então ele vai explícito (issue #82).
+  supabase functions deploy "${functions[@]}" --remote="$ref" --use-api --import-map "$IMPORT_MAP" --yes
 fi
