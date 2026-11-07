@@ -2,7 +2,7 @@
 
 Cenários obrigatórios da tech §8.4 (E01–E20). Todos rodam em **todo PR** nos três projetos do Playwright (`android`, `iphone` e `desktop`), salvo indicação, e o `nightly` repete com `--repeat-each=3`. Uma repetição que passa depois de falhar reprova o shard (testes instáveis não são aceitos).
 
-Usuários de teste: só e-mails `@example.test` da allowlist do `supabase/seed.sql`. Cenários que gravam no perfil ou dependem de um estado do usuário (sem renda, onboarding, conferência, CSV) usam um usuário por projeto (`e2e-<cenário>-<projeto>@example.test`) para não se misturarem quando rodam em paralelo.
+Usuários de teste: só e-mails `@example.test` da allowlist do `supabase/seed.sql`. Cenários que gravam no perfil ou dependem de um estado do usuário (sem renda, onboarding, conferência, CSV, NFC-e) usam um usuário por projeto (`e2e-<cenário>-<projeto>@example.test`) para não se misturarem quando rodam em paralelo.
 
 | # | Cenário (tech §8.4) | Histórias | Teste | Situação |
 |---|---|---|---|---|

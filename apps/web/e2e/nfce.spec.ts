@@ -4,7 +4,8 @@ import { expect, login, test } from './fixtures/base';
 // T-089: E09 (tech §8.4) nos casos de fallback e offline — QR injetado pelo stub do detector (foto) ou chave digitada.
 // A resposta do `nfce-fetch` vem do gancho do build E2E (`window.__oakE2ENfce`, como o FakePluggyConnect): página
 // quebrada → `fallback`; depois `full`. A checagem de rede do app continua valendo. O `full` com itens da SEFAZ real
-// fica para a T-090 (SETUP-14). Chaves com DV válido geradas aqui, a cada execução (nada versionado).
+// fica para a T-090 (SETUP-14). Chaves com DV válido geradas aqui, a cada execução (nada versionado). Usuário próprio
+// por projeto: uma nota pendente do e2e-a seria relida (e regravada) pelos outros cenários dele.
 
 declare global {
   interface Window {
@@ -79,9 +80,9 @@ async function hooks(page: Page) {
 const statusOf = (page: Page, key: string) =>
   page.evaluate((k) => window.__oakE2E?.nfceStatus(k) ?? null, key);
 
-test('E09: página quebrada cai no fallback, que pede o valor no Q01', async ({ page }) => {
+test('E09: página quebrada cai no fallback, que pede o valor no Q01', async ({ page }, info) => {
   await fakeNfce(page, BROKEN);
-  await login(page, 'e2e-a@example.test');
+  await login(page, `e2e-nfce-${info.project.name}@example.test`);
   await hooks(page);
   const key = randomKey();
   await page.goto('/nota');
@@ -103,7 +104,7 @@ test('E09: página quebrada cai no fallback, que pede o valor no Q01', async ({ 
   await expect(sheet.getByLabel('Descrição')).toHaveValue('12.345.678/0001-00');
 });
 
-test('E09: offline a nota fica pendente e é lida quando a rede volta', async ({ page }) => {
+test('E09: offline a nota fica pendente e é lida quando a rede volta', async ({ page }, info) => {
   test.setTimeout(90_000);
   await fakeNfce(page, BROKEN);
   const key = randomKey();
@@ -118,7 +119,7 @@ test('E09: offline a nota fica pendente e é lida quando a rede volta', async ({
       }
     };
   }, linkOf(key));
-  await login(page, 'e2e-a@example.test');
+  await login(page, `e2e-nfce-${info.project.name}@example.test`);
   await hooks(page);
   await page.goto('/nota');
   await expect(page.getByTestId('screen-I04')).toBeVisible();

@@ -27,5 +27,9 @@ insert into app.allowed_emails (email) values
   -- painel sem renda (E17, T-095): usuário que nunca recebe renda
   ('e2e-dash-android@example.test'),
   ('e2e-dash-iphone@example.test'),
-  ('e2e-dash-desktop@example.test')
+  ('e2e-dash-desktop@example.test'),
+  -- NFC-e (E09, T-089): notas pendentes de um usuário próprio não são relidas nos outros cenários do e2e-a
+  ('e2e-nfce-android@example.test'),
+  ('e2e-nfce-iphone@example.test'),
+  ('e2e-nfce-desktop@example.test')
 on conflict do nothing;
