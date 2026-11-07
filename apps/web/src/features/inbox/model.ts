@@ -8,6 +8,7 @@ import {
   addDays,
   formatBRL,
   type ISODate,
+  matchPatternFor,
   planMerge,
   type ReconItem,
   reconcile,
@@ -159,7 +160,7 @@ function reconItem(row: TxRow): ReconItem {
  * "É o mesmo" (RN-68): vincula; o manual mantém categoria e descrição e, com valor diferente, passa ao valor do
  * banco (a versão anterior vai para o histórico no servidor).
  */
-export function decideSame(
+export async function decideSame(
   db: OakDb,
   imported: TxRow,
   manual: TxRow,
@@ -172,22 +173,42 @@ export function decideSame(
       : {}),
   });
   const patch = plan.manualPatch;
-  return write(
-    db,
-    [
-      { ...imported, review_state: 'merged', duplicate_of: manual.id },
-      {
-        ...manual,
-        matched_external: true,
-        status: patch.status,
-        ...(patch.amountCents !== undefined ? { amount_cents: patch.amountCents } : {}),
-        ...(patch.description !== undefined ? { description: patch.description } : {}),
-        ...(patch.invoiceId !== undefined
-          ? { invoice_id: patch.invoiceId, invoice_pinned: true }
-          : {}),
-      },
-    ],
-    nowMs,
+  // RN-70: a 1ª conciliação aceita de uma conta fixa de valor variável grava o termo de conciliação
+  const recurrence = manual.recurrence_id
+    ? await db.recurrences.get(manual.recurrence_id)
+    : undefined;
+  const pattern =
+    recurrence?.is_variable_amount && !recurrence.match_pattern
+      ? matchPatternFor(imported.description ?? imported.description_raw)
+      : null;
+  const device = await deviceId(db);
+  return writeLocal(() =>
+    db.transaction('rw', [...writeScope(['recurrences', 'transactions']), 'kv'], async () => {
+      if (recurrence && pattern) {
+        await putInTransaction(
+          db,
+          'recurrences',
+          { ...recurrence, match_pattern: pattern },
+          device,
+          nowMs,
+        );
+      }
+      for (const row of [
+        { ...imported, review_state: 'merged', duplicate_of: manual.id } as TxRow,
+        {
+          ...manual,
+          matched_external: true,
+          status: patch.status,
+          ...(patch.amountCents !== undefined ? { amount_cents: patch.amountCents } : {}),
+          ...(patch.description !== undefined ? { description: patch.description } : {}),
+          ...(patch.invoiceId !== undefined
+            ? { invoice_id: patch.invoiceId, invoice_pinned: true }
+            : {}),
+        } as TxRow,
+      ]) {
+        await putInTransaction(db, 'transactions', row, device, nowMs);
+      }
+    }),
   );
 }
 

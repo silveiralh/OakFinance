@@ -12,12 +12,14 @@ import {
   type ReconAction,
   type ReconItem,
   reconcile,
+  todayIn,
   UNCLASSIFIED_SLUG,
   type YearMonth,
 } from '@oakfinance/domain';
 import type { LocalRow, OakDb } from '../db';
 import { putInTransaction, writeScope } from '../repositories/rows';
 import { writeLocal } from '../storage';
+import { applyBankRules } from './bank-rules';
 import { deviceId } from './clock';
 
 type TxRow = LocalRow<'transactions'>;
@@ -35,6 +37,12 @@ export interface ReconcileSummary {
   suggested: number;
   duplicates: number;
   fresh: number;
+  /** RN-69: parcelas importadas conciliadas com uma série (existente ou criada). */
+  installments: number;
+  /** RN-71: saídas reconhecidas como pagamento de fatura. */
+  payments: number;
+  /** RN-71: "Pagamento recebido" no cartão, ignorado. */
+  ignored: number;
 }
 
 function addDays(date: string, days: number): string {
@@ -118,6 +126,9 @@ export async function runReconcile(
     suggested: 0,
     duplicates: 0,
     fresh: 0,
+    installments: 0,
+    payments: 0,
+    ignored: 0,
   };
   const cursor = await readCursor(db);
   const apart = await apartIds(db);
@@ -137,17 +148,32 @@ export async function runReconcile(
   );
   const from = addDays(oldest, -LOOKBACK_DAYS);
   const ids = new Set(candidates.map((row) => row.id));
-  const [pool, invoices, recurrences, categories] = await Promise.all([
+  const [pool, invoices, recurrences, categories, cards, plans, everything] = await Promise.all([
     db.transactions.where('occurred_on').aboveOrEqual(from).toArray(),
     db.invoices.toArray(),
     db.recurrences.toArray(),
     db.categories.toArray(),
+    db.cards.toArray(),
+    db.installment_plans.toArray(),
+    db.transactions.toArray(),
   ]);
   const extras = reconExtras(invoices, recurrences);
   const alive = pool.filter((row) => row.deleted_at === null);
   const byId = new Map(alive.map((row) => [row.id, row]));
   const existing = alive.filter((row) => !ids.has(row.id)).map((row) => itemOf(row, extras));
-  const imported = candidates.map((row) => itemOf(row, extras));
+  // RN-69/RN-71 primeiro (parcelas, pagamento de fatura, "Pagamento recebido"); o resto vai para o reconcile
+  const rules = applyBankRules(candidates, {
+    userId: candidates[0]?.user_id ?? '',
+    today: todayIn('America/Sao_Paulo', new Date(nowMs)),
+    nowIso: new Date(nowMs).toISOString(),
+    cards,
+    invoices,
+    plans,
+    txs: everything.filter((row) => row.deleted_at === null),
+    itemOf: (row) => itemOf(row, extras),
+  });
+  const rest = candidates.filter((row) => !rules.handled.has(row.id));
+  const imported = rest.map((row) => itemOf(row, extras));
   const actions: ReconAction[] = reconcile(imported, existing);
   const unclassified = categories.find(
     (c) => c.slug === UNCLASSIFIED_SLUG && c.deleted_at === null,
@@ -156,59 +182,87 @@ export async function runReconcile(
 
   const device = await deviceId(db);
   const result = await writeLocal(() =>
-    db.transaction('rw', [...writeScope(['transactions']), 'kv'], async () => {
-      const save = (row: TxRow) => putInTransaction(db, 'transactions', row, device, nowMs);
-      for (const action of actions) {
-        const row =
-          byId.get(action.importedId) ?? candidates.find((c) => c.id === action.importedId);
-        if (!row) {
-          continue;
+    db.transaction(
+      'rw',
+      [...writeScope(['installment_plans', 'invoices', 'transactions']), 'kv'],
+      async () => {
+        const save = (row: TxRow) => putInTransaction(db, 'transactions', row, device, nowMs);
+        for (const plan of rules.plans) {
+          await putInTransaction(db, 'installment_plans', plan, device, nowMs);
         }
-        summary.checked += 1;
-        if (action.action === 'auto_merge') {
-          const manual = byId.get(action.matchId);
-          if (!manual) {
+        for (const invoice of rules.invoices) {
+          await putInTransaction(db, 'invoices', invoice, device, nowMs);
+        }
+        for (const row of rules.transactions) {
+          await save(row);
+        }
+        summary.checked += rules.handled.size;
+        summary.installments = rules.installments;
+        summary.payments = rules.payments;
+        summary.ignored = rules.ignored;
+        for (const action of actions) {
+          const row =
+            byId.get(action.importedId) ?? candidates.find((c) => c.id === action.importedId);
+          if (!row) {
             continue;
           }
-          const plan = planMerge(itemOf(row, extras), itemOf(manual, extras), {
-            approx: false,
-            ...(row.card_id && row.invoice_pinned && row.invoice_id
-              ? { bankInvoiceId: row.invoice_id }
-              : {}),
-          });
-          await save({
-            ...row,
-            review_state: 'merged',
-            duplicate_of: plan.importedPatch.duplicateOf,
-          });
-          const patch = plan.manualPatch;
-          await save({
-            ...manual,
-            matched_external: true,
-            status: patch.status,
-            ...(patch.amountCents !== undefined ? { amount_cents: patch.amountCents } : {}),
-            ...(patch.description !== undefined ? { description: patch.description } : {}),
-            ...(patch.invoiceId !== undefined
-              ? { invoice_id: patch.invoiceId, invoice_pinned: true }
-              : {}),
-          });
-          summary.merged += 1;
-        } else if (action.action === 'suggest') {
-          await save({ ...row, review_state: 'suggested' });
-          summary.suggested += 1;
-        } else if (action.action === 'duplicate') {
-          await save({ ...row, review_state: 'merged', duplicate_of: action.ofImportedId });
-          summary.duplicates += 1;
-        } else {
-          summary.fresh += 1;
-          const expense = row.kind === 'expense' || row.kind === 'refund';
-          if (row.category_id === null && expense && unclassified) {
-            await save({ ...row, category_id: unclassified, category_source: 'none' });
+          summary.checked += 1;
+          if (action.action === 'auto_merge') {
+            const manual = byId.get(action.matchId);
+            if (!manual) {
+              continue;
+            }
+            const plan = planMerge(itemOf(row, extras), itemOf(manual, extras), {
+              approx: false,
+              ...(row.card_id && row.invoice_pinned && row.invoice_id
+                ? { bankInvoiceId: row.invoice_id }
+                : {}),
+            });
+            await save({
+              ...row,
+              review_state: 'merged',
+              duplicate_of: plan.importedPatch.duplicateOf,
+            });
+            const patch = plan.manualPatch;
+            await save({
+              ...manual,
+              matched_external: true,
+              status: patch.status,
+              ...(patch.amountCents !== undefined ? { amount_cents: patch.amountCents } : {}),
+              ...(patch.description !== undefined ? { description: patch.description } : {}),
+              ...(patch.invoiceId !== undefined
+                ? { invoice_id: patch.invoiceId, invoice_pinned: true }
+                : {}),
+            });
+            summary.merged += 1;
+          } else if (action.action === 'suggest') {
+            await save({ ...row, review_state: 'suggested' });
+            summary.suggested += 1;
+          } else if (action.action === 'duplicate') {
+            await save({ ...row, review_state: 'merged', duplicate_of: action.ofImportedId });
+            summary.duplicates += 1;
+          } else {
+            summary.fresh += 1;
+            const expense = row.kind === 'expense' || row.kind === 'refund';
+            if (row.category_id === null && expense && unclassified) {
+              await save({ ...row, category_id: unclassified, category_source: 'none' });
+            }
           }
         }
-      }
-      await db.kv.put({ key: RECONCILE_KEY, value: maxVersion });
-    }),
+        await db.kv.put({ key: RECONCILE_KEY, value: maxVersion });
+      },
+    ),
   );
-  return result.ok ? summary : { checked: 0, merged: 0, suggested: 0, duplicates: 0, fresh: 0 };
+  return result.ok
+    ? summary
+    : {
+        checked: 0,
+        merged: 0,
+        suggested: 0,
+        duplicates: 0,
+        fresh: 0,
+        installments: 0,
+        payments: 0,
+        ignored: 0,
+      };
 }
