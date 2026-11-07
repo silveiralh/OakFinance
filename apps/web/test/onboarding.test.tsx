@@ -282,8 +282,11 @@ describe('ON04–ON08 (US-08)', () => {
     expect(await d.cards.count()).toBe(0);
     expect((await d.recurrences.toArray()).filter((r) => r.kind === 'income')).toHaveLength(0);
     fireEvent.click(screen.getByTestId('onb-done-home'));
-    expect(await screen.findByTestId('onb-pending')).toHaveTextContent(
-      'Complete a configuração: renda, contas, cartões, reserva',
+    // o card pode aparecer antes de a última gravação (Pular da reserva) chegar à consulta ao vivo
+    await waitFor(() =>
+      expect(screen.getByTestId('onb-pending')).toHaveTextContent(
+        'Complete a configuração: renda, contas, cartões, reserva',
+      ),
     );
     fireEvent.click(
       within(screen.getByTestId('onb-pending')).getByRole('button', { name: 'Completar' }),
