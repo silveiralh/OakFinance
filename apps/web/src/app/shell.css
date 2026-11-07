@@ -311,7 +311,8 @@ body:has(.screen-welcome) .backdrop {
 }
 .list-summary {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* minmax(0, …): valores de 6 ou 7 dígitos quebram dentro da coluna em vez de rolar a 360 px (1.4.10) */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
   margin: 0;
 }
@@ -321,6 +322,7 @@ body:has(.screen-welcome) .backdrop {
 }
 .list-summary dd {
   margin: 0;
+  overflow-wrap: anywhere;
   font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
 }
@@ -520,6 +522,7 @@ body:has(.screen-welcome) .backdrop {
 }
 .list-day {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin: var(--space-3) 0 var(--space-1);
   font-size: var(--font-size-caption);

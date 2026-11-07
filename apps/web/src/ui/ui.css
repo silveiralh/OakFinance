@@ -998,6 +998,7 @@
 .tx-main {
   display: flex;
   flex: 1;
+  min-width: 0;
   align-items: center;
   gap: var(--space-3);
   min-height: 64px;
@@ -1041,8 +1042,10 @@
 }
 .tx-title {
   font-weight: var(--font-weight-semibold);
+  overflow-wrap: anywhere;
 }
 .tx-meta {
+  overflow-wrap: anywhere;
   font-size: var(--font-size-caption);
   color: var(--text-secondary);
 }

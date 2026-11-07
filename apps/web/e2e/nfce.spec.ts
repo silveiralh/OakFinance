@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, login, test } from './fixtures/base';
+import { expect, freshUser, login, test } from './fixtures/base';
 
 // T-089: E09 (tech §8.4) nos casos de fallback e offline — QR injetado pelo stub do detector (foto) ou chave digitada.
 // A resposta do `nfce-fetch` vem do gancho do build E2E (`window.__oakE2ENfce`, como o FakePluggyConnect): página
@@ -82,7 +82,8 @@ const statusOf = (page: Page, key: string) =>
 
 test('E09: página quebrada cai no fallback, que pede o valor no Q01', async ({ page }, info) => {
   await fakeNfce(page, BROKEN);
-  await login(page, `e2e-nfce-${info.project.name}@example.test`);
+  // conta própria: a do E09 offline aprende o emitente da nota e o Q01 sugeriria o nome no lugar do CNPJ
+  await login(page, freshUser('nfce-fallback', info));
   await hooks(page);
   const key = randomKey();
   await page.goto('/nota');

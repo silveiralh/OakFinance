@@ -33,3 +33,13 @@ insert into app.allowed_emails (email) values
   ('e2e-nfce-iphone@example.test'),
   ('e2e-nfce-desktop@example.test')
 on conflict do nothing;
+
+-- Usuário novo por cenário, projeto e tentativa (`freshUser` em e2e/fixtures/base.ts): o nightly roda com
+-- --repeat-each=3 e retries 1, e cenários que contam a fila ou dependem do que a conta aprendeu não podem herdar
+-- os dados da repetição anterior (issue `regressão: nightly`, 07/11). Índice = repetição × 2 + tentativa.
+insert into app.allowed_emails (email)
+select format('e2e-%s-%s-%s@example.test', scenario, project, n)
+from unnest(array['inbox', 'nfce-fallback', 'a11y-reflow', 'analysis']) as scenario,
+  unnest(array['android', 'iphone', 'desktop']) as project,
+  generate_series(0, 9) as n
+on conflict do nothing;

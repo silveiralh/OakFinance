@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
-import { expect, login, test } from './fixtures/base';
+import { expect, freshUser, login, test } from './fixtures/base';
 
 // T-079: I05 Conferir importados (US-49). A conexão bancária (T-076) ainda não existe na tela, então os
 // lançamentos "recebidos do banco" entram pelo gancho do E2E e sobem pelo sync como os da Pluggy subiriam.
-// Um usuário por projeto, para os três navegadores não dividirem a fila.
+// Um usuário por projeto e tentativa (`freshUser`), para os navegadores e as repetições não dividirem a fila.
 
 async function hooks(page: Page) {
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
@@ -12,7 +12,7 @@ async function hooks(page: Page) {
 test('US-49: decidir "É o mesmo", dar OK num novo do banco e esvaziar a fila', async ({
   page,
 }, info) => {
-  await login(page, `e2e-inbox-${info.project.name}@example.test`);
+  await login(page, freshUser('inbox', info));
   await hooks(page);
   const tag = `${info.project.name}-${Date.now()}`;
   const account = await page.evaluate((n) => window.__oakE2E?.addAccount(n) ?? '', `Conta ${tag}`);
