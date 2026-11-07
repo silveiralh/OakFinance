@@ -1066,11 +1066,11 @@ body:has(.screen-welcome) .backdrop {
 .csv-preview {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--font-size-label, 0.875rem);
+  font-size: var(--font-size-label);
 }
 .csv-preview td {
   padding: var(--space-1) var(--space-2);
-  border-bottom: 1px solid var(--color-border, rgba(0, 0, 0, 0.08));
+  border-bottom: 1px solid var(--border-subtle);
   overflow-wrap: anywhere;
 }
 

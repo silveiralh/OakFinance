@@ -11,7 +11,7 @@ import { formatDateBR } from '../../lib/format';
 import { Button, GlassCard, Select, useToast } from '../../ui';
 import { ColumnMapper } from './ColumnMapper';
 import { tokenizeCsv } from './csv-parse';
-import { initialProfile, saveCsvProfile, savedProfiles } from './csv-profile';
+import { initialProfile, profileIdFor, saveCsvProfile, savedProfiles } from './csv-profile';
 import {
   commitImport,
   type Destination,
@@ -138,6 +138,23 @@ export function ImportScreen() {
     setLoaded({ fileName: file.name, sha, statement, csv: null, already });
   };
 
+  /** Trocar o destino de um CSV usa o mapeamento salvo para ele, se houver (RN-76). */
+  const changeDest = (value: string) => {
+    setDest(value);
+    const next = decode(value);
+    if (!loaded?.csv || !next) {
+      return;
+    }
+    const own = savedProfiles(data.settings).find((p) => p.id === profileIdFor(next));
+    if (own) {
+      const rows =
+        own.delimiter === loaded.csv.profile.delimiter
+          ? loaded.csv.rows
+          : tokenizeCsv(loaded.csv.text, own.delimiter).rows;
+      setLoaded({ ...loaded, csv: { ...loaded.csv, rows, profile: own, detected: own.name } });
+    }
+  };
+
   const setProfile = (profile: CsvProfile) => {
     if (loaded?.csv) {
       const rows =
@@ -240,7 +257,7 @@ export function ImportScreen() {
           loaded={loaded}
           options={options}
           dest={dest}
-          setDest={setDest}
+          setDest={changeDest}
           anyway={anyway}
           setAnyway={setAnyway}
           busy={busy}
