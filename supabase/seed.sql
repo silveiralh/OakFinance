@@ -15,5 +15,9 @@ insert into app.allowed_emails (email) values
   -- fechar o mês (P04, T-082): idem
   ('e2e-close-android@example.test'),
   ('e2e-close-iphone@example.test'),
-  ('e2e-close-desktop@example.test')
+  ('e2e-close-desktop@example.test'),
+  -- importar OFX (I03, T-084): idem (o mesmo arquivo nos 3 navegadores daria "já foi importado")
+  ('e2e-import-android@example.test'),
+  ('e2e-import-iphone@example.test'),
+  ('e2e-import-desktop@example.test')
 on conflict do nothing;

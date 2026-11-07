@@ -146,7 +146,7 @@ flowchart LR
 | T-081 | Desfazer conciliação | T-079 | done |
 | T-082 | Fechar o mês (P04) | T-079, T-059 | done |
 | T-083 | Validação real da Pluggy | T-077 | todo |
-| T-084 | Importar OFX | T-022, T-078 | todo |
+| T-084 | Importar OFX | T-022, T-078 | done |
 | T-085 | OFX real do BB anonimizado | T-084 | todo |
 | T-086 | Importar CSV | T-084 | todo |
 | T-087 | Presets Nubank confirmados | T-086 | todo |
@@ -1244,7 +1244,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-084 — Importar OFX
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-52 | RN-65, RN-75, RN-78 | T-022, T-078 | não |
+| done | S4 | M | US-52 | RN-65, RN-75, RN-78 | T-022, T-078 | não |
 
 **Escopo:**
 - I03 com ImportDropzone; parse em Web Worker;

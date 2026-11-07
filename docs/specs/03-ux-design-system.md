@@ -2558,6 +2558,17 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `import.cta` | Importar {n} lançamentos |
 | `import.badFile` | Arquivo não reconhecido. Envie um OFX ou CSV exportado pelo banco. |
 | `import.noAmountCol` | Selecione a coluna que contém o valor. |
+| `import.destination` | Importar para |
+| `import.noDestination` | Cadastre uma conta ou um cartão antes de importar. |
+| `import.merging` | {n} serão conciliados com lançamentos seus |
+| `import.empty` | O arquivo não tem lançamentos. |
+| `import.already` | Este arquivo já foi importado em {data}. |
+| `import.anyway` | Importar mesmo assim |
+| `import.done` | {n} lançamentos importados. |
+| `import.undo` | Desfazer importação |
+| `import.undone` | Importação desfeita. |
+| `import.recent` | Importações recentes |
+| `import.recentItem` | {arquivo} · {n} lançamentos · {data} |
 | `nfce.aim` | Aponte para o QR code da nota |
 | `nfce.photo` / `.manual` / `.torch` | Escolher foto / Digitar chave / Lanterna |
 | `nfce.use` | Usar estes dados |
