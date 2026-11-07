@@ -9,6 +9,8 @@ export const RATE_LIMITS = {
   'pluggy-link': 20,
   // tech §6.1.4: pelo app, 6 chamadas por hora por usuário
   'pluggy-sync': 6,
+  // tech §6.2.3: 30 consultas de NFC-e por hora por usuário
+  'nfce-fetch': 30,
 } as const;
 export const RATE_WINDOW_SECONDS = 3600;
 
