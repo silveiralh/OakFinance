@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import { cardFromRow } from '../../data/mappers';
-import { t } from '../../i18n/pt-BR';
+import { emptyStates, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import {
   Badge,
@@ -80,9 +80,12 @@ export function CardsScreen({
       <section className="screen" data-screen="C01" data-testid="screen-C01">
         <EmptyState
           icon={CreditCard}
-          title={t('cards.empty')}
-          description={t('cards.emptyHint')}
-          primaryAction={{ label: t('cards.add'), onPress: () => void navigate('/ajustes/contas') }}
+          title={emptyStates.cards.title}
+          description={emptyStates.cards.text}
+          primaryAction={{
+            label: emptyStates.cards.actions[0],
+            onPress: () => void navigate('/ajustes/contas'),
+          }}
         />
       </section>
     );

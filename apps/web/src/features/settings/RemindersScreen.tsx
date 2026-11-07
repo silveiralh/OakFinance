@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { deviceId } from '../../data/sync/clock';
-import { type MessageKey, t } from '../../i18n/pt-BR';
+import { errorStates, type MessageKey, shellText, t } from '../../i18n/pt-BR';
 import { getEnv } from '../../lib/env';
 import {
   baseState,
@@ -61,6 +61,7 @@ export function RemindersScreen({ environment }: { environment?: PushEnvironment
   const key = vapidKey();
   const [state, setState] = useState<PushState>(() => baseState(env, key));
   const [busy, setBusy] = useState(false);
+  const [slow, setSlow] = useState(false);
   const expired = state === 'off' && env.permission === 'granted';
 
   useEffect(() => {
@@ -89,6 +90,7 @@ export function RemindersScreen({ environment }: { environment?: PushEnvironment
       if (next === 'on') {
         showToast({ message: t('push.activated'), tone: 'success' });
         const sent = await sendTestPush(client);
+        setSlow(sent === 'timeout');
         if (sent === null) {
           showToast({ message: t('push.testFailed'), tone: 'warning' });
         }
@@ -106,6 +108,10 @@ export function RemindersScreen({ environment }: { environment?: PushEnvironment
     setBusy(true);
     const sent = await sendTestPush(client);
     setBusy(false);
+    setSlow(sent === 'timeout');
+    if (sent === 'timeout') {
+      return;
+    }
     showToast(
       sent === null || sent === 0
         ? { message: t('push.testFailed'), tone: 'warning' }
@@ -142,6 +148,20 @@ export function RemindersScreen({ environment }: { environment?: PushEnvironment
           <Button onClick={() => void activate()} loading={busy} data-testid="push-enable">
             {t('onb.notif.cta')}
           </Button>
+        )}
+        {state === 'unsupported' && (
+          <p className="reminders-hint" data-testid="push-unsupported">
+            {errorStates.pushUnsupported.text}{' '}
+            <Link to="/instalar">{errorStates.pushUnsupported.action}</Link>
+          </p>
+        )}
+        {slow && (
+          <p className="reminders-hint" role="status" data-testid="service-slow">
+            {shellText.serviceSlow}{' '}
+            <Button size="sm" variant="ghost" onClick={() => void test()}>
+              {shellText.retry}
+            </Button>
+          </p>
         )}
         {state === 'on' && (
           <div className="reserve-actions">

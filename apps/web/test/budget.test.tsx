@@ -206,15 +206,15 @@ describe('P01 — Orçamento 50/30/20 (US-31)', () => {
     expect(screen.getByTestId('budget-needs')).toHaveTextContent('de R$ 166,67');
   });
 
-  it('RN-48: sem renda, metas zeradas e "Cadastre sua renda para dividir o orçamento do mês"', async () => {
+  it('RN-48/US-63: sem renda, metas zeradas e "Orçamento sem renda cadastrada" (UX §6.5)', async () => {
     await renderBudget(rows([spend('m', 'mercado', 1000)]));
+    expect(screen.getByText('Orçamento sem renda cadastrada')).toBeInTheDocument();
     expect(
-      screen.getByText('Cadastre sua renda para dividir o orçamento do mês'),
+      screen.getByText(
+        'Cadastre sua renda para dividir o mês entre Necessidades, Desejos e Poupança.',
+      ),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Cadastrar renda' })).toHaveAttribute(
-      'href',
-      '/ajustes/renda',
-    );
+    expect(screen.getByRole('button', { name: 'Cadastrar renda' })).toBeInTheDocument();
     expect(screen.getByTestId('budget-needs')).not.toHaveTextContent('Dentro do planejado');
   });
 });

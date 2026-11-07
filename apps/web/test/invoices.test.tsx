@@ -292,7 +292,7 @@ describe('C01 e C02 (UX §3)', () => {
     expect(screen.getByTestId('invoice-head')).toHaveTextContent('Fecha em 03/12 · Vence em 10/12');
     expect(screen.getByTestId('invoice-state')).toHaveTextContent('Fecha em 03/12 (18 dias)');
     fireEvent.click(screen.getByRole('button', { name: 'Próximo mês' }));
-    expect(await screen.findByText('Nenhuma compra nesta fatura.')).toBeInTheDocument();
+    expect(await screen.findByText('Nenhuma compra nesta fatura')).toBeInTheDocument(); // US-63, UX §6.5
     expect(
       screen.getByText('Fatura futura: mostra parcelas e contas fixas já previstas.'),
     ).toBeInTheDocument();

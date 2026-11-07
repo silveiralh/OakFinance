@@ -7,7 +7,7 @@ import {
   todayIn,
   type YearMonth,
 } from '@oakfinance/domain';
-import { ChevronLeft, ChevronRight, Receipt, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Funnel, List, Search } from 'lucide-react';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -15,7 +15,7 @@ import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { deleteRow, restoreRow } from '../../data/repositories/rows';
-import { type MessageKey, t, uiText } from '../../i18n/pt-BR';
+import { emptyStates, fill, type MessageKey, t, uiText } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import {
   Dialog,
@@ -392,14 +392,11 @@ export function TransactionsScreen({
         </p>
       )}
       {data && entries.length === 0 ? (
-        <EmptyState
-          icon={Receipt}
-          title={
-            filters.query.trim()
-              ? t('list.noResult', { termo: filters.query.trim() })
-              : t('list.empty', { mês: title })
-          }
-          description=""
+        <ListEmpty
+          filters={filters}
+          month={title}
+          onClear={() => setFilters(NO_FILTERS)}
+          onNew={() => void navigate('?novo=despesa')}
         />
       ) : (
         <div ref={listRef} className="list-rows" data-testid="list-rows">
@@ -463,5 +460,61 @@ export function TransactionsScreen({
         onCancel={() => setActing(null)}
       />
     </section>
+  );
+}
+
+/** Vazio da T01 (UX §6.5): busca sem resultado, filtro sem lançamento ou mês vazio. */
+export function emptyKind(filters: ListFilters): 'search' | 'listFilter' | 'listMonth' {
+  if (filters.query.trim() !== '') {
+    return 'search';
+  }
+  const { query: _q, ...rest } = filters;
+  const { query: _n, ...none } = NO_FILTERS;
+  return Object.entries(rest).some(([k, v]) => none[k as keyof typeof none] !== v)
+    ? 'listFilter'
+    : 'listMonth';
+}
+
+function ListEmpty({
+  filters,
+  month,
+  onClear,
+  onNew,
+}: {
+  filters: ListFilters;
+  month: string;
+  onClear: () => void;
+  onNew: () => void;
+}) {
+  const kind = emptyKind(filters);
+  const state = emptyStates[kind];
+  if (kind === 'search') {
+    return (
+      <EmptyState
+        variant="filtered"
+        icon={Search}
+        title={fill(state.title, { termo: filters.query.trim() })}
+        description={state.text}
+      />
+    );
+  }
+  if (kind === 'listFilter') {
+    return (
+      <EmptyState
+        variant="filtered"
+        icon={Funnel}
+        title={state.title}
+        description={state.text}
+        primaryAction={{ label: emptyStates.listFilter.actions[0], onPress: onClear }}
+      />
+    );
+  }
+  return (
+    <EmptyState
+      icon={List}
+      title={fill(state.title, { mês: month })}
+      description={state.text}
+      primaryAction={{ label: emptyStates.listMonth.actions[0], onPress: onNew }}
+    />
   );
 }

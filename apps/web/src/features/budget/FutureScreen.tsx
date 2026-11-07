@@ -8,7 +8,7 @@ import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
-import { t } from '../../i18n/pt-BR';
+import { emptyStates, t } from '../../i18n/pt-BR';
 import { Button, EmptyState, GlassCard } from '../../ui';
 import { recurrenceFromRow } from '../recurrences/model';
 import { committedNext, futureMonths } from './future';
@@ -74,8 +74,8 @@ export function FutureScreen({
       {empty ? (
         <EmptyState
           icon={CalendarClock}
-          title={t('future.empty')}
-          description={t('future.emptyHint')}
+          title={emptyStates.future.title}
+          description={emptyStates.future.text}
         />
       ) : (
         <>

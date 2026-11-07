@@ -14,7 +14,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, useValuesHidden } from '../../app/values';
 import { cardFromRow } from '../../data/mappers';
-import { t } from '../../i18n/pt-BR';
+import { emptyStates, fill, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import {
   Badge,
@@ -174,8 +174,8 @@ export function InvoiceScreen({
       {rows.length === 0 ? (
         <EmptyState
           icon={Receipt}
-          title={t('invoice.empty')}
-          description={t('invoice.emptyHint', {
+          title={emptyStates.invoice.title}
+          description={fill(emptyStates.invoice.text, {
             cartão: cardRow.name,
             data: formatDateBR(view.period.periodStart),
           })}

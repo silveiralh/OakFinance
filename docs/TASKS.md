@@ -129,7 +129,7 @@ flowchart LR
 | T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | done |
 | T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | done |
 | T-066 | Exportar lançamentos em CSV | T-043 | done |
-| T-067 | Estados vazios e erros completos | T-065 | todo |
+| T-067 | Estados vazios e erros completos | T-065 | done |
 | T-068 | Tema escuro e reduzir movimento | T-029 | todo |
 | T-069 | Análise do mês no computador | T-059 | todo |
 | T-070 | Backup e restauração | T-066 | todo |
@@ -1048,7 +1048,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-067 — Estados vazios e erros completos
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-63, US-64 | RN-48, RN-96 | T-065 | não |
+| done | S2 | P | US-63, US-64 | RN-48, RN-96 | T-065 | não |
 
 **Escopo:** tabelas 6.5 e 6.6 do UX aplicadas em todas as telas (teste parametrizado); G13 com timeout de 15 s nas chamadas de Edge Function; G09 com código curto.
 

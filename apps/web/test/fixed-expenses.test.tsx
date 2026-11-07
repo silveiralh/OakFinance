@@ -223,7 +223,7 @@ describe('P03 — Futuro (UX §3 P03)', () => {
     const empty = fakeAuth('signedIn');
     const first = mountFuture(empty);
     expect(
-      await screen.findByText('Nenhum valor comprometido nos próximos meses.'),
+      await screen.findByText('Nenhum valor comprometido'), // UX §6.5
     ).toBeInTheDocument();
     first.unmount();
     const auth = fakeAuth('signedIn');

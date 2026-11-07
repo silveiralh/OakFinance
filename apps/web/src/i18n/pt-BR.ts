@@ -728,6 +728,7 @@ export const shellText = {
   screenErrorTitle: 'Não foi possível carregar esta tela.',
   screenErrorDescription: 'Seus dados estão seguros.',
   retry: 'Tentar novamente',
+  serviceSlow: 'O serviço demorou para responder. Tente novamente.',
   updateAvailable: 'Nova versão disponível.',
   storageFull: 'O armazenamento do aparelho está cheio. Libere espaço para continuar lançando.',
   storageBlocked: 'Este navegador bloqueou o armazenamento local. Abra pelo app instalado.',
@@ -799,6 +800,124 @@ export const shellText = {
 } as const;
 
 export type ScreenId = keyof typeof shellText.screens;
+
+/**
+ * Erros (UX §6.6), na ordem da tabela, montados com os textos que as telas usam; `action` `null` = sem ação.
+ * "Sem categoria", "Push não suportado" e "Excluir conta" ficam aqui até as telas que os mostram (T-071).
+ */
+export const errorStates = {
+  zeroAmount: { text: ptBR['onb.income.invalid'], action: null },
+  noCategory: { text: 'Escolha uma categoria.', action: null },
+  percentSum: { text: ptBR['budget.sumError'], action: null },
+  sameDay: { text: ptBR['cards.sameDay'], action: '(aviso, não bloqueia)' },
+  loginFailed: { text: shellText.loginFailed, action: shellText.retry },
+  firstOffline: { text: ptBR['onb.welcome.offline'], action: null },
+  syncFailed: { text: shellText.syncFailedMany, action: shellText.retry },
+  sessionExpired: {
+    text: `${shellText.sessionExpiredTitle} ${shellText.sessionExpiredDescription}`,
+    action: shellText.signInGoogle,
+  },
+  screenError: {
+    text: `${shellText.screenErrorTitle} ${shellText.screenErrorDescription}`,
+    action: shellText.retry,
+  },
+  wiped: {
+    text: `${shellText.wipedTitle} ${shellText.wipedDescription}`,
+    action: shellText.downloadNow,
+  },
+  pushUnsupported: {
+    text: 'Este navegador não envia lembretes. No iPhone, instale o app; no Android, use o Chrome.',
+    action: 'Ver como instalar',
+  },
+  cameraDenied: { text: ptBR['nfce.noCamera'], action: 'Escolher foto' },
+  deleteAccount: {
+    text: 'Todos os seus lançamentos, contas e conexões serão excluídos do aparelho e da nuvem. Esta ação não pode ser desfeita. Digite EXCLUIR para confirmar.',
+    action: 'Excluir conta / Cancelar',
+  },
+} as const satisfies Record<string, { text: string; action: string | null }>;
+
+/** Estados vazios (UX §6.5, fonte normativa da US-63), na ordem da tabela; `actions` vazio = sem ação. */
+export const emptyStates = {
+  homeMonth: {
+    title: 'Nenhum lançamento em {mês}',
+    text: 'Registre um gasto para começar a acompanhar o mês.',
+    actions: ['Novo lançamento'],
+  },
+  listMonth: {
+    title: 'Nenhum lançamento em {mês}',
+    text: 'Despesas e receitas do mês aparecem aqui.',
+    actions: ['Novo lançamento'],
+  },
+  listFilter: {
+    title: 'Nenhum lançamento com este filtro',
+    text: 'Altere o filtro ou o mês.',
+    actions: ['Limpar filtros'],
+  },
+  search: {
+    title: 'Nenhum resultado para "{termo}"',
+    text: 'Tente outro termo ou outro mês.',
+    actions: [],
+  },
+  cards: {
+    title: 'Nenhum cartão cadastrado',
+    text: 'Cadastre um cartão para acompanhar faturas e parcelas.',
+    actions: ['Adicionar cartão'],
+  },
+  invoice: {
+    title: 'Nenhuma compra nesta fatura',
+    text: 'Compras no {cartão} a partir de {data} aparecem aqui.',
+    actions: [],
+  },
+  future: {
+    title: 'Nenhum valor comprometido',
+    text: 'Compras parceladas e contas fixas aparecem aqui.',
+    actions: [],
+  },
+  budgetNoIncome: {
+    title: 'Orçamento sem renda cadastrada',
+    text: 'Cadastre sua renda para dividir o mês entre Necessidades, Desejos e Poupança.',
+    actions: ['Cadastrar renda'],
+  },
+  reserveNoMoves: {
+    title: 'Nenhum aporte registrado',
+    text: 'Defina a meta e registre aportes para acompanhar a reserva.',
+    actions: ['Guardar'],
+  },
+  inbox: {
+    title: 'Nenhum lançamento pendente',
+    text: 'Os lançamentos importados já foram conferidos.',
+    actions: [],
+  },
+  notices: {
+    title: 'Nenhum aviso',
+    text: 'Vencimentos, limites e conexões aparecem aqui.',
+    actions: [],
+  },
+  reserveNoGoal: {
+    title: 'Defina uma meta para acompanhar o progresso',
+    text: 'Cadastre a renda para receber uma sugestão ou informe a sua meta.',
+    actions: ['Definir meta'],
+  },
+  connections: {
+    title: 'Nenhum banco conectado',
+    text: 'Conecte o BB ou o Nubank para receber lançamentos automaticamente.',
+    actions: ['Conectar banco', 'Importar extrato'],
+  },
+  rules: {
+    title: 'Nenhuma regra criada',
+    text: 'Quando você corrige uma categoria, o app cria uma regra e passa a sugeri-la.',
+    actions: [],
+  },
+} as const satisfies Record<string, { title: string; text: string; actions: readonly string[] }>;
+
+export type EmptyStateId = keyof typeof emptyStates;
+
+/** Texto com os marcadores `{nome}` preenchidos (como `t`). */
+export function fill(text: string, values: Readonly<Record<string, string | number>> = {}): string {
+  return text.replace(/\{([^{}]+)\}/g, (whole, name: string) =>
+    name in values ? String(values[name]) : whole,
+  );
+}
 
 /** Nome falado de cada ícone de categoria (seletor da S04, UX §4.7). */
 export const iconText: Readonly<Record<string, string>> = {

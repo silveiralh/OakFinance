@@ -10,7 +10,7 @@ import { Amount, useValuesHidden } from '../../app/values';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
-import { shellText, t, uiText } from '../../i18n/pt-BR';
+import { emptyStates, fill, shellText, t, uiText } from '../../i18n/pt-BR';
 import { useToday } from '../../lib/useToday';
 import { EmptyState, PaceIndicator, TransactionRow } from '../../ui';
 import { MONTH_NAMES, monthTitle } from '../transactions/list';
@@ -243,10 +243,10 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
         <div className="glass home-list" data-testid="home-month-empty">
           <EmptyState
             icon={List}
-            title={t('list.empty', { mês: monthName(month) })}
-            description={uiText.homeEmptyHint}
+            title={fill(emptyStates.homeMonth.title, { mês: monthName(month) })}
+            description={emptyStates.homeMonth.text}
             primaryAction={{
-              label: uiText.newEntry,
+              label: emptyStates.homeMonth.actions[0],
               onPress: () => void navigate('?novo=despesa'),
             }}
           />
