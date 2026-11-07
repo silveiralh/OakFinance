@@ -158,7 +158,7 @@ flowchart LR
 | T-093 | Preferências de notificação | T-092 | done |
 | T-094 | Excluir conta | T-070, T-075 | done |
 | T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | done |
-| T-096 | Acessibilidade completa | T-095 | todo |
+| T-096 | Acessibilidade completa | T-095 | done |
 | T-097 | Desempenho | T-095 | todo |
 | T-098 | Operação e resiliência | T-095, T-036 | todo |
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | todo |
@@ -1385,7 +1385,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-096 — Acessibilidade completa
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-62, US-58 | — | T-095 | não |
+| done | S4 | M | US-62, US-58 | — | T-095 | não |
 
 **Escopo:** axe em todas as telas da lista do UX §8, nos 2 temas e com `data-glass="solid"`; foco, 48 px, zoom 200% e larguras de 360 a 1440 px sem rolagem horizontal; checklist de VoiceOver e TalkBack em HANDOFF §6.
 
