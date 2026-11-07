@@ -228,7 +228,8 @@ describe('G08 — cópia local apagada pelo sistema (US-05, RN-100)', () => {
     expect(
       await screen.findByText('O sistema liberou espaço e apagou a cópia local.'),
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Baixar agora' }));
+    // o <dialog> entra no DOM antes do showModal(): espere o botão ficar acessível (mesmo padrão do PR #88)
+    fireEvent.click(await screen.findByRole('button', { name: 'Baixar agora' }));
     expect(syncNow).toHaveBeenCalled();
   });
 
