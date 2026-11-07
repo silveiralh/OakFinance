@@ -147,8 +147,8 @@ flowchart LR
 | T-082 | Fechar o mês (P04) | T-079, T-059 | done |
 | T-083 | Validação real da Pluggy | T-077 | todo |
 | T-084 | Importar OFX | T-022, T-078 | done |
-| T-085 | OFX real do BB anonimizado | T-084 | todo |
-| T-086 | Importar CSV | T-084 | todo |
+| T-085 | OFX real do BB anonimizado | T-084 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
+| T-086 | Importar CSV | T-084 | done |
 | T-087 | Presets Nubank confirmados | T-086 | todo |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | todo |
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | todo |
@@ -1259,7 +1259,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-085 — OFX real do BB anonimizado
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
+| blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
 
 **Escopo:** ler o arquivo pelo canal privado, fora do clone; gerar a fixture anonimizada com README; ajustar o parser se for preciso; E07 usando essa fixture. O original nunca entra no repositório.
 
@@ -1270,7 +1270,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-086 — Importar CSV
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-53 | RN-65, RN-76, RN-78 | T-084 | não |
+| done | S4 | M | US-53 | RN-65, RN-76, RN-78 | T-084 | não |
 
 **Escopo:** papaparse no worker; detecção de presets; ColumnMapper com prévia de 5 linhas; perfil salvo por conta em `settings.csvProfiles`; Identificador usado como `external_id`.
 

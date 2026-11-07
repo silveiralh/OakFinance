@@ -1055,6 +1055,25 @@ body:has(.screen-welcome) .backdrop {
   min-height: 48px;
 }
 
+/* T-084/T-086: I03 importar */
+.import,
+.import-drop,
+.import-preview,
+.column-mapper {
+  display: grid;
+  gap: var(--space-3);
+}
+.csv-preview {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-label);
+}
+.csv-preview td {
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-wrap: anywhere;
+}
+
 /* T-082: P04 fechar o mês */
 .close-month,
 .close-block {
