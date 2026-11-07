@@ -146,7 +146,9 @@ describe('S07 — Lembretes (US-38)', () => {
         p_auth: 'auth',
       }),
     );
-    await waitFor(() => expect(invoke).toHaveBeenCalledWith('push-test', { body: {} }));
+    await waitFor(() =>
+      expect(invoke).toHaveBeenCalledWith('push-test', expect.objectContaining({ body: {} })),
+    );
     expect(await screen.findByText('Lembretes ativados.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Enviar notificação de teste' })).toBeInTheDocument();
   });

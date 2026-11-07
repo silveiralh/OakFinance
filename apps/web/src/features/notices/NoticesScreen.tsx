@@ -14,7 +14,7 @@ import {
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { useLive } from '../../data/live';
-import { t, uiText } from '../../i18n/pt-BR';
+import { emptyStates, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { Button, EmptyState } from '../../ui';
 import { localDate, markAllRead, markRead, type Notice, visibleNotices } from './model';
@@ -63,7 +63,11 @@ export function NoticesScreen({ now }: { now?: Date }) {
   return (
     <section className="screen notices" data-screen="H02" data-testid="screen-H02">
       {list.length === 0 ? (
-        <EmptyState icon={Bell} title={t('notices.empty')} description={uiText.noticesEmptyHint} />
+        <EmptyState
+          icon={Bell}
+          title={emptyStates.notices.title}
+          description={emptyStates.notices.text}
+        />
       ) : (
         <>
           {list.some((n) => n.read_at === null) && (

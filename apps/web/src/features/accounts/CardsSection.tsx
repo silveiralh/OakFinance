@@ -14,7 +14,7 @@ import {
   previewInvoice,
   removeCard,
 } from '../../data/repositories/cards';
-import { type MessageKey, t } from '../../i18n/pt-BR';
+import { emptyStates, type MessageKey, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { AmountInput, Button, EmptyState, GlassCard, Select, Switch, TextField } from '../../ui';
 import { CardEditSheet } from './CardEditSheet';
@@ -146,8 +146,8 @@ export function CardsSection({
         {active.length === 0 ? (
           <EmptyState
             icon={CreditCard}
-            title={t('cards.empty')}
-            description={t('onb.cards.title')}
+            title={emptyStates.cards.title}
+            description={emptyStates.cards.text}
           />
         ) : (
           <ul className="account-list">

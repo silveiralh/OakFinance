@@ -9,7 +9,7 @@ import {
   ruleMatches,
   todayIn,
 } from '@oakfinance/domain';
-import { ListFilter, Plus } from 'lucide-react';
+import { Plus, WandSparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -17,7 +17,7 @@ import { newId } from '../../data/ids';
 import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
-import { type MessageKey, t } from '../../i18n/pt-BR';
+import { emptyStates, type MessageKey, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { BottomSheet, Button, EmptyState, GlassCard, Select, TextField, useToast } from '../../ui';
 import { ruleFromRow } from '../quick-entry/model';
@@ -209,7 +209,11 @@ export function RulesScreen({
         </Button>
       </div>
       {rows.length === 0 ? (
-        <EmptyState icon={ListFilter} title={t('rules.empty')} description={t('rules.emptyHint')} />
+        <EmptyState
+          icon={WandSparkles}
+          title={emptyStates.rules.title}
+          description={emptyStates.rules.text}
+        />
       ) : (
         <GlassCard level={1}>
           <ul className="cards-invoices" data-testid="rules-list">

@@ -58,7 +58,7 @@ test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o 
 
   // a fatura de origem fica vazia
   await page.goBack();
-  await expect(page.getByText('Nenhuma compra nesta fatura.')).toBeVisible();
+  await expect(page.getByText('Nenhuma compra nesta fatura', { exact: true })).toBeVisible();
 });
 
 test('E04: invoices — compra à vista no cartão e "Registrar pagamento" deixam a fatura paga', async ({
@@ -127,5 +127,5 @@ test('E04: installments — compra em 3x no cartão "fecha 3 / vence 10" aparece
     await page.getByRole('button', { name: 'Próximo mês' }).click();
   }
   // a 4ª fatura não tem parcela
-  await expect(page.getByText('Nenhuma compra nesta fatura.')).toBeVisible();
+  await expect(page.getByText('Nenhuma compra nesta fatura', { exact: true })).toBeVisible();
 });

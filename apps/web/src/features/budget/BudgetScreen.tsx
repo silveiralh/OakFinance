@@ -1,15 +1,15 @@
 // P01 — Orçamento 50/30/20 (UX §3 P01, US-31, US-32): anel com a renda do mês, uma linha por faixa (valor, meta,
 // percentual, barra, "já foi" / "vai sair" e status), categorias da faixa com limite opcional e o grupo "Sem faixa".
 import { formatBRL, type ISODate, UNCLASSIFIED_SLUG } from '@oakfinance/domain';
-import { ChevronDown, TriangleAlert } from 'lucide-react';
+import { ChartPie, ChevronDown, TriangleAlert } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
-import { t } from '../../i18n/pt-BR';
+import { emptyStates, t } from '../../i18n/pt-BR';
 import { useToday } from '../../lib/useToday';
-import { BudgetRing, GlassCard, ProgressBar } from '../../ui';
+import { BudgetRing, EmptyState, GlassCard, ProgressBar } from '../../ui';
 import { loadHomeRows } from '../dashboard/data';
 import { BAND_NAME, type BandView, budgetView, type CategoryLine } from './budget';
 
@@ -143,6 +143,7 @@ function BandCard({
 
 export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const hidden = useValuesHidden();
   const today = useToday(fixedToday);
   const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
@@ -181,12 +182,16 @@ export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
         </p>
         <BudgetRing bands={ring} incomeCents={view.incomeCents} size="lg" showLegend={false} />
         {view.incomeCents <= 0 && (
-          <div className="budget-no-income">
-            <p>{t('budget.noIncome')}</p>
-            <Link to="/ajustes/renda" className="home-pill-link" data-tone="accent">
-              {t('home.hero.noIncomeCta')}
-            </Link>
-          </div>
+          <EmptyState
+            icon={ChartPie}
+            title={emptyStates.budgetNoIncome.title}
+            description={emptyStates.budgetNoIncome.text}
+            primaryAction={{
+              label: emptyStates.budgetNoIncome.actions[0],
+              onPress: () => void navigate('/ajustes/renda'),
+            }}
+            data-testid="budget-no-income"
+          />
         )}
       </GlassCard>
       {view.bands.map((band) => (

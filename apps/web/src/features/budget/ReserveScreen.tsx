@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
-import { t, uiText } from '../../i18n/pt-BR';
+import { emptyStates, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { useToday } from '../../lib/useToday';
 import {
@@ -131,7 +131,16 @@ export function ReserveScreen({ today: fixedToday }: { today?: ISODate }) {
               )}
             </>
           ) : (
-            <p className="reserve-line">{t('reserve.noGoal')}</p>
+            <EmptyState
+              icon={ShieldCheck}
+              title={emptyStates.reserveNoGoal.title}
+              description={emptyStates.reserveNoGoal.text}
+              primaryAction={{
+                label: emptyStates.reserveNoGoal.actions[0],
+                onPress: () => open('goal'),
+              }}
+              data-testid="reserve-no-goal"
+            />
           )}
           {p.savedCents < 0 && (
             <p className="reserve-hint" role="status" data-testid="reserve-negative">
@@ -193,9 +202,12 @@ export function ReserveScreen({ today: fixedToday }: { today?: ISODate }) {
       {view && view.moves.length === 0 ? (
         <EmptyState
           icon={ShieldCheck}
-          title={uiText.reserveEmpty}
-          description={uiText.reserveEmptyHint}
-          primaryAction={{ label: t('reserve.save'), onPress: () => open('save') }}
+          title={emptyStates.reserveNoMoves.title}
+          description={emptyStates.reserveNoMoves.text}
+          primaryAction={{
+            label: emptyStates.reserveNoMoves.actions[0],
+            onPress: () => open('save'),
+          }}
         />
       ) : (
         view && (

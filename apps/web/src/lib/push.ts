@@ -1,6 +1,8 @@
 // Web Push no aparelho (tech §6.4.1 e §6.4.2, US-38): suporte, plataforma, permissão (só em toque), inscrição com a
 // chave pública VAPID e registro pela RPC `upsert_push_subscription`. O envio de teste chama a função `push-test`.
+
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { type InvokeOptions, invokeFunction } from './functions';
 
 export type PushPlatform = 'android' | 'ios' | 'desktop' | 'other';
 
@@ -148,9 +150,14 @@ export async function disablePush(client: SupabaseClient): Promise<void> {
 }
 
 /** Envia a notificação de teste; devolve quantos aparelhos receberam ou `null` em erro. */
-export async function sendTestPush(client: SupabaseClient): Promise<number | null> {
-  const { data, error } = await client.functions.invoke<{ sent: number }>('push-test', {
-    body: {},
-  });
-  return error || !data ? null : data.sent;
+/** Notificação de teste (push-test): quantas inscrições receberam, ou o motivo da falha (G13 no timeout). */
+export async function sendTestPush(
+  client: SupabaseClient,
+  options: InvokeOptions = {},
+): Promise<number | null | 'timeout'> {
+  const result = await invokeFunction<{ sent: number }>(client, 'push-test', {}, options);
+  if (result.ok) {
+    return result.data.sent;
+  }
+  return result.reason === 'timeout' ? 'timeout' : null;
 }
