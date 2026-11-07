@@ -1335,3 +1335,15 @@ body:has(.screen-welcome) .backdrop {
     opacity: 0;
   }
 }
+
+/* ---------- S08 Aparência (T-068) ---------- */
+.appearance-card {
+  display: grid;
+  gap: var(--space-3);
+}
+.appearance-label {
+  margin: var(--space-2) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+}

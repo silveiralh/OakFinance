@@ -2401,6 +2401,23 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `future.total` | Total |
 | `future.every` | todo dia {dia} |
 
+**Aparência (S08)**
+
+| Chave | Texto |
+|---|---|
+| `appearance.theme` | Tema |
+| `appearance.theme.auto` | Automático |
+| `appearance.theme.light` | Claro |
+| `appearance.theme.dark` | Escuro |
+| `appearance.glass` | Transparência |
+| `appearance.glass.auto` | Automática |
+| `appearance.glass.solid` | Sempre sólida |
+| `appearance.motion` | Movimento |
+| `appearance.motion.auto` | Automático |
+| `appearance.motion.reduced` | Reduzido |
+| `appearance.hidden` | Abrir com valores ocultos |
+| `appearance.hiddenHint` | Vale para esta conta em todos os aparelhos. |
+
 **Dados e privacidade (S10)**
 
 | Chave | Texto |

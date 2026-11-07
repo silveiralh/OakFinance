@@ -38,6 +38,9 @@ function SettingsLinks() {
       <Button variant="secondary" onClick={() => void navigate('/ajustes/lembretes')}>
         {shellText.screens.S07}
       </Button>
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/aparencia')}>
+        {shellText.screens.S08}
+      </Button>
       <Button variant="secondary" onClick={() => void navigate('/ajustes/dados')}>
         {shellText.screens.S10}
       </Button>
