@@ -2549,6 +2549,19 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `review.same` / `.different` / `.ignore` | É o mesmo / São diferentes / Ignorar |
 | `review.auto` | Vinculados automaticamente |
 | `review.diff.date` | Data diferente: {a} × {b} |
+| `review.pending` | Para decidir |
+| `review.fresh` | Novos do banco |
+| `review.ok` | OK |
+| `review.allReviewed` | Marcar todos como revisados |
+| `review.allBlocked` | Classifique os {n} lançamentos em "A classificar" antes de marcar todos. |
+| `review.allDone` | {n} lançamentos revisados. |
+| `review.merged` | Lançamentos vinculados. |
+| `review.kept` | Os dois lançamentos foram mantidos. |
+| `review.ignored` | Lançamento do banco ignorado. |
+| `review.unlinked` | Vínculo desfeito. |
+| `review.diff.amount` | Valor diferente: {a} × {b} |
+| `review.diff.method` | Meio diferente: {a} × {b} |
+| `review.noCandidate` | O lançamento parecido não está mais disponível. |
 
 ### 6.5 Estados vazios
 

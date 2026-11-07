@@ -7,5 +7,9 @@ insert into app.allowed_emails (email) values
   -- onboarding (E01 completo, T-065): um usuário novo por projeto do Playwright, para os 3 não dividirem o progresso
   ('e2e-onb-android@example.test'),
   ('e2e-onb-iphone@example.test'),
-  ('e2e-onb-desktop@example.test')
+  ('e2e-onb-desktop@example.test'),
+  -- conferência de importados (I05, T-079): um usuário por projeto, para os contadores não se misturarem
+  ('e2e-inbox-android@example.test'),
+  ('e2e-inbox-iphone@example.test'),
+  ('e2e-inbox-desktop@example.test')
 on conflict do nothing;
