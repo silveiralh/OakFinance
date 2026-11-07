@@ -31,7 +31,11 @@ insert into app.allowed_emails (email) values
   -- NFC-e (E09, T-089): notas pendentes de um usuário próprio não são relidas nos outros cenários do e2e-a
   ('e2e-nfce-android@example.test'),
   ('e2e-nfce-iphone@example.test'),
-  ('e2e-nfce-desktop@example.test')
+  ('e2e-nfce-desktop@example.test'),
+  -- desempenho (T-097): 5.000 lançamentos só no aparelho, sem misturar com os outros cenários
+  ('e2e-perf-android@example.test'),
+  ('e2e-perf-iphone@example.test'),
+  ('e2e-perf-desktop@example.test')
 on conflict do nothing;
 
 -- Usuário novo por cenário, projeto e tentativa (`freshUser` em e2e/fixtures/base.ts): o nightly roda com
