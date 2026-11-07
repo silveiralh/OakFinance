@@ -44,6 +44,7 @@ export async function login(page: Page, email = 'e2e-a@example.test') {
   const form = page.locator('form[data-e2e-login]');
   await form.locator('input[type="email"]').fill(email);
   await form.getByRole('button', { name: 'Entrar (teste)' }).click();
-  await expect(page).toHaveURL('/');
+  // na primeira vez o formulário cria a conta, o que pode passar de 5 s no começo de um shard
+  await expect(page).toHaveURL('/', { timeout: 20_000 });
   await expect(page.getByTestId('app-shell')).toBeVisible();
 }
