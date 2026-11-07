@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, login, test } from './fixtures/base';
+import { expect, freshUser, login, test } from './fixtures/base';
 
 // T-069: US-35 no projeto `desktop` (≥ 1024 px): os 5 blocos da análise na P01, "Ver como tabela" e a troca de mês.
 // No celular a análise não aparece (só a P01 normal). Os números exatos estão em test/analysis.test.tsx.
@@ -12,7 +12,8 @@ test('US-35: análise do mês no computador com tabela equivalente e seletor de 
   page,
 }, info) => {
   test.setTimeout(90_000);
-  await login(page);
+  // conta própria: no e2e-a, gastos maiores de outros cenários tiravam este dos 10 maiores
+  await login(page, freshUser('analysis', info));
   await hooks(page);
   const stamp = Date.now();
   const account = await page.evaluate(

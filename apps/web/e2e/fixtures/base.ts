@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from '@playwright/test';
+import { test as base, expect, type Page, type TestInfo } from '@playwright/test';
 
 declare global {
   interface Window {
@@ -34,6 +34,22 @@ export const test = base.extend<{ cspGuard: undefined }>({
 });
 
 export { expect };
+
+/**
+ * E-mail de um usuário que só este cenário, neste projeto e nesta tentativa usa (`seed.sql`, índices 0 a 9).
+ * O nightly roda com `--repeat-each=3` e uma nova tentativa: quem conta a fila ou depende do que a conta já
+ * aprendeu não pode herdar os dados da repetição anterior.
+ */
+export function freshUser(
+  scenario: 'inbox' | 'nfce-fallback' | 'a11y-reflow' | 'analysis',
+  info: Pick<TestInfo, 'project' | 'repeatEachIndex' | 'retry'>,
+): string {
+  const n = info.repeatEachIndex * 2 + info.retry;
+  if (n > 9) {
+    throw new Error(`freshUser: índice ${n} fora do seed.sql (0 a 9)`);
+  }
+  return `e2e-${scenario}-${info.project.name}-${n}@example.test`;
+}
 
 /**
  * Entra pelo formulário de teste do build E2E (Supabase local com e-mail e senha, tech §8.4). O usuário é da

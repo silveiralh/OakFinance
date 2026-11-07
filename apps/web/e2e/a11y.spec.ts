@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
-import { expect, login, test } from './fixtures/base';
+import { expect, freshUser, login, test } from './fixtures/base';
 
 // T-096: E12 completo (UX §8, WCAG 2.1 AA) — axe sem violações sérias ou críticas nas telas da UX §8, nos temas
 // claro e escuro com transparência sólida; sem rolagem horizontal de 360 a 1440 px (360 px = zoom de 200% numa
@@ -84,10 +84,17 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
-test('E12: de 360 a 1440 px, nenhuma tela rola na horizontal (1.4.10)', async ({ page }) => {
+test('E12: de 360 a 1440 px, nenhuma tela rola na horizontal (1.4.10)', async ({ page }, info) => {
   test.setTimeout(180_000);
-  await login(page, 'e2e-a@example.test');
-  await seed(page);
+  // conta própria por tentativa, com valores de 6 dígitos e textos longos já na primeira rodada: no nightly
+  // (--repeat-each=3) os totais acumulados do e2e-a faziam o resumo da T01 passar de 360 px
+  await login(page, freshUser('a11y-reflow', info));
+  const account = await seed(page);
+  await page.evaluate((a) => window.__oakE2E?.addIncome(a, 12345678, 'Renda a11y'), account);
+  await page.evaluate(([a, d]) => window.__oakE2E?.addExpense(a, 9876543, d), [
+    account,
+    'Supermercado com descrição bem comprida 1794060263797',
+  ] as [string, string]);
   const overflow: string[] = [];
   for (const width of [360, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
