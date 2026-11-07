@@ -155,7 +155,7 @@ flowchart LR
 | T-090 | Parser da NFC-e com páginas reais | T-089 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
 | T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | done |
 | T-092 | Alertas de limite e resumo semanal | T-091, T-059 | done |
-| T-093 | Preferências de notificação | T-092 | todo |
+| T-093 | Preferências de notificação | T-092 | done |
 | T-094 | Excluir conta | T-070, T-075 | todo |
 | T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | todo |
 | T-096 | Acessibilidade completa | T-095 | todo |
@@ -1350,7 +1350,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-093 — Preferências de notificação
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-44 | RN-86, RN-87, RN-93 | T-092 | não |
+| done | S4 | P | US-44 | RN-86, RN-87, RN-93 | T-092 | não |
 
 **Escopo:** S07 com liga/desliga e horário por tipo e janela de silêncio; tabela `reminders` sincronizada; mudanças valem a partir do próximo tick.
 

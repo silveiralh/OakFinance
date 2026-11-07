@@ -1,6 +1,6 @@
 // S07 — Lembretes (UX §3 S01, US-38): status da permissão deste aparelho, "Ativar lembretes" (só no toque),
 // textos de permissão negada por plataforma, guia de instalação no iPhone fora da Tela de Início, "Enviar
-// notificação de teste" e desativar. As preferências por tipo de lembrete chegam na T-093.
+// notificação de teste" e desativar; abaixo, as preferências por tipo e a janela de silêncio (T-093).
 import { Bell, BellOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
@@ -20,6 +20,7 @@ import {
   sendTestPush,
 } from '../../lib/push';
 import { Button, GlassCard, useToast } from '../../ui';
+import { ReminderPrefs } from './ReminderPrefs';
 
 function vapidKey(): string | null {
   try {
@@ -174,6 +175,7 @@ export function RemindersScreen({ environment }: { environment?: PushEnvironment
           </div>
         )}
       </GlassCard>
+      <ReminderPrefs />
     </section>
   );
 }
