@@ -34,13 +34,11 @@ export function IncomeToConfirm({
             {t('income.confirm.title', { descrição: row.description ?? '' })}
           </p>
           <div className="account-actions">
-            <Button size="sm" onClick={() => void update(row, 'posted')}>
-              {t('income.confirm.ok')}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => void navigate(`?editar=${row.id}`)}>
+            <Button onClick={() => void update(row, 'posted')}>{t('income.confirm.ok')}</Button>
+            <Button variant="ghost" onClick={() => void navigate(`?editar=${row.id}`)}>
               {t('income.confirm.changeDate')}
             </Button>
-            <Button variant="ghost" size="sm" onClick={() => void update(row, 'cancelled')}>
+            <Button variant="ghost" onClick={() => void update(row, 'cancelled')}>
               {t('income.confirm.wontCome')}
             </Button>
           </div>

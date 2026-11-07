@@ -42,6 +42,16 @@
   /* `.glass` (base.css) põe position: relative; a barra de abas fica fixa embaixo */
   position: fixed;
 }
+/* T-096: a pílula fica preta mesmo quando o `.glass[data-level]` (base.css) chega depois no bundle (os rótulos
+   claros das abas sobre fundo branco reprovavam o contraste) */
+.shell .shell-tabbar.tabbar.glass {
+  --_bg: var(--surface-dark);
+}
+/* T-096 (2.4.7): o anel de foco vence as sombras de card e de variante em qualquer controle da moldura */
+.shell :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
 .shell .shell-tabbar .tab-center {
   margin: 0 var(--space-1);
 }

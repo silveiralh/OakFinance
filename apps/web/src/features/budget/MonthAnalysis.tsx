@@ -53,7 +53,8 @@ function Block({
       ) : (
         <>
           {asTable ? table : <div aria-hidden="true">{chart}</div>}
-          <Button size="sm" variant="ghost" onClick={() => setAsTable((v) => !v)}>
+          {/* T-096: alvo de 48 px (2.5.5) */}
+          <Button variant="ghost" onClick={() => setAsTable((v) => !v)}>
             {asTable ? t('analysis.chart') : t('analysis.table')}
           </Button>
         </>

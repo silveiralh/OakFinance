@@ -175,24 +175,19 @@ export function ReserveScreen({ today: fixedToday }: { today?: ISODate }) {
                 {t('reserve.suggestionChanged', { valor: money(view.suggestion.targetCents) })}
               </p>
               <div className="reserve-actions">
-                <Button size="sm" onClick={() => void saveGoal(null)}>
-                  {t('reserve.useSuggestion')}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => void saveGoal(view.goal.target_cents)}
-                >
+                <Button onClick={() => void saveGoal(null)}>{t('reserve.useSuggestion')}</Button>
+                <Button variant="ghost" onClick={() => void saveGoal(view.goal.target_cents)}>
                   {t('reserve.keepMine')}
                 </Button>
               </div>
             </div>
           )}
           <div className="reserve-actions">
-            <Button size="sm" variant="secondary" onClick={() => open('goal')}>
+            {/* T-096: alvos de 48 px (UX §8, 2.5.5) */}
+            <Button variant="secondary" onClick={() => open('goal')}>
               {t('reserve.adjustGoal')}
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => open('saved')}>
+            <Button variant="ghost" onClick={() => open('saved')}>
               {t('reserve.editSaved')}
             </Button>
           </div>

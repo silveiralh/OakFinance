@@ -86,6 +86,10 @@
   background: transparent;
   color: var(--text-primary);
 }
+/* 2.4.7 (T-096): o anel de foco vence a sombra das variantes */
+.btn[data-variant]:focus-visible {
+  box-shadow: var(--focus-ring);
+}
 @media (hover: hover) {
   .btn[data-variant="ghost"]:hover:not([aria-disabled="true"]) {
     background: var(--surface-pressed);
