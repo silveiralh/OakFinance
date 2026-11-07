@@ -137,6 +137,16 @@ export const ptBR = {
   'restore.confirmTitle': 'Substituir todos os meus dados?',
   'restore.confirmBody':
     'Os dados atuais desta conta serão trocados pelos do backup de {data}. Isso não pode ser desfeito.',
+  'deleteAccount.title': 'Excluir minha conta e dados',
+  'deleteAccount.hint':
+    'Apaga do aparelho e da nuvem tudo o que é seu. Se quiser guardar os dados, baixe um backup antes.',
+  'deleteAccount.pluggy': 'Se você conectou bancos, revogue também o acesso pelo Meu Pluggy.',
+  'deleteAccount.backup': 'Baixar backup antes de excluir',
+  'deleteAccount.cta': 'Excluir minha conta',
+  'deleteAccount.typeLabel': 'Digite EXCLUIR para confirmar',
+  'deleteAccount.confirm': 'Excluir conta',
+  'deleteAccount.offline': 'Sem conexão. Para excluir a conta é preciso estar com internet.',
+  'deleteAccount.failed': 'Não foi possível excluir a conta agora. Tente novamente.',
   'restore.typeLabel': 'Digite RESTAURAR para confirmar',
   'restore.word': 'RESTAURAR',
   'restore.confirm': 'Substituir todos os meus dados',

@@ -156,7 +156,7 @@ flowchart LR
 | T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | done |
 | T-092 | Alertas de limite e resumo semanal | T-091, T-059 | done |
 | T-093 | Preferências de notificação | T-092 | done |
-| T-094 | Excluir conta | T-070, T-075 | todo |
+| T-094 | Excluir conta | T-070, T-075 | done |
 | T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | todo |
 | T-096 | Acessibilidade completa | T-095 | todo |
 | T-097 | Desempenho | T-095 | todo |
@@ -1361,7 +1361,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-094 — Excluir conta
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-61 | RN-102 | T-070, T-075 | não |
+| done | S4 | P | US-61 | RN-102 | T-070, T-075 | não |
 
 **Escopo:** função `account-delete` (`{confirm:'EXCLUIR'}`); oferece o backup antes; desconecta os bancos (`DELETE /items`); orienta a revogar no Meu Pluggy; exclusão em cascata; logout.
 
