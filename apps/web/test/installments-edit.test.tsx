@@ -228,15 +228,16 @@ describe('T02 da parcela (UX §3 T02)', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
     const dialog = await screen.findByTestId('series-delete');
     expect(dialog).toHaveTextContent('Compra em 10x. O que deseja fazer?');
+    // o <dialog> entra no DOM antes do showModal(): espera os botões ficarem acessíveis
     expect(
-      within(dialog).getByRole('button', { name: 'Cancelar parcelas restantes' }),
+      await within(dialog).findByRole('button', { name: 'Cancelar parcelas restantes' }),
     ).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole('button', { name: 'Apagar a compra inteira' }));
     const warning = await screen.findByTestId('series-paid-warning');
     expect(warning).toHaveTextContent(
       'A fatura de dez/2026, já paga, vai deixar de mostrar R$ 100,00.',
     );
-    fireEvent.click(within(warning).getByRole('button', { name: 'Apagar mesmo assim' }));
+    fireEvent.click(await within(warning).findByRole('button', { name: 'Apagar mesmo assim' }));
     await waitFor(async () =>
       expect(
         (await db.transactions.where('series_id').equals(SERIES).toArray()).every(

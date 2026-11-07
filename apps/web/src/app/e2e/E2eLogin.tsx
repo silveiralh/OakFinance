@@ -22,10 +22,17 @@ export function E2eLogin() {
     if (result.error) {
       const signUp = await client.auth.signUp({ email, password: E2E_PASSWORD });
       if (signUp.error && !/registered/i.test(signUp.error.message)) {
-        setError(signUp.error.message);
-        return;
+        // dois projetos do Playwright criando o mesmo usuário ao mesmo tempo: um deles perde a corrida do
+        // cadastro (erro de banco); o usuário já existe, então tenta entrar de novo antes de desistir
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        result = await client.auth.signInWithPassword({ email, password: E2E_PASSWORD });
+        if (result.error) {
+          setError(signUp.error.message);
+          return;
+        }
+      } else {
+        result = await client.auth.signInWithPassword({ email, password: E2E_PASSWORD });
       }
-      result = await client.auth.signInWithPassword({ email, password: E2E_PASSWORD });
     }
     if (result.error) {
       setError(result.error.message);

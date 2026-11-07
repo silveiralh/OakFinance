@@ -131,7 +131,7 @@ flowchart LR
 | T-066 | Exportar lançamentos em CSV | T-043 | done |
 | T-067 | Estados vazios e erros completos | T-065 | done |
 | T-068 | Tema escuro e reduzir movimento | T-029 | done |
-| T-069 | Análise do mês no computador | T-059 | todo |
+| T-069 | Análise do mês no computador | T-059 | done |
 | T-070 | Backup e restauração | T-066 | todo |
 | T-071 | Diagnóstico, telemetria e saída | T-045 | todo |
 | T-072 | Conector Pluggy e mock | T-011, T-019 | todo |
@@ -1070,7 +1070,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-069 — Análise do mês no computador
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-35 | RN-45, RN-46 | T-059 | não |
+| done | S2 | M | US-35 | RN-45, RN-46 | T-059 | não |
 
 **Escopo:** em telas ≥ 1024 px, os 5 blocos da US-35, cada um com "Ver como tabela"; seletor de mês; mesmo modo de cálculo.
 
