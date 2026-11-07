@@ -102,9 +102,11 @@ export function ImportScreen() {
         : data.cards[0]
           ? { kind: 'card' as const, id: data.cards[0].id }
           : null;
+      // perfis lidos agora do banco (a consulta ao vivo pode não ter visto o salvo pela importação anterior)
+      const settings = (await user.db.profiles.toCollection().first())?.settings ?? null;
       const { profile, detected } = initialProfile(
         parsed.rows[0] ?? [],
-        savedProfiles(data.settings),
+        savedProfiles(settings),
         first,
         parsed.delimiter,
       );
@@ -200,7 +202,8 @@ export function ImportScreen() {
         }
         user.engine.notifyWrite();
         const importId = plan.importRow.id;
-        setLoaded(null);
+        // só limpa a prévia desta importação: um arquivo escolhido enquanto ela terminava fica na tela
+        setLoaded((current) => (current === loaded ? null : current));
         showToast({
           message: t('import.done', { n: result.value }),
           tone: 'success',
