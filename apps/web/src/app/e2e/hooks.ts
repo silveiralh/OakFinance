@@ -34,7 +34,12 @@ declare global {
         reviewState: 'new' | 'suggested',
       ): Promise<string>;
       /** Despesa avulsa de hoje na conta (E06/US-14). */
-      addExpense(accountId: string, cents: number, description: string): Promise<string>;
+      addExpense(
+        accountId: string,
+        cents: number,
+        description: string,
+        date?: string,
+      ): Promise<string>;
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
       setAmount(id: string, cents: number): Promise<void>;
       amountOf(id: string): Promise<number | null>;
@@ -129,7 +134,7 @@ export function installE2eHooks(user: UserSession): () => void {
       user.engine.notifyWrite();
       return id;
     },
-    async addExpense(accountId: string, cents: number, description: string) {
+    async addExpense(accountId: string, cents: number, description: string, date?: string) {
       const id = newId();
       const now = new Date().toISOString();
       const row = {
@@ -138,7 +143,7 @@ export function installE2eHooks(user: UserSession): () => void {
         id,
         user_id: user.userId,
         amount_cents: cents,
-        occurred_on: todayIn('America/Sao_Paulo', new Date()),
+        occurred_on: date ?? todayIn('America/Sao_Paulo', new Date()),
         description,
         account_id: accountId,
         created_at: now,

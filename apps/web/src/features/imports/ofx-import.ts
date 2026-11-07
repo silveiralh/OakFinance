@@ -354,7 +354,7 @@ export async function undoImport(
       for (const t of created) {
         if (t.duplicate_of) {
           const manual = await db.transactions.get(t.duplicate_of);
-          if (manual && manual.matched_external) {
+          if (manual?.matched_external) {
             await putInTransaction(
               db,
               'transactions',
