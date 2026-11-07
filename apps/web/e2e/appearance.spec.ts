@@ -11,7 +11,7 @@ test('E12: reducedMotion desliga as animações e o tema Escuro fica salvo no ap
   const html = page.locator('html');
   await expect(html).toHaveAttribute('data-motion', 'reduced');
 
-  const button = page.locator('.btn').first();
+  const button = page.getByRole('button').filter({ visible: true }).first();
   await expect(button).toBeVisible();
   const style = await button.evaluate((el) => {
     const s = getComputedStyle(el);
