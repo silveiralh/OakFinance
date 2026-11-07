@@ -351,4 +351,4 @@
 | 07/11/2026 | T-095 (triagem) | PR #116 | done | issue #115 `regressão: nightly`: `freshUser` por cenário e tentativa (US-49, E09, US-35, E12) e resumo e linhas da T01 sem rolagem horizontal a 360 px |
 | 07/11/2026 | T-097 | PR #114 | done | perf.spec.ts com 5.000 lançamentos: recálculo < 200 ms, painel, lista e busca < 1,5 s e gravação < 200 ms com o app parado; risco da gravação durante o sync no §5 |
 | 07/11/2026 | T-098 | PR #117 | done | roteiro de restauração do dump cifrado (`restore-backup.sh`, só banco local, ensaio sintético), alertas de keepalive/ops_health/gitleaks conferidos, orientações pós-MVP (60 dias) no §5 |
-| 07/11/2026 | T-099 | PR #n | done | RELEASE.md (DoD 1–16, 65 histórias, checklist M4, pendências), README final, sem LICENSE (D-072); nenhuma tarefa liberada depois dela |
+| 07/11/2026 | T-099 | PR #118 | done | RELEASE.md (DoD 1–16, 65 histórias, checklist M4, pendências), README final, sem LICENSE (D-072); nenhuma tarefa liberada depois dela |
