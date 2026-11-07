@@ -130,7 +130,7 @@ flowchart LR
 | T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | done |
 | T-066 | Exportar lançamentos em CSV | T-043 | done |
 | T-067 | Estados vazios e erros completos | T-065 | done |
-| T-068 | Tema escuro e reduzir movimento | T-029 | todo |
+| T-068 | Tema escuro e reduzir movimento | T-029 | done |
 | T-069 | Análise do mês no computador | T-059 | todo |
 | T-070 | Backup e restauração | T-066 | todo |
 | T-071 | Diagnóstico, telemetria e saída | T-045 | todo |
@@ -1059,7 +1059,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-068 — Tema escuro e reduzir movimento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-58 | — | T-029 | não |
+| done | S2 | P | US-58 | — | T-029 | não |
 
 **Escopo:** S08 (tema, transparência, movimento, "Abrir com valores ocultos"); atributos `data-*` persistidos; com movimento reduzido, só fades.
 

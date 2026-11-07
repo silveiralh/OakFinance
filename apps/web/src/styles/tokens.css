@@ -380,6 +380,17 @@
   --motion-duration-base: var(--motion-duration-fade);
   --motion-duration-slow: var(--motion-duration-fade);
 }
+/* US-58 (T-068): nada se desloca nem gira; sobram só mudanças de opacidade e de cor */
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  /* biome-ignore lint/complexity/noImportantStyles: movimento reduzido precisa vencer as regras de cada componente (US-58) */
+  animation: none !important;
+  /* biome-ignore lint/complexity/noImportantStyles: movimento reduzido precisa vencer as regras de cada componente (US-58) */
+  transition-property: opacity, color, background-color, border-color !important;
+  /* biome-ignore lint/complexity/noImportantStyles: movimento reduzido precisa vencer as regras de cada componente (US-58) */
+  scroll-behavior: auto !important;
+}
 
 /* ==========================================================
    BASE

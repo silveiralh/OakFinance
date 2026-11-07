@@ -91,6 +91,12 @@ export function setEnvironmentPrefs(patch: EnvironmentPrefs): Environment {
   if (next.values) {
     root.setAttribute('data-values', next.values);
   }
+  if (next.glass === 'solid') {
+    root.setAttribute('data-glass', 'solid');
+  }
+  if (next.motion === 'reduced' || next.motion === 'full') {
+    root.setAttribute('data-motion', next.motion);
+  }
   return readEnvironment(root);
 }
 

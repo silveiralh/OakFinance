@@ -201,7 +201,8 @@ describe('S03 — editar e arquivar (US-11)', () => {
     fireEvent.click(within(sheet).getByRole('button', { name: 'Salvar alterações' }));
     const dialog = await screen.findByTestId('card-move-dialog');
     expect(dialog).toHaveTextContent('6 itens podem mudar de fatura');
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Confirmar' }));
+    // o <dialog> entra no DOM antes de abrir (showModal no efeito): espera o botão ficar acessível
+    fireEvent.click(await within(dialog).findByRole('button', { name: 'Confirmar' }));
     await waitFor(async () => expect((await db.cards.get('a'))?.closing_day).toBe(8));
     expect(await screen.findByText('Cartão atualizado.')).toBeInTheDocument();
   });

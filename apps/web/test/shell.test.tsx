@@ -80,7 +80,7 @@ describe('rotas do UX §2.1 e §3', () => {
       ]),
     );
     const extra = Object.keys(shellText.screens).filter((id) => !spec.has(id));
-    expect(extra).toEqual(['S03', 'S04', 'S05', 'S06', 'S07', 'S10', 'I06']);
+    expect(extra).toEqual(['S03', 'S04', 'S05', 'S06', 'S07', 'S08', 'S10', 'I06']);
     for (const id of extra) {
       expect(shellText.screens[id as ScreenId], id).toBe(subscreens.get(id));
     }
@@ -89,6 +89,7 @@ describe('rotas do UX §2.1 e §3', () => {
     expect(table.get('S05')).toBe('/ajustes/renda');
     expect(table.get('S06')).toBe('/ajustes/calculo');
     expect(table.get('S07')).toBe('/ajustes/lembretes');
+    expect(table.get('S08')).toBe('/ajustes/aparencia');
     expect(table.get('S10')).toBe('/ajustes/dados');
     expect(table.get('I06')).toBe('/ajustes/regras');
     expect(
