@@ -205,3 +205,58 @@ describe('I03 com CSV (US-53)', () => {
     expect(imported).toHaveLength(2);
   });
 });
+
+describe('I03: segundo arquivo logo depois de importar (E08)', () => {
+  const GENERIC =
+    'Dt;Hist;Vlr\n03/11/2026;MERCADO EXEMPLO;-45,90\n04/11/2026;SALARIO EXEMPLO;3000,00\n';
+  const csvFile = (text: string, name: string) => {
+    const bytes = new TextEncoder().encode(text);
+    const file = new File([bytes], name);
+    Object.defineProperty(file, 'arrayBuffer', {
+      value: () => Promise.resolve(bytes.slice().buffer),
+    });
+    return file;
+  };
+
+  it('US-53: o arquivo escolhido enquanto a importação anterior termina mantém a prévia e usa o mapeamento salvo', async () => {
+    const auth = fakeAuth();
+    const db = dbOf(auth);
+    await db.accounts.put(
+      makeRow('accounts', { id: 'bb', name: 'Banco E08', deleted_at: null, archived_at: null }),
+    );
+    await db.profiles.put(
+      makeRow('profiles', { id: auth.user?.userId ?? '', settings: {}, deleted_at: null }),
+    );
+    const router = createMemoryRouter([{ path: '/', element: <ImportScreen /> }], {
+      initialEntries: ['/'],
+    });
+    render(
+      <AuthContext.Provider value={auth}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthContext.Provider>,
+    );
+    fireEvent.change(await screen.findByTestId('import-file'), {
+      target: { files: [csvFile(GENERIC, 'banco-a.csv')] },
+    });
+    expect((await screen.findByTestId('import-summary')).textContent).toContain('2 lançamentos');
+    fireEvent.click(screen.getByRole('button', { name: 'Importar 2 lançamentos' }));
+    // como no E08: o próximo arquivo entra assim que "Importações recentes" aparece
+    await screen.findByTestId('import-recent');
+    fireEvent.change(screen.getByTestId('import-file'), {
+      target: { files: [csvFile(`${GENERIC}05/11/2026;PADARIA EXEMPLO;-7,00\n`, 'banco-b.csv')] },
+    });
+    expect((await screen.findByTestId('csv-detected')).textContent).toBe(
+      'Formato detectado: Outro banco',
+    );
+    await waitFor(() =>
+      expect(screen.getByTestId('import-summary').textContent).toBe(
+        '3 lançamentos · 2 já existem (serão ignorados) · 0 parecidos com lançamentos seus (vão para conferência)',
+      ),
+    );
+    // a prévia continua depois de a importação anterior terminar
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(screen.getByTestId('import-summary')).toBeDefined();
+  });
+});
