@@ -142,7 +142,7 @@ flowchart LR
 | T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
 | T-078 | Conciliador no aparelho | T-074, T-021, T-033 | done |
 | T-079 | Conferir importados (I05) | T-078, T-056 | done |
-| T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | todo |
+| T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | done |
 | T-081 | Desfazer conciliação | T-079 | todo |
 | T-082 | Fechar o mês (P04) | T-079, T-059 | todo |
 | T-083 | Validação real da Pluggy | T-077 | todo |
@@ -1198,7 +1198,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-080 — Parcelas, contas fixas e pagamentos do banco
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-50 | RN-19, RN-69..RN-71 | T-079, T-053, T-055 | não |
+| done | S3 | M | US-50 | RN-19, RN-69..RN-71 | T-079, T-053, T-055 | não |
 
 **Escopo:** o runner passa a usar `linkImportedInstallment`, cria série nova ou parcial ("importada parcialmente"), concilia recorrência variável por `match_pattern` (preenchido na 1ª conciliação manual), aplica `detectInvoicePayments` e transferências sugeridas, e fixa a fatura informada pelo banco.
 
