@@ -1,7 +1,7 @@
 // I03 — Importar OFX (UX §3 I03; US-52, RN-65, RN-75, RN-78): escolher (ou arrastar, no computador) o arquivo,
 // o destino (lembrado pela conta do arquivo), a prévia e "Importar {n} lançamentos". Funciona offline: tudo é lido
 // e gravado no aparelho e sincroniza depois. As importações das últimas 24 h podem ser desfeitas.
-import type { ISODate, OfxStatement } from '@oakfinance/domain';
+import { type CsvProfile, type ISODate, mapCsvRows, type OfxStatement } from '@oakfinance/domain';
 import { FileUp } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useAuth } from '../../app/auth';
@@ -9,6 +9,9 @@ import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { Button, GlassCard, Select, useToast } from '../../ui';
+import { ColumnMapper } from './ColumnMapper';
+import { tokenizeCsv } from './csv-parse';
+import { initialProfile, saveCsvProfile, savedProfiles } from './csv-profile';
 import {
   commitImport,
   type Destination,
@@ -20,12 +23,14 @@ import {
   undoable,
   undoImport,
 } from './ofx-import';
-import { parseFile } from './parse-file';
+import { looksLikeOfx, parseCsvFile, parseFile } from './parse-file';
 
 interface Loaded {
   fileName: string;
   sha: string;
-  statement: OfxStatement;
+  /** OFX: o extrato; CSV: o texto, as linhas e o perfil do assistente de colunas. */
+  statement: OfxStatement | null;
+  csv: { text: string; rows: string[][]; profile: CsvProfile; detected: string | null } | null;
   already: string | null;
 }
 
@@ -57,6 +62,7 @@ export function ImportScreen() {
             (c) => c.deleted_at === null && c.archived_at === null,
           ),
           imports: await user.db.imports.toArray(),
+          settings: (await user.db.profiles.toCollection().first())?.settings ?? null,
         })
       : null,
     [user],
@@ -80,14 +86,48 @@ export function ImportScreen() {
     setLoaded(null);
     setAnyway(false);
     const bytes = new Uint8Array(await file.arrayBuffer());
+    const sha = await sha256Hex(bytes);
+    const before = await previousImport(user.db, sha);
+    const already = before
+      ? formatDateBR(before.created_at.slice(0, 10) as ISODate).slice(0, 5)
+      : null;
+    if (!looksLikeOfx(file.name, bytes)) {
+      const parsed = await parseCsvFile(bytes);
+      if (!parsed.ok) {
+        setError(parsed.code === 'EMPTY' ? t('import.empty') : t('import.badFile'));
+        return;
+      }
+      const first = data.accounts[0]
+        ? { kind: 'account' as const, id: data.accounts[0].id }
+        : data.cards[0]
+          ? { kind: 'card' as const, id: data.cards[0].id }
+          : null;
+      const { profile, detected } = initialProfile(
+        parsed.rows[0] ?? [],
+        savedProfiles(data.settings),
+        first,
+        parsed.delimiter,
+      );
+      const preferred =
+        profile.target === 'card' && data.cards[0]
+          ? { kind: 'card' as const, id: data.cards[0].id }
+          : first;
+      setDest(preferred ? encode(preferred) : '');
+      setLoaded({
+        fileName: file.name,
+        sha,
+        statement: null,
+        csv: { text: parsed.text, rows: parsed.rows, profile, detected },
+        already,
+      });
+      return;
+    }
     const parsed = await parseFile(bytes);
     if (!parsed.ok) {
       setError(parsed.code === 'EMPTY' ? t('import.empty') : t('import.badFile'));
       return;
     }
     const statement = parsed.statements[0] as OfxStatement;
-    const sha = await sha256Hex(bytes);
-    const before = await previousImport(user.db, sha);
     const remembered = await rememberedDestination(user.db, statement.acctIdMasked);
     const fallback =
       statement.kind === 'creditcard'
@@ -95,12 +135,17 @@ export function ImportScreen() {
         : data.accounts[0] && { kind: 'account' as const, id: data.accounts[0].id };
     const chosen = remembered ?? fallback ?? null;
     setDest(chosen ? encode(chosen) : '');
-    setLoaded({
-      fileName: file.name,
-      sha,
-      statement,
-      already: before ? formatDateBR(before.created_at.slice(0, 10) as ISODate).slice(0, 5) : null,
-    });
+    setLoaded({ fileName: file.name, sha, statement, csv: null, already });
+  };
+
+  const setProfile = (profile: CsvProfile) => {
+    if (loaded?.csv) {
+      const rows =
+        profile.delimiter === loaded.csv.profile.delimiter
+          ? loaded.csv.rows
+          : tokenizeCsv(loaded.csv.text, profile.delimiter).rows;
+      setLoaded({ ...loaded, csv: { ...loaded.csv, rows, profile } });
+    }
   };
 
   const destination = decode(dest);
@@ -108,9 +153,11 @@ export function ImportScreen() {
     if (!loaded || !destination) {
       return null;
     }
+    const csv = loaded.csv ? mapCsvRows(loaded.csv.rows, loaded.csv.profile) : null;
     return planImport({
       userId: user.userId,
-      statement: loaded.statement,
+      ...(loaded.statement ? { statement: loaded.statement } : {}),
+      ...(csv ? { csv: { rows: csv.rows, profileId: loaded.csv?.profile.id ?? '' } } : {}),
       destination,
       fileName: loaded.fileName,
       sha: loaded.sha,
@@ -129,8 +176,11 @@ export function ImportScreen() {
       if (!plan || !loaded) {
         return;
       }
-      const result = await commitImport(user.db, plan, loaded.statement.acctIdMasked);
+      const result = await commitImport(user.db, plan, loaded.statement?.acctIdMasked ?? null);
       if (result.ok) {
+        if (loaded.csv && destination) {
+          await saveCsvProfile(user.db, loaded.csv.profile, destination);
+        }
         user.engine.notifyWrite();
         const importId = plan.importRow.id;
         setLoaded(null);
@@ -166,7 +216,7 @@ export function ImportScreen() {
           <input
             ref={input}
             type="file"
-            accept=".ofx,application/x-ofx"
+            accept=".ofx,.csv,text/csv,application/x-ofx"
             hidden
             onChange={(event) => void choose(event.target.files?.[0])}
             data-testid="import-file"
@@ -182,6 +232,8 @@ export function ImportScreen() {
           )}
         </GlassCard>
       </div>
+
+      {loaded?.csv && <ColumnMapper csv={loaded.csv} onChange={setProfile} />}
 
       {loaded && (
         <ImportPreviewCard
@@ -250,7 +302,7 @@ function ImportPreviewCard(props: {
   const { loaded, options, dest } = props;
   const preview = useLive(
     () => props.planFor().then((p) => p?.preview ?? null),
-    [dest, loaded.sha],
+    [dest, loaded.sha, loaded.csv?.profile, loaded.csv?.rows],
   );
   if (options.length === 0) {
     return (

@@ -2569,6 +2569,23 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `import.undone` | Importação desfeita. |
 | `import.recent` | Importações recentes |
 | `import.recentItem` | {arquivo} · {n} lançamentos · {data} |
+| `csv.detected` | Formato detectado: {nome} |
+| `csv.delimiter` | Separador |
+| `csv.comma` | Vírgula |
+| `csv.semicolon` | Ponto e vírgula |
+| `csv.tab` | Tabulação |
+| `csv.date` | Coluna da data |
+| `csv.dateFormat` | Formato da data |
+| `csv.amount` | Coluna do valor |
+| `csv.decimal` | Separador decimal |
+| `csv.sign` | Sinal do valor |
+| `csv.signNegative` | Despesa com sinal negativo |
+| `csv.signPositive` | Despesa com valor positivo |
+| `csv.description` | Coluna da descrição |
+| `csv.externalId` | Identificador (opcional) |
+| `csv.none` | Nenhuma |
+| `csv.preview` | Prévia das 5 primeiras linhas |
+| `csv.errors` | {n} linhas com erro ficam de fora. |
 | `nfce.aim` | Aponte para o QR code da nota |
 | `nfce.photo` / `.manual` / `.torch` | Escolher foto / Digitar chave / Lanterna |
 | `nfce.use` | Usar estes dados |

@@ -111,7 +111,9 @@ function baseTx(userId: string, nowIso: string): Omit<TxRow, 'id'> {
 
 export interface PlanInput {
   userId: string;
-  statement: OfxStatement;
+  /** OFX: o extrato (as linhas saem de `ofxToImportRows`). CSV: as linhas já mapeadas e o período. */
+  statement?: OfxStatement;
+  csv?: { rows: ImportedRow[]; profileId: string };
   destination: Destination;
   fileName: string;
   sha: string;
@@ -133,10 +135,15 @@ export function planImport(input: PlanInput): ImportPlan {
     input.destination.kind === 'account'
       ? { accountId: input.destination.id }
       : { cardId: input.destination.id };
-  const rows: ImportedRow[] = ofxToImportRows(input.statement, target);
+  const source: 'ofx' | 'csv' = input.csv ? 'csv' : 'ofx';
+  const rows: ImportedRow[] = input.csv
+    ? input.csv.rows
+    : input.statement
+      ? ofxToImportRows(input.statement, target)
+      : [];
   const alive = input.txs.filter((r) => r.deleted_at === null);
   const known = new Set(
-    alive.filter((r) => r.source === 'ofx' && r.external_id).map((r) => r.external_id as string),
+    alive.filter((r) => r.source === source && r.external_id).map((r) => r.external_id as string),
   );
   const cardRow =
     input.destination.kind === 'card'
@@ -195,7 +202,8 @@ export function planImport(input: PlanInput): ImportPlan {
       card_id: card ? card.id : null,
       invoice_id: invoiceId,
       external_id: row.externalKey,
-      external_meta: { provider: 'ofx', ...row.extra },
+      source,
+      external_meta: { provider: source, ...row.extra },
       import_id: importId,
     });
   }
@@ -242,20 +250,22 @@ export function planImport(input: PlanInput): ImportPlan {
     suggested,
     existing,
   };
-  const st = input.statement;
+  const dates = rows.map((r) => r.occurredOn).sort();
+  const periodStart = input.statement?.startOn ?? dates[0] ?? null;
+  const periodEnd = input.statement?.endOn ?? dates.at(-1) ?? null;
   return {
     importRow: {
       id: importId,
       user_id: input.userId,
-      source: 'ofx',
+      source,
       file_name: input.fileName.slice(0, 200),
       file_sha256: input.sha,
-      csv_profile: null,
+      csv_profile: input.csv?.profileId ?? null,
       account_id: input.destination.kind === 'account' ? input.destination.id : null,
       card_id: input.destination.kind === 'card' ? input.destination.id : null,
       status: 'committed',
-      period_start: st.startOn,
-      period_end: st.endOn,
+      period_start: periodStart,
+      period_end: periodEnd,
       stats: {
         total: preview.total,
         new: preview.fresh,
