@@ -128,7 +128,7 @@ flowchart LR
 | T-063 | Ativar notificações push | T-062, T-030 | done |
 | T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | done |
 | T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | done |
-| T-066 | Exportar lançamentos em CSV | T-043 | todo |
+| T-066 | Exportar lançamentos em CSV | T-043 | done |
 | T-067 | Estados vazios e erros completos | T-065 | todo |
 | T-068 | Tema escuro e reduzir movimento | T-029 | todo |
 | T-069 | Análise do mês no computador | T-059 | todo |
@@ -1037,7 +1037,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-066 — Exportar lançamentos em CSV
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | P | US-59 | RN-01, RN-02 | T-043 | não |
+| done | S2 | P | US-59 | RN-01, RN-02 | T-043 | não |
 
 **Escopo:** S10 exportação por período: arquivo `lancamentos_AAAA-MM_a_AAAA-MM.csv`, UTF-8 com BOM, separador `;`, decimal `,`, as 13 colunas e os sinais da US-59; período vazio mostra "Não há lançamentos nesse período".
 

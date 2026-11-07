@@ -124,6 +124,11 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
     load: () => import('../features/settings/RemindersScreen').then((m) => m.RemindersScreen),
   },
   {
+    path: '/ajustes/dados',
+    handle: { screen: 'S10', nav: 'settings' },
+    load: () => import('../features/settings/DataScreen').then((m) => m.DataScreen),
+  },
+  {
     path: '/ajustes/regras',
     handle: { screen: 'I06', nav: 'settings' },
     load: () => import('../features/rules/screens').then((m) => m.RulesScreen),
