@@ -18,6 +18,7 @@ import { movedRow } from '../cards/model';
 import { movePlan } from '../cards/move';
 import { LinkActions } from '../inbox/LinkActions';
 import { SeriesActions } from '../installments/SeriesActions';
+import { NfceTxStatus } from '../nfce/NfcePending';
 import { buildInvoice } from '../quick-entry/model';
 import { CategoryCorrection } from '../rules/CategoryCorrection';
 import {
@@ -285,6 +286,7 @@ export function TransactionDetailScreen({
           ))}
         </dl>
       </GlassCard>
+      {tx.nfce_receipt_id && <NfceTxStatus tx={tx} />}
       <LinkActions tx={tx} />
       <div className="detail-actions">
         {tx.series_id ? (

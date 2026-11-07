@@ -36,6 +36,10 @@ const BudgetAlerts = lazy(() =>
 );
 // tech §6.4.2: renova a inscrição de push ao abrir (fora do bundle inicial)
 const PushKeeper = lazy(() => import('./PushKeeper').then((m) => ({ default: m.PushKeeper })));
+// US-55: relê as notas NFC-e lidas sem rede quando ela volta (fora do bundle inicial)
+const NfceRetryKeeper = lazy(() =>
+  import('../features/nfce/NfcePending').then((m) => ({ default: m.NfceRetryKeeper })),
+);
 const FabMenu = lazy(() =>
   import('../features/quick-entry/QuickEntryHost').then((m) => ({ default: m.FabMenu })),
 );
@@ -117,6 +121,7 @@ export function AppShell() {
       <Suspense fallback={null}>
         <BudgetAlerts />
         <PushKeeper />
+        <NfceRetryKeeper />
       </Suspense>
       <div className="shell" data-testid="app-shell">
         <a className="skip-link" href="#conteudo">

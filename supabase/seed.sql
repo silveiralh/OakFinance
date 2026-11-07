@@ -19,5 +19,9 @@ insert into app.allowed_emails (email) values
   -- importar OFX (I03, T-084): idem (o mesmo arquivo nos 3 navegadores daria "já foi importado")
   ('e2e-import-android@example.test'),
   ('e2e-import-iphone@example.test'),
-  ('e2e-import-desktop@example.test')
+  ('e2e-import-desktop@example.test'),
+  -- CSV (E08, T-086): separado do E07, que roda em paralelo e sobrescrevia o perfil CSV salvo na conta
+  ('e2e-csv-android@example.test'),
+  ('e2e-csv-iphone@example.test'),
+  ('e2e-csv-desktop@example.test')
 on conflict do nothing;
