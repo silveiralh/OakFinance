@@ -84,7 +84,13 @@ test('E15: nova versão → "Atualizar" → recarrega sem perder o lançamento e
   await controlledBySw(page, '/lancamentos');
   // o vite preview devolve um sw.js com outros bytes para este contexto (cookie), como num deploy novo
   await context.addCookies([{ name: 'oak-sw-bump', value: '1', url: 'http://localhost:4173' }]);
-  await page.getByRole('button', { name: 'Novo lançamento' }).click();
+  // o + da moldura (o vazio da T01 também tem "Novo lançamento", UX §6.5)
+  await page
+    .getByRole('navigation', { name: 'Navegação principal' })
+    .getByRole('button', { name: 'Novo lançamento' })
+    .filter({ visible: true })
+    .first()
+    .click();
   await expect(page).toHaveURL('/lancamentos?novo=despesa');
   await page.evaluate(() => {
     (window as Window & { __marca?: number }).__marca = 1;

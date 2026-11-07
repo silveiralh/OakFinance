@@ -49,7 +49,13 @@ test('o + abre o lançamento rápido como sheet sobre a tela atual (?novo=despes
 }) => {
   await login(page);
   await page.goto('/lancamentos');
-  await page.getByRole('button', { name: 'Novo lançamento' }).click();
+  // o + da moldura (o vazio da T01 também tem "Novo lançamento", UX §6.5)
+  await page
+    .getByRole('navigation', { name: 'Navegação principal' })
+    .getByRole('button', { name: 'Novo lançamento' })
+    .filter({ visible: true })
+    .first()
+    .click();
   await expect(page).toHaveURL('/lancamentos?novo=despesa');
 });
 
