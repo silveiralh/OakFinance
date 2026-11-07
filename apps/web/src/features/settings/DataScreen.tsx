@@ -1,5 +1,6 @@
 // S10 — Dados e privacidade (UX §3 S01): "Exportar lançamentos (CSV)" com o período em meses (US-59), "Baixar
-// backup" e "Restaurar backup" com a confirmação digitando RESTAURAR (US-60). A exclusão da conta chega depois.
+// backup" e "Restaurar backup" com a confirmação digitando RESTAURAR (US-60) e "Excluir minha conta e dados"
+// (US-61, T-094).
 import { type ISODate, monthLabel, monthOf, type YearMonth } from '@oakfinance/domain';
 import { DatabaseBackup, FileDown, FileUp } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -17,6 +18,7 @@ import {
   type RestoreSummary,
   restoreBackup,
 } from './backup';
+import { DeleteAccountCard } from './DeleteAccountCard';
 import { downloadFile, exportTransactions, monthOptions } from './export';
 
 /** "Restaurado: 120 lançamentos, 3 contas, …" (US-60: resumo do que foi restaurado). */
@@ -263,6 +265,7 @@ export function DataScreen({
         </Button>
       </GlassCard>
       <RestoreCard />
+      <DeleteAccountCard onBackup={backup} />
     </section>
   );
 }

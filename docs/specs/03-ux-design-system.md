@@ -2466,6 +2466,15 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `backup.hint` | Arquivo com todos os seus dados, para guardar fora da nuvem. Não inclui as conexões bancárias nem as notificações dos aparelhos. |
 | `backup.cta` | Baixar backup |
 | `backup.done` | Backup gerado. |
+| `deleteAccount.title` | Excluir minha conta e dados |
+| `deleteAccount.hint` | Apaga do aparelho e da nuvem tudo o que é seu. Se quiser guardar os dados, baixe um backup antes. |
+| `deleteAccount.pluggy` | Se você conectou bancos, revogue também o acesso pelo Meu Pluggy. |
+| `deleteAccount.backup` | Baixar backup antes de excluir |
+| `deleteAccount.cta` | Excluir minha conta |
+| `deleteAccount.typeLabel` | Digite EXCLUIR para confirmar |
+| `deleteAccount.confirm` | Excluir conta |
+| `deleteAccount.offline` | Sem conexão. Para excluir a conta é preciso estar com internet. |
+| `deleteAccount.failed` | Não foi possível excluir a conta agora. Tente novamente. |
 | `restore.title` | Restaurar backup |
 | `restore.hint` | Troca todos os dados desta conta pelos de um backup baixado aqui. |
 | `restore.choose` | Escolher arquivo |
