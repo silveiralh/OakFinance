@@ -7,6 +7,7 @@ import { deviceId } from './clock';
 import { pendingCount } from './outbox';
 import { pullChanges, purgeLocalTombstones, readCursor } from './pull';
 import { pushOutbox } from './push';
+import { type ReconcileSummary, runReconcile } from './reconcile-runner';
 import type { FailureKind, SyncTransport } from './transport';
 
 export const LOCK_NAME = 'oakfinance-sync';
@@ -105,6 +106,8 @@ export class SyncEngine {
   private readonly isOnline: () => boolean;
   private readonly isVisible: () => boolean;
   private readonly appVersion: string | undefined;
+  /** Resumo da última conciliação com importados (I01/I05). */
+  reconciled: ReconcileSummary | null = null;
   private timer: unknown = null;
   private debounce: unknown = null;
   private running: Promise<CycleResult> | null = null;
@@ -259,6 +262,12 @@ export class SyncEngine {
     }
     if (!pull.failure) {
       await purgeLocalTombstones(this.db, this.now());
+      // passo 6 (tech §4.6): conciliação dos importados novos; as escritas vão para a outbox
+      const recon = await runReconcile(this.db, { nowMs: this.now() }).catch(() => null);
+      if (recon && recon.checked > 0) {
+        this.reconciled = recon;
+        void this.refreshCounts();
+      }
     }
     return pull.failure;
   }

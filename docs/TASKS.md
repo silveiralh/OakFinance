@@ -140,7 +140,7 @@ flowchart LR
 | T-075 | Webhook e desconexão | T-074 | done |
 | T-076 | Telas de conexão (I01/I02) | T-075, T-045 | blocked: needs-owner — o SDK do widget (pluggy-connect-sdk) traz "PLUGGY_" e o build reprova |
 | T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
-| T-078 | Conciliador no aparelho | T-074, T-021, T-033 | todo |
+| T-078 | Conciliador no aparelho | T-074, T-021, T-033 | done |
 | T-079 | Conferir importados (I05) | T-078, T-056 | todo |
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | todo |
 | T-081 | Desfazer conciliação | T-079 | todo |
@@ -1176,7 +1176,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-078 — Conciliador no aparelho
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-48 | RN-65..RN-68, RN-72 | T-074, T-021, T-033 | não |
+| done | S3 | M | US-48 | RN-65..RN-68, RN-72 | T-074, T-021, T-033 | não |
 
 **Escopo:** `sync/reconcile-runner.ts` depois do pull para `review_state = 'new'`: `auto_merge` via `planMerge`, `suggest`, `new` com categoria da RN-61, `duplicate`. Pendentes de decisão ficam fora dos agregados.
 
