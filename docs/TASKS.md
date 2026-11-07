@@ -132,7 +132,7 @@ flowchart LR
 | T-067 | Estados vazios e erros completos | T-065 | done |
 | T-068 | Tema escuro e reduzir movimento | T-029 | done |
 | T-069 | Análise do mês no computador | T-059 | done |
-| T-070 | Backup e restauração | T-066 | todo |
+| T-070 | Backup e restauração | T-066 | done |
 | T-071 | Diagnóstico, telemetria e saída | T-045 | todo |
 | T-072 | Conector Pluggy e mock | T-011, T-019 | todo |
 | T-073 | Conectar e vincular item | T-072 | todo |
@@ -1081,7 +1081,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-070 — Backup e restauração
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-60 | RN-102 | T-066 | não |
+| done | S2 | M | US-60 | RN-102 | T-066 | não |
 
 **Escopo:** `backup_AAAA-MM-DD.json` com `schema_version` e todas as tabelas (sem inscrições push nem segredos); restauração com a confirmação "RESTAURAR", reescrevendo `user_id`; arquivo inválido mostra "Este arquivo não é um backup válido deste app".
 

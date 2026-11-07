@@ -2459,6 +2459,21 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `export.empty` | Não há lançamentos nesse período |
 | `export.inverted` | O mês final precisa ser igual ou depois do inicial. |
 | `export.done` | Arquivo gerado. |
+| `backup.title` | Backup completo (JSON) |
+| `backup.hint` | Arquivo com todos os seus dados, para guardar fora da nuvem. Não inclui as conexões bancárias nem as notificações dos aparelhos. |
+| `backup.cta` | Baixar backup |
+| `backup.done` | Backup gerado. |
+| `restore.title` | Restaurar backup |
+| `restore.hint` | Troca todos os dados desta conta pelos de um backup baixado aqui. |
+| `restore.choose` | Escolher arquivo |
+| `restore.invalid` | Este arquivo não é um backup válido deste app |
+| `restore.confirmTitle` | Substituir todos os meus dados? |
+| `restore.confirmBody` | Os dados atuais desta conta serão trocados pelos do backup de {data}. Isso não pode ser desfeito. |
+| `restore.typeLabel` | Digite RESTAURAR para confirmar |
+| `restore.word` | RESTAURAR |
+| `restore.confirm` | Substituir todos os meus dados |
+| `restore.done` | Backup restaurado. |
+| `restore.summary` | Restaurado: {tx} lançamentos, {contas} contas, {cartoes} cartões, {categorias} categorias e {outros} outros itens. |
 
 **Conexões, importação, nota, conferência**
 
