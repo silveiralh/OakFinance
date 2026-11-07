@@ -149,8 +149,8 @@ flowchart LR
 | T-084 | Importar OFX | T-022, T-078 | done |
 | T-085 | OFX real do BB anonimizado | T-084 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
 | T-086 | Importar CSV | T-084 | done |
-| T-087 | Presets Nubank confirmados | T-086 | todo |
-| T-088 | nfce-fetch e fallback | T-023, T-011 | todo |
+| T-087 | Presets Nubank confirmados | T-086 | blocked: aguarda cliente — SETUP-14 (arquivos reais) |
+| T-088 | nfce-fetch e fallback | T-023, T-011 | done |
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | todo |
 | T-090 | Parser da NFC-e com páginas reais | T-089 | todo |
 | T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | todo |
@@ -1281,7 +1281,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-087 — Presets Nubank confirmados
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
+| blocked: aguarda cliente — SETUP-14 (arquivos reais) | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
 
 **Escopo:** conferir `nubank-fatura` e `nubank-conta` com os arquivos reais (fora do clone); fixtures anonimizadas; tirar a marca PROVISÓRIO.
 
@@ -1292,7 +1292,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-088 — nfce-fetch e fallback
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-55 | RN-82, RN-84 | T-023, T-011 | não |
+| done | S4 | M | US-55 | RN-82, RN-84 | T-023, T-011 | não |
 
 **Escopo:** `supabase/functions/nfce-fetch` (allowlist anti-SSRF, URL reconstruída, timeout de 10 s (D-005), no máximo 3 redirects, corpo de até 2 MB, 1 nova tentativa, 30 chamadas/h); `packages/nfce-parser` defensivo (busca por rótulo, devolve `fallback` quando não reconhece); `NFCE_TEST_BASE_URL` só com `APP_ENV=local`; fixtures sintéticas de erro e captcha.
 

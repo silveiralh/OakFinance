@@ -80,7 +80,8 @@ function store(): LinkStore {
   };
 }
 
-async function userCaller(authorization: string): Promise<Caller | null> {
+/** Quem chama, pelo token do usuário (também usado pelo `nfce-fetch`). */
+export async function userCaller(authorization: string): Promise<Caller | null> {
   const client = createClient(env.get('SUPABASE_URL') ?? '', env.get('SUPABASE_ANON_KEY') ?? '', {
     ...options,
     global: { headers: { Authorization: authorization } },
