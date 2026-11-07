@@ -52,7 +52,7 @@ Deno.test('fuso com horário de verão: 08:00 em Nova York antes e depois da tro
   );
 });
 
-Deno.test('T-064: só diário, fatura fechou e vencimento ficam ligados; o resto espera as próprias tarefas', () => {
+Deno.test('T-064/T-091: diário, faturas, contas fixas e receitas ligados; o resto espera as próprias tarefas', () => {
   const prefs = tickPrefs([
     {
       kind: 'weekly_summary',

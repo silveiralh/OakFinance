@@ -1,6 +1,7 @@
 // Regras do reminders-tick (tech §6.4.5) sem I/O: o que vira aviso e push para cada usuário e o que fazer com cada
-// push devido. O "agora" é sempre injetado. Escopo da T-064: lembrete diário (RN-87), fatura fechou (RN-88) e
-// vencimento de fatura (RN-89); os outros tipos ficam desligados aqui até as tarefas deles.
+// push devido. O "agora" é sempre injetado. Ligados: lembrete diário (RN-87), fatura fechou (RN-88), vencimento de
+// fatura (RN-89) — T-064 — e contas fixas e receitas (RN-90, RN-91, RN-34) — T-091; os outros tipos ficam
+// desligados aqui até as tarefas deles.
 import {
   DEFAULT_BUDGET_PCT_BP,
   DEFAULT_REMINDERS,
@@ -12,6 +13,8 @@ import {
   type ISODate,
   invoiceTotals,
   noticeId,
+  type PaymentMethod,
+  type Recurrence,
   type ReminderKind,
   type ReminderPref,
   resolveProfileSettings,
@@ -21,7 +24,14 @@ import {
 } from '../_shared/domain/index.ts';
 import { declarativePayload, type SendResult } from '../_shared/push.ts';
 
-export const TICK_KINDS: readonly ReminderKind[] = ['daily_log', 'invoice_due', 'invoice_closed'];
+export const TICK_KINDS: readonly ReminderKind[] = [
+  'daily_log',
+  'invoice_due',
+  'invoice_closed',
+  'bill_due',
+  'bill_overdue',
+  'income_unconfirmed',
+];
 /** Tamanho da janela de avaliação: o pg_cron chama a cada 15 min (RN-86). */
 export const WINDOW_MINUTES = 15;
 /** Teto de push por usuário por dia local (UX 6.7); os excedentes ficam só na central. */
@@ -48,6 +58,43 @@ export interface SnapshotTx {
   reviewState: Tx['reviewState'];
 }
 
+/** Recorrência ativa com lembrete, como o snapshot devolve (T-091). */
+export interface SnapshotRecurrence {
+  id: string;
+  kind: 'expense' | 'income';
+  description: string;
+  amountCents: number;
+  isVariableAmount: boolean;
+  categoryId: string | null;
+  accountId: string | null;
+  cardId: string | null;
+  paymentMethod: PaymentMethod;
+  isFixedIncome: boolean;
+  autoPost: boolean;
+  remind: boolean;
+  frequency: Recurrence['frequency'];
+  intervalCount: number;
+  dayOfMonth: number | null;
+  weekday: number | null;
+  monthOfYear: number | null;
+  startOn: ISODate;
+  endOn: ISODate | null;
+  maxOccurrences: number | null;
+}
+
+/** Lançamento de uma ocorrência próxima ou receita avulsa pendente (RN-91, RN-34). */
+export interface SnapshotRecurrenceTx {
+  id: string;
+  kind: Tx['kind'];
+  status: Tx['status'];
+  amountCents: number;
+  occurredOn: ISODate;
+  description: string | null;
+  recurrenceId: string | null;
+  recurrenceDate: ISODate | null;
+  reviewState: Tx['reviewState'];
+}
+
 /** Uma linha de `reminders` como o snapshot devolve. */
 export interface SnapshotReminder {
   kind: string;
@@ -68,6 +115,9 @@ export interface UserSnapshot {
   invoices: SnapshotInvoice[];
   txs: SnapshotTx[];
   loggedOn: ISODate[];
+  /** T-091 (migração 13); ausente em snapshots antigos. */
+  recurrences?: SnapshotRecurrence[];
+  recurrenceTxs?: SnapshotRecurrenceTx[];
 }
 
 export interface NoticeRow {
@@ -191,6 +241,54 @@ export function toTx(row: SnapshotTx): Tx {
   };
 }
 
+/** Recorrência do domínio (sem lembrete ou pausada nem chega do snapshot). */
+export function toRecurrence(row: SnapshotRecurrence): Recurrence {
+  return {
+    id: row.id,
+    kind: row.kind,
+    description: row.description,
+    amountCents: row.amountCents,
+    isVariableAmount: row.isVariableAmount,
+    categoryId: row.categoryId,
+    accountId: row.accountId,
+    cardId: row.cardId,
+    paymentMethod: row.paymentMethod,
+    isFixedIncome: row.isFixedIncome,
+    autoPost: row.autoPost,
+    remind: row.remind,
+    pausedAt: null,
+    deletedAt: null,
+    frequency: row.frequency,
+    intervalCount: row.intervalCount,
+    ...(row.dayOfMonth !== null ? { dayOfMonth: row.dayOfMonth } : {}),
+    ...(row.weekday !== null ? { weekday: row.weekday } : {}),
+    ...(row.monthOfYear !== null ? { monthOfYear: row.monthOfYear } : {}),
+    startOn: row.startOn,
+    endOn: row.endOn,
+    maxOccurrences: row.maxOccurrences,
+  };
+}
+
+/** Lançamento da ocorrência para saber se ela ainda está prevista (RN-91) e as receitas avulsas (RN-34). */
+export function recurrenceTx(row: SnapshotRecurrenceTx): Tx {
+  return {
+    ...toTx({
+      id: row.id,
+      kind: row.kind,
+      status: row.status,
+      amountCents: row.amountCents,
+      cardId: null,
+      counterpartCardId: null,
+      invoiceId: null,
+      reviewState: row.reviewState,
+    }),
+    occurredOn: row.occurredOn,
+    description: row.description,
+    recurrenceId: row.recurrenceId,
+    recurrenceDate: row.recurrenceDate,
+  };
+}
+
 /** Faturas com o saldo (RN-89: "não paga" = saldo > 0, inclusive quando o Open Finance registrou o pagamento). */
 export function invoicesWithTotals(
   snap: Pick<UserSnapshot, 'invoices' | 'txs'>,
@@ -205,10 +303,12 @@ export function invoicesWithTotals(
   }));
 }
 
-/** Avisos devidos agora para o usuário (só os tipos da T-064). */
+/** Avisos devidos agora para o usuário (só os tipos de `TICK_KINDS`). */
 export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
   const settings = resolveProfileSettings(snap.settings);
   const nowLocal = localParts(now, snap.timezone);
+  const recurrences = (snap.recurrences ?? []).filter((r) => r.remind).map(toRecurrence);
+  const recTxs = (snap.recurrenceTxs ?? []).map(recurrenceTx);
   const due = dueNotifications({
     nowLocal,
     windowMinutes: WINDOW_MINUTES,
@@ -216,8 +316,8 @@ export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
     month: {
       month: nowLocal.date.slice(0, 7) as YearMonth,
       today: nowLocal.date,
-      txs: [],
-      recurrences: [],
+      txs: recTxs,
+      recurrences,
       cards: [],
       accounts: [],
       categories: [],
@@ -228,7 +328,7 @@ export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
     budget: { pctBp: { ...DEFAULT_BUDGET_PCT_BP }, alertThresholdsBp: [] },
     spendable: settings.spendable,
     invoices: invoicesWithTotals(snap),
-    recurrences: [],
+    recurrences,
     hideValues: settings.hideValues,
     labels: { cards: snap.cards },
     loggedOn: snap.loggedOn,

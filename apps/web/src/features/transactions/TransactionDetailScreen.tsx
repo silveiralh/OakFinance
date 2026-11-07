@@ -20,6 +20,7 @@ import { LinkActions } from '../inbox/LinkActions';
 import { SeriesActions } from '../installments/SeriesActions';
 import { NfceTxStatus } from '../nfce/NfcePending';
 import { buildInvoice } from '../quick-entry/model';
+import { OccurrenceActions, useOccurrence } from '../recurrences/OccurrenceActions';
 import { CategoryCorrection } from '../rules/CategoryCorrection';
 import {
   describeHistory,
@@ -91,6 +92,8 @@ export function TransactionDetailScreen({
     [user, id],
   );
   const tx = data?.tx ?? null;
+  // T-091: o aviso de conta fixa ou receita abre o id v5 da ocorrência, que pode ainda não ser lançamento
+  const occurrence = useOccurrence(user, id, today as ISODate);
   const [device, setDevice] = useState<string | null>(null);
   const [moving, setMoving] = useState(false);
   useEffect(() => {
@@ -137,6 +140,18 @@ export function TransactionDetailScreen({
     return (
       <section className="screen" data-screen="T02" data-testid="screen-T02">
         <Skeleton shape="hero" />
+      </section>
+    );
+  }
+  if ((!tx || tx.deleted_at !== null) && user && occurrence && !occurrence.tx) {
+    return (
+      <section className="screen" data-screen="T02" data-testid="screen-T02">
+        <OccurrenceActions
+          user={user}
+          occurrence={occurrence}
+          approx={occurrence.approx}
+          today={today as ISODate}
+        />
       </section>
     );
   }
@@ -287,6 +302,14 @@ export function TransactionDetailScreen({
         </dl>
       </GlassCard>
       {tx.nfce_receipt_id && <NfceTxStatus tx={tx} />}
+      {occurrence?.tx && (
+        <OccurrenceActions
+          user={user}
+          occurrence={occurrence}
+          approx={occurrence.approx}
+          today={today as ISODate}
+        />
+      )}
       <LinkActions tx={tx} />
       <div className="detail-actions">
         {tx.series_id ? (

@@ -152,8 +152,8 @@ flowchart LR
 | T-087 | Presets Nubank confirmados | T-086 | blocked: aguarda cliente — SETUP-14 (arquivos reais) |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | done |
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | done |
-| T-090 | Parser da NFC-e com páginas reais | T-089 | todo |
-| T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | todo |
+| T-090 | Parser da NFC-e com páginas reais | T-089 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
+| T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | done |
 | T-092 | Alertas de limite e resumo semanal | T-091, T-059 | todo |
 | T-093 | Preferências de notificação | T-092 | todo |
 | T-094 | Excluir conta | T-070, T-075 | todo |
@@ -1317,7 +1317,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-090 — Parser da NFC-e com páginas reais
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-54, US-56 | RN-82 | T-089 | sim — SETUP-14 |
+| blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) | S4 | M | US-54, US-56 | RN-82 | T-089 | sim — SETUP-14 |
 
 **Escopo:** 3 páginas reais viram fixtures anonimizadas (§6.2.3 item 7); seletores confirmados; validação Σ itens − desconto ≈ total; `receipt_items`; itens no T02 (US-56).
 
@@ -1328,7 +1328,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-091 — Lembretes de contas fixas e receitas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-41 | RN-34, RN-90, RN-91 | T-064, T-055 | não |
+| done | S4 | P | US-41 | RN-34, RN-90, RN-91 | T-064, T-055 | não |
 
 **Escopo:** `bill_due` em D−1; `bill_overdue` e `income_unconfirmed` em D+1; nada para recorrência no cartão com confirmação automática; textos #3, #19 e #20 do UX; ações no T02.
 

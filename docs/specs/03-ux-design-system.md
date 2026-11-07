@@ -2364,6 +2364,9 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `fixed.expenseSaved` | Conta fixa salva. |
 | `fixed.confirmPaid` | Informe o valor pago. |
 | `fixed.skipToast` | Ocorrência pulada neste mês. |
+| `occurrence.dueOn` | Vence em {data}. |
+| `occurrence.overdue` | Venceu em {data}. Confirme o pagamento ou pule este mês. |
+| `occurrence.expectedOn` | Prevista para {data}. Confirme o valor recebido ou mude a data. |
 | `fixed.editValue` | Mudar valor |
 | `fixed.editTitle` | Mudar valor de {descrição} |
 | `fixed.occurrence` | Ocorrência |
