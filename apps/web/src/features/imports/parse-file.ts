@@ -13,12 +13,13 @@ export type CsvFileOutcome =
     }
   | { ok: false; code: 'TOO_LARGE' | 'BAD_FILE' | 'EMPTY' };
 
-function inWorker<T>(url: URL, bytes: Uint8Array, fallback: () => T): Promise<T> {
+/** `create` precisa ser `new Worker(new URL('./x.worker.ts', import.meta.url))` literal: é assim que o Vite gera o chunk. */
+function inWorker<T>(create: () => Worker, bytes: Uint8Array, fallback: () => T): Promise<T> {
   if (typeof Worker === 'undefined') {
     return Promise.resolve(fallback());
   }
   return new Promise((resolve) => {
-    const worker = new Worker(url, { type: 'module' });
+    const worker = create();
     const done = (outcome: T) => {
       worker.terminate();
       resolve(outcome);
@@ -31,14 +32,22 @@ function inWorker<T>(url: URL, bytes: Uint8Array, fallback: () => T): Promise<T>
 }
 
 export function parseFile(bytes: Uint8Array): Promise<ParseOutcome> {
-  return inWorker(new URL('./ofx.worker.ts', import.meta.url), bytes, () => parseOfxBytes(bytes));
+  return inWorker(
+    () => new Worker(new URL('./ofx.worker.ts', import.meta.url), { type: 'module' }),
+    bytes,
+    () => parseOfxBytes(bytes),
+  );
 }
 
 export function parseCsvFile(bytes: Uint8Array): Promise<CsvFileOutcome> {
-  return inWorker(new URL('./csv.worker.ts', import.meta.url), bytes, () => {
-    const decoded = decodeCsvBytes(bytes);
-    return decoded.ok ? { ...decoded, ...tokenizeCsv(decoded.text) } : decoded;
-  });
+  return inWorker(
+    () => new Worker(new URL('./csv.worker.ts', import.meta.url), { type: 'module' }),
+    bytes,
+    () => {
+      const decoded = decodeCsvBytes(bytes);
+      return decoded.ok ? { ...decoded, ...tokenizeCsv(decoded.text) } : decoded;
+    },
+  );
 }
 
 /** OFX pelo nome ou pelo conteúdo (`<OFX>` / `OFXHEADER`); o resto é tratado como CSV. */
