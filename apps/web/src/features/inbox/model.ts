@@ -6,6 +6,9 @@
 // de separados do conciliador, para ele não sugerir o mesmo par de novo.
 import {
   addDays,
+  type Category,
+  type CategoryRule,
+  categorize,
   formatBRL,
   type ISODate,
   matchPatternFor,
@@ -15,6 +18,7 @@ import {
   UNCLASSIFIED_SLUG,
 } from '@oakfinance/domain';
 import type { LocalRow, OakDb } from '../../data/db';
+import { categoryFromRow } from '../../data/mappers';
 import { putInTransaction, writeScope } from '../../data/repositories/rows';
 import type { Result } from '../../data/result';
 import { writeLocal } from '../../data/storage';
@@ -22,6 +26,13 @@ import { deviceId } from '../../data/sync/clock';
 import { itemOf, keepApart, reconExtras } from '../../data/sync/reconcile-runner';
 import { t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
+import { ruleFromRow } from '../quick-entry/model';
+import {
+  type HistoryClient,
+  type HistoryEntry,
+  loadHistory,
+  restoredRow,
+} from '../transactions/history';
 import { methodLabel } from '../transactions/TransactionsScreen';
 
 type TxRow = LocalRow<'transactions'>;
@@ -282,4 +293,107 @@ export function unlink(
     nowMs,
     [imported.id],
   );
+}
+
+/**
+ * Versão do manual anterior à conciliação (RN-73): a mais recente do histórico em que ele ainda não estava
+ * vinculado a uma fonte externa. `null` sem histórico (offline) ou sem essa versão.
+ */
+export function versionBeforeMerge(
+  history: readonly HistoryEntry[],
+): Record<string, unknown> | null {
+  for (const entry of history) {
+    if (entry.op === 'update' && entry.oldRow && entry.oldRow.matched_external === false) {
+      return entry.oldRow;
+    }
+  }
+  return null;
+}
+
+export interface CategoryContext {
+  rules: readonly CategoryRule[];
+  categories: readonly Category[];
+}
+
+/** RN-73/RN-61: o importado separado volta a `new` com a categoria da regra que casar (senão a que já tinha). */
+function separated(imported: TxRow, ctx: CategoryContext): TxRow {
+  const hit = categorize(
+    {
+      description: imported.description ?? imported.description_raw,
+      merchantCnpj: imported.merchant_cnpj,
+      paymentMethod: imported.payment_method as never,
+      kind: imported.kind as never,
+      accountId: imported.account_id,
+      cardId: imported.card_id,
+    },
+    ctx.rules,
+    ctx.categories,
+  );
+  return {
+    ...imported,
+    review_state: 'new',
+    duplicate_of: null,
+    ...(hit
+      ? { category_id: hit.categoryId, category_source: 'rule', category_rule_id: hit.ruleId }
+      : {}),
+  };
+}
+
+/**
+ * "Não é o mesmo" (US-51, RN-73): o manual volta à versão anterior à conciliação (pelo histórico do servidor;
+ * sem ele, só perde o vínculo) e o importado vira um lançamento novo a revisar, com a categoria da regra.
+ */
+export function unlinkRestoring(
+  db: OakDb,
+  imported: TxRow,
+  manual: TxRow,
+  history: readonly HistoryEntry[] | null,
+  ctx: CategoryContext,
+  nowMs = Date.now(),
+): Promise<Result<void>> {
+  const before = history ? versionBeforeMerge(history) : null;
+  const restored = before ? restoredRow(manual, before) : null;
+  return write(
+    db,
+    [separated(imported, ctx), { ...(restored ?? manual), matched_external: false }],
+    nowMs,
+    [imported.id],
+  );
+}
+
+/** "Não é duplicada" (US-51): a transação marcada como duplicada de outra fonte vira um lançamento próprio. */
+export function notDuplicate(
+  db: OakDb,
+  imported: TxRow,
+  ctx: CategoryContext,
+  nowMs = Date.now(),
+): Promise<Result<void>> {
+  return write(db, [separated(imported, ctx)], nowMs, [imported.id]);
+}
+
+/** Regras e categorias vivas do aparelho, para a categoria do importado separado. */
+export async function categoryContext(db: OakDb): Promise<CategoryContext> {
+  const [rules, categories] = await Promise.all([
+    db.category_rules.toArray(),
+    db.categories.toArray(),
+  ]);
+  return {
+    rules: rules.filter((r) => r.deleted_at === null).map(ruleFromRow),
+    categories: categories.filter((c) => c.deleted_at === null).map(categoryFromRow),
+  };
+}
+
+/** Histórico do manual pela RPC (precisa de internet); `null` sem cliente ou se falhar. */
+export async function manualHistory(
+  client: unknown,
+  manualId: string,
+): Promise<HistoryEntry[] | null> {
+  if (!client) {
+    return null;
+  }
+  try {
+    return await loadHistory(client as HistoryClient, manualId);
+  } catch {
+    return null;
+  }
 }

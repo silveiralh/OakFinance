@@ -143,7 +143,7 @@ flowchart LR
 | T-078 | Conciliador no aparelho | T-074, T-021, T-033 | done |
 | T-079 | Conferir importados (I05) | T-078, T-056 | done |
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | done |
-| T-081 | Desfazer conciliação | T-079 | todo |
+| T-081 | Desfazer conciliação | T-079 | done |
 | T-082 | Fechar o mês (P04) | T-079, T-059 | todo |
 | T-083 | Validação real da Pluggy | T-077 | todo |
 | T-084 | Importar OFX | T-022, T-078 | todo |
@@ -1209,7 +1209,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-081 — Desfazer conciliação
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | P | US-51 | RN-73 | T-079 | não |
+| done | S3 | P | US-51 | RN-73 | T-079 | não |
 
 **Escopo:** "Não é o mesmo" restaura o manual pelo `row_history` e transforma o importado em lançamento novo com a categoria da regra; "Não é duplicada".
 

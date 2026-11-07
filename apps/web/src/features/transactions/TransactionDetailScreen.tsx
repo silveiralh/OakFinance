@@ -16,6 +16,7 @@ import { useOnline } from '../../lib/online';
 import { Button, Dialog, EmptyState, GlassCard, MoneyText, Skeleton, useToast } from '../../ui';
 import { movedRow } from '../cards/model';
 import { movePlan } from '../cards/move';
+import { LinkActions } from '../inbox/LinkActions';
 import { SeriesActions } from '../installments/SeriesActions';
 import { buildInvoice } from '../quick-entry/model';
 import { CategoryCorrection } from '../rules/CategoryCorrection';
@@ -284,6 +285,7 @@ export function TransactionDetailScreen({
           ))}
         </dl>
       </GlassCard>
+      <LinkActions tx={tx} />
       <div className="detail-actions">
         {tx.series_id ? (
           <SeriesActions
