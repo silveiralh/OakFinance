@@ -1055,6 +1055,57 @@ body:has(.screen-welcome) .backdrop {
   min-height: 48px;
 }
 
+/* T-079: I05 conferir importados */
+.inbox {
+  display: grid;
+  gap: var(--space-4);
+}
+.inbox-count {
+  font-weight: var(--font-weight-bold);
+}
+.reconcile-card,
+.inbox-fresh {
+  display: grid;
+  gap: var(--space-3);
+}
+.reconcile-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+@media (max-width: 359px) {
+  .reconcile-sides {
+    grid-template-columns: 1fr;
+  }
+}
+.reconcile-side {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.reconcile-diffs,
+.inbox-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.reconcile-diffs li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.inbox-auto {
+  padding: var(--space-4);
+}
+.inbox-auto summary {
+  min-height: 48px;
+  cursor: pointer;
+  font-weight: var(--font-weight-bold);
+}
+
 /* T-071: S11 diagnóstico */
 .diag {
   display: grid;

@@ -727,6 +727,19 @@ export const ptBR = {
   'review.ignore': 'Ignorar',
   'review.auto': 'Vinculados automaticamente',
   'review.diff.date': 'Data diferente: {a} × {b}',
+  'review.pending': 'Para decidir',
+  'review.fresh': 'Novos do banco',
+  'review.ok': 'OK',
+  'review.allReviewed': 'Marcar todos como revisados',
+  'review.allBlocked': 'Classifique os {n} lançamentos em "A classificar" antes de marcar todos.',
+  'review.allDone': '{n} lançamentos revisados.',
+  'review.merged': 'Lançamentos vinculados.',
+  'review.kept': 'Os dois lançamentos foram mantidos.',
+  'review.ignored': 'Lançamento do banco ignorado.',
+  'review.unlinked': 'Vínculo desfeito.',
+  'review.diff.amount': 'Valor diferente: {a} × {b}',
+  'review.diff.method': 'Meio diferente: {a} × {b}',
+  'review.noCandidate': 'O lançamento parecido não está mais disponível.',
 } as const;
 
 export type MessageKey = keyof typeof ptBR;

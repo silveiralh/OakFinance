@@ -43,10 +43,38 @@ function addDays(date: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-function itemOf(
-  row: TxRow,
-  extras: { invoiceMonth: Map<string, string>; recurrences: Map<string, LocalRow<'recurrences'>> },
-): ReconItem {
+export interface ReconExtras {
+  invoiceMonth: Map<string, string>;
+  recurrences: Map<string, LocalRow<'recurrences'>>;
+}
+
+/** Mês das faturas e recorrências (termo e valor variável, RN-70) para montar os `ReconItem`. */
+export function reconExtras(
+  invoices: readonly LocalRow<'invoices'>[],
+  recurrences: readonly LocalRow<'recurrences'>[],
+): ReconExtras {
+  return {
+    invoiceMonth: new Map(invoices.map((inv) => [inv.id, inv.reference_month])),
+    recurrences: new Map(recurrences.map((r) => [r.id, r])),
+  };
+}
+
+/** Importados que o usuário separou ("São diferentes", "Não é o mesmo"): o conciliador não os sugere de novo. */
+export const APART_KEY = 'reconcile_apart';
+const APART_MAX = 2000;
+
+async function apartIds(db: OakDb): Promise<Set<string>> {
+  const value = (await db.kv.get(APART_KEY))?.value;
+  return new Set(Array.isArray(value) ? (value as string[]) : []);
+}
+
+/** Acrescenta à lista de separados (chame dentro de uma transação com `kv`). */
+export async function keepApart(db: OakDb, ids: readonly string[]): Promise<void> {
+  const current = [...(await apartIds(db))].filter((id) => !ids.includes(id));
+  await db.kv.put({ key: APART_KEY, value: [...current, ...ids].slice(-APART_MAX) });
+}
+
+export function itemOf(row: TxRow, extras: ReconExtras): ReconItem {
   const recurrence = row.recurrence_id ? extras.recurrences.get(row.recurrence_id) : undefined;
   const month = row.invoice_id ? extras.invoiceMonth.get(row.invoice_id) : undefined;
   return {
@@ -92,9 +120,13 @@ export async function runReconcile(
     fresh: 0,
   };
   const cursor = await readCursor(db);
+  const apart = await apartIds(db);
   const candidates = (await db.transactions.where('review_state').equals('new').toArray()).filter(
     (row) =>
-      IMPORTED_SOURCES.has(row.source) && row.deleted_at === null && row.server_version > cursor,
+      IMPORTED_SOURCES.has(row.source) &&
+      row.deleted_at === null &&
+      row.server_version > cursor &&
+      !apart.has(row.id),
   );
   if (candidates.length === 0) {
     return summary;
@@ -111,10 +143,7 @@ export async function runReconcile(
     db.recurrences.toArray(),
     db.categories.toArray(),
   ]);
-  const extras = {
-    invoiceMonth: new Map(invoices.map((inv) => [inv.id, inv.reference_month])),
-    recurrences: new Map(recurrences.map((r) => [r.id, r])),
-  };
+  const extras = reconExtras(invoices, recurrences);
   const alive = pool.filter((row) => row.deleted_at === null);
   const byId = new Map(alive.map((row) => [row.id, row]));
   const existing = alive.filter((row) => !ids.has(row.id)).map((row) => itemOf(row, extras));

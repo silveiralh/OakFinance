@@ -141,7 +141,7 @@ flowchart LR
 | T-076 | Telas de conexão (I01/I02) | T-075, T-045 | blocked: needs-owner — o SDK do widget (pluggy-connect-sdk) traz "PLUGGY_" e o build reprova |
 | T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
 | T-078 | Conciliador no aparelho | T-074, T-021, T-033 | done |
-| T-079 | Conferir importados (I05) | T-078, T-056 | todo |
+| T-079 | Conferir importados (I05) | T-078, T-056 | done |
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | todo |
 | T-081 | Desfazer conciliação | T-079 | todo |
 | T-082 | Fechar o mês (P04) | T-079, T-059 | todo |
@@ -1187,7 +1187,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-079 — Conferir importados (I05)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-49 | RN-67, RN-74 | T-078, T-056 | não |
+| done | S3 | M | US-49 | RN-67, RN-74 | T-078, T-056 | não |
 
 **Escopo:** ReconcileCard (É o mesmo / São diferentes / Ignorar, com gesto opcional); Novos do banco com OK e "Marcar todos como revisados" (bloqueado por "A classificar"); Vinculados automaticamente dos últimos 7 dias; badge e card no Início; recategorizar cria regra.
 

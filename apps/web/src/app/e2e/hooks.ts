@@ -26,6 +26,13 @@ declare global {
       addIncome(accountId: string, cents: number, description: string): Promise<string>;
       /** Aviso na central como o reminders-tick gravaria (E18); devolve o id v5 da dedupe_key. */
       addNotice(dedupeKey: string, title: string, body: string, navigate: string): Promise<string>;
+      /** Despesa de hoje "recebida do banco" (I05, T-079): importado `pluggy` com o estado de conferência dado. */
+      addImported(
+        accountId: string,
+        cents: number,
+        description: string,
+        reviewState: 'new' | 'suggested',
+      ): Promise<string>;
       /** Despesa avulsa de hoje na conta (E06/US-14). */
       addExpense(accountId: string, cents: number, description: string): Promise<string>;
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
@@ -134,6 +141,36 @@ export function installE2eHooks(user: UserSession): () => void {
         occurred_on: todayIn('America/Sao_Paulo', new Date()),
         description,
         account_id: accountId,
+        created_at: now,
+        updated_at: now,
+        client_updated_at: now,
+      } satisfies LocalRow<'transactions'>;
+      await saveRow(user.db, 'transactions', row);
+      user.engine.notifyWrite();
+      return id;
+    },
+    async addImported(
+      accountId: string,
+      cents: number,
+      description: string,
+      reviewState: 'new' | 'suggested',
+    ) {
+      const id = newId();
+      const now = new Date().toISOString();
+      const row = {
+        ...EXPENSE_DEFAULTS,
+        tags: [],
+        id,
+        user_id: user.userId,
+        amount_cents: cents,
+        occurred_on: todayIn('America/Sao_Paulo', new Date()),
+        description,
+        description_raw: description,
+        account_id: accountId,
+        payment_method: 'debit',
+        source: 'pluggy',
+        external_id: `e2e-${id}`,
+        review_state: reviewState,
         created_at: now,
         updated_at: now,
         client_updated_at: now,
