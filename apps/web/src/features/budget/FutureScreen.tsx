@@ -83,7 +83,7 @@ export function FutureScreen({
             <p className="cards-line" data-testid="future-summary">
               {t('future.summary', { valor: money(committedNext(months)) })}
             </p>
-            <Button variant="ghost" size="sm" onClick={() => setTable((v) => !v)}>
+            <Button variant="ghost" onClick={() => setTable((v) => !v)}>
               {table ? t('future.chart') : t('future.table')}
             </Button>
             {table ? (
