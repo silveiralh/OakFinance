@@ -126,7 +126,7 @@ flowchart LR
 | T-061 | Ajustes do cálculo (S06) | T-059 | done |
 | T-062 | Central de avisos (H02) | T-045 | done |
 | T-063 | Ativar notificações push | T-062, T-030 | done |
-| T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | todo |
+| T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | done |
 | T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | todo |
 | T-066 | Exportar lançamentos em CSV | T-043 | todo |
 | T-067 | Estados vazios e erros completos | T-065 | todo |
@@ -1015,7 +1015,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-064 — reminders-tick: diário e faturas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-39, US-40 | RN-86..RN-89 | T-063, T-024, T-011 | não |
+| done | S2 | M | US-39, US-40 | RN-86..RN-89 | T-063, T-024, T-011 | não |
 
 **Escopo:** passar `REMINDERS_TICK_LIVE` para `true` em `scripts/ops-check.ts` junto com o deploy da função (issue #51); `supabase/functions/reminders-tick` (auth `secret`): roda para todos os usuários, sempre gera `notices`, enfileira o push, usa `for update skip locked`, adia o silêncio para 08:00 (com a regra do `daily_log` adiado), limita a 3 push por dia e grava `job_runs`. Kinds `daily_log`, `invoice_due` e `invoice_closed`.
 
