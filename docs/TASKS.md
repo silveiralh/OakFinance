@@ -161,7 +161,7 @@ flowchart LR
 | T-096 | Acessibilidade completa | T-095 | done |
 | T-097 | Desempenho | T-095 | done |
 | T-098 | Operação e resiliência | T-095, T-036 | done |
-| T-099 | Checklist de lançamento | T-096, T-097, T-098 | todo |
+| T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 
 ---
@@ -1418,7 +1418,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-099 — Checklist de lançamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | — | — | T-096, T-097, T-098 | sim — SETUP-15, SETUP-16 |
+| done | S4 | P | — | — | T-096, T-097, T-098 | sim — SETUP-15, SETUP-16 |
 
 **Escopo:** `LICENSE` conforme a escolha do cliente; `README.md` final; `docs/RELEASE.md` com a DoD 1–16 conferida por história; checklist de aparelho do M4; pendências de marca e do limite de 20% registradas.
 
