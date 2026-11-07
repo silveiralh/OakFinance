@@ -1707,6 +1707,10 @@ export type Database = {
       };
       ops_health: { Args: Record<PropertyKey, never>; Returns: Json };
       ping: { Args: Record<PropertyKey, never>; Returns: string };
+      rate_limit_hit: {
+        Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
+        Returns: boolean;
+      };
       reminders_tick_claim: { Args: { p_limit?: number; p_now?: string }; Returns: Json };
       reminders_tick_context: { Args: { p_now?: string; p_user: string }; Returns: Json };
       reminders_tick_finish: {

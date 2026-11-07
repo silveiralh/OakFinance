@@ -11,6 +11,13 @@ export const ERRORS = {
   METHOD_NOT_ALLOWED: { status: 405, message: 'Método não permitido.' },
   PAYLOAD_TOO_LARGE: { status: 413, message: 'Corpo da requisição grande demais.' },
   RATE_LIMITED: { status: 429, message: 'Muitas requisições. Tente de novo em instantes.' },
+  // Open Finance (T-073, US-45)
+  ITEM_NOT_FOUND: {
+    status: 404,
+    message: 'Não encontramos essa conexão no Meu Pluggy. Confira o código.',
+  },
+  ITEM_FOREIGN: { status: 409, message: 'Essa conexão pertence a outra conta.' },
+  CONNECTOR_NOT_ALLOWED: { status: 403, message: 'Conector não permitido.' },
   INTERNAL: { status: 500, message: 'Erro interno.' },
   UPSTREAM_UNAVAILABLE: { status: 502, message: 'Serviço externo indisponível.' },
   UPSTREAM_TIMEOUT: { status: 504, message: 'Serviço externo não respondeu a tempo.' },
