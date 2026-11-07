@@ -160,7 +160,7 @@ flowchart LR
 | T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | done |
 | T-096 | Acessibilidade completa | T-095 | done |
 | T-097 | Desempenho | T-095 | done |
-| T-098 | Operação e resiliência | T-095, T-036 | todo |
+| T-098 | Operação e resiliência | T-095, T-036 | done |
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | todo |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 
@@ -1407,7 +1407,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-098 — Operação e resiliência
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-05 | RN-100 | T-095, T-036 | não |
+| done | S4 | P | US-05 | RN-100 | T-095, T-036 | não |
 
 **Escopo:** ensaio local de restauração do dump cifrado (documentado); alerta de `keepalive`/`ops_health` verificado; checagem de 48 h do nightly; orientações pós-MVP no HANDOFF (60 dias de inatividade, Worker opcional); gitleaks no histórico completo.
 
