@@ -1,0 +1,233 @@
+{
+  "_aviso": "PROVISÓRIO: dados sintéticos no formato da API da Pluggy (tech §6.1.1). Substituir pela gravação anonimizada do sandbox na T-083. Ver README.md.",
+  "connectors": [{ "id": 200, "name": "MeuPluggy" }],
+  "items": [
+    {
+      "id": "item-bb",
+      "connector": { "id": 200, "name": "MeuPluggy" },
+      "status": "UPDATED",
+      "executionStatus": "SUCCESS",
+      "clientUserId": null,
+      "consentExpiresAt": null,
+      "lastUpdatedAt": "2026-11-06T10:00:00.000Z",
+      "createdAt": "2026-11-01T12:00:00.000Z"
+    },
+    {
+      "id": "item-nubank",
+      "connector": { "id": 200, "name": "MeuPluggy" },
+      "status": "UPDATED",
+      "executionStatus": "SUCCESS",
+      "clientUserId": "00000000-0000-7000-8000-00000000000a",
+      "consentExpiresAt": "2027-11-01T00:00:00.000Z",
+      "lastUpdatedAt": "2026-11-06T10:05:00.000Z"
+    },
+    {
+      "id": "item-login-error",
+      "connector": { "id": 200, "name": "MeuPluggy" },
+      "status": "LOGIN_ERROR",
+      "executionStatus": "USER_AUTHORIZATION_REVOKED",
+      "clientUserId": "00000000-0000-7000-8000-00000000000a",
+      "consentExpiresAt": null,
+      "lastUpdatedAt": "2026-10-20T10:00:00.000Z"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "acc-bb-cc",
+      "itemId": "item-bb",
+      "type": "BANK",
+      "subtype": "CHECKING_ACCOUNT",
+      "name": "Conta corrente exemplo",
+      "number": "00000-1",
+      "balance": 1234.56,
+      "currencyCode": "BRL",
+      "creditData": null
+    },
+    {
+      "id": "acc-nu-cc",
+      "itemId": "item-nubank",
+      "type": "BANK",
+      "subtype": "CHECKING_ACCOUNT",
+      "name": "Conta exemplo",
+      "number": "00000-2",
+      "balance": -10.5,
+      "currencyCode": "BRL",
+      "creditData": null
+    },
+    {
+      "id": "acc-nu-card",
+      "itemId": "item-nubank",
+      "type": "CREDIT",
+      "subtype": "CREDIT_CARD",
+      "name": "Cartão exemplo",
+      "number": "0000",
+      "balance": 900.0,
+      "currencyCode": "BRL",
+      "creditData": {
+        "balanceCloseDate": "2026-11-03T00:00:00.000Z",
+        "balanceDueDate": "2026-11-10T00:00:00.000Z",
+        "creditLimit": 5000,
+        "availableCreditLimit": 4100,
+        "minimumPayment": 135
+      }
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-bb-001",
+      "accountId": "acc-bb-cc",
+      "date": "2026-10-05T03:00:00.000Z",
+      "description": "Pix enviado Padaria Exemplo",
+      "descriptionRaw": "PIX ENVIADO PADARIA EXEMPLO",
+      "amount": -45.9,
+      "type": "DEBIT",
+      "status": "POSTED",
+      "category": "Eating out",
+      "paymentData": { "paymentMethod": "PIX" }
+    },
+    {
+      "id": "tx-bb-002",
+      "accountId": "acc-bb-cc",
+      "date": "2026-10-05T12:30:00.000Z",
+      "description": "TED recebida Empresa Exemplo",
+      "descriptionRaw": "TED RECEBIDA EMPRESA EXEMPLO",
+      "amount": 5000,
+      "type": "CREDIT",
+      "status": "POSTED",
+      "category": "Salary",
+      "paymentData": { "paymentMethod": "TED" }
+    },
+    {
+      "id": "tx-bb-003",
+      "accountId": "acc-bb-cc",
+      "date": "2026-10-12T15:00:00.000Z",
+      "description": "Pagamento boleto Energia Exemplo",
+      "descriptionRaw": "PAGAMENTO BOLETO ENERGIA EXEMPLO",
+      "amount": -150,
+      "type": "DEBIT",
+      "status": "POSTED",
+      "category": "Electricity",
+      "paymentData": { "paymentMethod": "BOLETO" }
+    },
+    {
+      "id": "tx-bb-004",
+      "accountId": "acc-bb-cc",
+      "date": "2026-11-08T02:30:00.000Z",
+      "description": "Compra no débito Mercado Ficticio",
+      "descriptionRaw": "COMPRA CARTAO DEB MERCADO FICTICIO",
+      "amount": -80.25,
+      "type": "DEBIT",
+      "status": "PENDING",
+      "category": "Groceries",
+      "paymentData": null,
+      "merchant": {
+        "name": "Mercado Ficticio",
+        "businessName": "Mercado Ficticio Ltda",
+        "cnpj": "12.345.678/0001-00"
+      }
+    },
+    {
+      "id": "tx-nu-001",
+      "accountId": "acc-nu-card",
+      "date": "2026-10-15T18:00:00.000Z",
+      "description": "Loja Exemplo 2/10",
+      "descriptionRaw": "LOJA EXEMPLO 2/10",
+      "amount": 120,
+      "type": "DEBIT",
+      "status": "POSTED",
+      "category": "Shopping",
+      "creditCardMetadata": {
+        "installmentNumber": 2,
+        "totalInstallments": 10,
+        "billId": "bill-nu-2026-11"
+      }
+    },
+    {
+      "id": "tx-nu-002",
+      "accountId": "acc-nu-card",
+      "date": "2026-10-20T20:00:00.000Z",
+      "description": "Estorno Loja Exemplo",
+      "descriptionRaw": "ESTORNO LOJA EXEMPLO",
+      "amount": -30,
+      "type": "CREDIT",
+      "status": "POSTED",
+      "category": "Shopping"
+    },
+    {
+      "id": "tx-nu-003",
+      "accountId": "acc-nu-card",
+      "date": "2026-10-28T10:00:00.000Z",
+      "description": "Pagamento recebido",
+      "descriptionRaw": "PAGAMENTO RECEBIDO",
+      "amount": -900,
+      "type": "CREDIT",
+      "status": "POSTED",
+      "category": "Credit card payment"
+    },
+    {
+      "id": "tx-nu-004",
+      "accountId": "acc-nu-card",
+      "date": "2026-11-04T23:30:00.000Z",
+      "description": "Streaming Exemplo",
+      "descriptionRaw": "STREAMING EXEMPLO",
+      "amount": 39.9,
+      "type": "DEBIT",
+      "status": "PENDING",
+      "category": "Video streaming"
+    },
+    {
+      "id": "tx-nu-005",
+      "accountId": "acc-nu-card",
+      "date": "2026-11-05T13:00:00.000Z",
+      "description": "Posto Exemplo",
+      "descriptionRaw": "POSTO EXEMPLO",
+      "amount": 200,
+      "type": "DEBIT",
+      "status": "POSTED",
+      "category": "Gas stations"
+    },
+    {
+      "id": "tx-nu-cc-001",
+      "accountId": "acc-nu-cc",
+      "date": "2026-10-30T11:00:00.000Z",
+      "description": "Pagamento de fatura",
+      "descriptionRaw": "PAGAMENTO DE FATURA",
+      "amount": -900,
+      "type": "DEBIT",
+      "status": "POSTED",
+      "category": "Credit card payment",
+      "paymentData": { "paymentMethod": "PIX" }
+    }
+  ],
+  "reissue": {
+    "_aviso": "Cenário da tech §6.1.1: o banco some com tx-nu-005 e devolve a mesma compra com id novo.",
+    "deleted": "tx-nu-005",
+    "created": {
+      "id": "tx-nu-005b",
+      "accountId": "acc-nu-card",
+      "date": "2026-11-05T13:00:00.000Z",
+      "description": "Posto Exemplo",
+      "descriptionRaw": "POSTO EXEMPLO",
+      "amount": 200,
+      "type": "DEBIT",
+      "status": "POSTED",
+      "category": "Gas stations"
+    }
+  },
+  "bills": [
+    {
+      "id": "bill-nu-2026-10",
+      "accountId": "acc-nu-card",
+      "dueDate": "2026-10-10T00:00:00.000Z",
+      "totalAmount": 640.5,
+      "minimumPaymentAmount": 96.08
+    },
+    {
+      "id": "bill-nu-2026-11",
+      "accountId": "acc-nu-card",
+      "dueDate": "2026-11-10T00:00:00.000Z",
+      "totalAmount": 900,
+      "minimumPaymentAmount": 135
+    }
+  ]
+}
