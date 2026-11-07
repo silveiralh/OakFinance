@@ -14,6 +14,7 @@ import { Button, EmptyState, GlassCard, MoneyText, useToast } from '../../ui';
 import { CategoryCorrection } from '../rules/CategoryCorrection';
 import { methodLabel } from '../transactions/TransactionsScreen';
 import {
+  categoryContext,
   type Decision,
   decideDifferent,
   decideSame,
@@ -21,9 +22,10 @@ import {
   ignoreImported,
   inboxCount,
   inboxGroups,
+  manualHistory,
   markAllReviewed,
   markReviewed,
-  unlink,
+  unlinkRestoring,
 } from './model';
 
 type TxRow = LocalRow<'transactions'>;
@@ -119,7 +121,7 @@ function ReconcileCard({
 
 export function InboxScreen({ today: fixedToday }: { today?: ISODate } = {}) {
   const today = useToday(fixedToday);
-  const { user } = useAuth();
+  const { user, client } = useAuth();
   const showToast = useToast();
   const [blocked, setBlocked] = useState<number | null>(null);
   const data = useLive(
@@ -232,12 +234,16 @@ export function InboxScreen({ today: fixedToday }: { today?: ISODate } = {}) {
                 <Button
                   variant="ghost"
                   onClick={() =>
-                    void unlink(user.db, imported, manual).then((r) => {
-                      if (r.ok) {
-                        user.engine.notifyWrite();
-                        done(t('review.unlinked'));
-                      }
-                    })
+                    void Promise.all([manualHistory(client, manual.id), categoryContext(user.db)])
+                      .then(([history, ctx]) =>
+                        unlinkRestoring(user.db, imported, manual, history, ctx),
+                      )
+                      .then((r) => {
+                        if (r.ok) {
+                          user.engine.notifyWrite();
+                          done(t('review.unlinked'));
+                        }
+                      })
                   }
                 >
                   {t('tx.unlink')}

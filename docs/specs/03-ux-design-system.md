@@ -2562,6 +2562,10 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `review.diff.amount` | Valor diferente: {a} × {b} |
 | `review.diff.method` | Meio diferente: {a} × {b} |
 | `review.noCandidate` | O lançamento parecido não está mais disponível. |
+| `detail.linkedTo` | Vinculado a: {descricao} |
+| `detail.duplicateOf` | Duplicada de: {descricao} |
+| `detail.notDuplicate` | Não é duplicada |
+| `review.separated` | Lançamento separado. |
 
 ### 6.5 Estados vazios
 
