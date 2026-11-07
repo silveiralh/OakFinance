@@ -157,7 +157,7 @@ flowchart LR
 | T-092 | Alertas de limite e resumo semanal | T-091, T-059 | done |
 | T-093 | Preferências de notificação | T-092 | done |
 | T-094 | Excluir conta | T-070, T-075 | done |
-| T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | todo |
+| T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | done |
 | T-096 | Acessibilidade completa | T-095 | todo |
 | T-097 | Desempenho | T-095 | todo |
 | T-098 | Operação e resiliência | T-095, T-036 | todo |
@@ -1374,7 +1374,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-095 — Auditoria E2E E01–E20
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-01..US-65 (com UI) | — | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | não |
+| done | S4 | M | US-01..US-65 (com UI) | — | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | não |
 
 **Escopo:** matriz cenário × história em `apps/web/e2e/README.md`; preencher as lacunas dos cenários E01 a E20 nos 3 projetos; o nightly com `--repeat-each=3` fica sem testes instáveis. As tarefas bloqueadas por cliente ficam marcadas como lacuna conhecida.
 
