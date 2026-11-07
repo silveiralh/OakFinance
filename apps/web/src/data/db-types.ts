@@ -1712,6 +1712,17 @@ export type Database = {
         Returns: undefined;
       };
       pluggy_sync_start: { Args: { p_connection: string; p_user: string }; Returns: number };
+      pluggy_webhook_done: { Args: { p_error?: string; p_event_id: string }; Returns: undefined };
+      pluggy_webhook_record: {
+        Args: {
+          p_event: string;
+          p_event_id: string;
+          p_item_id: string;
+          p_payload: Json;
+          p_user: string;
+        };
+        Returns: boolean;
+      };
       rate_limit_hit: {
         Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
         Returns: boolean;

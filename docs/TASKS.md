@@ -137,7 +137,7 @@ flowchart LR
 | T-072 | Conector Pluggy e mock | T-011, T-019 | done |
 | T-073 | Conectar e vincular item | T-072 | done |
 | T-074 | Sincronização pluggy-sync | T-073, T-013 | done |
-| T-075 | Webhook e desconexão | T-074 | todo |
+| T-075 | Webhook e desconexão | T-074 | done |
 | T-076 | Telas de conexão (I01/I02) | T-075, T-045 | todo |
 | T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
 | T-078 | Conciliador no aparelho | T-074, T-021, T-033 | todo |
@@ -1143,7 +1143,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-075 — Webhook e desconexão
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | P | US-46, US-47 | RN-81 | T-074 | não |
+| done | S3 | P | US-46, US-47 | RN-81 | T-074 | não |
 
 **Escopo:** `pluggy-webhook` (token comparado em tempo constante, checagem de `clientId`, idempotência em `integration_events`, 202 + `waitUntil`, `deleted` de um `merged` desfaz o vínculo, `item/created` sem `onSuccess`); `pluggy-disconnect`.
 
