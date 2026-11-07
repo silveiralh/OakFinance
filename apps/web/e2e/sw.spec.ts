@@ -100,18 +100,29 @@ test('E15: nova versão → "Atualizar" → recarrega sem perder o lançamento e
     await registration?.update();
   });
   await expect(page.getByText('Nova versão disponível.')).toBeAttached();
-  const changed = page.evaluate(
-    () =>
-      new Promise<void>((resolve) => {
-        navigator.serviceWorker.addEventListener('controllerchange', () => resolve(), {
-          once: true,
-        });
-      }),
-  );
-  // o Q01 é modal: o toque em "Atualizar" vem pelo gancho do E2E (mesma função do botão)
+  await page.evaluate(() => {
+    const w = window as Window & { __swChanged?: boolean };
+    w.__swChanged = false;
+    navigator.serviceWorker.addEventListener(
+      'controllerchange',
+      () => {
+        w.__swChanged = true;
+      },
+      { once: true },
+    );
+  });
+  // o Q01 é modal: o toque em "Atualizar" vem pelo gancho do E2E (mesma função do botão). O SKIP_WAITING pode
+  // chegar antes de o SW novo ficar pronto para recebê-lo (E15 instável no CI): repete até o controle mudar.
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
-  await page.evaluate(() => window.__oakE2E?.applyUpdate());
-  await changed;
+  await expect
+    .poll(
+      async () => {
+        await page.evaluate(() => window.__oakE2E?.applyUpdate());
+        return page.evaluate(() => (window as Window & { __swChanged?: boolean }).__swChanged);
+      },
+      { timeout: 20_000, intervals: [1_000] },
+    )
+    .toBe(true);
   // com o lançamento aberto a página não recarrega
   await page.waitForTimeout(300);
   expect(await page.evaluate(() => (window as Window & { __marca?: number }).__marca)).toBe(1);

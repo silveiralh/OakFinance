@@ -89,7 +89,7 @@
 - `test/installments-edit.test.tsx` ("US-14: Excluir abre as opções da RN-25…") falhava às vezes na suíte inteira pelo mesmo motivo do `cards-edit` (diálogo ainda fechado); corrigido no PR #89 com `findByRole` dentro do diálogo.
 - E2E: no PR #89 o primeiro teste de um shard ficou em `/entrar` duas vezes (*flaky*): dois projetos criavam o mesmo usuário ao mesmo tempo e o perdedor da corrida do `signUp` recebia erro de banco. O `E2eLogin` agora tenta entrar de novo depois de 1 s, e o `login()` espera até 20 s pelo Início.
 - `test/cards-edit.test.tsx` ("US-11: pela tela, o fechamento 3 → 8…") falhou duas vezes no CI (PR #84 e #88) porque o `<dialog>` entra no DOM antes do `showModal()`; corrigido no PR #88 com `findByRole` dentro do diálogo. Use o mesmo padrão em testes de diálogo.
-- E15 (`sw.spec.ts`, desktop) falhou uma vez no PR #79 esperando o `controllerchange` depois do `applyUpdate()` (passou na repetição, o que reprova o shard); nada do SW mudou na T-062. Se voltar a acontecer, vale esperar o novo SW chegar a `waiting` antes do `applyUpdate()`.
+- E15 (`sw.spec.ts`) falhou no PR #79 (desktop) e de novo no PR #92 (android) esperando o `controllerchange` depois do `applyUpdate()` (passou na repetição, o que reprova o shard). No PR #92 o teste passou a repetir o `applyUpdate()` a cada 1 s até o controle mudar (até 20 s), com as mesmas verificações; se ainda falhar, investigar o `messageSkipWaiting` do Workbox.
 - Ruleset de `main`: ativo desde 05/11 (SETUP-04). Todo merge exige os 8 checks verdes e a branch atualizada.
 
 ## 3. Próximos passos
