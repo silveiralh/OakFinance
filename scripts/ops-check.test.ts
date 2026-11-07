@@ -70,14 +70,24 @@ describe('ops-check', () => {
     ).toEqual(['último reminders-tick há 90 min']);
   });
 
-  it('regressão #51: antes da T-064 o tick ausente não reprova o keepalive', async () => {
-    expect(REMINDERS_TICK_LIVE).toBe(false);
-    expect(evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: null })).toEqual([]);
-    const ok = await exec(
+  it('regressão #51: sem a função no ar o tick ausente não reprova; desde a T-064 reprova', async () => {
+    expect(REMINDERS_TICK_LIVE).toBe(true);
+    expect(evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: null })).toEqual([
+      'reminders-tick nunca rodou',
+    ]);
+    expect(
+      evaluateHealth({ job_errors_24h: 0, reminders_tick_age_minutes: null }, { tickLive: false }),
+    ).toEqual([]);
+    const live = await exec(
+      'health',
+      fetcher(200, [{ job_errors_24h: 0, reminders_tick_age_minutes: 5 }]),
+    );
+    expect(live).toMatchObject({ code: 0, lines: ['health: ok'] });
+    const missing = await exec(
       'health',
       fetcher(200, [{ job_errors_24h: 0, reminders_tick_age_minutes: null }]),
     );
-    expect(ok).toMatchObject({ code: 0, lines: ['health: ok'] });
+    expect(missing.code).toBe(1);
     const jobs = await exec(
       'health',
       fetcher(200, [{ job_errors_24h: 1, reminders_tick_age_minutes: null }]),

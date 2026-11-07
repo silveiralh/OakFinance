@@ -1707,6 +1707,22 @@ export type Database = {
       };
       ops_health: { Args: Record<PropertyKey, never>; Returns: Json };
       ping: { Args: Record<PropertyKey, never>; Returns: string };
+      reminders_tick_claim: { Args: { p_limit?: number; p_now?: string }; Returns: Json };
+      reminders_tick_context: { Args: { p_now?: string; p_user: string }; Returns: Json };
+      reminders_tick_finish: {
+        Args: { p_error?: string; p_run: number; p_stats: Json; p_status: string };
+        Returns: undefined;
+      };
+      reminders_tick_record: {
+        Args: { p_now: string; p_outbox: Json; p_subs: Json };
+        Returns: undefined;
+      };
+      reminders_tick_save: {
+        Args: { p_notices: Json; p_outbox: Json; p_user: string };
+        Returns: number;
+      };
+      reminders_tick_snapshot: { Args: { p_now?: string }; Returns: Json };
+      reminders_tick_start: { Args: Record<PropertyKey, never>; Returns: number };
       sync_pull: { Args: { p_limit?: number; p_since: number }; Returns: Json };
       sync_push: { Args: { p_device_id: string; p_mutations: Json }; Returns: Json };
       upsert_push_subscription: {

@@ -75,5 +75,5 @@ deno_version = 2
 
 # verify_jwt por função (tech §6.0): ligado por padrão (auth 'user').
 # Desligar só nas funções chamadas pelo pg_cron (auth 'secret') e no pluggy-webhook (token próprio):
-# [functions.reminders-tick]
-# verify_jwt = false
+[functions.reminders-tick]
+verify_jwt = false
