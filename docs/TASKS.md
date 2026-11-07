@@ -135,7 +135,7 @@ flowchart LR
 | T-070 | Backup e restauração | T-066 | done |
 | T-071 | Diagnóstico, telemetria e saída | T-045 | done |
 | T-072 | Conector Pluggy e mock | T-011, T-019 | done |
-| T-073 | Conectar e vincular item | T-072 | todo |
+| T-073 | Conectar e vincular item | T-072 | done |
 | T-074 | Sincronização pluggy-sync | T-073, T-013 | todo |
 | T-075 | Webhook e desconexão | T-074 | todo |
 | T-076 | Telas de conexão (I01/I02) | T-075, T-045 | todo |
@@ -1121,7 +1121,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-073 — Conectar e vincular item
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-45 | RN-79 | T-072 | não |
+| done | S3 | M | US-45 | RN-79 | T-072 | não |
 
 **Escopo:** `pluggy-connect-token` e `pluggy-link-item` (valida `clientUserId` ou faz `PATCH`; item único por usuário; upsert de conexões e contas); rate limits; CORS; erro "Não encontramos essa conexão no Meu Pluggy. Confira o código.".
 
