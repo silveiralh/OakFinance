@@ -16,6 +16,7 @@ import type {
   SyncHandlerDeps,
   SyncStore,
 } from './pluggy-sync.ts';
+import type { DisconnectDeps, WebhookDeps } from './pluggy-webhook.ts';
 
 const env = { get: (name: string) => Deno.env.get(name) };
 const options = { auth: { persistSession: false, autoRefreshToken: false } };
@@ -282,7 +283,7 @@ function syncStore(): SyncStore {
       const { data, error } = await admin
         .from('transactions')
         .select(
-          'id, external_id, amount_cents, occurred_on, occurred_at, status, description_raw, external_meta, invoice_id, invoice_pinned',
+          'id, external_id, amount_cents, occurred_on, occurred_at, status, description_raw, external_meta, invoice_id, invoice_pinned, review_state, duplicate_of, deleted_at',
         )
         .eq('user_id', userId)
         .eq('source', 'pluggy')
@@ -305,6 +306,64 @@ export function syncDeps(): SyncHandlerDeps {
   return {
     cors: readCorsConfig(env),
     isSecret: (request) => authorizedSecret(request, secretKeysFromEnv(env)) !== null,
+    caller: userCaller,
+    connector: () => new PluggyConnector(pluggyConfigFromEnv(env)),
+    get store() {
+      return syncStore();
+    },
+    now: () => new Date(),
+  };
+}
+
+/** Dependências reais do `pluggy-webhook` (sem usuário: tudo pela chave secreta, filtrando por `user_id`). */
+export function webhookDeps(): WebhookDeps {
+  const link = pluggyDeps();
+  const admin = adminClient();
+  const runtime = (globalThis as { EdgeRuntime?: { waitUntil(task: Promise<unknown>): void } })
+    .EdgeRuntime;
+  return {
+    token: env.get('PLUGGY_WEBHOOK_TOKEN')?.trim() || null,
+    clientId: env.get('PLUGGY_CLIENT_ID')?.trim() || null,
+    link,
+    sync: syncDeps(),
+    events: {
+      async record(eventId, event, itemId, userId, payload) {
+        const { data, error } = await admin.rpc('pluggy_webhook_record', {
+          p_event_id: eventId,
+          p_event: event,
+          p_item_id: itemId,
+          p_user: userId,
+          p_payload: payload,
+        });
+        if (error) {
+          fail('pluggy_webhook_record', error);
+        }
+        return data === true;
+      },
+      async done(eventId, error) {
+        const { error: rpcError } = await admin.rpc('pluggy_webhook_done', {
+          p_event_id: eventId,
+          p_error: error ?? null,
+        });
+        if (rpcError) {
+          fail('pluggy_webhook_done', rpcError);
+        }
+      },
+    },
+    defer: (task) => {
+      if (runtime) {
+        runtime.waitUntil(task);
+      } else {
+        void task;
+      }
+    },
+  };
+}
+
+/** Dependências reais do `pluggy-disconnect`. */
+export function disconnectDeps(): DisconnectDeps {
+  return {
+    cors: readCorsConfig(env),
     caller: userCaller,
     connector: () => new PluggyConnector(pluggyConfigFromEnv(env)),
     get store() {

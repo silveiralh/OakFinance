@@ -52,7 +52,7 @@ export interface PluggyDeps {
   now: () => Date;
 }
 
-function connectorOf(deps: PluggyDeps): LinkConnector {
+function connectorOf(deps: Pick<PluggyDeps, 'connector'>): LinkConnector {
   try {
     return deps.connector();
   } catch {
@@ -177,6 +177,80 @@ export function externalAccountRow(
   };
 }
 
+/** Resultado do vínculo (`pluggy-link-item` e o `item/created` do webhook). */
+export interface LinkResult {
+  connectionId: string;
+  status: string;
+  accounts: ExternalAccountDTO[];
+}
+
+/**
+ * Valida o item na Pluggy (existe; é de `userId` ou, sem dono, ganha esse `clientUserId`; conector permitido),
+ * recusa item de outro usuário e grava conexão e contas (tech §6.1.3 passo 4).
+ */
+export async function linkItem(
+  userId: string,
+  itemId: string,
+  deps: Pick<PluggyDeps, 'connector' | 'allowedConnectorIds' | 'store' | 'newId' | 'now'>,
+): Promise<LinkResult> {
+  const existing = await deps.store.connectionByItem(itemId);
+  if (existing && existing.user_id !== userId) {
+    throw new AppError('ITEM_FOREIGN');
+  }
+  const connector = connectorOf(deps);
+  const item = await guarded(() => connector.getItem(itemId));
+  if (item.clientUserId !== null && item.clientUserId !== userId) {
+    throw new AppError('ITEM_FOREIGN');
+  }
+  if (item.connectorId === null || !deps.allowedConnectorIds.includes(item.connectorId)) {
+    throw new AppError('CONNECTOR_NOT_ALLOWED');
+  }
+  if (item.clientUserId === null) {
+    await guarded(() => connector.setClientUserId(itemId, userId));
+  }
+  const nowIso = deps.now().toISOString();
+  const connectionId = existing?.id ?? deps.newId();
+  await deps.store.saveConnection(connectionRow(connectionId, userId, item, nowIso));
+
+  const accounts = await guarded(() => connector.listAccounts(itemId));
+  const known = new Map(
+    (await deps.store.externalAccounts(accounts.map((a) => a.id))).map((r) => [
+      r.external_account_id,
+      r,
+    ]),
+  );
+  const own = accounts.filter((a) => {
+    const ref = known.get(a.id);
+    return !ref || ref.user_id === userId;
+  });
+  const rows = own.map((a) =>
+    externalAccountRow(known.get(a.id)?.id ?? deps.newId(), userId, connectionId, a, nowIso),
+  );
+  await deps.store.saveExternalAccounts(rows);
+
+  const dto: ExternalAccountDTO[] = own.map((a, i) => {
+    const ref = known.get(a.id);
+    return {
+      id: String(rows[i]?.id),
+      type: a.type,
+      subtype: a.subtype,
+      name: a.name,
+      numberMasked: a.numberMasked,
+      accountId: ref?.account_id ?? null,
+      cardId: ref?.card_id ?? null,
+      isIgnored: ref?.is_ignored ?? false,
+      suggestion: a.credit
+        ? {
+            closingDay: dayOf(a.credit.closeDate),
+            dueDay: dayOf(a.credit.dueDate),
+            limitCents: a.credit.limitCents,
+          }
+        : null,
+    };
+  });
+  return { connectionId, status: item.status, accounts: dto };
+}
+
 /**
  * `pluggy-link-item` `{ itemId }` → `{ connectionId, status, accounts }`. Valida o item na Pluggy (existe; é do
  * chamador ou, sem dono, ganha o `clientUserId` dele; conector permitido), recusa item de outro usuário e grava
@@ -194,68 +268,8 @@ export async function handleLinkItem(request: Request, deps: PluggyDeps): Promis
     const caller = await requireCaller(request, deps.caller);
     const itemId = readItemId(await readJson(request), true) as string;
     await enforceRate(caller, 'pluggy-link');
-    const existing = await deps.store.connectionByItem(itemId);
-    if (existing && existing.user_id !== caller.userId) {
-      throw new AppError('ITEM_FOREIGN');
-    }
-    const connector = connectorOf(deps);
-    const item = await guarded(() => connector.getItem(itemId));
-    if (item.clientUserId !== null && item.clientUserId !== caller.userId) {
-      throw new AppError('ITEM_FOREIGN');
-    }
-    if (item.connectorId === null || !deps.allowedConnectorIds.includes(item.connectorId)) {
-      throw new AppError('CONNECTOR_NOT_ALLOWED');
-    }
-    if (item.clientUserId === null) {
-      await guarded(() => connector.setClientUserId(itemId, caller.userId));
-    }
-    const nowIso = deps.now().toISOString();
-    const connectionId = existing?.id ?? deps.newId();
-    await deps.store.saveConnection(connectionRow(connectionId, caller.userId, item, nowIso));
-
-    const accounts = await guarded(() => connector.listAccounts(itemId));
-    const known = new Map(
-      (await deps.store.externalAccounts(accounts.map((a) => a.id))).map((r) => [
-        r.external_account_id,
-        r,
-      ]),
-    );
-    const own = accounts.filter((a) => {
-      const ref = known.get(a.id);
-      return !ref || ref.user_id === caller.userId;
-    });
-    const rows = own.map((a) =>
-      externalAccountRow(
-        known.get(a.id)?.id ?? deps.newId(),
-        caller.userId,
-        connectionId,
-        a,
-        nowIso,
-      ),
-    );
-    await deps.store.saveExternalAccounts(rows);
-
-    const dto: ExternalAccountDTO[] = own.map((a, i) => {
-      const ref = known.get(a.id);
-      return {
-        id: String(rows[i]?.id),
-        type: a.type,
-        subtype: a.subtype,
-        name: a.name,
-        numberMasked: a.numberMasked,
-        accountId: ref?.account_id ?? null,
-        cardId: ref?.card_id ?? null,
-        isIgnored: ref?.is_ignored ?? false,
-        suggestion: a.credit
-          ? {
-              closingDay: dayOf(a.credit.closeDate),
-              dueDay: dayOf(a.credit.dueDate),
-              limitCents: a.credit.limitCents,
-            }
-          : null,
-      };
-    });
-    return jsonResponse({ connectionId, status: item.status, accounts: dto }, request, deps.cors);
+    const result = await linkItem(caller.userId, itemId, deps);
+    return jsonResponse(result, request, deps.cors);
   } catch (error) {
     return handleError(error, request, deps.cors);
   }

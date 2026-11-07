@@ -81,3 +81,7 @@ verify_jwt = false
 [functions.pluggy-sync]
 # auth 'user' (app) ou 'secret' (pg_cron): a função valida os dois
 verify_jwt = false
+
+[functions.pluggy-webhook]
+# auth 'none' + token próprio (?t=), comparado em tempo constante
+verify_jwt = false

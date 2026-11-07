@@ -68,6 +68,9 @@ export interface ExistingTx {
   external_meta: unknown;
   invoice_id: string | null;
   invoice_pinned: boolean;
+  review_state?: string;
+  duplicate_of?: string | null;
+  deleted_at?: string | null;
 }
 
 export interface SyncStats {
@@ -108,6 +111,8 @@ export interface SyncInput {
   mode: 'incremental' | 'backfill';
   days?: number;
   refresh?: boolean;
+  /** Só estes ids do provedor (webhook `transactions/created|updated`); sem `/bills`. Nunca vem do corpo HTTP. */
+  ids?: readonly string[];
 }
 
 export interface SyncDeps {
@@ -186,7 +191,11 @@ async function syncAccount(
 
   const dateFrom = dateFromFor(ctx.input.mode, ctx.today, account.last_tx_date, ctx.input.days);
   let last = account.last_tx_date;
-  for await (const page of connector.listTransactions(account.external_account_id, { dateFrom })) {
+  const ids = ctx.input.ids;
+  const source: AsyncIterable<ProviderTransaction[]> | ProviderTransaction[][] = ids
+    ? [await connector.getTransactionsByIds(account.external_account_id, [...ids])]
+    : connector.listTransactions(account.external_account_id, { dateFrom });
+  for await (const page of source) {
     if (page.length === 0) {
       continue;
     }
@@ -232,13 +241,13 @@ async function syncAccount(
     }
   }
 
-  if (target.kind === 'card') {
+  if (target.kind === 'card' && !ids) {
     await syncBills(store, userId, target.card, bills, invoices, nowIso);
     stats.bills += bills.length;
   }
   await store.updateExternalAccount(account.id, userId, {
     last_tx_date: last,
-    ...(ctx.input.mode === 'backfill' ? { backfill_done_at: nowIso } : {}),
+    ...(ctx.input.mode === 'backfill' && !ids ? { backfill_done_at: nowIso } : {}),
     client_updated_at: nowIso,
     device_id: SERVER_DEVICE,
   });
