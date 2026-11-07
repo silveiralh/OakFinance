@@ -1263,3 +1263,75 @@ body:has(.screen-welcome) .backdrop {
     padding: var(--space-3) var(--space-6);
   }
 }
+
+/* ---------- Onboarding ON04–ON08 (UX §2.3, T-065) ---------- */
+.onb-step {
+  display: grid;
+  gap: var(--space-5);
+}
+.onb-stepper {
+  display: grid;
+  gap: var(--space-2);
+}
+.onb-stepper-label {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+}
+.onb-body,
+.onb-actions {
+  display: grid;
+  gap: var(--space-3);
+}
+.onb-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-solid-2);
+  color: var(--text-primary);
+}
+.onb-icon[data-tone="success"] {
+  color: var(--status-success-fg);
+}
+/* fieldset sem flex/grid (WebKit parava de desenhar quadros, ver HANDOFF): o layout fica no div de dentro */
+.onb-group,
+.onb-line {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.onb-line > * + * {
+  margin-top: var(--space-3);
+}
+.onb-line + .onb-line {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+}
+.onb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.onb-chip {
+  border: 1px solid var(--border-strong);
+  background: var(--surface-solid-1);
+}
+.onb-hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .onb-done {
+    animation: onb-fade var(--motion-duration-fade) var(--motion-ease-out);
+  }
+}
+@keyframes onb-fade {
+  from {
+    opacity: 0;
+  }
+}

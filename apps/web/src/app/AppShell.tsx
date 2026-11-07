@@ -16,6 +16,7 @@ import {
 } from '../ui';
 import { AutoPosts } from './AutoPosts';
 import { NoticesBell } from './NoticesBell';
+import { OnboardingGate } from './OnboardingGate';
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
@@ -109,6 +110,7 @@ export function AppShell() {
       <RemoteEditsToast />
       <WipedDialog />
       <ValuesFromProfile />
+      <OnboardingGate />
       <AutoPosts />
       <Suspense fallback={null}>
         <BudgetAlerts />
