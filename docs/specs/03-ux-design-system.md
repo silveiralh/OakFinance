@@ -2605,6 +2605,37 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `nfce.cameraIntro` | A câmera é usada só para ler o QR code da nota. Nenhuma foto é guardada. |
 | `nfce.openCamera` | Abrir câmera |
 | `nfce.items` | Itens da nota ({n}) |
+| `reminders.types` | Quais lembretes receber |
+| `reminders.invoiceDue` | Vencimento de faturas |
+| `reminders.invoiceDueHint` | 3 dias antes e no dia, às 09:00 |
+| `reminders.invoiceClosed` | Fatura fechou |
+| `reminders.invoiceClosedHint` | No dia do fechamento, às 09:00 |
+| `reminders.billDue` | Contas fixas |
+| `reminders.billDueHint` | Na véspera do vencimento, às 09:00 |
+| `reminders.late` | Conta fixa atrasada e receita não confirmada |
+| `reminders.lateHint` | No dia seguinte, às 09:00 |
+| `reminders.budget` | Limite de faixa ou categoria |
+| `reminders.budgetHint` | Ao chegar a 80% e a 100% |
+| `reminders.daily` | Lembrete diário |
+| `reminders.dailyHint` | Só se não houver lançamento no dia |
+| `reminders.weekly` | Resumo semanal |
+| `reminders.weeklyHint` | Gastos da semana, maiores categorias e o disponível |
+| `reminders.bank` | Conexão bancária |
+| `reminders.bankHint` | Quando a conexão com o banco precisar de atenção |
+| `reminders.time` | Horário |
+| `reminders.day` | Dia |
+| `reminders.weekday.0` | Domingo |
+| `reminders.weekday.1` | Segunda-feira |
+| `reminders.weekday.2` | Terça-feira |
+| `reminders.weekday.3` | Quarta-feira |
+| `reminders.weekday.4` | Quinta-feira |
+| `reminders.weekday.5` | Sexta-feira |
+| `reminders.weekday.6` | Sábado |
+| `reminders.quiet` | Horário silencioso |
+| `reminders.quietHint` | Nesse intervalo os avisos ficam na central, e o push sai quando ele termina. |
+| `reminders.quietStart` | Início |
+| `reminders.quietEnd` | Fim |
+| `reminders.nextTick` | As mudanças valem a partir da próxima verificação, em até 15 minutos. |
 | `review.count` | {n} para conferir |
 | `review.manual` / `.imported` | Lançado por você / Recebido do banco |
 | `review.same` / `.different` / `.ignore` | É o mesmo / São diferentes / Ignorar |

@@ -1409,6 +1409,18 @@ body:has(.screen-welcome) .backdrop {
   gap: 8px;
 }
 
+/* S07 — preferências por tipo de lembrete (T-093) */
+.reminder-pref {
+  display: grid;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+}
+.reminder-pref-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+
 @media (min-width: 1024px) {
   /* D-025: uma coluna que estica na largura toda, com tudo maior para ocupar a tela */
   .home {
