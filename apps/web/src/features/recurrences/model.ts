@@ -270,6 +270,21 @@ export function skipOccurrence(
   return writeOccurrence(db, userId, rec, date, { status: 'cancelled' }, nowMs);
 }
 
+/**
+ * Grava a ocorrência ainda prevista (pendente) com o valor dado, para poder mudar a data dela pelo Q01 (RN-34
+ * "Mudar data"; T-091). Se já existe, só confirma que continua pendente.
+ */
+export function holdOccurrence(
+  db: OakDb,
+  userId: string,
+  rec: Recurrence,
+  date: ISODate,
+  amountCents: number,
+  nowMs: number = Date.now(),
+) {
+  return writeOccurrence(db, userId, rec, date, { status: 'pending', amountCents }, nowMs);
+}
+
 /** RN-31: "≈ R$ X", com X = valor da última ocorrência efetivada (ou o cadastrado). */
 export function approxAmount(rec: Recurrence, txs: readonly Tx[]): number {
   const last = txs

@@ -21,7 +21,7 @@ export const BACKUP_FORMAT = 'oakfinance-backup';
  * Versão do esquema do banco que o arquivo segue: o prefixo da última migração em `supabase/migrations`. O teste
  * `backup.test.ts` confere; quem acrescentar uma migração atualiza aqui.
  */
-export const BACKUP_SCHEMA_VERSION = '20261107000012';
+export const BACKUP_SCHEMA_VERSION = '20261107000013';
 
 /** Tabelas fora do backup: segredos de integração (US-60), gravadas só pelo servidor. */
 export const BACKUP_EXCLUDED: readonly SyncedTable[] = ['bank_connections', 'external_accounts'];
