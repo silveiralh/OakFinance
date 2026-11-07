@@ -12,6 +12,7 @@ import { putInTransaction, writeScope } from '../../data/repositories/rows';
 import type { Result } from '../../data/result';
 import { writeLocal } from '../../data/storage';
 import { deviceId } from '../../data/sync/clock';
+import { appVersion } from '../../lib/env';
 
 /** Identifica o arquivo como backup deste app. */
 export const BACKUP_FORMAT = 'oakfinance-backup';
@@ -41,10 +42,6 @@ export interface BackupFile {
   app_version: string;
   exported_at: string;
   tables: Partial<Record<SyncedTable, BackupRow[]>>;
-}
-
-function appVersion(): string {
-  return typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : '0.0.0-dev';
 }
 
 /** "backup_2026-11-07.json" (US-60), com a data de hoje no fuso de São Paulo. */

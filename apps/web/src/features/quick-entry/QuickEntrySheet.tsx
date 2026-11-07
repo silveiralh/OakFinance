@@ -12,7 +12,7 @@ import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { writeLocal } from '../../data/storage';
 import { t, uiText } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
-import { track } from '../../lib/telemetry';
+import { track, trackUsage } from '../../lib/telemetry';
 import {
   AmountInput,
   BottomSheet,
@@ -111,6 +111,12 @@ export function QuickEntrySheet({
     [user, editId],
   );
   const navigate = useNavigate();
+  // RN-104: lancamento_iniciado, uma vez por abertura do Q01 para um lançamento novo.
+  useEffect(() => {
+    if (user && editId === null) {
+      void trackUsage(user.db, 'lancamento_iniciado', { origem: 'manual' });
+    }
+  }, [user, editId]);
   const [mode, setMode] = useState<QuickKind>(initialMode);
   const [amount, setAmount] = useState(0);
   const [categoryId, setCategoryId] = useState<string | null>(null);
@@ -415,7 +421,7 @@ export function QuickEntrySheet({
       user.engine.notifyWrite();
       const elapsed = quickEntryElapsed();
       void track(user.db, {
-        code: 'lancamento_salvo',
+        code: 'usage.lancamento_salvo',
         context: {
           ...(elapsed !== null && { duracao_ms: elapsed }),
           offline: typeof navigator !== 'undefined' && !navigator.onLine,
@@ -449,7 +455,7 @@ export function QuickEntrySheet({
     if (!editing) {
       const elapsed = quickEntryElapsed();
       void track(user.db, {
-        code: 'lancamento_salvo',
+        code: 'usage.lancamento_salvo',
         context: { ...(elapsed !== null && { duracao_ms: elapsed }), offline, origem: 'manual' },
       });
     }

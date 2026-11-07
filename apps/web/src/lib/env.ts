@@ -103,3 +103,8 @@ export function getEnv(): AppEnv {
   );
   return cached;
 }
+
+/** Versão do build (`__APP_VERSION__`), sem validar o resto do ambiente. */
+export function appVersion(): string {
+  return typeof __APP_VERSION__ === 'string' ? __APP_VERSION__ : '0.0.0-dev';
+}

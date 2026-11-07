@@ -171,7 +171,7 @@ export function WipedDialog() {
   );
 }
 
-/** G15: banner discreto no Início com as alterações rejeitadas; "Ver detalhes" leva às Configurações (S11). */
+/** G15: banner discreto no Início com as alterações rejeitadas; "Ver detalhes" leva ao Diagnóstico (S11). */
 export function RejectedBanner() {
   const snapshot = useSyncSnapshot();
   const navigate = useNavigate();
@@ -184,7 +184,7 @@ export function RejectedBanner() {
       tone="warning"
       icon={TriangleAlert}
       message={rejectedText(rejected)}
-      action={{ label: shellText.seeDetails, onPress: () => void navigate('/ajustes') }}
+      action={{ label: shellText.seeDetails, onPress: () => void navigate('/ajustes/diagnostico') }}
       data-testid="g15"
     />
   );

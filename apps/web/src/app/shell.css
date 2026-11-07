@@ -1055,6 +1055,43 @@ body:has(.screen-welcome) .backdrop {
   min-height: 48px;
 }
 
+/* T-071: S11 diagnóstico */
+.diag {
+  display: grid;
+  gap: var(--space-4);
+}
+.diag-block {
+  display: grid;
+  gap: var(--space-3);
+}
+.diag-block dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+.diag-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.diag-row dd {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  overflow-wrap: anywhere;
+}
+.diag-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.diag-rejected {
+  display: grid;
+  gap: var(--space-2);
+}
+
 /* T-061: S06 ajustes do cálculo */
 .calc {
   display: grid;

@@ -44,6 +44,9 @@ function SettingsLinks() {
       <Button variant="secondary" onClick={() => void navigate('/ajustes/dados')}>
         {shellText.screens.S10}
       </Button>
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/diagnostico')}>
+        {shellText.screens.S11}
+      </Button>
     </>
   );
 }
