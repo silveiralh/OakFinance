@@ -127,7 +127,7 @@ flowchart LR
 | T-062 | Central de avisos (H02) | T-045 | done |
 | T-063 | Ativar notificações push | T-062, T-030 | done |
 | T-064 | reminders-tick: diário e faturas | T-063, T-024, T-011 | done |
-| T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | todo |
+| T-065 | Onboarding completo | T-064, T-060, T-050, T-039, T-037 | done |
 | T-066 | Exportar lançamentos em CSV | T-043 | todo |
 | T-067 | Estados vazios e erros completos | T-065 | todo |
 | T-068 | Tema escuro e reduzir movimento | T-029 | todo |
@@ -1026,7 +1026,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-065 — Onboarding completo
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S2 | M | US-08 | RN-07, RN-09, RN-32, RN-55 | T-064, T-060, T-050, T-039, T-037 | não |
+| done | S2 | M | US-08 | RN-07, RN-09, RN-32, RN-55 | T-064, T-060, T-050, T-039, T-037 | não |
 
 **Escopo:** ON04 a ON08 com o stepper "Passo n de 5"; Pular; retomada por `profiles.onboarding` (também offline); "Refazer configuração inicial"; cards "Complete a configuração".
 

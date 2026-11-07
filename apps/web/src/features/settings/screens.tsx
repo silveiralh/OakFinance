@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router';
+import { useAuth } from '../../app/auth';
 import { ScreenStub } from '../../app/ScreenStub';
-import { shellText } from '../../i18n/pt-BR';
+import { shellText, t } from '../../i18n/pt-BR';
 import { Button } from '../../ui';
+import { restart, STEP_PATH, updateOnboarding } from '../onboarding/progress';
 import { SignOutAction } from './SignOut';
 
 /** S01: a lista de ajustes chega depois; por enquanto só o "Sair" (S02, RN-100). */
@@ -10,6 +12,7 @@ export function SettingsScreen() {
     <>
       <ScreenStub screen="S01" />
       <SettingsLinks />
+      <RedoOnboarding />
       <SignOutAction />
     </>
   );
@@ -36,5 +39,23 @@ function SettingsLinks() {
         {shellText.screens.S07}
       </Button>
     </>
+  );
+}
+
+/** S02 "Refazer configuração inicial" (UX §3 S01, US-08): reabre o fluxo no ON04 sem apagar dados. */
+function RedoOnboarding() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const redo = async () => {
+    if (user) {
+      await updateOnboarding(user.db, (s) => restart(s, new Date().toISOString()));
+      user.engine.notifyWrite();
+    }
+    void navigate(STEP_PATH.reminders);
+  };
+  return (
+    <Button variant="secondary" onClick={() => void redo()} data-testid="onb-redo">
+      {t('onb.redo')}
+    </Button>
   );
 }

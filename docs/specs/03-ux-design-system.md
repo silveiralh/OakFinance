@@ -1897,6 +1897,37 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `onb.done.cta` | Fazer o primeiro lançamento |
 | `onb.done.home` | Ir para o início |
 | `onb.pending.card` | Complete a configuração: {itens} |
+| `onb.stepName.reminders` | Lembretes |
+| `onb.stepName.income` | Renda |
+| `onb.stepName.accounts` | Contas |
+| `onb.stepName.cards` | Cartões |
+| `onb.stepName.reserve` | Reserva |
+| `onb.notif.due` | Vencimento de faturas e contas |
+| `onb.notif.dueHint` | 3 dias antes e no dia |
+| `onb.notif.daily` | Lembrete diário para registrar gastos |
+| `onb.notif.dailyHint` | Às 20:00, se não houver lançamento no dia |
+| `onb.notif.weekly` | Resumo semanal |
+| `onb.notif.weeklyHint` | Domingo, 19:00 |
+| `onb.notif.budget` | Categoria perto do limite |
+| `onb.notif.budgetHint` | Ao chegar a 80% do limite |
+| `onb.income.account` | Conta de crédito |
+| `onb.income.accountLater` | Cadastrar no próximo passo |
+| `onb.income.invalid` | Informe um valor maior que zero. |
+| `onb.accounts.bb` | Banco do Brasil |
+| `onb.accounts.nubank` | Nubank |
+| `onb.accounts.other` | Outra conta |
+| `onb.accounts.balance` | Saldo atual (opcional) |
+| `onb.cards.addAnother` | Adicionar outro cartão |
+| `onb.cards.limit` | Limite (opcional) |
+| `onb.reserve.title` | Reserva de emergência |
+| `onb.reserve.saved` | Quanto você já tem guardado |
+| `onb.reserve.suggested` | Meta sugerida: {valor} |
+| `onb.reserve.provisional` | Meta sugerida: {valor} · estimativa provisória, recalculada com seus gastos |
+| `onb.reserve.noIncome` | A meta é sugerida depois que você cadastrar a renda. |
+| `onb.reserve.custom` | Definir outra meta |
+| `onb.reserve.target` | Meta da reserva |
+| `onb.pending.cta` | Completar |
+| `onb.redo` | Refazer configuração inicial |
 | `common.skip` | Pular |
 | `common.continue` | Continuar |
 

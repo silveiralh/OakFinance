@@ -1,30 +1,12 @@
-import { ScreenStub } from '../../app/ScreenStub';
-
-export function OnbRemindersScreen() {
-  return <ScreenStub screen="ON04" standalone />;
-}
-
-export function OnbIncomeScreen() {
-  return <ScreenStub screen="ON05" standalone />;
-}
-
-export function OnbAccountsScreen() {
-  return <ScreenStub screen="ON06" standalone />;
-}
-
-export function OnbCardsScreen() {
-  return <ScreenStub screen="ON07" standalone />;
-}
-
-export function OnbReserveScreen() {
-  return <ScreenStub screen="ON07b" standalone />;
-}
-
-export function OnbDoneScreen() {
-  return <ScreenStub screen="ON08" standalone />;
-}
-
+// Onboarding depois do login (UX §2.3, T-065): ON04 Lembretes, ON05 Renda, ON06 Contas, ON07 Cartões, ON07b Reserva
+// e ON08 Configuração concluída.
+export { AccountsStep as OnbAccountsScreen } from './AccountsStep';
 export { AuthCallback } from './AuthCallback';
+export { CardsStep as OnbCardsScreen } from './CardsStep';
+export { DoneStep as OnbDoneScreen } from './DoneStep';
+export { IncomeStep as OnbIncomeScreen } from './IncomeStep';
 export { InstallScreen } from './InstallScreen';
 export { LoginScreen } from './LoginScreen';
+export { RemindersStep as OnbRemindersScreen } from './RemindersStep';
+export { ReserveStep as OnbReserveScreen } from './ReserveStep';
 export { WelcomeScreen } from './WelcomeScreen';

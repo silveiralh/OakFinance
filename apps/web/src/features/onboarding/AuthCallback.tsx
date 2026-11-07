@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { markFreshLogin } from '../../app/OnboardingGate';
 import { Splash } from '../../app/Splash';
 
 /** Motivo do erro devolvido pelo Supabase no retorno do OAuth. `privado`: o hook de cadastro recusou (RN-101). */
@@ -13,7 +14,7 @@ export function callbackError(params: URLSearchParams): 'privado' | 'falha' | nu
   return /privado/i.test(description) ? 'privado' : 'falha';
 }
 
-/** `/auth/callback` (PKCE): troca o código pela sessão e segue para o Início; erro volta ao ON03. */
+/** `/auth/callback` (PKCE): troca o código pela sessão e segue para o Início (ou o onboarding); erro volta ao ON03. */
 export function AuthCallback() {
   const { client } = useAuth();
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export function AuthCallback() {
       return;
     }
     void client.auth.exchangeCodeForSession(code).then(({ error: exchange }) => {
+      if (!exchange) {
+        markFreshLogin(); // o perfil sincronizado decide se o onboarding começa (UX §2.3)
+      }
       void navigate(exchange ? '/entrar?erro=falha' : '/', { replace: true });
     });
   }, [client, navigate]);
