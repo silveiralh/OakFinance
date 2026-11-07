@@ -1707,6 +1707,11 @@ export type Database = {
       };
       ops_health: { Args: Record<PropertyKey, never>; Returns: Json };
       ping: { Args: Record<PropertyKey, never>; Returns: string };
+      pluggy_sync_finish: {
+        Args: { p_error?: string; p_run: number; p_stats: Json; p_status: string };
+        Returns: undefined;
+      };
+      pluggy_sync_start: { Args: { p_connection: string; p_user: string }; Returns: number };
       rate_limit_hit: {
         Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
         Returns: boolean;

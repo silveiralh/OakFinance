@@ -136,7 +136,7 @@ flowchart LR
 | T-071 | Diagnóstico, telemetria e saída | T-045 | done |
 | T-072 | Conector Pluggy e mock | T-011, T-019 | done |
 | T-073 | Conectar e vincular item | T-072 | done |
-| T-074 | Sincronização pluggy-sync | T-073, T-013 | todo |
+| T-074 | Sincronização pluggy-sync | T-073, T-013 | done |
 | T-075 | Webhook e desconexão | T-074 | todo |
 | T-076 | Telas de conexão (I01/I02) | T-075, T-045 | todo |
 | T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
@@ -1132,7 +1132,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-074 — Sincronização pluggy-sync
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-46 | RN-19, RN-65, RN-80 | T-073, T-013 | não |
+| done | S3 | M | US-46 | RN-19, RN-65, RN-80 | T-073, T-013 | não |
 
 **Escopo:** backfill de 90 dias e incremental com −10 dias; upsert só das colunas do provedor; faturas v5 e `/bills`; lançamentos anteriores ao onboarding entram revisados; `job_runs`; `PATCH` no máximo 1×/h ("Atualizado há 10 min. Tente de novo em 50 min.").
 

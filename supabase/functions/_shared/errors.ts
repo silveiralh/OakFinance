@@ -18,6 +18,7 @@ export const ERRORS = {
   },
   ITEM_FOREIGN: { status: 409, message: 'Essa conexão pertence a outra conta.' },
   CONNECTOR_NOT_ALLOWED: { status: 403, message: 'Conector não permitido.' },
+  REFRESH_TOO_SOON: { status: 429, message: 'Atualizado há pouco. Tente de novo mais tarde.' },
   INTERNAL: { status: 500, message: 'Erro interno.' },
   UPSTREAM_UNAVAILABLE: { status: 502, message: 'Serviço externo indisponível.' },
   UPSTREAM_TIMEOUT: { status: 504, message: 'Serviço externo não respondeu a tempo.' },

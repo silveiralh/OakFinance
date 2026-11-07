@@ -7,6 +7,8 @@ import { AppError } from './errors.ts';
 export const RATE_LIMITS = {
   'pluggy-connect': 20,
   'pluggy-link': 20,
+  // tech §6.1.4: pelo app, 6 chamadas por hora por usuário
+  'pluggy-sync': 6,
 } as const;
 export const RATE_WINDOW_SECONDS = 3600;
 
