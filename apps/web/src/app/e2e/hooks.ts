@@ -1,12 +1,14 @@
 // Só no build E2E (VITE_E2E=1): ganchos para o Playwright criar alterações locais antes de existir a tela de
 // lançamento (E20). Nunca entra no bundle de produção (import dinâmico atrás da constante).
-import { invoiceForPurchase, noticeId, todayIn } from '@oakfinance/domain';
+import { type ISODate, invoiceForPurchase, noticeId, todayIn } from '@oakfinance/domain';
 import type { LocalRow } from '../../data/db';
 import { newId } from '../../data/ids';
 import { cardFromRow } from '../../data/mappers';
 import { createCard } from '../../data/repositories/cards';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { pendingCount } from '../../data/sync/outbox';
+import { loadHomeRows } from '../../features/dashboard/data';
+import { homeModel } from '../../features/dashboard/model';
 import { installmentRows, saveInstallmentPurchase } from '../../features/quick-entry/installments';
 import { buildInvoice } from '../../features/quick-entry/model';
 import { applyUpdate } from '../../lib/sw-update';
@@ -18,6 +20,13 @@ declare global {
       userId: string;
       dbName: string;
       addAccount(name: string): Promise<string>;
+      /**
+       * T-097: grava `n` despesas só no aparelho (direto no Dexie, sem outbox) espalhadas nos últimos 120 dias, para
+       * medir o desempenho com volume (RN-51).
+       */
+      seedTransactions(accountId: string, n: number): Promise<number>;
+      /** T-097: ms do recálculo do painel (`homeModel` sobre as linhas locais), mediana de `runs` execuções. */
+      measureHome(runs: number): Promise<number>;
       /** Estado da nota NFC-e com a chave dada (E09, T-089), ou `null` se não foi lida. */
       nfceStatus(accessKey: string): Promise<string | null>;
       pending(): Promise<number>;
@@ -109,6 +118,40 @@ export function installE2eHooks(user: UserSession): () => void {
   window.__oakE2E = {
     userId: user.userId,
     dbName: user.db.name,
+    async seedTransactions(accountId: string, n: number) {
+      const today = todayIn('America/Sao_Paulo', new Date());
+      const base = Date.parse(`${today}T12:00:00Z`);
+      const now = new Date().toISOString();
+      const rows = Array.from({ length: n }, (_, i) => ({
+        ...EXPENSE_DEFAULTS,
+        tags: [],
+        id: newId(),
+        user_id: user.userId,
+        amount_cents: 100 + (i % 9000),
+        occurred_on: new Date(base - (i % 120) * 86_400_000).toISOString().slice(0, 10),
+        description: `Volume ${i}`,
+        account_id: accountId,
+        created_at: now,
+        updated_at: now,
+        client_updated_at: now,
+        server_version: 1,
+      })) satisfies LocalRow<'transactions'>[];
+      await user.db.transactions.bulkPut(rows);
+      return rows.length;
+    },
+    async measureHome(runs: number) {
+      const today = todayIn('America/Sao_Paulo', new Date()) as ISODate;
+      // RN-51: o recálculo (a leitura do banco local fica fora, como no painel ao vivo)
+      const rows = await loadHomeRows(user.db);
+      const times: number[] = [];
+      for (let i = 0; i < runs; i++) {
+        const started = performance.now();
+        homeModel(rows, today);
+        times.push(performance.now() - started);
+      }
+      times.sort((a, b) => a - b);
+      return times[Math.floor(times.length / 2)] ?? Number.NaN;
+    },
     async nfceStatus(accessKey: string) {
       const receipt = (await user.db.nfce_receipts.toArray()).find(
         (r) => r.access_key === accessKey && r.deleted_at === null,
