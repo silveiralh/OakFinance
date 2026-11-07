@@ -154,7 +154,7 @@ flowchart LR
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | done |
 | T-090 | Parser da NFC-e com páginas reais | T-089 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
 | T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | done |
-| T-092 | Alertas de limite e resumo semanal | T-091, T-059 | todo |
+| T-092 | Alertas de limite e resumo semanal | T-091, T-059 | done |
 | T-093 | Preferências de notificação | T-092 | todo |
 | T-094 | Excluir conta | T-070, T-075 | todo |
 | T-095 | Auditoria E2E E01–E20 | T-094, T-093, T-089, T-086, T-082, T-081, T-080 | todo |
@@ -1339,7 +1339,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-092 — Alertas de limite e resumo semanal
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | M | US-42, US-43 | RN-92, RN-93 | T-091, T-059 | não |
+| done | S4 | M | US-42, US-43 | RN-92, RN-93 | T-091, T-059 | não |
 
 **Escopo:** `budget_threshold` em todo tick (uma vez por mês, nada com Base = 0 nem para Poupança); `weekly_summary` aos domingos às 19:00, com a versão curta; textos #5, #6, #8 e #8b.
 

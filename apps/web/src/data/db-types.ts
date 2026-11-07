@@ -1733,6 +1733,7 @@ export type Database = {
         Args: { p_error?: string; p_run: number; p_stats: Json; p_status: string };
         Returns: undefined;
       };
+      reminders_tick_month: { Args: { p_today: string; p_user: string }; Returns: Json };
       reminders_tick_record: {
         Args: { p_now: string; p_outbox: Json; p_subs: Json };
         Returns: undefined;

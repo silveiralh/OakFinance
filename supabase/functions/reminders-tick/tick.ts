@@ -1,9 +1,11 @@
 // Regras do reminders-tick (tech §6.4.5) sem I/O: o que vira aviso e push para cada usuário e o que fazer com cada
 // push devido. O "agora" é sempre injetado. Ligados: lembrete diário (RN-87), fatura fechou (RN-88), vencimento de
-// fatura (RN-89) — T-064 — e contas fixas e receitas (RN-90, RN-91, RN-34) — T-091; os outros tipos ficam
-// desligados aqui até as tarefas deles.
+// fatura (RN-89) — T-064 —, contas fixas e receitas (RN-90, RN-91, RN-34) — T-091 — e limite de faixa ou
+// categoria (RN-92) e resumo semanal (RN-93) — T-092; a conexão bancária (RN-94) fica desligada até a tarefa dela.
 import {
-  DEFAULT_BUDGET_PCT_BP,
+  type Account,
+  type Card,
+  type Category,
   DEFAULT_REMINDERS,
   type DueNotification,
   deliverAt,
@@ -12,11 +14,13 @@ import {
   type InvoiceTotals,
   type ISODate,
   invoiceTotals,
+  type MonthInput,
   noticeId,
   type PaymentMethod,
   type Recurrence,
   type ReminderKind,
   type ReminderPref,
+  resolveBudgetConfig,
   resolveProfileSettings,
   stillDue,
   type Tx,
@@ -31,6 +35,8 @@ export const TICK_KINDS: readonly ReminderKind[] = [
   'bill_due',
   'bill_overdue',
   'income_unconfirmed',
+  'budget_threshold',
+  'weekly_summary',
 ];
 /** Tamanho da janela de avaliação: o pg_cron chama a cada 15 min (RN-86). */
 export const WINDOW_MINUTES = 15;
@@ -95,6 +101,28 @@ export interface SnapshotRecurrenceTx {
   reviewState: Tx['reviewState'];
 }
 
+/** Orçamento (padrão ou do mês) como o snapshot devolve (T-092). */
+export interface SnapshotBudget {
+  month: YearMonth | null;
+  scope: string;
+  bucket: string | null;
+  categoryId: string | null;
+  pctBp: number | null;
+  limitCents: number | null;
+  alertThresholdsBp: number[];
+}
+
+/** Mês orçamentário de hoje no formato do domínio (migração 14, `reminders_tick_month`). */
+export interface SnapshotMonth {
+  txs: Tx[];
+  recurrences: (SnapshotRecurrence & { pausedAt: string | null })[];
+  accounts: Account[];
+  cards: Card[];
+  categories: (Category & { name: string })[];
+  invoiceMonths: Record<string, YearMonth>;
+  budgets: SnapshotBudget[];
+}
+
 /** Uma linha de `reminders` como o snapshot devolve. */
 export interface SnapshotReminder {
   kind: string;
@@ -118,6 +146,8 @@ export interface UserSnapshot {
   /** T-091 (migração 13); ausente em snapshots antigos. */
   recurrences?: SnapshotRecurrence[];
   recurrenceTxs?: SnapshotRecurrenceTx[];
+  /** T-092 (migração 14); ausente em snapshots antigos. */
+  month?: SnapshotMonth;
 }
 
 export interface NoticeRow {
@@ -303,37 +333,95 @@ export function invoicesWithTotals(
   }));
 }
 
+const BUCKETS = ['needs', 'wants', 'savings'] as const;
+
+/** Percentuais e limiares do mês (RN-43): o registro do mês sobrepõe o padrão. */
+export function budgetOf(budgets: readonly SnapshotBudget[], month: YearMonth) {
+  return resolveBudgetConfig(
+    budgets.map((b) => ({
+      month: b.month,
+      scope: b.scope,
+      bucket: BUCKETS.find((x) => x === b.bucket) ?? null,
+      pctBp: b.pctBp,
+      alertThresholdsBp: b.alertThresholdsBp,
+    })),
+    month,
+  );
+}
+
+/** Limites por categoria vigentes no mês (RN-45): o do mês, senão o padrão; só os maiores que zero. */
+export function categoryLimitsOf(budgets: readonly SnapshotBudget[], month: YearMonth) {
+  const rows = budgets.filter(
+    (b) => b.scope === 'category' && b.categoryId !== null && b.limitCents !== null,
+  );
+  const ids = [...new Set(rows.map((b) => b.categoryId as string))];
+  return ids.flatMap((categoryId) => {
+    const mine = rows.filter((b) => b.categoryId === categoryId);
+    const row = mine.find((b) => b.month === month) ?? mine.find((b) => b.month === null);
+    return row && (row.limitCents ?? 0) > 0
+      ? [
+          {
+            categoryId,
+            limitCents: row.limitCents as number,
+            alertThresholdsBp: row.alertThresholdsBp,
+          },
+        ]
+      : [];
+  });
+}
+
+/** Lançamentos do mês com os das ocorrências e receitas pendentes (o do mês, completo, prevalece). */
+function mergeTxs(month: readonly Tx[], extra: readonly Tx[]): Tx[] {
+  const ids = new Set(month.map((t) => t.id));
+  return [...month, ...extra.filter((t) => !ids.has(t.id))];
+}
+
 /** Avisos devidos agora para o usuário (só os tipos de `TICK_KINDS`). */
 export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
   const settings = resolveProfileSettings(snap.settings);
   const nowLocal = localParts(now, snap.timezone);
   const recurrences = (snap.recurrences ?? []).filter((r) => r.remind).map(toRecurrence);
   const recTxs = (snap.recurrenceTxs ?? []).map(recurrenceTx);
+  const ym = nowLocal.date.slice(0, 7) as YearMonth;
+  const m = snap.month;
+  const month: MonthInput = {
+    month: ym,
+    today: nowLocal.date,
+    txs: mergeTxs(m?.txs ?? [], recTxs),
+    // as pausadas vêm com `pausedAt` e o domínio as ignora
+    recurrences: (m?.recurrences ?? []).map((r) => ({ ...toRecurrence(r), pausedAt: r.pausedAt })),
+    cards: m?.cards ?? [],
+    accounts: m?.accounts ?? [],
+    categories: m?.categories ?? [],
+    invoiceMonthById: new Map(Object.entries(m?.invoiceMonths ?? {})),
+    attribution: settings.spendable.cardAttribution,
+    includeRestrictedAccounts: settings.spendable.includeRestrictedAccounts,
+  };
+  const budgets = m?.budgets ?? [];
+  // sem o mês (snapshot antigo) não há como calcular consumo nem resumo: esses dois tipos ficam de fora
+  const kinds = m
+    ? TICK_KINDS
+    : TICK_KINDS.filter((k) => k !== 'budget_threshold' && k !== 'weekly_summary');
   const due = dueNotifications({
     nowLocal,
     windowMinutes: WINDOW_MINUTES,
-    prefs: tickPrefs(snap.reminders),
-    month: {
-      month: nowLocal.date.slice(0, 7) as YearMonth,
-      today: nowLocal.date,
-      txs: recTxs,
-      recurrences,
-      cards: [],
-      accounts: [],
-      categories: [],
-      invoiceMonthById: new Map(),
-      attribution: settings.spendable.cardAttribution,
-      includeRestrictedAccounts: settings.spendable.includeRestrictedAccounts,
-    },
-    budget: { pctBp: { ...DEFAULT_BUDGET_PCT_BP }, alertThresholdsBp: [] },
+    prefs: tickPrefs(snap.reminders).map((p) =>
+      kinds.includes(p.kind) ? p : { ...p, enabled: false },
+    ),
+    month,
+    budget: budgetOf(budgets, ym),
     spendable: settings.spendable,
     invoices: invoicesWithTotals(snap),
     recurrences,
     hideValues: settings.hideValues,
-    labels: { cards: snap.cards },
+    labels: {
+      cards: snap.cards,
+      categories: Object.fromEntries((m?.categories ?? []).map((c) => [c.id, c.name])),
+    },
     loggedOn: snap.loggedOn,
+    categoryLimits: categoryLimitsOf(budgets, ym),
   });
-  return due.filter((n) => TICK_KINDS.includes(n.kind));
+  return due.filter((n) => kinds.includes(n.kind));
 }
 
 /**
