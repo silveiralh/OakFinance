@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, login, test } from './fixtures/base';
+import { expect, freshUser, login, test } from './fixtures/base';
 
 // T-046: ocultar valores (E13, US-57, RN-103).
 
@@ -16,11 +16,11 @@ async function noMoney(page: Page, where: string) {
 
 test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principais e o Q01 mostra o que se digita', async ({
   page,
-}) => {
+}, info) => {
   test.setTimeout(90_000);
-  // usuário B: a preferência vai para a conta e não pode afetar os testes do A que rodam em paralelo
-  // a primeira entrada cria o usuário; se outro teste criar o e2e-b ao mesmo tempo, a tentativa falha e repete
-  await login(page, 'e2e-b@example.test').catch(() => login(page, 'e2e-b@example.test'));
+  // a preferência vai para a conta: um usuário por projeto e tentativa (`freshUser`), para os três navegadores não
+  // trocarem o olho uns dos outros pelo sync (issue #119: o desktop ocultava e o pull trazia "mostrar" do android)
+  await login(page, freshUser('hide-values', info));
   await hooks(page);
   const stamp = Date.now();
   const account = await page.evaluate(

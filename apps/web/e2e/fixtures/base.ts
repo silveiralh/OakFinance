@@ -41,7 +41,7 @@ export { expect };
  * aprendeu não pode herdar os dados da repetição anterior.
  */
 export function freshUser(
-  scenario: 'inbox' | 'nfce-fallback' | 'a11y-reflow' | 'analysis',
+  scenario: 'inbox' | 'nfce-fallback' | 'a11y-reflow' | 'analysis' | 'close' | 'hide-values',
   info: Pick<TestInfo, 'project' | 'repeatEachIndex' | 'retry'>,
 ): string {
   const n = info.repeatEachIndex * 2 + info.retry;
