@@ -18,7 +18,8 @@ export function parseStatusEnv(text) {
   return out;
 }
 
-const env = { ...process.env, VITE_E2E: '1' };
+// T-115 (D-080): o build E2E liga o Open Finance (OPEN_FINANCE_ENABLED) para o E10 seguir coberto até a v2
+const env = { ...process.env, VITE_E2E: '1', VITE_OPEN_FINANCE: '1' };
 try {
   const status = parseStatusEnv(
     execFileSync('supabase', ['status', '-o', 'env'], {

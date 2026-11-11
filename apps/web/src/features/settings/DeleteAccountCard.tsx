@@ -5,6 +5,7 @@ import { DatabaseBackup, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { OPEN_FINANCE_ENABLED } from '../../app/openFinance';
 import { errorStates, t, uiText } from '../../i18n/pt-BR';
 import { invokeFunction } from '../../lib/functions';
 import { BottomSheet, Button, GlassCard, TextField } from '../../ui';
@@ -51,7 +52,7 @@ export function DeleteAccountCard({ onBackup }: { onBackup: () => Promise<void> 
     <GlassCard level={2} className="export-card" data-testid="delete-account-card">
       <h2>{t('deleteAccount.title')}</h2>
       <p className="account-meta">{t('deleteAccount.hint')}</p>
-      <p className="account-meta">{t('deleteAccount.pluggy')}</p>
+      {OPEN_FINANCE_ENABLED && <p className="account-meta">{t('deleteAccount.pluggy')}</p>}
       <Button
         variant="secondary"
         iconStart={DatabaseBackup}
@@ -83,7 +84,7 @@ export function DeleteAccountCard({ onBackup }: { onBackup: () => Promise<void> 
         data-testid="delete-account-confirm"
       >
         <p className="dialog-description">{errorStates.deleteAccount.text}</p>
-        <p className="dialog-description">{t('deleteAccount.pluggy')}</p>
+        {OPEN_FINANCE_ENABLED && <p className="dialog-description">{t('deleteAccount.pluggy')}</p>}
         <TextField
           label={t('deleteAccount.typeLabel')}
           value={typed}

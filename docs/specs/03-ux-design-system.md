@@ -577,6 +577,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### I01 — Conexões e importação · `/ajustes/conexoes` · S3–S4
 
+- **MVP sem Open Finance (D-080, D-087):** com `OPEN_FINANCE_ENABLED` desligado (produção até a v2), a I01 mostra só as seções 2 (**Importar extrato**) e 3 (**Nota fiscal (NFC-e)**); a seção 1, o botão **Conectar banco** e o estado vazio "Nenhum banco conectado" não aparecem. A descrição abaixo é a da v2.
 - **Conteúdo:** três seções em GlassCard:
   1. **Bancos conectados (Open Finance)**: `BankConnectionCard` para BB e Nubank: estado, "Atualizado hoje às 07:40", "Expira em 12 dias" (só quando o consentimento tem data), botões **Atualizar agora** (no máximo 1 vez por hora: "Atualizado há {n} min. Tente de novo em {m} min.") / **Renovar** / **Desconectar**. Botão **Conectar banco**. Após cada sincronização: "{n} novas · {m} vinculadas · {k} para conferir".
   2. **Importar extrato**: **Escolher arquivo OFX ou CSV** + dica "Banco do Brasil: exporte o extrato em OFX (Money 2000+)."
@@ -586,6 +587,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### I02 — Conectar banco · `/ajustes/conexoes/novo` · S3
 
+- **MVP sem Open Finance (D-080, D-087):** a rota redireciona para a I01; nenhum caminho visível leva a esta tela.
 - **Fluxo:** tela de explicação ("A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos.") → **Continuar** abre o fluxo do Meu Pluggy/Pluggy Connect → retorno → "Conectado. Buscando os últimos 90 dias…" (`ProgressBar` indeterminada) → resultado "48 lançamentos importados. 6 precisam de conferência." → **Conferir agora** (I05) / **Depois**.
 - **Mapeamento de contas** (após o retorno): para cada conta do banco, **Vincular a uma conta ou cartão existente** / **Criar nova** (pré-preenchida com nome, fechamento, vencimento e limite) / **Ignorar**.
 - **Plano B:** link **Tenho um Item ID** (campo de texto + **Validar**), para quando o widget falhar no iPhone instalado. Código inválido: "Não encontramos essa conexão no Meu Pluggy. Confira o código."

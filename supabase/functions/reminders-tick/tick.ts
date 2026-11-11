@@ -40,6 +40,11 @@ export const TICK_KINDS: readonly ReminderKind[] = [
   'weekly_summary',
   'bank_connection',
 ];
+/**
+ * Open Finance fora do MVP (D-080, T-115): equivalente servidor do `OPEN_FINANCE_ENABLED` do app. Desligado, o tick
+ * não gera o aviso nem o push `bank_connection` (RN-94); na v2 basta trocar por `true`.
+ */
+export const OPEN_FINANCE_ENABLED = false;
 /** Tamanho da janela de avaliação: o pg_cron chama a cada 15 min (RN-86). */
 export const WINDOW_MINUTES = 15;
 /** Teto de push por usuário por dia local (UX 6.7); os excedentes ficam só na central. */
@@ -401,8 +406,12 @@ function mergeTxs(month: readonly Tx[], extra: readonly Tx[]): Tx[] {
   return [...month, ...extra.filter((t) => !ids.has(t.id))];
 }
 
-/** Avisos devidos agora para o usuário (só os tipos de `TICK_KINDS`). */
-export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
+/** Avisos devidos agora para o usuário (só os tipos de `TICK_KINDS`; sem o Open Finance, sem `bank_connection`). */
+export function dueForUser(
+  snap: UserSnapshot,
+  now: Date,
+  openFinance: boolean = OPEN_FINANCE_ENABLED,
+): DueNotification[] {
   const settings = resolveProfileSettings(snap.settings);
   const nowLocal = localParts(now, snap.timezone);
   const recurrences = (snap.recurrences ?? []).filter((r) => r.remind).map(toRecurrence);
@@ -424,9 +433,10 @@ export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
   };
   const budgets = m?.budgets ?? [];
   // sem o mês (snapshot antigo) não há como calcular consumo nem resumo: esses dois tipos ficam de fora
+  const available = openFinance ? TICK_KINDS : TICK_KINDS.filter((k) => k !== 'bank_connection');
   const kinds = m
-    ? TICK_KINDS
-    : TICK_KINDS.filter((k) => k !== 'budget_threshold' && k !== 'weekly_summary');
+    ? available
+    : available.filter((k) => k !== 'budget_threshold' && k !== 'weekly_summary');
   const due = dueNotifications({
     nowLocal,
     windowMinutes: WINDOW_MINUTES,
@@ -457,9 +467,9 @@ export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
 export function planUser(
   snap: UserSnapshot,
   now: Date,
-  options: { pushEnabled: boolean; appOrigin: string },
+  options: { pushEnabled: boolean; appOrigin: string; openFinance?: boolean },
 ): UserPlan {
-  const due = dueForUser(snap, now);
+  const due = dueForUser(snap, now, options.openFinance ?? OPEN_FINANCE_ENABLED);
   const notices = due.map((n) => ({
     id: noticeId(snap.userId, n.dedupeKey),
     kind: n.kind,

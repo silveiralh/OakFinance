@@ -3,7 +3,7 @@
 import { DEFAULT_REMINDERS, seedReminderId } from '@oakfinance/domain';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AuthContext, type AuthValue } from '../src/app/auth';
 import type { OakDb } from '../src/data/db';
 import { ensureSeeds } from '../src/data/seeds';
@@ -20,6 +20,10 @@ import {
 import { ToastProvider } from '../src/ui';
 import { fakeAuth } from './auth-fixture';
 import { makeRow } from './data/rows';
+
+// Os cenários deste arquivo cobrem o app com o Open Finance ligado (build E2E e v2); sem ele, ver
+// test/open-finance-off.test.tsx (T-115, D-080).
+vi.mock('../src/app/openFinance', () => ({ OPEN_FINANCE_ENABLED: true }));
 
 function dbOf(auth: AuthValue): OakDb {
   const db = auth.user?.db;

@@ -1,3 +1,4 @@
+import { OPEN_FINANCE_ENABLED } from '../../app/openFinance';
 import { RejectedBanner } from '../../app/SyncStatus';
 import { ConnectionBanner } from '../connections/ConnectionBanner';
 import { HomeOverview } from './HomeOverview';
@@ -11,7 +12,7 @@ export function HomeScreen() {
       <RejectedBanner />
       <InstallCard />
       <PendingSetupCard />
-      <ConnectionBanner />
+      {OPEN_FINANCE_ENABLED && <ConnectionBanner />}
       <IncomeToConfirm />
       <section className="screen" data-screen="H01" data-testid="screen-H01">
         <HomeOverview />

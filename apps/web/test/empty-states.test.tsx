@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { App } from '../src/app/App';
 import type { AuthValue } from '../src/app/auth';
 import { appRoutes } from '../src/app/routes';
@@ -14,6 +14,12 @@ import { NO_FILTERS } from '../src/features/transactions/list';
 import { emptyKind } from '../src/features/transactions/TransactionsScreen';
 import { emptyStates } from '../src/i18n/pt-BR';
 import { fakeAuth } from './auth-fixture';
+
+// Os cenários deste arquivo cobrem o app com o Open Finance ligado (build E2E e v2); sem ele, ver
+// test/open-finance-off.test.tsx (T-115, D-080).
+vi.mock('../src/app/openFinance', () => ({ OPEN_FINANCE_ENABLED: true }));
+// a tabela de rotas lê a mesma constante em linha (screens.ts)
+vi.stubEnv('VITE_OPEN_FINANCE', '1');
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ux = readFileSync(join(here, '../../../docs/specs/03-ux-design-system.md'), 'utf8');
