@@ -178,7 +178,7 @@ flowchart LR
 | T-113 | Moldura, onboarding e marca | T-104 | blocked: substituída pela T-127 e T-118 (D-085) |
 | T-114 | Revalidação de UX com o agente | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | blocked: substituída pela T-129 (D-085) |
 | T-115 | Open Finance fora do MVP | T-100 | done |
-| T-116 | Dinheiro mostrado errado | T-115 | todo |
+| T-116 | Dinheiro mostrado errado | T-115 | done |
 | T-117 | Base visual: CSS, tokens e componentes | T-116 | todo |
 | T-118 | Navegação no celular | T-117 | todo |
 | T-119 | Lançamento rápido (Q01) e folhas | T-117 | todo |
@@ -1661,7 +1661,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-116 — Dinheiro mostrado errado
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-24, US-49 | RN-23, RN-74 | T-115 | não |
+| done | R | M | US-24, US-49 | RN-23, RN-74 | T-115 | não |
 
 **Escopo:** UXB-001 (parcelas futuras aparecem como efetivadas e somam no dia da compra: cada parcela com o próprio status e mês, como o Q01 gera); UXC-001 (entradas do banco aparecem como despesa na conferência: o sinal e o tipo vêm da transação, não de `kind="expense"` fixo em `features/inbox/screens.tsx`).
 

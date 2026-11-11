@@ -31,6 +31,7 @@ import {
   loadHistory,
   restoredRow,
 } from './history';
+import { isPlannedInstallment } from './list';
 import { methodLabel, toRow } from './TransactionsScreen';
 
 type Tx = LocalRow<'transactions'>;
@@ -172,7 +173,14 @@ export function TransactionDetailScreen({
   const category = tx.category_id
     ? data.categories.find((c) => c.id === tx.category_id)
     : undefined;
-  const row = toRow(tx, category, today as Parameters<typeof toRow>[2]);
+  const day = today as Parameters<typeof toRow>[2];
+  // RN-23: parcela com a fatura ainda aberta ou futura é "Prevista"
+  const planned = isPlannedInstallment(
+    tx,
+    data.invoice && data.invoice.deleted_at === null ? data.invoice.closing_date : undefined,
+    day,
+  );
+  const row = toRow(tx, category, day, planned);
   const status = statusText(row.state);
   // US-11: conta ou cartão arquivado continua com o nome e o selo "arquivada"
   const archivedTag = (row: { archived_at: string | null } | undefined) =>

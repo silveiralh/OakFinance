@@ -107,7 +107,43 @@ export function filtersFromParams(params: URLSearchParams): ListFilters {
   };
 }
 
-function chipMatches(tx: Tx, chip: Chip, today: ISODate): boolean {
+/**
+ * RN-23 (D-034): parcela k > 1 de cartão é "prevista" enquanto a fatura dela não fechou (futura ou aberta). As parcelas
+ * são gravadas como `posted`, então o estado é derivado da data de fechamento da fatura (UXB-001).
+ */
+export function isPlannedInstallment(
+  tx: Pick<Tx, 'installment_number' | 'card_id' | 'status'>,
+  invoiceClosing: string | undefined,
+  today: ISODate,
+): boolean {
+  return (
+    tx.status === 'posted' &&
+    tx.card_id !== null &&
+    (tx.installment_number ?? 0) > 1 &&
+    invoiceClosing !== undefined &&
+    invoiceClosing >= today
+  );
+}
+
+/** Ids das parcelas previstas (RN-23), a partir das datas de fechamento das faturas (`id → closing_date`). */
+export function plannedIds(
+  rows: readonly Tx[],
+  closingByInvoice: ReadonlyMap<string, string>,
+  today: ISODate,
+): Set<string> {
+  const out = new Set<string>();
+  for (const tx of rows) {
+    const closing = tx.invoice_id ? closingByInvoice.get(tx.invoice_id) : undefined;
+    if (isPlannedInstallment(tx, closing, today)) {
+      out.add(tx.id);
+    }
+  }
+  return out;
+}
+
+const NONE: ReadonlySet<string> = new Set();
+
+function chipMatches(tx: Tx, chip: Chip, today: ISODate, planned: ReadonlySet<string>): boolean {
   switch (chip) {
     case 'all':
       return true;
@@ -126,18 +162,26 @@ function chipMatches(tx: Tx, chip: Chip, today: ISODate): boolean {
     case 'review':
       return tx.review_state === 'new' || tx.review_state === 'suggested';
     case 'forecast':
-      return tx.status === 'pending';
+      return tx.status === 'pending' || planned.has(tx.id);
     case 'late':
       return tx.status === 'pending' && tx.occurred_on < today;
   }
 }
 
-function statusMatches(tx: Tx, status: StatusFilter, today: ISODate): boolean {
+function statusMatches(
+  tx: Tx,
+  status: StatusFilter,
+  today: ISODate,
+  planned: ReadonlySet<string>,
+): boolean {
   if (status === 'forecast') {
-    return tx.status === 'pending';
+    return tx.status === 'pending' || planned.has(tx.id);
   }
   if (status === 'late') {
     return tx.status === 'pending' && tx.occurred_on < today;
+  }
+  if (status === 'posted') {
+    return tx.status === 'posted' && !planned.has(tx.id);
   }
   return tx.status === status;
 }
@@ -160,11 +204,12 @@ export function filterTransactions(
   filters: ListFilters,
   categories: ReadonlyMap<string, Category>,
   today: ISODate,
+  planned: ReadonlySet<string> = NONE,
 ): Tx[] {
   const query = fold(filters.query);
   const amount = queryAmount(filters.query);
   return rows.filter((tx) => {
-    if (tx.deleted_at !== null || !chipMatches(tx, filters.chip, today)) {
+    if (tx.deleted_at !== null || !chipMatches(tx, filters.chip, today, planned)) {
       return false;
     }
     if (
@@ -182,7 +227,7 @@ export function filterTransactions(
     if (filters.categoryId && tx.category_id !== filters.categoryId) {
       return false;
     }
-    if (filters.status && !statusMatches(tx, filters.status, today)) {
+    if (filters.status && !statusMatches(tx, filters.status, today, planned)) {
       return false;
     }
     if (query === '') {
@@ -215,8 +260,19 @@ export interface DayGroup {
   outCents: number;
 }
 
-/** Grupos por dia, do mais recente ao mais antigo, com entradas e saídas do dia (US-15). */
-export function groupByDay(rows: readonly Tx[]): DayGroup[] {
+/** Dentro do dia: mais recente primeiro; parcelas da mesma série em ordem (1/6, 2/6…, UXB-001). */
+function dayOrder(a: Tx, b: Tx): number {
+  if (a.series_id !== null && a.series_id === b.series_id) {
+    return (a.installment_number ?? 0) - (b.installment_number ?? 0);
+  }
+  return b.created_at.localeCompare(a.created_at) || a.id.localeCompare(b.id);
+}
+
+/**
+ * Grupos por dia, do mais recente ao mais antigo, com entradas e saídas do dia (US-15). As parcelas previstas
+ * (RN-23) aparecem na lista, mas não somam no dia da compra: contam no mês da fatura delas.
+ */
+export function groupByDay(rows: readonly Tx[], planned: ReadonlySet<string> = NONE): DayGroup[] {
   const groups = new Map<ISODate, DayGroup>();
   for (const tx of rows) {
     let group = groups.get(tx.occurred_on);
@@ -225,7 +281,7 @@ export function groupByDay(rows: readonly Tx[]): DayGroup[] {
       groups.set(tx.occurred_on, group);
     }
     group.rows.push(tx);
-    if (tx.status !== 'cancelled') {
+    if (tx.status !== 'cancelled' && !planned.has(tx.id)) {
       const value = signedCents(tx);
       if (value > 0) {
         group.inCents += value;
@@ -238,7 +294,7 @@ export function groupByDay(rows: readonly Tx[]): DayGroup[] {
     .sort((a, b) => b.date.localeCompare(a.date))
     .map((group) => ({
       ...group,
-      rows: group.rows.sort((a, b) => b.created_at.localeCompare(a.created_at)),
+      rows: group.rows.sort(dayOrder),
     }));
 }
 
@@ -248,14 +304,18 @@ export interface MonthSummary {
   savedCents: number;
 }
 
-/** Resumo do mês: entradas, saídas (despesas − estornos) e guardado (despesas na faixa Poupança). */
+/**
+ * Resumo do mês: entradas, saídas (despesas − estornos) e guardado (despesas na faixa Poupança). As parcelas
+ * previstas (RN-23) ficam de fora: pertencem ao mês da fatura delas (a soma pelo mês de impacto é da T-122).
+ */
 export function monthSummary(
   rows: readonly Tx[],
   categories: ReadonlyMap<string, Category>,
+  planned: ReadonlySet<string> = NONE,
 ): MonthSummary {
   const out: MonthSummary = { inCents: 0, outCents: 0, savedCents: 0 };
   for (const tx of rows) {
-    if (tx.deleted_at !== null || tx.status === 'cancelled') {
+    if (tx.deleted_at !== null || tx.status === 'cancelled' || planned.has(tx.id)) {
       continue;
     }
     const bucket = tx.category_id ? categories.get(tx.category_id)?.bucket : undefined;
