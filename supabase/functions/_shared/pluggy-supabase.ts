@@ -141,7 +141,9 @@ function syncStore(): SyncStore {
     async connection(id) {
       const { data, error } = await admin
         .from('bank_connections')
-        .select('id, user_id, external_item_id, is_active, deleted_at, last_manual_refresh_at')
+        .select(
+          'id, user_id, external_item_id, is_active, deleted_at, last_manual_refresh_at, last_error',
+        )
         .eq('id', id)
         .maybeSingle();
       check('bank_connections', error);

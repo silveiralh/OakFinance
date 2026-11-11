@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext, type AuthValue } from '../src/app/auth';
 import type { LocalRow } from '../src/data/db';
 import { applyMapping } from '../src/features/connections/api';
+import { ConnectionBanner } from '../src/features/connections/ConnectionBanner';
 import {
   BACKFILL_DAYS,
   bankName,
@@ -117,7 +118,9 @@ describe('T-076: regras das telas de conexão', () => {
     expect(connectionState({ status: 'UPDATED', consent_expires_at: at(12) }, NOW)).toBe('active');
     expect(connectionState({ status: 'UPDATED', consent_expires_at: at(7) }, NOW)).toBe('expiring');
     expect(connectionState({ status: 'UPDATED', consent_expires_at: at(0) }, NOW)).toBe('expired');
-    expect(connectionState({ status: 'LOGIN_ERROR', consent_expires_at: null }, NOW)).toBe('error');
+    expect(connectionState({ status: 'LOGIN_ERROR', consent_expires_at: null }, NOW)).toBe(
+      'reconnect',
+    );
     expect(connectionState({ status: 'UPDATING', consent_expires_at: null }, NOW)).toBe('updating');
   });
 
@@ -501,5 +504,96 @@ describe('US-45: conectar banco', () => {
     expect(result).toEqual({ ok: false, accountId: 'x', message: 'Escolha um dia entre 1 e 31.' });
     expect(rpc).not.toHaveBeenCalled();
     expect(await user.db.cards.count()).toBe(0);
+  });
+});
+
+describe('US-47: estado da conexão e reconexão', () => {
+  it('RN-81: erro temporário não avisa nas 3 novas tentativas; depois vira "Erro do banco"', () => {
+    const base = { status: 'UPDATED', consent_expires_at: null };
+    expect(connectionState({ ...base, last_error: 'UPSTREAM_UNAVAILABLE' }, NOW)).toBe('active');
+    expect(connectionState({ ...base, last_error: 'UPSTREAM_TIMEOUT:3' }, NOW)).toBe('active');
+    expect(connectionState({ ...base, last_error: 'UPSTREAM_UNAVAILABLE:4' }, NOW)).toBe('error');
+    expect(connectionState({ ...base, execution_status: 'USER_AUTHORIZATION_REVOKED' }, NOW)).toBe(
+      'reconnect',
+    );
+  });
+
+  it('US-47: última atualização "Atualizado em dd/mm às hh:mm"', () => {
+    expect(updatedText('2026-11-09T22:40:00Z', NOW)).toBe('Atualizado em 09/11 às 19:40');
+  });
+
+  it('US-47: erro de login mostra "Precisa reconectar" com o passo a passo, Renovar e o atalho de importar', async () => {
+    online(true);
+    const { auth } = withClient(() => Promise.resolve({ data: null, error: null }));
+    await auth.user?.db.bank_connections.put(connectionRow({ status: 'LOGIN_ERROR' }));
+    const router = mount(auth, '/ajustes/conexoes');
+    const card = await screen.findByTestId('bank-connection-conn-1');
+    expect(within(card).getAllByText(/Precisa reconectar/).length).toBeGreaterThan(0);
+    expect(within(card).getByText(/abra o Meu Pluggy, autorize o Nubank de novo/)).toBeDefined();
+    fireEvent.click(within(card).getByRole('button', { name: 'Importar extrato (OFX/CSV)' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/importar'));
+  });
+
+  it('US-47: consentimento vencido mostra o texto de expirada e Renovar leva à I02', async () => {
+    online(true);
+    const { auth } = withClient(() => Promise.resolve({ data: null, error: null }));
+    await auth.user?.db.bank_connections.put(
+      connectionRow({ consent_expires_at: new Date(Date.now() - 86_400_000).toISOString() }),
+    );
+    const router = mount(auth, '/ajustes/conexoes');
+    expect(
+      await screen.findByText(
+        'A conexão com o Nubank expirou. Renove para continuar recebendo lançamentos.',
+      ),
+    ).toBeDefined();
+    fireEvent.click(screen.getByRole('button', { name: 'Renovar' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/ajustes/conexoes/novo'));
+  });
+
+  it('US-47: erro do banco depois das 3 tentativas mostra "O {banco} não respondeu…"', async () => {
+    online(true);
+    const { auth } = withClient(() => Promise.resolve({ data: null, error: null }));
+    await auth.user?.db.bank_connections.put(
+      connectionRow({ institution: 'bb', last_error: 'UPSTREAM_UNAVAILABLE:4' }),
+    );
+    mount(auth, '/ajustes/conexoes');
+    expect(
+      await screen.findByText(
+        'O Banco do Brasil não respondeu. Uma nova tentativa será feita amanhã cedo, ou tente agora.',
+      ),
+    ).toBeDefined();
+  });
+
+  it('RN-94: o Início avisa "Sua conexão com o Nubank precisa ser renovada" e Renovar abre a I01', async () => {
+    const auth = fakeAuth();
+    await auth.user?.db.bank_connections.put(connectionRow({ status: 'OUTDATED' }));
+    const router = createMemoryRouter(
+      [
+        { path: '/', element: <ConnectionBanner /> },
+        { path: '/ajustes/conexoes', element: <p>conexoes</p> },
+      ],
+      { initialEntries: ['/'] },
+    );
+    render(
+      <AuthContext.Provider value={auth}>
+        <RouterProvider router={router} />
+      </AuthContext.Provider>,
+    );
+    expect(await screen.findByText('Sua conexão com o Nubank precisa ser renovada')).toBeDefined();
+    fireEvent.click(screen.getByRole('button', { name: 'Renovar' }));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/ajustes/conexoes'));
+  });
+
+  it('RN-94: conexão ativa não mostra aviso no Início', async () => {
+    const auth = fakeAuth();
+    await auth.user?.db.bank_connections.put(connectionRow());
+    const router = createMemoryRouter([{ path: '/', element: <ConnectionBanner /> }]);
+    render(
+      <AuthContext.Provider value={auth}>
+        <RouterProvider router={router} />
+      </AuthContext.Provider>,
+    );
+    await new Promise((r) => setTimeout(r, 50));
+    expect(screen.queryByTestId('connection-banner')).toBeNull();
   });
 });

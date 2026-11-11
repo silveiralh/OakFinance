@@ -78,7 +78,20 @@ export function normalizeItemId(text: string): string | null {
   return /^[A-Za-z0-9-]{8,64}$/.test(id) ? id : null;
 }
 
-export type ConnectionState = 'active' | 'updating' | 'expiring' | 'expired' | 'error';
+export type ConnectionState =
+  | 'active'
+  | 'updating'
+  | 'expiring'
+  | 'expired'
+  | 'reconnect'
+  | 'error';
+
+/** Status da Pluggy que pedem reconectar no Meu Pluggy (RN-81: `erro_login`/`expirada`). */
+const RECONNECT_STATUS = new Set(['LOGIN_ERROR', 'OUTDATED', 'WAITING_USER_INPUT']);
+const RECONNECT_EXECUTION = new Set(['USER_AUTHORIZATION_REVOKED']);
+/** Erro temporário com a contagem do `pluggy-sync` (RN-81): até 3 novas tentativas sem avisar. */
+const TEMPORARY = /^(UPSTREAM_UNAVAILABLE|UPSTREAM_TIMEOUT)(?::(\d+))?$/;
+export const TEMPORARY_RETRIES = 3;
 
 /** Dias inteiros até o fim do consentimento (`null` sem data: por padrão não expira). */
 export function daysUntil(iso: string | null, nowMs: number): number | null {
@@ -88,16 +101,33 @@ export function daysUntil(iso: string | null, nowMs: number): number | null {
   return Math.ceil((Date.parse(iso) - nowMs) / DAY_MS);
 }
 
-/** Estado do card (UX §3 I01). Renovação e erro detalhado ficam com a T-077. */
+/** Falhas seguidas do erro temporário (0 se o último erro não for temporário). */
+export function temporaryFailures(lastError: string | null): number {
+  const match = TEMPORARY.exec(lastError ?? '');
+  return match ? Number(match[2] ?? 1) : 0;
+}
+
+/**
+ * Estado do card (UX §3 I01, RN-81): expirada; precisa reconectar (erro de login ou autorização revogada); erro do
+ * banco só depois das 3 novas tentativas do erro temporário (antes disso, sem avisar); atualizando; expira em breve
+ * (≤ 7 dias, RN-94); ativa.
+ */
 export function connectionState(
-  connection: Pick<Connection, 'status' | 'consent_expires_at'>,
+  connection: Pick<Connection, 'status' | 'consent_expires_at'> &
+    Partial<Pick<Connection, 'execution_status' | 'last_error'>>,
   nowMs: number,
 ): ConnectionState {
   const days = daysUntil(connection.consent_expires_at, nowMs);
   if (days !== null && days <= 0) {
     return 'expired';
   }
-  if (connection.status === 'LOGIN_ERROR' || connection.status === 'OUTDATED') {
+  if (
+    RECONNECT_STATUS.has(connection.status) ||
+    RECONNECT_EXECUTION.has(connection.execution_status ?? '')
+  ) {
+    return 'reconnect';
+  }
+  if (temporaryFailures(connection.last_error ?? null) > TEMPORARY_RETRIES) {
     return 'error';
   }
   if (connection.status === 'UPDATING') {
@@ -107,6 +137,11 @@ export function connectionState(
     return 'expiring';
   }
   return 'active';
+}
+
+/** O Início mostra o aviso de renovar (tech §6.1.3 passo 8) para estes estados. */
+export function needsRenewal(state: ConnectionState): boolean {
+  return state === 'expired' || state === 'reconnect' || state === 'expiring';
 }
 
 function parts(ms: number) {

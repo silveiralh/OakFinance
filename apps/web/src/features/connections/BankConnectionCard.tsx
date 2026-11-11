@@ -1,8 +1,10 @@
 // BankConnectionCard (UX §3 I01): estado, "Atualizado hoje às 07:40", "Expira em {n} dias" (só com data),
 // "Atualizar agora" (no máximo 1 vez por hora, RN-80) e o resumo da última sincronização. Sem rede, o botão fica
-// desativado com "Precisa de internet". Renovar e os estados de erro detalhados entram na T-077.
+// desativado com "Precisa de internet". Expirada ou com erro de login (T-077, US-47): o passo a passo do Meu Pluggy,
+// Renovar (I02) e o atalho "Importar extrato (OFX/CSV)"; o erro temporário só aparece depois das 3 novas tentativas.
 import { AlertTriangle, CheckCircle2, Clock, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
@@ -26,7 +28,8 @@ const BADGES = {
   updating: { tone: 'info', icon: RefreshCw },
   expiring: { tone: 'warning', icon: Clock },
   expired: { tone: 'danger', icon: AlertTriangle },
-  error: { tone: 'danger', icon: AlertTriangle },
+  reconnect: { tone: 'danger', icon: AlertTriangle },
+  error: { tone: 'warning', icon: AlertTriangle },
 } as const;
 
 export function BankConnectionCard({ connection }: { connection: LocalRow<'bank_connections'> }) {
@@ -34,6 +37,7 @@ export function BankConnectionCard({ connection }: { connection: LocalRow<'bank_
   const { user } = auth;
   const client = auth.client ? withE2e(auth.client as typeof auth.client & MapClient) : null;
   const online = useOnline();
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const summary = useLive<SyncSummary | null>(
@@ -91,6 +95,26 @@ export function BankConnectionCard({ connection }: { connection: LocalRow<'bank_
       {summary && (
         <p className="account-meta" data-testid="bank-connection-summary">
           {t('conn.summary', { n: summary.fresh, m: summary.linked, k: summary.review })}
+        </p>
+      )}
+      {(state === 'expired' || state === 'reconnect') && (
+        <div className="bank-connection-attention" role="note">
+          <p>
+            {state === 'expired'
+              ? t('conn.expired', { banco })
+              : t('conn.reconnectSteps', { banco })}
+          </p>
+          <Button fullWidth onClick={() => void navigate('/ajustes/conexoes/novo')}>
+            {t('conn.renew')}
+          </Button>
+          <Button variant="ghost" fullWidth onClick={() => void navigate('/importar')}>
+            {t('conn.importShortcut')}
+          </Button>
+        </div>
+      )}
+      {state === 'error' && (
+        <p className="account-meta" role="note">
+          {t('conn.bankError', { banco })}
         </p>
       )}
       {message && (

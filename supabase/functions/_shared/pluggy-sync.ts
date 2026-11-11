@@ -44,6 +44,30 @@ export interface ConnectionRow {
   is_active: boolean;
   deleted_at: string | null;
   last_manual_refresh_at: string | null;
+  /** Último erro (T-077: `UPSTREAM_UNAVAILABLE`, `UPSTREAM_UNAVAILABLE:2`… conta as tentativas do erro temporário). */
+  last_error?: string | null;
+}
+
+/** RN-81: erro temporário (5xx da Pluggy) tenta de novo em 1 h, até 3 vezes, sem avisar (pg_cron `pluggy-retry`). */
+export const TEMPORARY_RETRIES = 3;
+const TEMPORARY = /^(UPSTREAM_UNAVAILABLE|UPSTREAM_TIMEOUT)(?::(\d+))?$/;
+
+/** Falhas seguidas do erro temporário registrado em `last_error` (0 se não for temporário). */
+export function temporaryFailures(lastError: string | null | undefined): number {
+  const match = TEMPORARY.exec(lastError ?? '');
+  return match ? Number(match[2] ?? 1) : 0;
+}
+
+/**
+ * `last_error` depois de uma falha com `code`: o erro temporário guarda a contagem (`CODE`, `CODE:2`, `CODE:3`,
+ * `CODE:4`); a 1ª falha e as 3 novas tentativas. Outros erros ficam com o código.
+ */
+export function nextLastError(code: string, previous: string | null | undefined): string {
+  if (code !== 'UPSTREAM_UNAVAILABLE' && code !== 'UPSTREAM_TIMEOUT') {
+    return code;
+  }
+  const n = temporaryFailures(previous) + 1;
+  return n === 1 ? code : `${code}:${n}`;
 }
 
 export interface ExternalAccountRow {
@@ -438,7 +462,7 @@ export async function runSync(
     const code = appError instanceof AppError ? appError.code : 'INTERNAL';
     await store
       .updateConnection(connection.id, userId, {
-        last_error: code,
+        last_error: nextLastError(code, connection.last_error),
         last_synced_at: nowIso,
         client_updated_at: nowIso,
         device_id: SERVER_DEVICE,

@@ -12,11 +12,14 @@ import {
   type ExistingTx,
   type ExternalAccountRow,
   handlePluggySync,
+  nextLastError,
   readSyncInput,
   refreshBlockedMessage,
   type SyncHandlerDeps,
   type SyncStats,
   type SyncStore,
+  TEMPORARY_RETRIES,
+  temporaryFailures,
 } from './pluggy-sync.ts';
 
 const USER = '00000000-0000-7000-8000-00000000000a';
@@ -522,4 +525,53 @@ Deno.test('tech §6.0: auth do usuário ou secret, conexão alheia, entrada, rat
   });
   assert.equal((await handlePluggySync(call(backfill), unconfigured.deps)).status, 502);
   assert.equal(unconfigured.store.runs.length, 0); // não abre job_runs (o ops_health não acusa)
+});
+
+Deno.test('RN-81: erro temporário conta as falhas para até 3 novas tentativas; outro erro não conta', () => {
+  assert.equal(TEMPORARY_RETRIES, 3);
+  assert.equal(nextLastError('UPSTREAM_UNAVAILABLE', null), 'UPSTREAM_UNAVAILABLE');
+  assert.equal(
+    nextLastError('UPSTREAM_UNAVAILABLE', 'UPSTREAM_UNAVAILABLE'),
+    'UPSTREAM_UNAVAILABLE:2',
+  );
+  assert.equal(nextLastError('UPSTREAM_TIMEOUT', 'UPSTREAM_UNAVAILABLE:3'), 'UPSTREAM_TIMEOUT:4');
+  assert.equal(nextLastError('ITEM_NOT_FOUND', 'UPSTREAM_UNAVAILABLE:2'), 'ITEM_NOT_FOUND');
+  assert.equal(temporaryFailures('UPSTREAM_UNAVAILABLE'), 1);
+  assert.equal(temporaryFailures('UPSTREAM_TIMEOUT:4'), 4);
+  assert.equal(temporaryFailures('LOGIN_ERROR'), 0);
+  assert.equal(temporaryFailures(null), 0);
+});
+
+Deno.test('RN-81: 5xx da Pluggy numa nova tentativa sobe a contagem; sucesso limpa o erro', async () => {
+  const down = setup({
+    connector: () =>
+      new PluggyConnector({
+        baseUrl: 'http://mock.test',
+        clientId: 'a',
+        clientSecret: 'b',
+        allowedConnectorIds: [200],
+        webhookUrl: null,
+        fetch: (input) =>
+          Promise.resolve(
+            new URL(new Request(input).url).pathname === '/auth'
+              ? Response.json({ apiKey: 'k' })
+              : new Response('{}', { status: 503 }),
+          ),
+      }),
+  });
+  (down.store.connections[0] as Row).last_error = 'UPSTREAM_UNAVAILABLE:2';
+  const retry = { connectionId: CONN, mode: 'incremental' };
+  assert.equal(
+    (await handlePluggySync(call(retry, { apikey: 'chave-secreta' }), down.deps)).status,
+    502,
+  );
+  assert.equal((down.store.connections[0] as Row).last_error, 'UPSTREAM_UNAVAILABLE:3');
+
+  const up = setup();
+  (up.store.connections[0] as Row).last_error = 'UPSTREAM_UNAVAILABLE:3';
+  assert.equal(
+    (await handlePluggySync(call(retry, { apikey: 'chave-secreta' }), up.deps)).status,
+    200,
+  );
+  assert.equal((up.store.connections[0] as Row).last_error, null);
 });

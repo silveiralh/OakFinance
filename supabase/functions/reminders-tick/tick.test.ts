@@ -214,3 +214,41 @@ Deno.test('tech §6.4.3: Urgency high só no vencimento do dia', () => {
   assert.equal(urgencyOf({ kind: 'invoice_due', dedupeKey: 'invoice_due:i:d3' }), 'normal');
   assert.equal(urgencyOf({ kind: 'daily_log', dedupeKey: 'daily_log:2026-12-08' }), 'normal');
 });
+
+Deno.test('RN-94: conexão expirada ou com erro de login gera um aviso por estado; ativa não avisa', () => {
+  const now = brt('2026-12-08', '10:00');
+  const base = { institution: 'nubank', connectorName: 'MeuPluggy', consentExpiresOn: null };
+  const plan = planUser(
+    snap({
+      connections: [
+        { id: 'c-login', status: 'LOGIN_ERROR', ...base },
+        { id: 'c-ok', status: 'UPDATED', ...base },
+        {
+          id: 'c-exp',
+          status: 'UPDATED',
+          ...base,
+          consentExpiresOn: '2026-12-08',
+          institution: 'bb',
+        },
+      ],
+    }),
+    now,
+    { pushEnabled: false, appOrigin: 'https://app.example.test/' },
+  );
+  const bank = plan.notices.filter((n) => n.kind === 'bank_connection');
+  assert.deepEqual(bank.map((n) => n.dedupeKey).sort(), [
+    'bank:c-exp:expired',
+    'bank:c-login:login_error',
+  ]);
+  assert.ok(bank.some((n) => n.title === 'Conexão com o Nubank precisa de atenção'));
+  assert.ok(bank.some((n) => n.title.startsWith('Conexão com o Banco do Brasil')));
+  assert.ok(bank.every((n) => n.navigate === '/ajustes/conexoes'));
+  // snapshot antigo (sem a chave) não avisa nada de conexão
+  assert.equal(
+    planUser(snap(), now, {
+      pushEnabled: false,
+      appOrigin: 'https://app.example.test/',
+    }).notices.filter((n) => n.kind === 'bank_connection').length,
+    0,
+  );
+});
