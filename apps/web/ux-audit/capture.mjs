@@ -172,6 +172,11 @@ const SCREENS = [
         .first()
         .click(),
   },
+  {
+    id: 'Q01-categorias',
+    url: '/?novo=despesa',
+    act: (p) => p.getByRole('dialog').getByText('Mais', { exact: true }).first().click(),
+  },
   { id: 'Q01-receita', url: '/?novo=receita' },
   { id: 'Q01-guardar', url: '/?novo=guardar' },
   { id: 'T01', url: '/lancamentos' },

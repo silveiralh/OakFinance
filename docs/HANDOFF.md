@@ -128,6 +128,7 @@
 
 ## 3. Próximos passos
 
+- **Ajuste do front-end (T-103 a T-114, pedido do dono em 11/11):** fila criada a partir da auditoria de UX (`docs/ux-audit/2026-11-11.md`). Ordem: T-102 (desempenho do Início), T-103 (valores errados, S1), T-104 (base visual e pílulas de categoria), T-105 (navegação da D-076: menu da conta com Sair e abas do Planejar) e o acabamento por área; T-114 revalida com o agente. Cada PR leva capturas de antes e depois e passa pelo `ux-auditor` nas telas tocadas. Pontos de decisão do dono do relatório não entram até ele responder.
 - **T-102 liberada (pedido do dono em 11/11):** o Início passa a ler só o período necessário em vez de todos os lançamentos; motivo: o E2E de desempenho com 5.000 lançamentos oscilou no limite de 1,5 s. Cuidado com as parcelas (data da compra antiga, RN-22) e com a Reserva, que soma o histórico inteiro. Detalhes na tarefa.
 
 - **Tema e largura (D-025):** o app abre claro mesmo com o sistema escuro (`public/env.js`: escuro só com preferência `dark` ou `auto`); a S08 (T-068) oferece Claro (padrão), Escuro e Automático. As escolhas da S08 ficam na conta, mas outro aparelho ainda não as aplica (só `hideValues`, pelo `ValuesFromProfile`). No `lg` não há mais limite de 1200 px e **não se usam duas colunas** (D-026): uma coluna que estica, com elementos maiores (ver o bloco `@media (min-width: 1024px)` do fim de `shell.css`).
