@@ -627,6 +627,28 @@ describe('motor (tech §4.5 e §4.8, RN-96..RN-99)', () => {
     await Promise.all(spy.mock.results.map((r) => r.value));
   });
 
+  it('US-15: o ciclo que começa já sobe a escrita e cancela o debounce dela (sem 2º ciclo depois)', async () => {
+    const db = open();
+    const server = new FakeServer();
+    const { e, timers } = engine(db, server);
+    await started(e);
+    timers.timers.clear();
+    await enqueue(db, { table: 'transactions', rowId: 'd1', row: tx('d1'), createdAt: 'x' });
+    e.notifyWrite();
+    expect(timers.delays()).toEqual([WRITE_DEBOUNCE_MS]);
+    const spy = vi.spyOn(e, 'syncNow');
+    await e.syncNow();
+    expect(server.calls.filter((c) => c.name === 'sync_push')).toHaveLength(1);
+    // só o agendamento normal (fila vazia → 5 min); nada a 2 s
+    expect(timers.delays()).toEqual([POLL_IDLE_MS]);
+    // escrita durante ou depois do ciclo ainda agenda o próprio debounce
+    e.notifyWrite();
+    expect(timers.delays()).toContain(WRITE_DEBOUNCE_MS);
+    expect(spy).toHaveBeenCalledTimes(1);
+    // a contagem que o notifyWrite dispara termina antes de fechar o banco
+    await new Promise((resolve) => setTimeout(resolve, 20));
+  });
+
   it('rejeitada gera evento sync.rejected sem dados do lançamento', async () => {
     const db = open();
     const server = new FakeServer();
