@@ -379,4 +379,4 @@
 | 11/11/2026 | — | PR #132 | blocked | T-085/T-087 liberadas pelo SETUP-14, mas a sessão não tem acesso ao canal privado (§4); PRs #126 e #129 do dono seguem abertos e verdes |
 | 11/11/2026 | T-101 | PR #126 | aberto | agente de auditoria de UX e primeira auditoria (82 problemas; correções aguardam o dono) |
 | 11/11/2026 | T-102 | PR #133 | done | Início lê só o período do mês pelos índices do Dexie (20.000 lançamentos: 118 → 13 ms local); propriedade compara com a leitura completa; issue #128 segue sem as fixtures (canal privado fora do alcance) |
-| 11/11/2026 | issue #136 | PR #NNN | done | regressão do RN-51 no `iphone` (painel em ~2,1 s desde o PR #133): Início, `BudgetAlerts` e `measureHome` voltam à leitura completa; T-102 reaberta (`todo`) |
+| 11/11/2026 | issue #136 | PR #137 | done | regressão do RN-51 no `iphone` (painel em ~2,1 s desde o PR #133): Início, `BudgetAlerts` e `measureHome` voltam à leitura completa; T-102 reaberta (`todo`) |
