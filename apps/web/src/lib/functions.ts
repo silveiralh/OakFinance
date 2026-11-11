@@ -5,11 +5,31 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 export const FUNCTION_TIMEOUT_MS = 15_000;
 
 export type InvokeFailure = 'timeout' | 'offline' | 'failed';
-export type InvokeResult<T> = { ok: true; data: T } | { ok: false; reason: InvokeFailure };
+export type InvokeResult<T> =
+  | { ok: true; data: T }
+  /** `code`: o código estável do corpo `{ error: { code } }` da função (tech §6.0), quando veio. */
+  | { ok: false; reason: InvokeFailure; code?: string };
 
 export interface InvokeOptions {
   timeoutMs?: number;
   isOnline?: () => boolean;
+}
+
+/** Código de erro do corpo da resposta (`FunctionsHttpError.context` é a `Response`). */
+async function errorCode(error: unknown): Promise<string | undefined> {
+  const context = (error as { context?: unknown } | null)?.context as
+    | { clone?: () => { json(): Promise<unknown> } }
+    | undefined;
+  if (typeof context?.clone !== 'function') {
+    return undefined;
+  }
+  try {
+    const body = (await context.clone().json()) as { error?: { code?: unknown } } | null;
+    const code = body?.error?.code;
+    return typeof code === 'string' ? code : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Invoca `name` com `body`; nunca lança. A região é a de São Paulo (tech §6.0). */
@@ -41,7 +61,11 @@ export async function invokeFunction<T>(
     if (outcome === 'timeout') {
       return { ok: false, reason: 'timeout' };
     }
-    return outcome.error || outcome.data === null
+    if (outcome.error) {
+      const code = await errorCode(outcome.error);
+      return code ? { ok: false, reason: 'failed', code } : { ok: false, reason: 'failed' };
+    }
+    return outcome.data === null
       ? { ok: false, reason: 'failed' }
       : { ok: true, data: outcome.data };
   } catch {
