@@ -15,7 +15,7 @@ Usuários de teste: só e-mails `@example.test` da allowlist do `supabase/seed.s
 | E07 | OFX: prévia, conciliação, sugestão e reimportação sem duplicar | US-52 | `import-ofx.spec.ts` | coberto (fixture sintética; a real anonimizada fica para a T-085, SETUP-14) |
 | E08 | CSV pelo assistente de colunas | US-53 | `import-csv.spec.ts` | coberto |
 | E09 | NFC-e: `full` com itens, `fallback` e `pending` | US-54, US-55, US-56 | `nfce.spec.ts` | fallback e offline cobertos; **`full` com itens: lacuna conhecida** (T-090, SETUP-14) |
-| E10 | Open Finance com o mock | US-45 a US-51 | — | **lacuna conhecida**: T-076 (`needs-owner`) e T-077/T-083 (SETUP-13) |
+| E10 | Open Finance com o mock | US-45 a US-51 | `open-finance.spec.ts` | parcial: até a caixa de revisão, com `FakePluggyConnect` e as funções respondidas pelo teste (T-076); recategorizar e regra aprendida com T-077/T-083 (SETUP-13) |
 | E11 | Isolamento entre usuários | US-02, RN-102 | `seeds.spec.ts` | coberto |
 | E12 | Acessibilidade (axe nos 2 temas) e movimento reduzido | US-58, US-62 | `a11y.spec.ts`, `appearance.spec.ts` | coberto: axe nas telas da UX §8 com rota (claro e escuro, transparência sólida), 360–1440 px sem rolagem horizontal, alvos de 48 px e foco visível (D-071); T02, C02 e P04 no checklist manual |
 | E13 | Ocultar valores | US-57 | `hide-values.spec.ts` | coberto |
@@ -30,7 +30,7 @@ Usuários de teste: só e-mails `@example.test` da allowlist do `supabase/seed.s
 ## Lacunas conhecidas
 
 - **E09 `full` com itens** — depende das páginas reais da SEFAZ-PR anonimizadas (T-090, SETUP-14). O teste de hoje injeta o QR pelo stub do detector e simula a resposta do `nfce-fetch` pelo gancho `window.__oakE2ENfce` (só no build E2E).
-- **E10 Open Finance** — depende da decisão do dono na T-076 (o widget da Pluggy e o `check-build`) e do SETUP-13.
+- **E10 Open Finance** — cobre até a caixa de revisão (T-076); o widget real espera o dono ajustar o `check-build` (HANDOFF §4) e o resto do cenário, o SETUP-13.
 
 ## Como rodar
 
