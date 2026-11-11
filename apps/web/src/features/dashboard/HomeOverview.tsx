@@ -15,6 +15,7 @@ import { useToday } from '../../lib/useToday';
 import { EmptyState, PaceIndicator, TransactionRow } from '../../ui';
 import { MONTH_NAMES, monthTitle } from '../transactions/list';
 import { toRow } from '../transactions/TransactionsScreen';
+import { loadHomePeriodRows, loadRecentRows, loadReviewRows } from './data';
 import { FormulaSheet } from './FormulaSheet';
 import {
   BudgetCard,
@@ -43,54 +44,51 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
   const hidden = useValuesHidden();
   const today = useToday(fixedToday);
   const [formulaOpen, setFormulaOpen] = useState(false);
+  // T-102: o painel lê só o período que o mês usa; recentes e "Conferir" vêm pelos índices, sem o histórico inteiro
   const data = useLive(
     user
       ? async () => {
           const rows: HomeRows & {
             goals: LocalRow<'goals'>[];
+            recent: LocalRow<'transactions'>[];
+            reviewRows: LocalRow<'transactions'>[];
           } = {
-            txRows: await user.db.transactions.toArray(),
-            recurrences: await user.db.recurrences.toArray(),
-            cards: await user.db.cards.toArray(),
-            accounts: await user.db.accounts.toArray(),
-            categories: await user.db.categories.toArray(),
-            invoices: await user.db.invoices.toArray(),
-            budgets: await user.db.budgets.toArray(),
-            profile: (await user.db.profiles.toCollection().first()) ?? null,
+            ...(await loadHomePeriodRows(user.db, today)),
             goals: await user.db.goals.where('kind').equals('emergency_reserve').toArray(),
+            recent: await loadRecentRows(user.db, RECENT),
+            reviewRows: await loadReviewRows(user.db),
           };
           return rows;
         }
       : null,
-    [user],
+    [user, today],
+  );
+  const goal = data?.goals.find((g) => g.deleted_at === null) ?? null;
+  // A Reserva soma os aportes de todos os meses (RN-56): leitura à parte, que não segura o herói
+  const goalTxs = useLive(
+    user && goal
+      ? async () =>
+          (await user.db.transactions.filter((r) => r.goal_id === goal.id).toArray()).filter(
+            (r) => r.deleted_at === null,
+          )
+      : null,
+    [user, goal?.id],
   );
   const model = useMemo(() => (data ? homeModel(data, today) : null), [data, today]);
   const extras = useMemo(() => {
     if (!data) {
       return null;
     }
-    const live = data.txRows.filter((r) => r.deleted_at === null);
-    const recent = [...live]
-      .sort((a, b) =>
-        a.occurred_on === b.occurred_on
-          ? b.created_at.localeCompare(a.created_at)
-          : a.occurred_on < b.occurred_on
-            ? 1
-            : -1,
-      )
-      .slice(0, RECENT);
-    const goal = data.goals.find((g) => g.deleted_at === null);
+    const recent = data.recent;
     let reserve: ReserveSummary | null = null;
-    if (goal) {
-      const txs = live
-        .filter((r) => r.goal_id === goal.id)
-        .flatMap((r) => {
-          try {
-            return [txFromRow(r)];
-          } catch {
-            return [];
-          }
-        });
+    if (goal && goalTxs) {
+      const txs = goalTxs.flatMap((r) => {
+        try {
+          return [txFromRow(r)];
+        } catch {
+          return [];
+        }
+      });
       const progress = reserveProgress(
         {
           id: goal.id,
@@ -108,20 +106,20 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
     }
     const accountName = new Map(data.accounts.map((a) => [a.id, a.name]));
     const review = new Map<string, number>();
-    for (const r of live) {
-      if (r.source !== 'manual' && (r.review_state === 'new' || r.review_state === 'suggested')) {
-        const bank = (r.account_id && accountName.get(r.account_id)) || '';
-        review.set(bank, (review.get(bank) ?? 0) + 1);
-      }
+    for (const r of data.reviewRows) {
+      const bank = (r.account_id && accountName.get(r.account_id)) || '';
+      review.set(bank, (review.get(bank) ?? 0) + 1);
     }
     const categories = new Map(data.categories.map((c) => [c.id, c]));
     return {
       recent,
       reserve,
+      // com reserva criada, o card espera a soma dos aportes (sem mostrar "sem meta" por um instante)
+      reserveReady: !goal || goalTxs !== undefined,
       categories,
       review: [...review].map(([bank, n]) => ({ bank, n })),
     };
-  }, [data, today]);
+  }, [data, goal, goalTxs, today]);
 
   const month = today.slice(0, 7) as YearMonth;
   const name = firstName(data?.profile?.display_name);
@@ -255,7 +253,7 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
       {extras && <ReviewCard pending={extras.review} />}
       {model && <UpcomingCard model={model} hidden={hidden} />}
       {model && <BudgetCard model={model} hidden={hidden} />}
-      {extras && (
+      {extras?.reserveReady && (
         <ReserveCard
           reserve={extras.reserve ?? { savedCents: 0, targetCents: null }}
           hidden={hidden}
