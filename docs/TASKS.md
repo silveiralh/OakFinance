@@ -163,6 +163,20 @@ flowchart LR
 | T-098 | Operação e resiliência | T-095, T-036 | done |
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
+| T-101 | Agente de auditoria de UX | T-100 | done |
+| T-102 | Início lê só o período necessário | T-058, T-097 | todo |
+| T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | todo |
+| T-104 | Base visual e componentes | T-101 | todo |
+| T-105 | Navegação: menu da conta e abas do Planejar | T-101 | todo |
+| T-106 | Lançamento rápido no celular | T-104 | todo |
+| T-107 | Configurações organizadas | T-105 | todo |
+| T-108 | Início: acabamento | T-102, T-104 | todo |
+| T-109 | Lançamentos e cartões: acabamento | T-104 | todo |
+| T-110 | Planejar: acabamento | T-105 | todo |
+| T-111 | Contas, categorias e dados: acabamento | T-107 | todo |
+| T-112 | Conexões, importação e conferência: acabamento | T-105 | todo |
+| T-113 | Moldura, onboarding e marca | T-104 | todo |
+| T-114 | Revalidação de UX com o agente | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | todo |
 
 ---
 
@@ -1440,3 +1454,172 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 **Pronto quando:** contraste da §4.3 recalculado e verde nos 2 temas; axe sem violação séria; alvos ≥ 48 px; bundle inicial ≤ 250 KB; E2E verde nos 3 projetos. O snapshot visual do `/__styleguide` muda e exige o rótulo `needs-owner` (baseline protegida).
 
 **Verificar:** `pnpm ci:local`; capturas das telas migradas em 390 px e 1280 px no PR.
+
+### T-101 — Agente de auditoria de UX
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| done | — | P | US-62 | — | T-100 | não |
+
+**Escopo (D-075):** agente `ux-auditor` em `.claude/agents/ux-auditor.md`, com a skill `frontend-design` em `.claude/skills/` (cópia da Anthropic, Apache 2.0); roteiro de capturas `apps/web/ux-audit/capture.mjs` (build E2E, Supabase interceptado, dados pelos ganchos `__oakE2E`, 360/390/1280 px, claro e escuro, estados vazios); primeira auditoria em `docs/ux-audit/`.
+
+**Pronto quando:** o agente roda sobre as capturas e entrega o relatório com achados por severidade, evidência e causa no código.
+
+**Verificar:** `pnpm --filter web exec node ux-audit/capture.mjs` depois do `build:e2e` (ver o cabeçalho do script).
+
+### T-102 — Início lê só o período necessário
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+
+**Contexto (pedido do dono em 11/11):** o `loadHomeRows` (`features/dashboard/data.ts`) e o `HomeOverview.tsx:52` leem **todos** os lançamentos (`transactions.toArray()`) a cada abertura do Início, então o painel fica mais lento a cada mês de histórico. O E2E de desempenho (`e2e/perf.spec.ts`, 5.000 lançamentos) passou a oscilar no limite de 1,5 s (1.540 ms no PR #126). Nenhum dado é apagado: o histórico continua inteiro no aparelho e na nuvem.
+
+**Escopo:** uma leitura por período para o H01 usando os índices que já existem (`occurred_on`, `invoice_id`, `series_id`, `recurrence_id`), em vez do `toArray()`:
+- lançamentos com `occurred_on` desde o início do mês anterior ao mês de orçamento (RN-46) até o fim do mês corrente, mais os agendados à frente;
+- lançamentos de faturas abertas, fechadas não pagas e futuras (`invoice_id`), porque as parcelas guardam a data da compra (RN-22) e podem ter `occurred_on` de anos atrás;
+- lançamentos de recorrências ativas;
+- os últimos 30 dias que as sugestões e "Próximos 7 dias" usarem.
+Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregado: a Reserva (P02, soma de todos os aportes, RN-54/RN-55), o Fechar o mês (P04) e o `ReserveMoveSheet`. O `BudgetAlerts` usa a leitura por período.
+
+**Testes:** propriedade (fast-check) que gera históricos com compras parceladas antigas, recorrências e aportes e exige `homeModel(leitura por período) === homeModel(tudo)` no mês corrente e na virada do mês; os casos do `test/dashboard.test.tsx` seguem verdes. O `perf.spec.ts` não muda de limite.
+
+**Também:** o `e2e/perf.spec.ts` oscilou duas vezes seguidas no PR #126, que só mexe em docs: o painel em 1.540 ms (`desktop`) e, no `iphone`, uma de três gravações do US-15 em 284–364 ms. Investigar a gravação no WebKit (sem mudar limite nem tirar teste: portão protegido).
+
+**Pronto quando:** o Início com 5.000 lançamentos abre abaixo de 1,5 s com folga (meta ≤ 1.000 ms no `desktop` do CI) e o tempo não cresce com o histórico (medir também com 20.000 no teste local, sem entrar no CI).
+
+**Verificar:** `pnpm --filter web test -- dashboard && pnpm e2e -- perf`.
+
+## Ajuste do front-end a partir da auditoria de UX (T-103 a T-114)
+
+**Como trabalhar (vale para T-103 a T-114):** cada tarefa corrige os achados listados de `docs/ux-audit/2026-11-11.md`; o "o que se vê", a causa (`arquivo:linha`) e a correção sugerida estão nas partes `docs/ux-audit/partes/`. Confira a causa no código atual antes de mudar (pode ter andado). Pontos marcados como decisão do dono (seção "Contradições" do relatório) **não entram** até o dono responder: siga a spec atual neles. Texto novo de interface entra na UX §6.4 com linha em `DECISIONS.md`. Antes do PR, gere as capturas das telas tocadas (`apps/web/ux-audit/capture.mjs --only=…`, cabeçalho do script) e rode o agente `ux-auditor` só nelas; anexe ao PR as capturas de 390 px antes e depois e o que o agente ainda apontar. Se o snapshot `e2e/styleguide.spec.ts-snapshots` (área de tokens) mudar, o PR fica com `needs-owner`.
+
+### T-103 — Dinheiro mostrado certo (auditoria S1)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-14, US-20, US-52 | RN-22, RN-23, RN-46 | T-101 | não |
+
+**Escopo:** UXB-001 (parcela com fatura futura ou aberta é **prevista**, derivada da fatura como manda a D-034, no `rowState` da T01, no status da T02 e nos filtros "Previstas"/Status; a série no mesmo dia em ordem de `installment_number`; o total do dia não soma o previsto), UXB-009 (T02 de parcela com "k de n" e a lista das parcelas), UXC-001 (o sinal e o tipo do importado vêm do próprio lançamento na I05, não de `kind="expense"` fixo) e UXD-009 (plural nos textos com contagem).
+
+**Pronto quando:** cada achado tem teste com o ID no nome (ex.: `it('UXB-001: parcela 3/6 em fatura futura aparece como prevista')`); nenhum valor importado positivo aparece com "−".
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-104 — Base visual e componentes
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | G | US-58, US-62 | — | T-101 | não |
+
+**Escopo:** defeitos sistêmicos G1–G6 do relatório e o pedido do dono para as pílulas: (G1) títulos `h2` sem peso pelo preflight do Tailwind — UXA-007, UXB-008, UXC-005, UXD-011; (G2) classes com nome de utilitário do Tailwind (`.ring` do BudgetRing e as demais que colidirem: `.shadow`, `.table`, `.hidden`, `.grid`, `.flex`) — UXA-005, UXB-014, UXB-019; (G3) `list-style` e seta do `<select>` — UXA-015, UXB-007; (G4) espaço não separável entre "R$" e o número no `formatBRL` (`packages/domain/src/money.ts`, linha no Apêndice A) — UXA-002, UXB-004; (G5) seleção com contorno ou check também no escuro em chips, SegmentedControl e DateChip — UXA-009, UXA-011, UXB-023, UXC-008; (G6) tokens do Aero que não existem mais (`--aqua-700`, `--status-info-fg`) — UXA-006, UXC-009; UXA-004 (`text-transform: capitalize`); regressão UXD-012 (`.reconcile-diffs,` grudado no seletor das conexões em `shell.css`); **pílulas de categoria** (pedido do dono em 11/11): o `CategoryPicker` deixa o grid fixo de 4 colunas (`.chip-grid`) e as pílulas fluem conforme o espaço da tela, com o nome inteiro numa linha e o ícone com tamanho fixo (`flex-shrink: 0`; hoje o ícone é espremido até sumir), e o campo de busca sem contorno duplo.
+
+**Pronto quando:** nenhum `h2` com o peso do corpo; nenhum valor partido em duas linhas a 360 px; pílulas de categoria com ícone visível e nome inteiro a 360, 390 e 1280 px; teste de unidade para o espaço não separável e para a seleção não depender só de cor.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-105 — Navegação: menu da conta e abas do Planejar
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-01, US-05, US-36 | — | T-101 | não |
+
+**Escopo:** decisão D-076 (opção A, escolhida pelo dono): (1) avatar com as iniciais no topo das 4 abas principais (Início, Lançamentos, Cartões, Planejar), abrindo o menu da conta com Configurações, Conexões e importação, Ler nota fiscal e **Sair** (o Sair do S02 com o aviso de pendências da RN-100); (2) botão Voltar no TopBar das subtelas (UXA-012); (3) abas internas no Planejar — Orçamento · Reserva · Futuro · Fechar o mês — pelo SegmentedControl da UX §5.9 (UXB-002); (4) toque longo no FAB com Receita, Guardar, Importar extrato e Ler nota (UX §2.1), com alternativa por botão (2.5.1); (5) atalho "Importar extrato" no vazio de Lançamentos. No `lg` a barra lateral continua. Atualizar a UX §2.1 e §3.0 com a D-076. Resolve UXA-001 e UXC-002.
+
+**Pronto quando:** no celular, todas as telas de Ajustes, Conexões, Importar, Nota, Reserva, Futuro e Fechar o mês são alcançáveis a partir das abas em no máximo 2 toques, e Sair funciona; E2E novo no `android` e no `iphone` para "abrir o menu da conta e sair" e "chegar ao Fechar o mês pelo Planejar".
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-106 — Lançamento rápido no celular
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-12 | — | T-104 | não |
+
+**Escopo:** UXA-003 ("Lançar" e categorias acima da dobra em 360×640 e 390×844, com o teclado do AmountInput sem empurrar o resto), UXA-008 (o Q01 abre com foco no valor), UXA-010 (cabeçalho da folha fixo com o Fechar sempre visível) e UXA-027 ("Mais" com forma de chip, valor centrado, rótulo acessível do grupo de categorias).
+
+**Pronto quando:** P1 medido no E2E: do toque no + ao "Lançar" em ≤ 3 toques além dos dígitos, sem rolar, em 360×640.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-107 — Configurações organizadas
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-58 | — | T-105 | não |
+
+**Escopo:** UXC-004: a S01 deixa de ser uma nuvem de pílulas e vira uma lista em grupos (Conta · Dinheiro · Lembretes e aparência · Dados e privacidade), cada item com o valor atual quando houver e chevron; itens que faltam (Perfil, Instalar app, Conexões, Privacidade); Sair no fim, igual ao do menu da conta.
+
+**Pronto quando:** toda subtela S03–S11 e I01/I06 tem entrada na S01; a S01 cabe sem rolagem horizontal a 360 px.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-108 — Início: acabamento
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-30 | RN-47, RN-50 | T-102, T-104 | não |
+
+**Escopo:** UXA-017 (card Reserva sem meta), UXA-018 (botão "Novo lançamento" sem quebrar, valor no token de herói, sem duplicar no `lg`), UXA-021, UXA-022, UXA-023, UXA-025 (H01-S), UXA-026 só se o dono decidir a cor do escuro, UXD-010 (Renovar e cor do aviso de conexão).
+
+**Pronto quando:** "Disponível para gastar" e o botão numa linha cada em 360×640 sem rolagem (P4).
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-109 — Lançamentos e cartões: acabamento
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-15, US-17, US-19 | — | T-104 | não |
+
+**Escopo:** UXB-003 (linha de lançamento e altura da lista virtual), UXB-005 e UXA-024 (card e selo "Conferir", G8), UXB-006 (Filtros visível), UXB-010 (restos do Aero no cartão da fatura, G7), UXB-011, UXB-012, UXB-013 (pagamento só para a fatura certa e no rodapé), UXB-021, UXB-022, UXB-024, UXB-025.
+
+**Pronto quando:** nenhuma descrição quebrando no meio da palavra a 360 px; nenhuma ação primária de pagamento numa fatura futura.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-110 — Planejar: acabamento
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-31, US-33, US-36 | RN-44, RN-45 | T-105 | não |
+
+**Escopo:** UXB-015, UXB-016, UXB-017 (uma ação primária por tela), UXB-018 (resumo do mês no P04) e UXB-020 (valores e legenda no gráfico do Futuro).
+
+**Pronto quando:** P01, P02, P03 e P04 sem texto duplicado e com uma só ação primária visível.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-111 — Contas, categorias e dados: acabamento
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-09, US-10, US-29 | — | T-107 | não |
+
+**Escopo:** UXC-006 e UXD-006 (espaço interno dos cards), UXC-007 (formulários da S03 abertos só ao criar ou editar), UXC-010 (editar conta pelo `updateAccount`), UXC-013, UXC-015, UXC-016, UXC-017, UXC-018, UXC-019 e UXC-021.
+
+**Pronto quando:** criar, editar e arquivar conta e cartão sem teclados embutidos abertos ao mesmo tempo; teste do editar conta.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-112 — Conexões, importação e conferência: acabamento
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-45, US-52, US-53, US-54 | RN-78 | T-105 | não |
+
+**Escopo:** UXC-011 e UXC-012 (I05), UXC-020 (arrastar arquivo na I03), UXD-001, UXD-002 (estado "indisponível" com a importação como saída), UXD-003 (texto do plano B, sem decidir a origem do código antes do dono), UXD-004, UXD-005 (Desconectar e Desfazer importação), UXD-007 e UXD-008.
+
+**Pronto quando:** o caminho "conectar banco" sempre termina numa ação possível (conectar, importar ou voltar), também com a Pluggy fora do ar.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-113 — Moldura, onboarding e marca
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-06, US-07, US-08 | — | T-104 | não |
+
+**Escopo:** UXA-013 (wordmark em Nunito, monograma e favicon sem cores do Aero, G7), UXA-014, UXA-016, UXA-019, UXA-020, UXA-028, UXA-029, UXA-030, UXA-031 e UXA-032.
+
+**Pronto quando:** ON01–ON08 sem quebra de botão a 360 px e com o mesmo topo em todos os passos; wordmark igual em todas as telas.
+
+**Verificar:** `pnpm ci:local`; capturas de antes e depois no PR.
+
+### T-114 — Revalidação de UX com o agente
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | P | US-62 | — | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | não |
+
+**Escopo:** captura completa (`capture.mjs` sem filtro, semeando também categorias, receitas e contas fixas, que faltaram na primeira rodada) e nova auditoria pelo agente `ux-auditor` em `docs/ux-audit/<data>.md`, marcando cada achado de 11/11 como resolvido, mudou ou continua.
+
+**Pronto quando:** o relatório novo existe e não há S1 aberto; os S2 que continuarem viram tarefas novas.
+
+**Verificar:** `node apps/web/ux-audit/capture.mjs` e o relatório no PR.
