@@ -10,7 +10,14 @@ import { useLive } from '../../data/live';
 import { emptyStates, t } from '../../i18n/pt-BR';
 import { useOnline } from '../../lib/online';
 import { Button, EmptyState, GlassCard, ProgressBar, Select, TextField } from '../../ui';
-import { applyMapping, backfill, linkItem, type MapClient, requestConnectToken } from './api';
+import {
+  applyMapping,
+  backfill,
+  linkItem,
+  type MapClient,
+  requestConnectToken,
+  withE2e,
+} from './api';
 import { BankConnectionCard } from './BankConnectionCard';
 import {
   bankName,
@@ -123,7 +130,9 @@ function accountTitle(account: ExternalAccountDTO): string {
 
 /** I02: explicação → Pluggy Connect (ou Item ID) → mapeamento → "Buscando os últimos 90 dias…" → resultado. */
 export function ConnectBankScreen() {
-  const { user, client } = useAuth();
+  const auth = useAuth();
+  const { user } = auth;
+  const client = auth.client ? withE2e(auth.client as typeof auth.client & MapClient) : null;
   const online = useOnline();
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>({ kind: 'explain' });
@@ -211,7 +220,7 @@ export function ConnectBankScreen() {
     const mapped = await applyMapping(current.link.accounts, current.choices, {
       db: user.db,
       userId: user.userId,
-      client: client as unknown as MapClient,
+      client,
       today: today(),
       institution: connection?.institution ?? null,
       // um ciclo que já estava rodando pode ter começado antes das linhas novas: espera ele e roda outro

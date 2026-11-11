@@ -9,7 +9,7 @@ import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
 import { useOnline } from '../../lib/online';
 import { Badge, Button, GlassCard } from '../../ui';
-import { refreshNow } from './api';
+import { type MapClient, refreshNow, withE2e } from './api';
 import {
   bankName,
   connectionState,
@@ -30,7 +30,9 @@ const BADGES = {
 } as const;
 
 export function BankConnectionCard({ connection }: { connection: LocalRow<'bank_connections'> }) {
-  const { user, client } = useAuth();
+  const auth = useAuth();
+  const { user } = auth;
+  const client = auth.client ? withE2e(auth.client as typeof auth.client & MapClient) : null;
   const online = useOnline();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);

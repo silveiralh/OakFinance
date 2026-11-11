@@ -27,6 +27,34 @@ export interface MapClient {
   ): PromiseLike<{ data: unknown; error: unknown }>;
 }
 
+interface E2eApi {
+  respond(name: string, body: Record<string, unknown>): unknown;
+}
+
+/**
+ * Só no build E2E (E10): o Playwright responde as funções da Pluggy e a RPC de mapeamento por
+ * `window.__oakE2EPluggyApi` (como o `__oakE2ENfce` da NFC-e). Sem os segredos do SETUP-13 as funções devolvem 502
+ * no Supabase local. Some do build de produção (constante falsa).
+ */
+export function withE2e<C extends Functions & MapClient>(client: C): C {
+  if (import.meta.env.VITE_E2E !== '1') {
+    return client;
+  }
+  const api = (globalThis as { __oakE2EPluggyApi?: E2eApi }).__oakE2EPluggyApi;
+  if (!api || typeof api.respond !== 'function') {
+    return client;
+  }
+  const fake = {
+    functions: {
+      invoke: (name: string, options?: { body?: Record<string, unknown> }) =>
+        Promise.resolve({ data: api.respond(name, options?.body ?? {}), error: null }),
+    },
+    rpc: (name: string, args: Record<string, unknown>) =>
+      Promise.resolve({ data: api.respond(name, args), error: null }),
+  };
+  return fake as unknown as C;
+}
+
 export function requestConnectToken(
   client: Functions,
   itemId?: string,
