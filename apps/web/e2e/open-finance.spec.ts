@@ -34,7 +34,8 @@ test('E10: conectar, mapear, buscar 90 dias e abrir a caixa de revisão', async 
     account,
     `MERCADO BANCO ${tag}`,
   ] as [string, string]);
-  await page.evaluate(() => {
+  // o page.goto recarrega a página: o item do mock entra por script de inicialização
+  await page.addInitScript(() => {
     window.__oakE2EPluggyItem = 'mock-item-nubank';
   });
 
