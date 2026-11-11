@@ -2,7 +2,6 @@
 // de `features/`; o `routes.tsx` monta o roteador a partir desta tabela.
 import type { ComponentType } from 'react';
 import type { ScreenId } from '../i18n/pt-BR';
-import { OPEN_FINANCE_ENABLED } from './openFinance';
 
 export type NavKey = 'home' | 'transactions' | 'cards' | 'plan' | 'settings' | 'connections';
 
@@ -39,7 +38,6 @@ const dashboard = () => import('../features/dashboard/screens');
 const transactions = () => import('../features/transactions/screens');
 const cards = () => import('../features/cards/screens');
 const budget = () => import('../features/budget/screens');
-const connections = () => import('../features/connections/screens');
 const onboarding = () => import('../features/onboarding/screens');
 
 /** Telas dentro do AppShell (TopBar, abas ou barra lateral, FAB). */
@@ -147,18 +145,19 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
   {
     path: '/ajustes/conexoes',
     handle: { screen: 'I01', nav: 'connections' },
-    // sem o Open Finance (D-080) a I01 só importa extrato e lê nota, e o módulo da conexão nem entra no bundle
+    // sem o Open Finance (D-080, `OPEN_FINANCE_ENABLED`) a I01 só importa extrato e lê nota; a condição fica em
+    // linha para o empacotador descartar o módulo da conexão do bundle de produção
     load: () =>
-      OPEN_FINANCE_ENABLED
-        ? connections().then((m) => m.ConnectionsScreen)
+      import.meta.env.VITE_OPEN_FINANCE === '1'
+        ? import('../features/connections/screens').then((m) => m.ConnectionsScreen)
         : import('../features/connections/ImportCards').then((m) => m.ImportHubScreen),
   },
   {
     path: '/ajustes/conexoes/novo',
     handle: { screen: 'I02', nav: 'connections' },
     load: () =>
-      OPEN_FINANCE_ENABLED
-        ? connections().then((m) => m.ConnectBankScreen)
+      import.meta.env.VITE_OPEN_FINANCE === '1'
+        ? import('../features/connections/screens').then((m) => m.ConnectBankScreen)
         : import('../features/connections/ImportCards').then((m) => m.RedirectToConnections),
   },
   {

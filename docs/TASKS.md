@@ -177,7 +177,7 @@ flowchart LR
 | T-112 | Conexões, importação e conferência: acabamento | T-105 | blocked: substituída pela T-115 e T-126 (D-085) |
 | T-113 | Moldura, onboarding e marca | T-104 | blocked: substituída pela T-127 e T-118 (D-085) |
 | T-114 | Revalidação de UX com o agente | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | blocked: substituída pela T-129 (D-085) |
-| T-115 | Open Finance fora do MVP | T-100 | todo |
+| T-115 | Open Finance fora do MVP | T-100 | done |
 | T-116 | Dinheiro mostrado errado | T-115 | todo |
 | T-117 | Base visual: CSS, tokens e componentes | T-116 | todo |
 | T-118 | Navegação no celular | T-117 | todo |
@@ -1650,7 +1650,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-115 — Open Finance fora do MVP
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-45..US-51 | RN-79..RN-81, RN-94 | T-100 | não |
+| done | R | M | US-45..US-51 | RN-79..RN-81, RN-94 | T-100 | não |
 
 **Escopo (D-080):** constante de build `OPEN_FINANCE_ENABLED = false` (em `apps/web/src/app/` ou `config`, lida em tempo de build para o código da conexão sair do bundle); com ela desligada: some "Conectar banco", a rota da I02 redireciona para a I01, a I01 mostra só "Importar extrato" e "Nota fiscal (NFC-e)", some o aviso de conexão do Início, o push `bank_connection` não é gerado (o `reminders-tick` lê uma flag equivalente) e a S01 não mostra nada de banco conectado. Achados que ficam sem efeito e só precisam ser conferidos como invisíveis: UXC-003, UXD-002, UXD-003, UXD-004, UXD-010, UXD-011 e a parte de conexão do UXD-005 e do UXD-009. E2E de conexão (E10) passa a rodar só com a flag ligada no build E2E, sem perder casos. Atualiza a UX I01 e a §6 com a versão sem conexão.
 
