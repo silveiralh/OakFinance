@@ -2563,6 +2563,44 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.bankError` | O {banco} não respondeu. Uma nova tentativa será feita amanhã cedo, ou tente agora. |
 | `conn.cancelled` | Conexão cancelada. Você pode tentar novamente quando quiser. |
 | `conn.paused` | Sincronização automática pausada. Enquanto isso, importe o extrato em OFX ou CSV. |
+| `conn.section.banks` | Bancos conectados (Open Finance) |
+| `conn.section.import` | Importar extrato |
+| `conn.section.nfce` | Nota fiscal (NFC-e) |
+| `conn.nfce.read` | Ler QR code da nota |
+| `conn.nfce.hint` | Disponível para notas emitidas no Paraná. |
+| `conn.needsInternet` | Precisa de internet |
+| `conn.refresh` | Atualizar agora |
+| `conn.refreshTooSoon` | Atualizado há {n} min. Tente de novo em {m} min. |
+| `conn.summary` | {n} novas · {m} vinculadas · {k} para conferir |
+| `conn.state.active` | Ativa |
+| `conn.state.updating` | Atualizando |
+| `conn.state.expiring` | Expira em breve |
+| `conn.state.expired` | Expirada |
+| `conn.state.error` | Erro do banco |
+| `conn.continue` | Continuar |
+| `conn.opening` | Abrindo o Meu Pluggy… |
+| `conn.validating` | Validando a conexão… |
+| `conn.itemId` | Tenho um Item ID |
+| `conn.itemId.label` | Item ID |
+| `conn.itemId.hint` | Copie o código no dashboard da Pluggy. |
+| `conn.itemId.validate` | Validar |
+| `conn.itemNotFound` | Não encontramos essa conexão no Meu Pluggy. Confira o código. |
+| `conn.itemForeign` | Essa conexão pertence a outra conta. |
+| `conn.notAllowed` | Essa conexão não veio do Meu Pluggy. Conecte pelo Meu Pluggy. |
+| `conn.unavailable` | O {banco} está indisponível agora. Tente novamente mais tarde. |
+| `conn.slow` | O serviço demorou para responder. Tente novamente. |
+| `conn.failed` | Não foi possível concluir a conexão. Tente novamente. |
+| `conn.map.title` | Contas do banco |
+| `conn.map.link` | Vincular a uma conta ou cartão existente |
+| `conn.map.create` | Criar nova |
+| `conn.map.ignore` | Ignorar |
+| `conn.map.save` | Salvar e importar |
+| `conn.kind.checking` | Conta corrente |
+| `conn.kind.savings` | Poupança |
+| `conn.kind.credit` | Cartão de crédito |
+| `conn.cardMissing` | O {banco} liberou apenas a conta, sem o cartão. As compras no cartão podem ser importadas pela fatura em CSV. |
+| `conn.review` | Conferir agora |
+| `conn.later` | Depois |
 | `import.choose` | Escolher arquivo OFX ou CSV |
 | `import.bbHint` | Banco do Brasil: exporte o extrato em OFX (Money 2000+). |
 | `import.local` | O arquivo é lido no seu aparelho e não é enviado ao servidor. |

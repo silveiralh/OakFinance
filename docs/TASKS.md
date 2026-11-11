@@ -138,7 +138,7 @@ flowchart LR
 | T-073 | Conectar e vincular item | T-072 | done |
 | T-074 | Sincronização pluggy-sync | T-073, T-013 | done |
 | T-075 | Webhook e desconexão | T-074 | done |
-| T-076 | Telas de conexão (I01/I02) | T-075, T-045 | blocked: needs-owner — o SDK do widget (pluggy-connect-sdk) traz "PLUGGY_" e o build reprova |
+| T-076 | Telas de conexão (I01/I02) | T-075, T-045 | done |
 | T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
 | T-078 | Conciliador no aparelho | T-074, T-021, T-033 | done |
 | T-079 | Conferir importados (I05) | T-078, T-056 | done |
@@ -1155,13 +1155,15 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-076 — Telas de conexão (I01/I02)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: needs-owner — o SDK do widget (pluggy-connect-sdk) traz "PLUGGY_" e o build reprova | S3 | M | US-45, US-46 | RN-79, RN-80 | T-075, T-045 | não |
+| done | S3 | M | US-45, US-46 | RN-79, RN-80 | T-075, T-045 | não |
 
 **Escopo:** I01 e I02 (explicação, `react-pluggy-connect` em lazy, mapeamento vincular/criar/ignorar via `map_external_account`, plano B "Tenho um Item ID", erros); BankConnectionCard; resumo "{n} novas · {m} vinculadas · {k} para conferir"; ações desativadas offline; FakePluggyConnect no E2E.
 
 **Pronto quando:** E10 passa até a caixa de revisão.
 
 **Verificar:** `pnpm e2e -- open-finance`.
+
+**Entregue (11/11, D-073):** I01, I02 com o plano B, mapeamento, backfill, card e resumo; E10 com o `FakePluggyConnect`. O widget real (`react-pluggy-connect`) espera o dono aplicar no `scripts/check-build.ts` o padrão escolhido na issue #2 ("T-076: a"), ver HANDOFF §4.
 
 ### T-077 — Estado da conexão e reconexão
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
@@ -1443,7 +1445,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 |---|---|---|---|---|---|---|
 | done | — | P | US-62 | — | T-100 | não |
 
-**Escopo (D-073):** agente `ux-auditor` em `.claude/agents/ux-auditor.md`, com a skill `frontend-design` em `.claude/skills/` (cópia da Anthropic, Apache 2.0); roteiro de capturas `apps/web/ux-audit/capture.mjs` (build E2E, Supabase interceptado, dados pelos ganchos `__oakE2E`, 360/390/1280 px, claro e escuro, estados vazios); primeira auditoria em `docs/ux-audit/`.
+**Escopo (D-074):** agente `ux-auditor` em `.claude/agents/ux-auditor.md`, com a skill `frontend-design` em `.claude/skills/` (cópia da Anthropic, Apache 2.0); roteiro de capturas `apps/web/ux-audit/capture.mjs` (build E2E, Supabase interceptado, dados pelos ganchos `__oakE2E`, 360/390/1280 px, claro e escuro, estados vazios); primeira auditoria em `docs/ux-audit/`.
 
 **Pronto quando:** o agente roda sobre as capturas e entrega o relatório com achados por severidade, evidência e causa no código.
 
