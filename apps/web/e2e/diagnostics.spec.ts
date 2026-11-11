@@ -5,8 +5,12 @@ import { expect, login, test } from './fixtures/base';
 test('US-64: o Diagnóstico mostra os dados do sync e os últimos eventos', async ({ page }) => {
   await login(page);
   await page.goto('/ajustes');
-  await page.getByRole('button', { name: 'Diagnóstico' }).click();
-  await expect(page).toHaveURL(/\/ajustes\/diagnostico$/);
+  // no WebKit o primeiro toque logo depois do goto às vezes chega antes do roteador assumir (issue #119):
+  // repete o toque até a URL mudar
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Diagnóstico' }).click();
+    await expect(page).toHaveURL(/\/ajustes\/diagnostico$/, { timeout: 2_000 });
+  }).toPass({ timeout: 15_000 });
   await expect(page.getByTestId('screen-S11')).toBeVisible();
   await expect(page.getByTestId('diag-version')).not.toHaveText('');
   await expect(page.getByTestId('diag-device')).not.toHaveText('…');

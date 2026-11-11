@@ -88,6 +88,10 @@ test('US-15: com 5.000 lançamentos, a lista do mês abre e a busca filtra sem t
       });
     const times: number[] = [];
     for (let i = 0; i < 3; i++) {
+      // a releitura ao vivo das 5.000 linhas depois do sync pode passar de 300 ms no WebKit; a medição começa
+      // quando ela termina (issue #119: a 1ª gravação esperava a leitura da T01 e media 264 a 425 ms)
+      await settle();
+      await window.__oakE2E?.idle();
       await settle();
       const t0 = performance.now();
       await window.__oakE2E?.addExpense(a, 1234 + i, `Rápido com volume ${i}`);

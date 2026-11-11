@@ -33,6 +33,11 @@ declare global {
       accountNames(): Promise<string[]>;
       counts(): Promise<Record<string, number>>;
       syncNow(): Promise<boolean>;
+      /**
+       * Espera o aparelho ficar parado: uma transação `rw` vazia em `transactions` só começa depois das leituras
+       * ao vivo que já estavam na fila (ordem do IndexedDB), como quando a pessoa abre o Q01 e digita.
+       */
+      idle(): Promise<void>;
       /** Receita avulsa recebida hoje na conta (E02: o mês passa a ter Base). */
       addIncome(accountId: string, cents: number, description: string): Promise<string>;
       /** Aviso na central como o reminders-tick gravaria (E18); devolve o id v5 da dedupe_key. */
@@ -385,6 +390,7 @@ export function installE2eHooks(user: UserSession): () => void {
       rejected: await user.db.outbox.where('state').equals('rejected').count(),
     }),
     syncNow: async () => (await user.engine.syncNow()).ok,
+    idle: () => user.db.transaction('rw', user.db.transactions, () => undefined),
     applyUpdate,
   };
   return () => {

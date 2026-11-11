@@ -1,10 +1,12 @@
-import { expect, login, test } from './fixtures/base';
+import { expect, freshUser, login, test } from './fixtures/base';
 
 // T-082: E19 — o checklist do P04 bloqueia com pendência; sem pendência, "Fechar mês" grava `month_closings`;
 // "Reabrir para revisão" volta ao checklist. (O aviso ao editar um mês fechado no Q01 está no teste de componente.)
-// Um usuário por projeto, para os três navegadores não fecharem o mesmo mês ao mesmo tempo.
+// Um usuário por projeto e tentativa (`freshUser`): os três navegadores não fecham o mesmo mês ao mesmo tempo, e a
+// repetição seguinte do nightly não puxa do servidor o mês fechado de antes quando o "Reabrir" ainda não subiu
+// (issue #119: a 2ª e a 3ª repetição viam o P04 fechado, sem o checklist).
 test('E19: pendência bloqueia, sem pendência fecha e reabre', async ({ page }, info) => {
-  await login(page, `e2e-close-${info.project.name}@example.test`);
+  await login(page, freshUser('close', info));
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
   const month = await page.evaluate(() =>
     new Intl.DateTimeFormat('en-CA', {
