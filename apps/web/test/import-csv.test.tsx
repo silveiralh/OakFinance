@@ -108,6 +108,38 @@ describe('US-53: presets e mapeamento', () => {
     });
   });
 
+  it('issue #128 (RN-76): a fatura real do Nubank passa pelo leitor de CSV e nenhuma linha fica de fora', () => {
+    const { rows, delimiter } = rowsOf(fixture('nubank-fatura-real-anon.csv'));
+    expect(delimiter).toBe(',');
+    const { profile, detected } = initialProfile(rows[0] ?? [], [], null, delimiter);
+    expect(detected).toBe('Nubank — fatura');
+    const mapped = mapCsvRows(rows, profile);
+    expect(mapped.errors).toEqual([]);
+    expect(mapped.rows).toHaveLength(19);
+    // "1.456,20" e "- 1.234,56": milhar com ponto, vírgula decimal e o sinal separado por espaço
+    expect(mapped.rows.map((r) => [r.kind, r.amountCents])).toEqual(
+      expect.arrayContaining([
+        ['expense', 145620],
+        ['income', 123456],
+        ['income', 2990],
+      ]),
+    );
+  });
+
+  it('issue #128 (US-53): o extrato real da conta Nubank passa pelo leitor de CSV sem erro', () => {
+    const { rows, delimiter } = rowsOf(fixture('nubank-conta-real-anon.csv'));
+    const { profile, detected } = initialProfile(
+      rows[0] ?? [],
+      [],
+      { kind: 'account', id: 'bb' },
+      delimiter,
+    );
+    expect(detected).toBe('Nubank — conta');
+    const mapped = mapCsvRows(rows, profile);
+    expect(mapped.errors).toEqual([]);
+    expect(mapped.rows).toHaveLength(13);
+  });
+
   it('US-53: "Data,Valor,Identificador,Descrição" sugere "Nubank — conta"; negativo é saída e o Identificador vira a chave', () => {
     const { rows } = rowsOf(CONTA);
     const { profile, detected } = initialProfile(
