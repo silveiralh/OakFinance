@@ -1,0 +1,71 @@
+OFXHEADER:100
+DATA:OFXSGML
+VERSION:102
+SECURITY:NONE
+ENCODING:USASCII
+CHARSET:1252
+COMPRESSION:NONE
+OLDFILEUID:NONE
+NEWFILEUID:NONE
+
+
+<OFX>
+  <SIGNONMSGSRSV1>
+   <SONRS>
+    <STATUS>
+      <CODE>0</CODE>
+      <SEVERITY>INFO</SEVERITY>
+    </STATUS>
+    <DTSERVER>20241015103000[-3:BRT]</DTSERVER>
+    <LANGUAGE>POR</LANGUAGE>
+    <FI>
+     <ORG>Banco do Brasil</ORG>
+     <FID>1</FID>
+    </FI>
+   </SONRS>
+  </SIGNONMSGSRSV1>
+  <BANKMSGSRSV1>
+    <STMTTRNRS>
+      <TRNUID>1</TRNUID>
+        <STATUS>
+        <CODE>0</CODE>
+        <SEVERITY>INFO</SEVERITY>
+       </STATUS>
+      <STMTRS>
+        <CURDEF>BRL</CURDEF>
+        <BANKACCTFROM>
+          <BANKID>1</BANKID>
+          <BRANCHID>0000-0</BRANCHID>
+          <ACCTID>00000-0</ACCTID>
+          <ACCTTYPE>CHECKING</ACCTTYPE>
+        </BANKACCTFROM>
+        <BANKTRANLIST>
+            <DTSTART>20241001000000[-3:BRT]</DTSTART>
+            <DTEND>20241028000000[-3:BRT]</DTEND>
+            <STMTTRN>
+              <TRNTYPE>DEBIT</TRNTYPE>
+              <DTPOSTED>20241005000000[-3:BRT]</DTPOSTED>
+              <TRNAMT>-150.00</TRNAMT>
+              <FITID>174527591210774</FITID>
+              <CHECKNUM>191280</CHECKNUM>
+              <NAME>Pix - Enviado</NAME>
+              <MEMO>13/10 13:27 Maria Ficticia Souza</MEMO>
+            </STMTTRN>
+            <STMTTRN>
+              <TRNTYPE>DEBIT</TRNTYPE>
+              <DTPOSTED>20241012000000[-3:BRT]</DTPOSTED>
+              <TRNAMT>-37.90</TRNAMT>
+              <FITID>124519483131075</FITID>
+              <CHECKNUM>976416</CHECKNUM>
+              <NAME>Pix - Enviado</NAME>
+              <MEMO>17/10 12:19 Mercado Exemplo Ltda</MEMO>
+            </STMTTRN>
+      </BANKTRANLIST>
+      <LEDGERBAL>
+        <BALAMT>0.00</BALAMT>
+        <DTASOF>20241028000000[-3:BRT]</DTASOF>
+      </LEDGERBAL>
+    </STMTRS>
+    </STMTTRNRS>
+  </BANKMSGSRSV1>
+</OFX>
