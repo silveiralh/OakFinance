@@ -113,6 +113,67 @@ describe('decodeOfxBytes (US-52, RN-75)', () => {
 });
 
 describe('parseOfx (US-52, RN-75)', () => {
+  it('US-52 (T-085): OFX real do BB anonimizado — tags com fechamento, LF, DTPOSTED com [-3:BRT], FITID de 15 dígitos e MEMO "dd/mm hh:mm nome"', () => {
+    const bytes = fixture('bb-real-anon.ofx');
+    // o arquivo real vem com LF (não CRLF) e tags fechadas
+    expect(bytes.includes(13)).toBe(false);
+    const [st, ...rest] = parseOfx(decodeOfxBytes(bytes));
+    expect(rest).toEqual([]);
+    expect(st).toMatchObject({
+      kind: 'bank',
+      bankId: '1',
+      acctIdMasked: '****00-0',
+      currency: 'BRL',
+      startOn: '2024-10-01',
+      endOn: '2024-10-28',
+      ledgerBalanceCents: 0,
+    });
+    expect(st?.transactions).toEqual([
+      {
+        fitId: '174527591210774',
+        trnType: 'DEBIT',
+        postedOn: '2024-10-05',
+        amountCents: -15_000,
+        memo: '13/10 13:27 Maria Ficticia Souza',
+        name: 'Pix - Enviado',
+        checkNum: '191280',
+      },
+      {
+        fitId: '124519483131075',
+        trnType: 'DEBIT',
+        postedOn: '2024-10-12',
+        amountCents: -3_790,
+        memo: '17/10 12:19 Mercado Exemplo Ltda',
+        name: 'Pix - Enviado',
+        checkNum: '976416',
+      },
+    ]);
+    const rows = ofxToImportRows(st as NonNullable<typeof st>, { accountId: 'bb' });
+    expect(rows.map((r) => [r.kind, r.amountCents, r.occurredOn, r.description])).toEqual([
+      ['expense', 15_000, '2024-10-05', '13/10 13:27 Maria Ficticia Souza'],
+      ['expense', 3_790, '2024-10-12', '17/10 12:19 Mercado Exemplo Ltda'],
+    ]);
+    // RN-65: a chave vem do FITID, com data e valor com sinal
+    expect(rows.map((r) => r.externalKey)).toEqual([
+      '174527591210774|2024-10-05|-15000',
+      '124519483131075|2024-10-12|-3790',
+    ]);
+    expect(rows[0]?.extra).toMatchObject({ name: 'Pix - Enviado', checkNum: '191280' });
+  });
+
+  it('RN-75 (T-085): OFX real do BB de um mês sem movimento — BANKTRANLIST só com o período, sem erro', () => {
+    const [st, ...rest] = parseOfx(decodeOfxBytes(fixture('bb-real-anon-sem-movimento.ofx')));
+    expect(rest).toEqual([]);
+    expect(st).toMatchObject({
+      kind: 'bank',
+      bankId: '1',
+      startOn: '2024-10-01',
+      endOn: '2024-10-28',
+    });
+    expect(st?.transactions).toEqual([]);
+    expect(ofxToImportRows(st as NonNullable<typeof st>, { accountId: 'bb' })).toEqual([]);
+  });
+
   it('RN-75: SGML "Money 2000+" do BB — conta, saldo, período e transações', () => {
     const [st, ...rest] = parseOfx(decodeOfxBytes(fixture('bb-sgml-1252.ofx')));
     expect(rest).toEqual([]);
