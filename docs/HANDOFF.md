@@ -369,4 +369,4 @@
 | 11/11/2026 | T-083 | PR #127 | blocked | aguarda o SETUP-13 (Pluggy e Meu Pluggy); nenhuma tarefa liberada |
 | 11/11/2026 | T-097 (issue #123) | PR #130 | done | nightly: o ciclo de sync cancela o debounce da escrita que ele já sobe (US-15 no `iphone` com 240–380 ms numa gravação); E15 segue *flaky* (§5) |
 | 11/11/2026 | T-086 (issue #128) | PR #131 | done | I03 nunca termina em silêncio (catch, fallback do Worker com timeout, `accept` mais amplo); causa real e fixtures esperam os arquivos do SETUP-14 (issue segue aberta) |
-| 11/11/2026 | — | PR #PRNUM | blocked | T-085/T-087 liberadas pelo SETUP-14, mas a sessão não tem acesso ao canal privado (§4); PRs #126 e #129 do dono seguem abertos e verdes |
+| 11/11/2026 | — | PR #132 | blocked | T-085/T-087 liberadas pelo SETUP-14, mas a sessão não tem acesso ao canal privado (§4); PRs #126 e #129 do dono seguem abertos e verdes |
