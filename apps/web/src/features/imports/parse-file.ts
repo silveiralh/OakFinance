@@ -13,23 +13,71 @@ export type CsvFileOutcome =
     }
   | { ok: false; code: 'TOO_LARGE' | 'BAD_FILE' | 'EMPTY' };
 
-/** `create` precisa ser `new Worker(new URL('./x.worker.ts', import.meta.url))` literal: é assim que o Vite gera o chunk. */
-function inWorker<T>(create: () => Worker, bytes: Uint8Array, fallback: () => T): Promise<T> {
+/** Sem resposta do Worker em 20 s, a leitura segue na própria thread (issue #128: nada pode ficar sem retorno). */
+export const WORKER_TIMEOUT_MS = 20_000;
+
+/** Resposta do Worker no formato esperado (`{ ok: boolean, … }`). */
+function isOutcome(data: unknown): boolean {
+  return (
+    typeof data === 'object' && data !== null && typeof (data as { ok?: unknown }).ok === 'boolean'
+  );
+}
+
+/**
+ * `create` precisa ser `new Worker(new URL('./x.worker.ts', import.meta.url))` literal: é assim que o Vite gera o
+ * chunk. Qualquer falha do Worker (não criou, erro no script, mensagem ilegível, resposta fora do formato ou sem
+ * resposta) cai na leitura na própria thread; um erro dessa leitura rejeita a promessa, e a tela mostra o aviso.
+ */
+function inWorker<T>(
+  create: () => Worker,
+  bytes: Uint8Array,
+  fallback: () => T,
+  timeoutMs = WORKER_TIMEOUT_MS,
+): Promise<T> {
+  const local = () => new Promise<T>((resolve) => resolve(fallback()));
   if (typeof Worker === 'undefined') {
-    return Promise.resolve(fallback());
+    return local();
   }
-  return new Promise((resolve) => {
-    const worker = create();
-    const done = (outcome: T) => {
+  let worker: Worker;
+  try {
+    worker = create();
+  } catch {
+    return local();
+  }
+  return new Promise<T>((resolve, reject) => {
+    let settled = false;
+    const finish = (outcome: { data: T } | null) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      clearTimeout(timer);
       worker.terminate();
-      resolve(outcome);
+      if (outcome) {
+        resolve(outcome.data);
+      } else {
+        local().then(resolve, reject);
+      }
     };
-    worker.onmessage = (event: MessageEvent<T>) => done(event.data);
-    worker.onerror = () => done(fallback());
-    const copy = bytes.slice();
-    worker.postMessage(copy.buffer, [copy.buffer]);
+    const timer = setTimeout(() => finish(null), timeoutMs);
+    worker.onmessage = (event: MessageEvent<T>) =>
+      finish(isOutcome(event.data) ? { data: event.data } : null);
+    worker.onerror = (event) => {
+      event.preventDefault();
+      finish(null);
+    };
+    worker.onmessageerror = () => finish(null);
+    try {
+      const copy = bytes.slice();
+      worker.postMessage(copy.buffer, [copy.buffer]);
+    } catch {
+      finish(null);
+    }
   });
 }
+
+/** Só para os testes: o mesmo caminho de `parseCsvFile` com um Worker qualquer. */
+export const inWorkerForTests = inWorker;
 
 export function parseFile(bytes: Uint8Array): Promise<ParseOutcome> {
   return inWorker(
