@@ -164,19 +164,19 @@ flowchart LR
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 | T-101 | Agente de auditoria de UX | T-100 | done |
-| T-102 | Início lê só o período necessário | T-058, T-097 | todo |
-| T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | todo |
-| T-104 | Base visual e componentes | T-101 | todo |
-| T-105 | Navegação: menu da conta e abas do Planejar | T-101 | todo |
-| T-106 | Lançamento rápido no celular | T-104 | todo |
-| T-107 | Configurações organizadas | T-105 | todo |
-| T-108 | Início: acabamento | T-102, T-104 | todo |
-| T-109 | Lançamentos e cartões: acabamento | T-104 | todo |
-| T-110 | Planejar: acabamento | T-105 | todo |
-| T-111 | Contas, categorias e dados: acabamento | T-107 | todo |
-| T-112 | Conexões, importação e conferência: acabamento | T-105 | todo |
-| T-113 | Moldura, onboarding e marca | T-104 | todo |
-| T-114 | Revalidação de UX com o agente | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | todo |
+| T-102 | Início lê só o período necessário | T-058, T-097 | blocked: aguarda o merge do PR #135 (o novo Início da D-081 muda o que a tela lê) |
+| T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-104 | Base visual e componentes | T-101 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-105 | Navegação: menu da conta e abas do Planejar | T-101 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-106 | Lançamento rápido no celular | T-104 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-107 | Configurações organizadas | T-105 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-108 | Início: acabamento | T-102, T-104 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-109 | Lançamentos e cartões: acabamento | T-104 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-110 | Planejar: acabamento | T-105 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-111 | Contas, categorias e dados: acabamento | T-107 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-112 | Conexões, importação e conferência: acabamento | T-105 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-113 | Moldura, onboarding e marca | T-104 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
+| T-114 | Revalidação de UX com o agente | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) |
 
 ---
 
@@ -1469,7 +1469,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-102 — Início lê só o período necessário
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+| blocked: aguarda o merge do PR #135 (o novo Início da D-081 muda o que a tela lê) | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
 
 **Reaberta em 11/11 (issue #136):** a primeira entrega (PR #133) deixou o painel com 5.000 lançamentos em ~2,1 s no projeto `iphone` (limite de 1,5 s, RN-51) e o `e2e` vermelho em `main`. A correção devolveu a leitura completa ao Início, ao `BudgetAlerts` e ao `measureHome`; `loadHomePeriodRows`, `loadRecentRows` e `loadReviewRows` e a propriedade de `test/dashboard-period.test.ts` ficaram no código, sem uso nas telas. Para refazer: PR `[WIP]` cedo e medir o RN-51 no `iphone` do CI antes do resto (o WebKit não roda na sessão); evitar cursores (`filter`, `anyOf`, `orderBy().reverse()`) e várias transações em paralelo; ver HANDOFF §3.
 
@@ -1497,7 +1497,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-103 — Dinheiro mostrado certo (auditoria S1)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-14, US-20, US-52 | RN-22, RN-23, RN-46 | T-101 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-14, US-20, US-52 | RN-22, RN-23, RN-46 | T-101 | não |
 
 **Escopo:** UXB-001 (parcela com fatura futura ou aberta é **prevista**, derivada da fatura como manda a D-034, no `rowState` da T01, no status da T02 e nos filtros "Previstas"/Status; a série no mesmo dia em ordem de `installment_number`; o total do dia não soma o previsto), UXB-009 (T02 de parcela com "k de n" e a lista das parcelas), UXC-001 (o sinal e o tipo do importado vêm do próprio lançamento na I05, não de `kind="expense"` fixo) e UXD-009 (plural nos textos com contagem).
 
@@ -1508,7 +1508,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-104 — Base visual e componentes
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | G | US-58, US-62 | — | T-101 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | G | US-58, US-62 | — | T-101 | não |
 
 **Escopo:** defeitos sistêmicos G1–G6 do relatório e o pedido do dono para as pílulas: (G1) títulos `h2` sem peso pelo preflight do Tailwind — UXA-007, UXB-008, UXC-005, UXD-011; (G2) classes com nome de utilitário do Tailwind (`.ring` do BudgetRing e as demais que colidirem: `.shadow`, `.table`, `.hidden`, `.grid`, `.flex`) — UXA-005, UXB-014, UXB-019; (G3) `list-style` e seta do `<select>` — UXA-015, UXB-007; (G4) espaço não separável entre "R$" e o número no `formatBRL` (`packages/domain/src/money.ts`, linha no Apêndice A) — UXA-002, UXB-004; (G5) seleção com contorno ou check também no escuro em chips, SegmentedControl e DateChip — UXA-009, UXA-011, UXB-023, UXC-008; (G6) tokens do Aero que não existem mais (`--aqua-700`, `--status-info-fg`) — UXA-006, UXC-009; UXA-004 (`text-transform: capitalize`); regressão UXD-012 (`.reconcile-diffs,` grudado no seletor das conexões em `shell.css`); **pílulas de categoria** (pedido do dono em 11/11): o `CategoryPicker` deixa o grid fixo de 4 colunas (`.chip-grid`) e as pílulas fluem conforme o espaço da tela, com o nome inteiro numa linha e o ícone com tamanho fixo (`flex-shrink: 0`; hoje o ícone é espremido até sumir), e o campo de busca sem contorno duplo.
 
@@ -1519,7 +1519,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-105 — Navegação: menu da conta e abas do Planejar
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-01, US-05, US-36 | — | T-101 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-01, US-05, US-36 | — | T-101 | não |
 
 **Escopo:** decisão D-076 (opção A, escolhida pelo dono): (1) avatar com as iniciais no topo das 4 abas principais (Início, Lançamentos, Cartões, Planejar), abrindo o menu da conta com Configurações, Conexões e importação, Ler nota fiscal e **Sair** (o Sair do S02 com o aviso de pendências da RN-100); (2) botão Voltar no TopBar das subtelas (UXA-012); (3) abas internas no Planejar — Orçamento · Reserva · Futuro · Fechar o mês — pelo SegmentedControl da UX §5.9 (UXB-002); (4) toque longo no FAB com Receita, Guardar, Importar extrato e Ler nota (UX §2.1), com alternativa por botão (2.5.1); (5) atalho "Importar extrato" no vazio de Lançamentos. No `lg` a barra lateral continua. Atualizar a UX §2.1 e §3.0 com a D-076. Resolve UXA-001 e UXC-002.
 
@@ -1530,7 +1530,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-106 — Lançamento rápido no celular
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-12 | — | T-104 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-12 | — | T-104 | não |
 
 **Escopo:** UXA-003 ("Lançar" e categorias acima da dobra em 360×640 e 390×844, com o teclado do AmountInput sem empurrar o resto), UXA-008 (o Q01 abre com foco no valor), UXA-010 (cabeçalho da folha fixo com o Fechar sempre visível) e UXA-027 ("Mais" com forma de chip, valor centrado, rótulo acessível do grupo de categorias).
 
@@ -1541,7 +1541,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-107 — Configurações organizadas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-58 | — | T-105 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-58 | — | T-105 | não |
 
 **Escopo:** UXC-004: a S01 deixa de ser uma nuvem de pílulas e vira uma lista em grupos (Conta · Dinheiro · Lembretes e aparência · Dados e privacidade), cada item com o valor atual quando houver e chevron; itens que faltam (Perfil, Instalar app, Conexões, Privacidade); Sair no fim, igual ao do menu da conta.
 
@@ -1552,7 +1552,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-108 — Início: acabamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-30 | RN-47, RN-50 | T-102, T-104 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-30 | RN-47, RN-50 | T-102, T-104 | não |
 
 **Escopo:** UXA-017 (card Reserva sem meta), UXA-018 (botão "Novo lançamento" sem quebrar, valor no token de herói, sem duplicar no `lg`), UXA-021, UXA-022, UXA-023, UXA-025 (H01-S), UXA-026 só se o dono decidir a cor do escuro, UXD-010 (Renovar e cor do aviso de conexão).
 
@@ -1563,7 +1563,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-109 — Lançamentos e cartões: acabamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-15, US-17, US-19 | — | T-104 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-15, US-17, US-19 | — | T-104 | não |
 
 **Escopo:** UXB-003 (linha de lançamento e altura da lista virtual), UXB-005 e UXA-024 (card e selo "Conferir", G8), UXB-006 (Filtros visível), UXB-010 (restos do Aero no cartão da fatura, G7), UXB-011, UXB-012, UXB-013 (pagamento só para a fatura certa e no rodapé), UXB-021, UXB-022, UXB-024, UXB-025.
 
@@ -1574,7 +1574,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-110 — Planejar: acabamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-31, US-33, US-36 | RN-44, RN-45 | T-105 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-31, US-33, US-36 | RN-44, RN-45 | T-105 | não |
 
 **Escopo:** UXB-015, UXB-016, UXB-017 (uma ação primária por tela), UXB-018 (resumo do mês no P04) e UXB-020 (valores e legenda no gráfico do Futuro).
 
@@ -1585,7 +1585,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-111 — Contas, categorias e dados: acabamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-09, US-10, US-29 | — | T-107 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-09, US-10, US-29 | — | T-107 | não |
 
 **Escopo:** UXC-006 e UXD-006 (espaço interno dos cards), UXC-007 (formulários da S03 abertos só ao criar ou editar), UXC-010 (editar conta pelo `updateAccount`), UXC-013, UXC-015, UXC-016, UXC-017, UXC-018, UXC-019 e UXC-021.
 
@@ -1596,7 +1596,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-112 — Conexões, importação e conferência: acabamento
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-45, US-52, US-53, US-54 | RN-78 | T-105 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-45, US-52, US-53, US-54 | RN-78 | T-105 | não |
 
 **Escopo:** UXC-011 e UXC-012 (I05), UXC-020 (arrastar arquivo na I03), UXD-001, UXD-002 (estado "indisponível" com a importação como saída), UXD-003 (texto do plano B, sem decidir a origem do código antes do dono), UXD-004, UXD-005 (Desconectar e Desfazer importação), UXD-007 e UXD-008.
 
@@ -1607,7 +1607,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-113 — Moldura, onboarding e marca
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-06, US-07, US-08 | — | T-104 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | M | US-06, US-07, US-08 | — | T-104 | não |
 
 **Escopo:** UXA-013 (wordmark em Nunito, monograma e favicon sem cores do Aero, G7), UXA-014, UXA-016, UXA-019, UXA-020, UXA-028, UXA-029, UXA-030, UXA-031 e UXA-032.
 
@@ -1618,7 +1618,7 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 ### T-114 — Revalidação de UX com o agente
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | P | US-62 | — | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | não |
+| blocked: aguarda o merge do PR #135 (D-085 substitui esta fila pelas T-115 a T-129) | — | P | US-62 | — | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | não |
 
 **Escopo:** captura completa (`capture.mjs` sem filtro, semeando também categorias, receitas e contas fixas, que faltaram na primeira rodada) e nova auditoria pelo agente `ux-auditor` em `docs/ux-audit/<data>.md`, marcando cada achado de 11/11 como resolvido, mudou ou continua.
 
