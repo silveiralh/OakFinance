@@ -6,12 +6,12 @@ Guia operacional das sessões automáticas de desenvolvimento. Cada sessão come
 
 1. OakFinance é um PWA de finanças pessoais para 2 pessoas com contas 100% separadas, sem nenhum compartilhamento.
 2. Persona A usa Android (Chrome) e Persona B usa iPhone (Safari instalado na Tela de Início, iOS ≥ 16.4); as duas também usam o computador.
-3. A pergunta central é "Quanto ainda posso gastar este mês?" (H01, fórmula RN-47, selo RN-50).
+3. A pergunta central é "Quanto já gastei este mês e como está minha conta?" (H01 pela D-081: gasto do mês, saldo nas contas e saúde por faixa do 50/30/20; o "Disponível para gastar" saiu da tela).
 4. É offline-first: Dexie local + outbox + RPCs `sync_push`/`sync_pull`. A nuvem é a fonte da verdade; a última edição vence e o histórico guarda o resto.
 5. O lançamento rápido leva ≤ 3 toques e < 5 s, inclusive sem rede.
 6. A compra no cartão cai na fatura pela data de fechamento e conta no mês do vencimento da fatura (decisão do cliente).
 7. 50/30/20 sobre a renda, reserva de emergência e regras de categoria que aprendem (determinísticas e locais, sem IA).
-8. Integrações: Open Finance (Pluggy/Meu Pluggy, BB e Nubank), OFX/CSV, NFC-e da SEFAZ-PR e Web Push com VAPID.
+8. Integrações: OFX/CSV, NFC-e da SEFAZ-PR e Web Push com VAPID. Open Finance (Pluggy/Meu Pluggy) fica para a v2 (D-080), escondido por `OPEN_FINANCE_ENABLED = false`.
 9. Custo R$ 0: Supabase Free (sa-east-1), Cloudflare Pages e GitHub Actions em repositório **público**.
 10. Visual Aero sóbrio e marca só tipográfica (sem árvore, folha ou figura). Textos em pt-BR, sem "!" e sem emoji.
 

@@ -145,11 +145,11 @@ flowchart LR
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | done |
 | T-081 | Desfazer conciliação | T-079 | done |
 | T-082 | Fechar o mês (P04) | T-079, T-059 | done |
-| T-083 | Validação real da Pluggy | T-077 | blocked: aguarda cliente — SETUP-13 (Pluggy e Meu Pluggy) |
+| T-083 | Validação real da Pluggy | T-077 | adiada: v2 (D-080) |
 | T-084 | Importar OFX | T-022, T-078 | done |
-| T-085 | OFX real do BB anonimizado | T-084 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
+| T-085 | OFX real do BB anonimizado | T-084 | todo |
 | T-086 | Importar CSV | T-084 | done |
-| T-087 | Presets Nubank confirmados | T-086 | blocked: aguarda cliente — SETUP-14 (arquivos reais) |
+| T-087 | Presets Nubank confirmados | T-086 | todo |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | done |
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | done |
 | T-090 | Parser da NFC-e com páginas reais | T-089 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
@@ -163,6 +163,21 @@ flowchart LR
 | T-098 | Operação e resiliência | T-095, T-036 | done |
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
+| T-110 | Open Finance fora do MVP | T-100 | todo |
+| T-111 | Dinheiro mostrado errado | T-110 | todo |
+| T-112 | Base visual: CSS, tokens e componentes | T-111 | todo |
+| T-113 | Navegação no celular | T-112 | todo |
+| T-114 | Lançamento rápido (Q01) e folhas | T-112 | todo |
+| T-115 | Início pelo gasto do mês | T-113 | todo |
+| T-116 | Limiares de aviso configuráveis | T-115 | todo |
+| T-117 | Lançamentos (T01/T02) | T-114 | todo |
+| T-118 | Cartões (C01/C02) | T-117 | todo |
+| T-119 | Planejar (P01–P04) | T-118 | todo |
+| T-120 | Ajustes (S01–S11) | T-116 | todo |
+| T-121 | Importação, nota e conferência | T-120 | todo |
+| T-122 | Onboarding e marca | T-121 | todo |
+| T-123 | Specs sem restos do Aero | T-122 | todo |
+| T-124 | Nova auditoria de UX | T-123 | todo |
 
 ---
 
@@ -1235,7 +1250,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-083 — Validação real da Pluggy
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-13 (Pluggy e Meu Pluggy) | S3 | M | US-45, US-46, US-47 | RN-79 | T-077 | sim — SETUP-13 |
+| adiada: v2 (D-080) | S3 | M | US-45, US-46, US-47 | RN-79 | T-077 | sim — SETUP-13 |
 
 **Escopo:** `GET /connectors` para achar o id do MeuPluggy (informado no HANDOFF sem segredos); respostas do sandbox anonimizadas substituem as fixtures PROVISÓRIAS; sinal de `amount` confirmado; nomes de `GET /categories`; CSP mínima para o widget (E14); resultado do time-box da US-45 (Q2) em `DECISIONS.md`.
 
@@ -1263,7 +1278,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-085 — OFX real do BB anonimizado
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
+| todo | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
 
 **Escopo:** ler o arquivo pelo canal privado, fora do clone; gerar a fixture anonimizada com README; ajustar o parser se for preciso; E07 usando essa fixture. O original nunca entra no repositório.
 
@@ -1285,7 +1300,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-087 — Presets Nubank confirmados
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-14 (arquivos reais) | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
+| todo | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
 
 **Escopo:** conferir `nubank-fatura` e `nubank-conta` com os arquivos reais (fora do clone); fixtures anonimizadas; tirar a marca PROVISÓRIO.
 
@@ -1440,3 +1455,172 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 **Pronto quando:** contraste da §4.3 recalculado e verde nos 2 temas; axe sem violação séria; alvos ≥ 48 px; bundle inicial ≤ 250 KB; E2E verde nos 3 projetos. O snapshot visual do `/__styleguide` muda e exige o rótulo `needs-owner` (baseline protegida).
 
 **Verificar:** `pnpm ci:local`; capturas das telas migradas em 390 px e 1280 px no PR.
+
+## R — Refinamento (pedido do dono em 11/11: D-080 a D-084)
+
+Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB-…`, `UXC-…`, `UXD-…`) estão em `docs/ux-audit/` (resumo em `docs/ux-audit/2026-11-11.md`; se a pasta ainda não estiver na `main`, leia da branch `task/T-101-agente-ux`). Cada tarefa fecha os achados listados: o PR cita os IDs e mostra capturas em 360 px e 1280 px, claro e escuro, das telas tocadas. Textos novos entram na UX §6 e em `i18n/pt-BR.ts`. Nenhum teste é apagado (o guard reprova).
+
+### T-110 — Open Finance fora do MVP
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-45..US-51 | RN-79..RN-81, RN-94 | T-100 | não |
+
+**Escopo (D-080):** constante de build `OPEN_FINANCE_ENABLED = false` (em `apps/web/src/app/` ou `config`, lida em tempo de build para o código da conexão sair do bundle); com ela desligada: some "Conectar banco", a rota da I02 redireciona para a I01, a I01 mostra só "Importar extrato" e "Nota fiscal (NFC-e)", some o aviso de conexão do Início, o push `bank_connection` não é gerado (o `reminders-tick` lê uma flag equivalente) e a S01 não mostra nada de banco conectado. Achados que ficam sem efeito e só precisam ser conferidos como invisíveis: UXC-003, UXD-002, UXD-003, UXD-004, UXD-010, UXD-011 e a parte de conexão do UXD-005 e do UXD-009. E2E de conexão (E10) passa a rodar só com a flag ligada no build E2E, sem perder casos. Atualiza a UX I01 e a §6 com a versão sem conexão.
+
+**Pronto quando:** em produção não há caminho visível para conectar banco; o bundle de produção não contém o SDK da Pluggy; E10 continua verde no build com a flag ligada; demais E2E verdes.
+
+**Verificar:** `pnpm ci:local`; `pnpm build && grep -ri pluggy apps/web/dist || echo ok`.
+
+### T-111 — Dinheiro mostrado errado
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-24, US-49 | RN-23, RN-74 | T-110 | não |
+
+**Escopo:** UXB-001 (parcelas futuras aparecem como efetivadas e somam no dia da compra: cada parcela com o próprio status e mês, como o Q01 gera); UXC-001 (entradas do banco aparecem como despesa na conferência: o sinal e o tipo vêm da transação, não de `kind="expense"` fixo em `features/inbox/screens.tsx`).
+
+**Pronto quando:** testes de regressão citando RN-23 e RN-74 cobrem os dois casos; T01, T02 e I05 mostram os valores certos.
+
+**Verificar:** `pnpm --filter web test && pnpm e2e -- transactions inbox`.
+
+### T-112 — Base visual: CSS, tokens e componentes
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-62 | — | T-111 | não |
+
+**Escopo:** grupos sistêmicos da auditoria: G1 títulos sem peso (UXA-007, UXB-008, UXC-005, UXA-030 entrelinha dos títulos); G2 classes com nome de utilitário do Tailwind (UXA-005, UXB-014; procure também `.shadow`, `.table`, `.hidden`, `.grid`, `.flex`) e arco de 0% como ponto (UXB-019); G3 listas e selects sem forma (UXA-015, UXB-007); G4 valor partido: `formatBRL` com espaço não separável U+00A0 no domínio (UXA-002, UXB-004; com linha no Apêndice A se a API mudar); G6 tokens do Aero que faltam no escuro (`--aqua-700`, `--status-info-fg`: UXA-006, UXC-009); G8 selo "Conferir" com forma de selo (UXA-024); espaço interno dos cards (UXC-006, UXD-006); regressão do seletor quebrado no `shell.css` (UXD-012). Também aplica a D-084 itens 3 e 4: rótulo das abas com 13 px e superfície elevada (não `#000`) com contorno de seleção na cor do texto no escuro.
+
+**Pronto quando:** os achados listados somem nas capturas; contraste da §4.3 verde nos 2 temas; axe sem violação séria.
+
+**Verificar:** `pnpm ci:local`; capturas do roteiro `apps/web/ux-audit/capture.mjs` antes e depois.
+
+### T-113 — Navegação no celular
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-58, US-62 | — | T-112 | não |
+
+**Escopo:** UXA-001 (entrada para Ajustes no TopBar do Início); UXC-002 (caminho para Importar extrato e Nota no celular, já sem conexão pela D-080); UXB-002 (abas internas do Planejar da UX §5.9 e entrada para Fechar o mês); UXA-012 (Voltar no TopBar das subtelas); UXA-019 (título do TopBar centrado); UXC-021 (título da S06 sem quebrar a 360 px); UXA-020 (SyncBadge no mesmo estilo dos ícones vizinhos); UXA-028 (toast nunca cobre a barra de abas).
+
+**Pronto quando:** toda tela com rota é alcançável no celular a partir das abas, sem digitar URL, e toda subtela tem Voltar; E2E de navegação cobre os caminhos novos.
+
+**Verificar:** `pnpm e2e`; capturas em 360 px.
+
+### T-114 — Lançamento rápido (Q01) e folhas
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-12 | — | T-112 | não |
+
+**Escopo:** UXA-003 ("Lançar" e categorias visíveis sem rolar a 360×640); UXA-008 (foco inicial no valor); G5 seleção só por cor no SegmentedControl e nos chips (UXA-009, UXC-008 parte do componente, UXA-011, UXB-023: contorno e check, também no escuro); UXA-010 (cabeçalho da folha fixo, Fechar sempre visível); UXA-027 ("Mais" com forma de chip, rótulo acessível certo).
+
+**Pronto quando:** o P1 (3 toques, < 5 s) volta a valer em 360×640 e 390×844; E01/E02 verdes.
+
+**Verificar:** `pnpm e2e -- quick-entry`; capturas do Q01 nos 4 tamanhos da auditoria.
+
+### T-115 — Início pelo gasto do mês
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | G | US-30..US-33 | RN-43..RN-50, RN-93 | T-113 | não |
+
+**Escopo (D-081):** novo H01: herói "Gasto em {mês}" (efetivadas do mês de impacto, menos estornos), "Saldo nas contas" (contas que não são cartão, toque abre a lista de contas), linha "Ainda vai sair este mês" (previstas, informativa), card "Saúde do mês" com uma barra por faixa do 50/30/20 e estados "No caminho" / "Atenção" / "Passou do planejado" (texto e ícone) e atalho "Ajustar percentuais"; saem o número "Disponível para gastar", o selo RN-50 e a folha H01-S (a rota redireciona para o Início). `spendable.ts` e os testes ficam. Resumo semanal (RN-93) com "Gasto no mês". Achados do H01 que continuam valendo: UXA-004, UXA-017, UXA-018, UXA-021, UXA-022, UXA-023, UXA-026 (e UXA-025 some com a H01-S). Se a T-102 (Início lê só o período necessário) já estiver na `main`, mantenha o ganho dela. Atualiza no mesmo PR: PRD RN-49, RN-50, RN-93 e as histórias do H01 (cenários novos em Gherkin), UX §3 H01 e §6, CLAUDE.md §1 item 3. Os limiares começam fixos em 80%/100% e passam a configuráveis na T-116.
+
+**Pronto quando:** os cenários novos (gasto do mês com cartão pelo mês de impacto, estorno, mês sem renda, faixa em atenção e acima do planejado, previstas fora do herói) viram testes com os IDs; E2E do Início verde; recálculo local < 200 ms com 5.000 lançamentos (RN-51).
+
+**Verificar:** `pnpm --filter domain test && pnpm e2e -- home`; capturas do H01 nos 4 tamanhos.
+
+### T-116 — Limiares de aviso configuráveis
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-60 | RN-92 | T-115 | não |
+
+**Escopo (D-082):** em Ajustes (seção de orçamento ou de notificações, a que ficar mais natural), "Avisar com atenção a partir de" (padrão 80%) e "Avisar que passou do planejado a partir de" (padrão 100%), inteiros com 1 ≤ atenção < alerta ≤ 200 e mensagem de validação; o card "Saúde do mês", os toasts e o `budget_threshold` do `reminders-tick` usam os valores do perfil; mudar no meio do mês não repete aviso já dado no mesmo limiar. Atualiza a RN-92 e a UX da tela escolhida.
+
+**Pronto quando:** testes citando RN-92 cobrem limiares padrão e personalizados no aparelho e no tick (Deno); E2E de Ajustes verde.
+
+**Verificar:** `pnpm test:fn && pnpm --filter web test && pnpm e2e -- settings`.
+
+### T-117 — Lançamentos (T01/T02)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-20..US-24 | RN-22, RN-46 | T-114 | não |
+
+**Escopo:** UXB-003 (linha espremida, descrição quebrando no meio da palavra); UXB-005 (card "Conferir" na T01); UXB-006 (Filtros fora da fileira de chips, busca sem ocupar a dobra); UXB-009 (T02 de parcela com "1 de 6", lista das parcelas e descrição no herói); UXB-022 ("Excluir" igual e na mesma posição em avulso e parcela, sem vermelho cheio); UXB-024 ("Status: Todos"). D-084 itens 1 e 2: datas relativas nas listas e completas no detalhe; resumo do mês da T01 pelo mês de impacto (RN-46), batendo com Início e P01.
+
+**Pronto quando:** teste prova que T01, P01 e Início mostram o mesmo total do mês com compras no cartão; E2E de lançamentos verde.
+
+**Verificar:** `pnpm e2e -- transactions`; capturas da T01/T02.
+
+### T-118 — Cartões (C01/C02)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-25, US-26 | — | T-117 | não |
+
+**Escopo:** UXB-010 (cartão da fatura sem gradiente e reflexo do Aero, contorno inteiro); UXB-011 (datas com rótulo, sem repetir nome e total); UXB-012 (linhas de "Próximas faturas" alinhadas; a parte do P03 fica na T-119); UXB-013 ("Registrar pagamento" não é primário numa fatura futura nem paga outra fatura); UXB-021 (fechamento numa linha só); UXB-025 (tocar no cartão abre a fatura mesmo com um só cartão). D-084 item 10: rodapé fixo da C02 acima da barra de abas, com espaço reservado no fim da rolagem.
+
+**Pronto quando:** os achados somem nas capturas; E2E de cartões verde.
+
+**Verificar:** `pnpm e2e -- cards`.
+
+### T-119 — Planejar (P01–P04)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-34..US-36 | RN-77 | T-118 | não |
+
+**Escopo:** UXB-015 (renda sem repetir no anel; sem renda, um vazio com ação em vez de faixas zeradas); UXB-016 (texto duplicado na Reserva); UXB-017 ("Defina uma meta" no tamanho certo e um só botão primário); UXB-018 (Fechar o mês com o resumo do mês); UXB-020 (barras do Futuro com valores e legenda; "Ver como tabela" depois do gráfico); parte do P03 do UXB-012. D-084 item 8 para o P03 vazio.
+
+**Pronto quando:** os achados somem nas capturas; E19 e E2E do Planejar verdes.
+
+**Verificar:** `pnpm e2e -- budget close-month`.
+
+### T-120 — Ajustes (S01–S11)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | G | US-57..US-61 | — | T-116 | não |
+
+**Escopo:** UXC-004 (S01 em grupos, com o valor atual de cada opção, completa); UXC-007 (formulários da S03 fechados até tocar, sem dois teclados embutidos); UXC-010 (editar uma conta; se a T-051 da branch `task/T-051-editar-contas-cartoes` tiver algo aproveitável, use); UXC-015 (vazio de contas próprio); UXC-016 (título da seção de receitas; "Nova…" abaixo do vazio); UXC-017 (erro só depois de digitar; listas com título); UXC-018 (diagnóstico: "2,0 GB", eventos legíveis, versão real do app); UXC-019 (linha de categoria mostra o limite e indica que abre a edição); UXC-008 (S06 com rótulo). D-084 itens 6 ("Meios:"), 7 (sai a opção "Transparência" da S08) e 8 (vazios da S03 e S05).
+
+**Pronto quando:** os achados somem nas capturas; E2E de Ajustes verde.
+
+**Verificar:** `pnpm e2e -- settings accounts`.
+
+### T-121 — Importação, nota e conferência
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-49, US-52..US-56 | RN-74, RN-78 | T-120 | não |
+
+**Escopo:** UXD-001 (I01 sem "Importar extrato" repetido); UXD-005 parte de importação ("Desfazer importação" na I01, RN-78); UXD-007 e UXD-008 (botão de arquivo abre o seletor, texto sem quebrar a 360 px, dica do BB igual nas telas); UXD-009 (plural certo: "1 nova", "2 novas"); UXC-011 (categoria sugerida aparece; botões com espaço); UXC-012 (card sem candidato sem texto falso de pagamento de fatura); UXC-013 (regras da I06 com hierarquia); UXC-014 (botões da nota sem quebrar a 360 px); UXC-020 (dica de arrastar o arquivo no computador). D-084 itens 6 ("OK" da I05 vira "Revisado") e 9 (vale a D-060/D-061; corrige a UX §3 I05). Se a issue `regressão:` da importação do Nubank ainda estiver aberta, ela vem antes desta tarefa.
+
+**Pronto quando:** E07, E08 e E09 verdes; os achados somem nas capturas.
+
+**Verificar:** `pnpm e2e -- import-ofx import-csv nfce inbox`.
+
+### T-122 — Onboarding e marca
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-01..US-05 | — | T-121 | não |
+
+**Escopo:** UXA-006 (passos do onboarding visíveis no escuro); UXA-013 (wordmark na fonte da §4.0; monograma e favicon sem as cores do Aero); UXA-014 ("Começar" legível no ON01 escuro); UXA-016 (campo de valor com moldura no ON05–ON07b); UXA-029 (cabeçalho do onboarding sempre no mesmo lugar); UXA-031 (placeholder que não parece valor; "Não uso cartão" e "Pular" sem redundância); UXA-032 ("Já uso em outro aparelho" numa linha). Mudança de ícone ou favicon que mexa em baseline protegida fica com o rótulo `needs-owner`.
+
+**Pronto quando:** os achados somem nas capturas do ON01–ON08; E2E do onboarding verde.
+
+**Verificar:** `pnpm e2e -- onboarding`.
+
+### T-123 — Specs sem restos do Aero
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | P | — | — | T-122 | não |
+
+**Escopo (D-084 itens 5 e 11):** UX §3 do Q01 alinhada à D-043 e à §5.8; §4.4, §4.7, §4.8, §5.9, §5.20, §5.22 e §5.23 reescritas pela §4.0 ou marcadas como substituídas; §5.33 e §4.0 com o rótulo de 13 px e as cores do escuro da T-112. Só documentação.
+
+**Pronto quando:** nenhuma seção da UX descreve vidro, Manrope, Phosphor, 1.200 px ou duas colunas como regra vigente.
+
+**Verificar:** `grep -nE "Manrope|Phosphor|1\.200 px|vidro" docs/specs/03-ux-design-system.md` só encontra trechos marcados como substituídos.
+
+### T-124 — Nova auditoria de UX
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | — | — | T-123 | não |
+
+**Escopo:** rodar de novo o agente `ux-auditor` e o roteiro de capturas em todas as telas com rota, nos 4 tamanhos, com lançamentos de exemplo **com categoria** (limite da rodada anterior) e com receitas e contas fixas na S05. Registrar o resultado em `docs/ux-audit/` com data. Achado S1 ou S2 que sobrar vira tarefa nova no fim desta seção.
+
+**Pronto quando:** zero S1; os S2 restantes têm tarefa; o resumo vai para o HANDOFF.
+
+**Verificar:** relatório novo em `docs/ux-audit/` e capturas no PR.
