@@ -28,6 +28,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const BB = new Uint8Array(
   readFileSync(join(here, '../../../packages/domain/test/fixtures/bb-sgml-1252.ofx')),
 );
+const realFixture = (name: string) =>
+  new Uint8Array(readFileSync(join(here, '../../../packages/domain/test/fixtures', name)));
+const REAL = realFixture('bb-real-anon.ofx');
+const REAL_EMPTY = realFixture('bb-real-anon-sem-movimento.ofx');
 const CARD_OFX = new Uint8Array(
   readFileSync(join(here, '../../../packages/domain/test/fixtures/cartao-ofx2-utf8.ofx')),
 );
@@ -269,6 +273,23 @@ describe('I03 (US-52)', () => {
       /Este arquivo já foi importado em \d\d\/\d\d\./,
     );
     expect(screen.getByTestId('import-run').getAttribute('aria-disabled')).toBe('true');
+  });
+
+  it('RN-75 (T-085): o OFX real do BB anonimizado é lido; o de um mês sem movimento mostra "O arquivo não tem lançamentos."', async () => {
+    const real = parseOfxBytes(REAL);
+    expect(real.ok && real.statements[0]?.transactions.map((x) => x.amountCents)).toEqual([
+      -15000, -3790,
+    ]);
+    expect(parseOfxBytes(REAL_EMPTY)).toEqual({ ok: false, code: 'EMPTY' });
+    const auth = fakeAuth();
+    mount(auth);
+    fireEvent.change(await screen.findByTestId('import-file'), {
+      target: { files: [fileOf(REAL_EMPTY)] },
+    });
+    expect((await screen.findByTestId('import-error')).textContent).toBe(
+      'O arquivo não tem lançamentos.',
+    );
+    expect(screen.queryByTestId('import-preview')).toBeNull();
   });
 
   it('arquivo inválido mostra "Arquivo não reconhecido…"', async () => {

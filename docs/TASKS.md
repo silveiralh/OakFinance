@@ -147,7 +147,7 @@ flowchart LR
 | T-082 | Fechar o mês (P04) | T-079, T-059 | done |
 | T-083 | Validação real da Pluggy | T-077 | adiada: v2 (D-080) |
 | T-084 | Importar OFX | T-022, T-078 | done |
-| T-085 | OFX real do BB anonimizado | T-084 | todo |
+| T-085 | OFX real do BB anonimizado | T-084 | done |
 | T-086 | Importar CSV | T-084 | done |
 | T-087 | Presets Nubank confirmados | T-086 | done |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | done |
@@ -1292,7 +1292,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-085 — OFX real do BB anonimizado
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
+| done | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
 
 **Escopo:** (11/11) as cópias anonimizadas dos arquivos reais já estão em `packages/domain/test/fixtures/` (`bb-real-anon*.ofx`, `nubank-*-real-anon.csv`, ver o README da pasta); use-as em vez do canal privado. ler o arquivo pelo canal privado, fora do clone; gerar a fixture anonimizada com README; ajustar o parser se for preciso; E07 usando essa fixture. O original nunca entra no repositório.
 
