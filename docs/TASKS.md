@@ -164,7 +164,7 @@ flowchart LR
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 | T-101 | Agente de auditoria de UX | T-100 | done |
-| T-102 | Início lê só o período necessário | T-058, T-097 | todo |
+| T-102 | Início lê só o período necessário | T-058, T-097 | done |
 | T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | blocked: substituída pela T-116 (D-085) |
 | T-104 | Base visual e componentes | T-101 | blocked: substituída pela T-117 e T-119 (D-085) |
 | T-105 | Navegação: menu da conta e abas do Planejar | T-101 | blocked: substituída pela T-118 (D-085) |
@@ -1294,7 +1294,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 |---|---|---|---|---|---|---|
 | todo | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
 
-**Escopo:** ler o arquivo pelo canal privado, fora do clone; gerar a fixture anonimizada com README; ajustar o parser se for preciso; E07 usando essa fixture. O original nunca entra no repositório.
+**Escopo:** (11/11) as cópias anonimizadas dos arquivos reais já estão em `packages/domain/test/fixtures/` (`bb-real-anon*.ofx`, `nubank-*-real-anon.csv`, ver o README da pasta); use-as em vez do canal privado. ler o arquivo pelo canal privado, fora do clone; gerar a fixture anonimizada com README; ajustar o parser se for preciso; E07 usando essa fixture. O original nunca entra no repositório.
 
 **Pronto quando:** o job `secrets` passa e E07 passa com a fixture real anonimizada.
 
@@ -1316,7 +1316,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 |---|---|---|---|---|---|---|
 | todo | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
 
-**Escopo:** conferir `nubank-fatura` e `nubank-conta` com os arquivos reais (fora do clone); fixtures anonimizadas; tirar a marca PROVISÓRIO.
+**Escopo:** (11/11) as cópias anonimizadas dos arquivos reais já estão em `packages/domain/test/fixtures/` (`bb-real-anon*.ofx`, `nubank-*-real-anon.csv`, ver o README da pasta); use-as em vez do canal privado. conferir `nubank-fatura` e `nubank-conta` com os arquivos reais (fora do clone); fixtures anonimizadas; tirar a marca PROVISÓRIO.
 
 **Pronto quando:** os cenários de preset da US-53 passam com as fixtures reais anonimizadas.
 
@@ -1484,7 +1484,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-102 — Início lê só o período necessário
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+| done | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
 
 **Contexto (pedido do dono em 11/11):** o `loadHomeRows` (`features/dashboard/data.ts`) e o `HomeOverview.tsx:52` leem **todos** os lançamentos (`transactions.toArray()`) a cada abertura do Início, então o painel fica mais lento a cada mês de histórico. O E2E de desempenho (`e2e/perf.spec.ts`, 5.000 lançamentos) passou a oscilar no limite de 1,5 s (1.540 ms no PR #126). Nenhum dado é apagado: o histórico continua inteiro no aparelho e na nuvem.
 

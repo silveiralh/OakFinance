@@ -13,7 +13,7 @@ import {
   budgetView,
   parseBudgetKey,
 } from '../features/budget/budget';
-import { loadHomeRows } from '../features/dashboard/data';
+import { loadHomePeriodRows } from '../features/dashboard/data';
 import { t } from '../i18n/pt-BR';
 import { useToday } from '../lib/useToday';
 import { useToast } from '../ui';
@@ -49,7 +49,7 @@ export function BudgetAlerts({ today: fixedToday }: { today?: ISODate } = {}) {
   const data = useLive(
     user
       ? async () => ({
-          rows: await loadHomeRows(user.db),
+          rows: await loadHomePeriodRows(user.db, today),
           noticeKeys: (await user.db.notices.toArray())
             .filter((n) => n.deleted_at === null)
             .map((n) => n.dedupe_key),
@@ -57,7 +57,7 @@ export function BudgetAlerts({ today: fixedToday }: { today?: ISODate } = {}) {
           localChanges: await pendingCount(user.db),
         })
       : null,
-    [user],
+    [user, today],
   );
   const seen = useRef<{ userId: string; keys: Set<string> } | null>(null);
   useEffect(() => {

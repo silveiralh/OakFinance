@@ -48,6 +48,7 @@
     "@vitejs/plugin-react": "6.2.1",
     "@vitest/coverage-v8": "5.1.0",
     "fake-indexeddb": "6.2.7",
+    "fast-check": "4.10.2",
     "happy-dom": "21.0.4",
     "msw": "3.0.3",
     "pg": "8.23.1",
