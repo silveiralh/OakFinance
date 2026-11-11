@@ -28,6 +28,9 @@ async function loadOtherRows(db: OakDb): Promise<Omit<HomeRows, 'txRows'>> {
 const SERIES_SLACK_MONTHS = 2;
 
 /**
+ * Sem uso nas telas desde a issue #136: no WebKit esta leitura deixou o painel acima de 1,5 s (RN-51); o Início voltou a
+ * `loadHomeRows`. Fica para a T-102 refeita, com a propriedade de `test/dashboard-period.test.ts`.
+ *
  * T-102: só os lançamentos que o mês de hoje (M) usa, pelos índices do Dexie, em vez de todo o histórico. O resultado de
  * `homeModel`, `budgetView` e `budgetAlerts` é o mesmo da leitura completa (teste de propriedade em
  * `test/dashboard-period.test.ts`):
