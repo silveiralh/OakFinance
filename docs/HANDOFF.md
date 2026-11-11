@@ -226,6 +226,8 @@
 
 - **E09 *flaky* no `iphone` (11/11, run de `main` do fb9f6e2):** `e2e/nfce.spec.ts:108` esperou 30 s e a nota seguiu `pending` depois de a rede voltar; passou na repetição e no run seguinte. Como o CI reprova teste que só passa na repetição, isso deixa o `e2e` vermelho de vez em quando. Hipótese não conferida: no WebKit o evento `online` nem sempre dispara depois do `setOffline(false)` e o `NfceRetryKeeper` só relê na próxima tentativa agendada. Se repetir, investigar o gatilho de releitura (não mexer no tempo do teste).
 
+- **Falha de infraestrutura no `e2e` (11/11, PR #140, run 43112004110):** o `supabase start` do shard 1/3 não subiu ("failed to bind host port 54322: address already in use" no runner). Não é do código; como a sessão não pode re-executar jobs, só um commit novo dispara o CI de novo.
+
 ## 6. Checklist de aparelho real
 
 - **Issue #128 (I03), depois do deploy do PR #138:** importar de novo os dois CSV do Nubank em produção. A fatura deve mostrar "Formato detectado: Nubank — fatura" e a prévia com todas as linhas (sem "linhas com erro ficam de fora"); o extrato da conta, "Nubank — conta". Conferir dois ou três valores com o app do banco (um com milhar, um estorno) e contar o resultado na issue.
