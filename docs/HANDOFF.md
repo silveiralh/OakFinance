@@ -186,6 +186,7 @@
 | **SETUP-13 Pluggy e Meu Pluggy (trial de 15 dias)** | **agora** (T-077 `done` em 11/11) | T-083, M3 |
 | **SETUP-14 arquivos reais anonimizáveis (canal privado)** | **agora** (a T-085 está `blocked` esperando) | T-085, T-087, T-090 |
 | **Dono: aplicar a opção (a) da T-076 no `scripts/check-build.ts`** | agora (respondido "T-076: a" em 11/11) | widget Pluggy Connect na I02 e o Renovar da T-077 |
+| **Dono: dar às sessões agendadas acesso de leitura ao canal privado** (SETUP-14 entregue na issue #2 para os CSVs do Nubank e o OFX do BB) | agora | T-085, T-087 e o fechamento da issue #128 |
 | SETUP-15 licença; SETUP-16 decisões pendentes | feito em 06/11 (sem licença; 6=manter, 7=ok, 8=depois de 2 semanas de uso) | T-099 (done) |
 
 - Conferido pela API em 06/11: SETUP-01, 02 e 04 feitos (só squash, auto-merge e exclusão automática de branch ligados; issue #2 reaberta com 01–04 marcados). SETUP-03 substituído pela D-012 (as sessões herdam o admin do dono; valem as salvaguardas).
@@ -194,6 +195,7 @@
 - Branch órfã `docs/bloqueia-T-089` (PR #106 fechado sem merge: o bloqueio da T-089 deixou de valer quando a correção da I03 entrou no PR #107 e a T-089 passou no PR #105). O proxy da sessão não deixa apagar branch fora de `task/*`: **o dono pode apagá-la** no GitHub.
 - Issue #38 (`regressão: deploy`) fechada pelo cliente em 06/11; issue #51 (`regressão: nightly`) fechada pelo PR #54.
 
+- **Canal privado fora do alcance (11/11, 17:40 UTC):** a issue #2 diz que os CSVs do Nubank e o OFX do BB estão no repositório privado do SETUP-14, mas a sessão agendada só enxerga o `OakFinance`: a API responde 403 ("access … is not enabled for this session") e o pedido de anexar o repositório foi recusado pela política de permissões da sessão. Por isso a T-085 e a T-087 não foram iniciadas (a mudança delas para `todo` já está no PR #129 do dono, ainda aberto). Para destravar: incluir o repositório privado no escopo da tarefa agendada (ou autorizar o anexo), e então a próxima sessão gera as fixtures anonimizadas fora do clone.
 - **Depois de 2 semanas de uso (SETUP-16 item 8):** validar o limite de 20% do selo "No ritmo do mês" e aprovar o wordmark e o monograma OF; responder na issue `Setup do cliente`.
 
 ## 5. Riscos conhecidos
@@ -367,3 +369,4 @@
 | 11/11/2026 | T-083 | PR #127 | blocked | aguarda o SETUP-13 (Pluggy e Meu Pluggy); nenhuma tarefa liberada |
 | 11/11/2026 | T-097 (issue #123) | PR #130 | done | nightly: o ciclo de sync cancela o debounce da escrita que ele já sobe (US-15 no `iphone` com 240–380 ms numa gravação); E15 segue *flaky* (§5) |
 | 11/11/2026 | T-086 (issue #128) | PR #131 | done | I03 nunca termina em silêncio (catch, fallback do Worker com timeout, `accept` mais amplo); causa real e fixtures esperam os arquivos do SETUP-14 (issue segue aberta) |
+| 11/11/2026 | — | PR #PRNUM | blocked | T-085/T-087 liberadas pelo SETUP-14, mas a sessão não tem acesso ao canal privado (§4); PRs #126 e #129 do dono seguem abertos e verdes |
