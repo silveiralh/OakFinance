@@ -164,6 +164,7 @@ flowchart LR
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 | T-101 | Agente de auditoria de UX | T-100 | done |
+| T-102 | Início lê só o período necessário | T-058, T-097 | todo |
 
 ---
 
@@ -1452,3 +1453,23 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 **Pronto quando:** o agente roda sobre as capturas e entrega o relatório com achados por severidade, evidência e causa no código.
 
 **Verificar:** `pnpm --filter web exec node ux-audit/capture.mjs` depois do `build:e2e` (ver o cabeçalho do script).
+
+### T-102 — Início lê só o período necessário
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+
+**Contexto (pedido do dono em 11/11):** o `loadHomeRows` (`features/dashboard/data.ts`) e o `HomeOverview.tsx:52` leem **todos** os lançamentos (`transactions.toArray()`) a cada abertura do Início, então o painel fica mais lento a cada mês de histórico. O E2E de desempenho (`e2e/perf.spec.ts`, 5.000 lançamentos) passou a oscilar no limite de 1,5 s (1.540 ms no PR #126). Nenhum dado é apagado: o histórico continua inteiro no aparelho e na nuvem.
+
+**Escopo:** uma leitura por período para o H01 usando os índices que já existem (`occurred_on`, `invoice_id`, `series_id`, `recurrence_id`), em vez do `toArray()`:
+- lançamentos com `occurred_on` desde o início do mês anterior ao mês de orçamento (RN-46) até o fim do mês corrente, mais os agendados à frente;
+- lançamentos de faturas abertas, fechadas não pagas e futuras (`invoice_id`), porque as parcelas guardam a data da compra (RN-22) e podem ter `occurred_on` de anos atrás;
+- lançamentos de recorrências ativas;
+- os últimos 30 dias que as sugestões e "Próximos 7 dias" usarem.
+Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregado: a Reserva (P02, soma de todos os aportes, RN-54/RN-55), o Fechar o mês (P04) e o `ReserveMoveSheet`. O `BudgetAlerts` usa a leitura por período.
+
+**Testes:** propriedade (fast-check) que gera históricos com compras parceladas antigas, recorrências e aportes e exige `homeModel(leitura por período) === homeModel(tudo)` no mês corrente e na virada do mês; os casos do `test/dashboard.test.tsx` seguem verdes. O `perf.spec.ts` não muda de limite.
+
+**Pronto quando:** o Início com 5.000 lançamentos abre abaixo de 1,5 s com folga (meta ≤ 1.000 ms no `desktop` do CI) e o tempo não cresce com o histórico (medir também com 20.000 no teste local, sem entrar no CI).
+
+**Verificar:** `pnpm --filter web test -- dashboard && pnpm e2e -- perf`.

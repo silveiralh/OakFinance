@@ -128,6 +128,8 @@
 
 ## 3. Próximos passos
 
+- **T-102 liberada (pedido do dono em 11/11):** o Início passa a ler só o período necessário em vez de todos os lançamentos; motivo: o E2E de desempenho com 5.000 lançamentos oscilou no limite de 1,5 s. Cuidado com as parcelas (data da compra antiga, RN-22) e com a Reserva, que soma o histórico inteiro. Detalhes na tarefa.
+
 - **Tema e largura (D-025):** o app abre claro mesmo com o sistema escuro (`public/env.js`: escuro só com preferência `dark` ou `auto`); a S08 (T-068) oferece Claro (padrão), Escuro e Automático. As escolhas da S08 ficam na conta, mas outro aparelho ainda não as aplica (só `hideValues`, pelo `ValuesFromProfile`). No `lg` não há mais limite de 1200 px e **não se usam duas colunas** (D-026): uma coluna que estica, com elementos maiores (ver o bloco `@media (min-width: 1024px)` do fim de `shell.css`).
 - **Visual (D-023):** telas novas seguem a UX §4.0 (menta, cards brancos, lima e preto, pílulas, Lucide). Use os componentes de `src/ui/` e os tokens; para destaque, `.glass` com `data-tone="dark"` ou `data-tone="accent"`. Ícone novo de categoria: acrescente o nome em `CATEGORY_ICONS`. Para revisar telas logadas localmente sem Supabase, intercepte `127.0.0.1:54321` no Playwright (sessão falsa e `sync_push`/`sync_pull` vazios).
 - **Nenhuma tarefa liberada (11/11).** T-083 `blocked` no SETUP-13; T-085, T-087 e T-090 no SETUP-14. As sessões só tratam a triagem (issues `regressão:`, PRs abertos, itens marcados na issue #2) e encerram. Quando o SETUP-13 aparecer na issue #2, a T-083 volta a `todo`. O widget real e o Renovar com `updateItem` esperam o dono aplicar a mudança do `check-build` (§4); hoje o Renovar abre a I02 pelo Item ID.
