@@ -214,7 +214,11 @@ export function ConnectBankScreen() {
       client: client as unknown as MapClient,
       today: today(),
       institution: connection?.institution ?? null,
-      flush: async () => (await user.engine.syncNow()).ok,
+      // um ciclo que já estava rodando pode ter começado antes das linhas novas: espera ele e roda outro
+      flush: async () => {
+        await user.engine.syncNow();
+        return (await user.engine.syncNow()).ok;
+      },
       notifyWrite: () => user.engine.notifyWrite(),
     });
     setBusy(false);
