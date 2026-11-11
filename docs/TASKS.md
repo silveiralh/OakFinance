@@ -145,7 +145,7 @@ flowchart LR
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | done |
 | T-081 | Desfazer conciliação | T-079 | done |
 | T-082 | Fechar o mês (P04) | T-079, T-059 | done |
-| T-083 | Validação real da Pluggy | T-077 | todo |
+| T-083 | Validação real da Pluggy | T-077 | blocked: aguarda cliente — SETUP-13 (Pluggy e Meu Pluggy) |
 | T-084 | Importar OFX | T-022, T-078 | done |
 | T-085 | OFX real do BB anonimizado | T-084 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
 | T-086 | Importar CSV | T-084 | done |
@@ -1236,7 +1236,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-083 — Validação real da Pluggy
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | M | US-45, US-46, US-47 | RN-79 | T-077 | sim — SETUP-13 |
+| blocked: aguarda cliente — SETUP-13 (Pluggy e Meu Pluggy) | S3 | M | US-45, US-46, US-47 | RN-79 | T-077 | sim — SETUP-13 |
 
 **Escopo:** `GET /connectors` para achar o id do MeuPluggy (informado no HANDOFF sem segredos); respostas do sandbox anonimizadas substituem as fixtures PROVISÓRIAS; sinal de `amount` confirmado; nomes de `GET /categories`; CSP mínima para o widget (E14); resultado do time-box da US-45 (Q2) em `DECISIONS.md`.
 
