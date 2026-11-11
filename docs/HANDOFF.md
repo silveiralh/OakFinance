@@ -215,6 +215,8 @@
 
 ## 6. Checklist de aparelho real
 
+- **Issue #128 (I03):** importar de novo o CSV do Nubank (conta e fatura) em produção depois do deploy: deve aparecer a prévia ou o aviso "Arquivo não reconhecido…", nunca nada. Contar na issue qual dos dois apareceu.
+
 - **Ensaio de restauração (T-098, no computador, uma vez antes do lançamento):** em Actions → deploy (último run verde) → artefato `backup-producao`, baixar o `.enc`; num clone do repositório, `supabase start` e `supabase db reset`; `BACKUP_PASSPHRASE='<a frase guardada fora do GitHub>' scripts/restore-backup.sh <arquivo>.enc` (só os dados, sobre o schema das migrações); abrir o Studio local (http://127.0.0.1:54323) e conferir que os lançamentos, contas e categorias dos dois usuários estão lá. Depois, `supabase stop --no-backup` e apagar o `.enc` e a pasta. Nunca anexar o arquivo nem prints com dados em issue ou PR. Se a frase não abrir o arquivo, avisar na issue `Setup do cliente` (só "backup não abre", sem valores).
 - Acessibilidade (T-096): com o VoiceOver (iPhone instalado) e o TalkBack (Android), lançar uma despesa do início ao fim só com o leitor de tela (Início → + → valor → categoria → Lançar) e ouvir o toast; navegar por teclado no computador e ver o anel de foco em todos os botões; com o texto grande do sistema (200%), conferir que nenhuma tela rola na horizontal; abrir uma T02, uma fatura (C02) e o fechamento do mês (P04) e conferir rótulos e foco.
 - Excluir conta (T-094): só com uma conta de teste (nunca a real): em Configurações › Dados e privacidade, "Baixar backup antes de excluir", depois "Excluir minha conta", digitar EXCLUIR e confirmar; conferir que volta para a tela de entrada e que entrar de novo começa do zero (onboarding).
@@ -364,4 +366,4 @@
 | 11/11/2026 | T-077 | PR #125 | done | estados do card, Precisa reconectar, aviso no Início, `bank_connection` no tick e `pluggy-retry` (migração 15); SETUP-13 passa a ser pedido |
 | 11/11/2026 | T-083 | PR #127 | blocked | aguarda o SETUP-13 (Pluggy e Meu Pluggy); nenhuma tarefa liberada |
 | 11/11/2026 | T-097 (issue #123) | PR #130 | done | nightly: o ciclo de sync cancela o debounce da escrita que ele já sobe (US-15 no `iphone` com 240–380 ms numa gravação); E15 segue *flaky* (§5) |
-| 11/11/2026 | T-086 (issue #128) | PR #PRNUM | done | I03 nunca termina em silêncio (catch, fallback do Worker com timeout, `accept` mais amplo); causa real e fixtures esperam os arquivos do SETUP-14 (issue segue aberta) |
+| 11/11/2026 | T-086 (issue #128) | PR #131 | done | I03 nunca termina em silêncio (catch, fallback do Worker com timeout, `accept` mais amplo); causa real e fixtures esperam os arquivos do SETUP-14 (issue segue aberta) |
