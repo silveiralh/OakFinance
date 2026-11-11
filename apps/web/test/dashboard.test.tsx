@@ -144,6 +144,36 @@ describe('H01 — Disponível para gastar (US-30)', () => {
     await waitFor(() => expect(hero()).toHaveTextContent('R$ 1.160,00'));
   });
 
+  it('RN-51 (issue #136): com o histórico inteiro lido, despesas de anos anteriores não mudam os R$ 1.210,00 do mês', async () => {
+    const old = ['2023-11-15', '2024-03-02', '2025-11-30'].map((occurred_on, i) =>
+      tx(`antigo-${i}`, {
+        ...base,
+        category_id: 'mercado',
+        amount_cents: 45000,
+        occurred_on,
+        payment_method: 'pix',
+      }),
+    );
+    const { auth } = await renderHome(rows([...referenceTxs(), ...old]));
+    expect(hero()).toHaveTextContent('R$ 1.210,00');
+    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-available', '121000');
+    // a leitura do Início segue ao vivo: um gasto de hoje entra na hora
+    await act(async () => {
+      await saveRow(
+        auth.user?.db as never,
+        'transactions',
+        tx('hoje-pix', {
+          ...base,
+          category_id: 'mercado',
+          amount_cents: 1000,
+          occurred_on: TODAY,
+          payment_method: 'pix',
+        }),
+      );
+    });
+    await waitFor(() => expect(hero()).toHaveTextContent('R$ 1.200,00'));
+  });
+
   it('US-30: "Contar antes de receber" no freela de R$ 300,00 → Base R$ 6.100,00 e o valor sobe R$ 240,00', async () => {
     const txs = referenceTxs().map((r) =>
       r.id === 'freela-25' ? { ...r, count_before_received: true } : r,
