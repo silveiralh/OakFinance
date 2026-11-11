@@ -164,7 +164,7 @@ flowchart LR
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 | T-101 | Agente de auditoria de UX | T-100 | done |
-| T-102 | Início lê só o período necessário | T-058, T-097 | todo |
+| T-102 | Início lê só o período necessário | T-058, T-097 | done |
 | T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | todo |
 | T-104 | Base visual e componentes | T-101 | todo |
 | T-105 | Navegação: menu da conta e abas do Planejar | T-101 | todo |
@@ -1469,7 +1469,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-102 — Início lê só o período necessário
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+| done | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
 
 **Contexto (pedido do dono em 11/11):** o `loadHomeRows` (`features/dashboard/data.ts`) e o `HomeOverview.tsx:52` leem **todos** os lançamentos (`transactions.toArray()`) a cada abertura do Início, então o painel fica mais lento a cada mês de histórico. O E2E de desempenho (`e2e/perf.spec.ts`, 5.000 lançamentos) passou a oscilar no limite de 1,5 s (1.540 ms no PR #126). Nenhum dado é apagado: o histórico continua inteiro no aparelho e na nuvem.
 
