@@ -139,7 +139,7 @@ flowchart LR
 | T-074 | Sincronização pluggy-sync | T-073, T-013 | done |
 | T-075 | Webhook e desconexão | T-074 | done |
 | T-076 | Telas de conexão (I01/I02) | T-075, T-045 | done |
-| T-077 | Estado da conexão e reconexão | T-076, T-064 | todo |
+| T-077 | Estado da conexão e reconexão | T-076, T-064 | done |
 | T-078 | Conciliador no aparelho | T-074, T-021, T-033 | done |
 | T-079 | Conferir importados (I05) | T-078, T-056 | done |
 | T-080 | Parcelas, contas fixas e pagamentos do banco | T-079, T-053, T-055 | done |
@@ -1168,13 +1168,15 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-077 — Estado da conexão e reconexão
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | S3 | P | US-47 | RN-81, RN-94 | T-076, T-064 | não |
+| done | S3 | P | US-47 | RN-81, RN-94 | T-076, T-064 | não |
 
 **Escopo:** estados do card; Renovar (`updateItem`); banner na home; retentativa em 1 h, até 3 vezes, sem avisar; kind `bank_connection` no tick; atalho "Importar extrato (OFX/CSV)".
 
 **Pronto quando:** os cenários da US-47 passam. O HANDOFF passa a pedir o SETUP-13.
 
 **Verificar:** `pnpm test:fn && pnpm e2e -- open-finance`.
+
+**Entregue (11/11, D-074):** estados do card, "Precisa reconectar" com o passo a passo, Renovar (abre a I02 pelo Item ID enquanto o widget real não entra), atalho de importar, aviso no Início, `bank_connection` no tick (migração 15) e o pg_cron `pluggy-retry`.
 
 ### T-078 — Conciliador no aparelho
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
@@ -1445,7 +1447,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 |---|---|---|---|---|---|---|
 | done | — | P | US-62 | — | T-100 | não |
 
-**Escopo (D-074):** agente `ux-auditor` em `.claude/agents/ux-auditor.md`, com a skill `frontend-design` em `.claude/skills/` (cópia da Anthropic, Apache 2.0); roteiro de capturas `apps/web/ux-audit/capture.mjs` (build E2E, Supabase interceptado, dados pelos ganchos `__oakE2E`, 360/390/1280 px, claro e escuro, estados vazios); primeira auditoria em `docs/ux-audit/`.
+**Escopo (D-075):** agente `ux-auditor` em `.claude/agents/ux-auditor.md`, com a skill `frontend-design` em `.claude/skills/` (cópia da Anthropic, Apache 2.0); roteiro de capturas `apps/web/ux-audit/capture.mjs` (build E2E, Supabase interceptado, dados pelos ganchos `__oakE2E`, 360/390/1280 px, claro e escuro, estados vazios); primeira auditoria em `docs/ux-audit/`.
 
 **Pronto quando:** o agente roda sobre as capturas e entrega o relatório com achados por severidade, evidência e causa no código.
 

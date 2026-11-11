@@ -1,4 +1,5 @@
 import { RejectedBanner } from '../../app/SyncStatus';
+import { ConnectionBanner } from '../connections/ConnectionBanner';
 import { HomeOverview } from './HomeOverview';
 import { IncomeToConfirm } from './IncomeToConfirm';
 import { InstallCard } from './InstallCard';
@@ -10,6 +11,7 @@ export function HomeScreen() {
       <RejectedBanner />
       <InstallCard />
       <PendingSetupCard />
+      <ConnectionBanner />
       <IncomeToConfirm />
       <section className="screen" data-screen="H01" data-testid="screen-H01">
         <HomeOverview />

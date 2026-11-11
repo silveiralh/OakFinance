@@ -4,6 +4,7 @@
 // categoria (RN-92) e resumo semanal (RN-93) — T-092; a conexão bancária (RN-94) fica desligada até a tarefa dela.
 import {
   type Account,
+  type BankConnectionState,
   type Card,
   type Category,
   DEFAULT_REMINDERS,
@@ -37,6 +38,7 @@ export const TICK_KINDS: readonly ReminderKind[] = [
   'income_unconfirmed',
   'budget_threshold',
   'weekly_summary',
+  'bank_connection',
 ];
 /** Tamanho da janela de avaliação: o pg_cron chama a cada 15 min (RN-86). */
 export const WINDOW_MINUTES = 15;
@@ -133,6 +135,27 @@ export interface SnapshotReminder {
   skipIfLoggedToday: boolean;
 }
 
+/** Conexão do Open Finance como o snapshot devolve (T-077, migração 15). */
+export interface SnapshotConnection {
+  id: string;
+  institution: string | null;
+  connectorName: string | null;
+  status: string;
+  consentExpiresOn: ISODate | null;
+}
+
+const BANK_NAMES: Readonly<Record<string, string>> = { bb: 'Banco do Brasil', nubank: 'Nubank' };
+
+/** Estado da conexão para o domínio (RN-94), com o nome do banco dos textos. */
+export function toConnectionState(c: SnapshotConnection): BankConnectionState {
+  return {
+    id: c.id,
+    bankName: BANK_NAMES[c.institution?.toLowerCase() ?? ''] ?? c.connectorName ?? 'banco',
+    status: c.status,
+    consentExpiresOn: c.consentExpiresOn,
+  };
+}
+
 export interface UserSnapshot {
   userId: string;
   timezone: string;
@@ -148,6 +171,8 @@ export interface UserSnapshot {
   recurrenceTxs?: SnapshotRecurrenceTx[];
   /** T-092 (migração 14); ausente em snapshots antigos. */
   month?: SnapshotMonth;
+  /** T-077 (migração 15): conexões ativas; ausente em snapshots antigos. */
+  connections?: SnapshotConnection[];
 }
 
 export interface NoticeRow {
@@ -420,6 +445,7 @@ export function dueForUser(snap: UserSnapshot, now: Date): DueNotification[] {
     },
     loggedOn: snap.loggedOn,
     categoryLimits: categoryLimitsOf(budgets, ym),
+    connections: (snap.connections ?? []).map(toConnectionState),
   });
   return due.filter((n) => kinds.includes(n.kind));
 }
