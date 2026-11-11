@@ -2601,6 +2601,10 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.cardMissing` | O {banco} liberou apenas a conta, sem o cartão. As compras no cartão podem ser importadas pela fatura em CSV. |
 | `conn.review` | Conferir agora |
 | `conn.later` | Depois |
+| `conn.state.reconnect` | Precisa reconectar |
+| `conn.reconnectSteps` | Precisa reconectar: abra o Meu Pluggy, autorize o {banco} de novo e copie o novo Item ID. Depois toque em Renovar. |
+| `conn.importShortcut` | Importar extrato (OFX/CSV) |
+| `conn.banner` | Sua conexão com o {banco} precisa ser renovada |
 | `import.choose` | Escolher arquivo OFX ou CSV |
 | `import.bbHint` | Banco do Brasil: exporte o extrato em OFX (Money 2000+). |
 | `import.local` | O arquivo é lido no seu aparelho e não é enviado ao servidor. |
