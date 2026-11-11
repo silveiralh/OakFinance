@@ -11,12 +11,15 @@ const fixture = (name: string): Uint8Array =>
   new Uint8Array(readFileSync(new URL(`./fixtures/${name}`, import.meta.url)));
 
 /** Tokenização mínima para as fixtures (sem aspas); no app quem faz isso é o papaparse. */
+// Tokenização mínima só para os testes (no app é o papaparse): vírgula como separador e campos entre aspas.
+const csvLine = (line: string): string[] =>
+  line === ''
+    ? ['']
+    : [...line.matchAll(/("(?:[^"]|"")*"|[^,]*)(?:,|$)/g)]
+        .slice(0, -1)
+        .map((m) => (m[1] ?? '').replace(/^"(.*)"$/, '$1').replaceAll('""', '"'));
 const csvRows = (name: string): string[][] =>
-  new TextDecoder()
-    .decode(fixture(name))
-    .replace(/\n$/, '')
-    .split('\n')
-    .map((line) => (line === '' ? [''] : line.split(',')));
+  new TextDecoder().decode(fixture(name)).replace(/\n$/, '').split('\n').map(csvLine);
 
 function domainError(fn: () => unknown): DomainError {
   try {
@@ -381,6 +384,61 @@ describe('mapCsvRows (US-53, RN-65, RN-76)', () => {
     expect(mapCsvRows(rows, preset('nubank-fatura')).rows.map((r) => r.externalKey)).toEqual(first);
   });
 
+  it('issue #128 (RN-76): a fatura real do Nubank — valor entre aspas com vírgula decimal, ponto de milhar e "- 29,90"', () => {
+    const rows = csvRows('nubank-fatura-real-anon.csv');
+    expect(sniffCsvProfile(rows[0] ?? [])?.id).toBe('nubank-fatura');
+    const result = mapCsvRows(rows, preset('nubank-fatura'));
+    expect(result.errors).toEqual([]);
+    expect(result.rows).toHaveLength(rows.length - 1);
+    const by = (description: string) => result.rows.filter((r) => r.description === description);
+    expect(by('Padaria Ficticia').map((r) => [r.kind, r.amountCents, r.occurredOn])).toEqual([
+      ['expense', 1_890, '2026-10-02'],
+    ]);
+    expect(by('Supermercado Ficticio').map((r) => [r.kind, r.amountCents])).toEqual([
+      ['expense', 145_620],
+    ]);
+    // estorno, crédito, IOF de estorno e pagamento vêm negativos, com espaço depois do sinal
+    expect(by('Estorno de Compra Exemplo').map((r) => [r.kind, r.amountCents])).toEqual([
+      ['income', 2_990],
+    ]);
+    expect(by('Pagamento recebido').map((r) => [r.kind, r.amountCents])).toEqual([
+      ['income', 123_456],
+    ]);
+    expect(result.rows.filter((r) => r.kind === 'income')).toHaveLength(4);
+    // RN-65: as duas linhas idênticas do mesmo dia têm chaves diferentes
+    expect(new Set(by('Mercado Teste').map((r) => r.externalKey)).size).toBe(2);
+    expect(new Set(result.rows.map((r) => r.externalKey)).size).toBe(result.rows.length);
+  });
+
+  it('issue #128 (RN-76): com ponto decimal (formato antigo do preset) a linha da fatura vira erro visível, não some', () => {
+    const result = mapCsvRows(
+      [
+        ['date', 'title', 'amount'],
+        ['2026-10-02', 'Padaria Ficticia', '18.90'],
+        ['2026-10-02', 'Posto Exemplo', '150,00'],
+      ],
+      preset('nubank-fatura'),
+    );
+    expect(result.errors).toEqual([{ line: 2, code: 'CSV_AMOUNT_INVALID' }]);
+    expect(result.rows.map((r) => r.amountCents)).toEqual([15_000]);
+  });
+
+  it('issue #128 (US-53): o extrato real da conta Nubank — DD/MM/AAAA, ponto decimal, sinal colado e Identificador UUID', () => {
+    const rows = csvRows('nubank-conta-real-anon.csv');
+    expect(sniffCsvProfile(rows[0] ?? [])?.id).toBe('nubank-conta');
+    const result = mapCsvRows(rows, preset('nubank-conta'));
+    expect(result.errors).toEqual([]);
+    expect(result.rows).toHaveLength(rows.length - 1);
+    expect(result.rows[0]).toMatchObject({
+      kind: 'expense',
+      amountCents: 15_000,
+      occurredOn: '2026-01-02',
+      extra: { line: '2', externalId: '77ed1c80-7c2f-42d6-8109-d013dce52bef' },
+    });
+    expect(result.rows[1]).toMatchObject({ kind: 'income', amountCents: 250_000 });
+    expect(result.rows.every((r) => /^[0-9a-f-]{36}$/.test(r.extra.externalId ?? ''))).toBe(true);
+  });
+
   it('US-53: preset da conta — negativos são saídas e "Identificador" é o external_id; erros por linha', () => {
     const result = mapCsvRows(csvRows('nubank-conta.csv'), preset('nubank-conta'));
     expect(result.rows.map((r) => [r.kind, r.amountCents, r.occurredOn])).toEqual([
@@ -448,8 +506,8 @@ describe('mapCsvRows (US-53, RN-65, RN-76)', () => {
     const iso = mapCsvRows(
       [
         ['date', 'title', 'amount'],
-        ['2026-11-03T10:00:00', 'X', '1.00'],
-        ['03/11/2026', 'Y', '1.00'],
+        ['2026-11-03T10:00:00', 'X', '1,00'],
+        ['03/11/2026', 'Y', '1,00'],
       ],
       preset('nubank-fatura'),
     );
