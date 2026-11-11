@@ -85,6 +85,17 @@ export function ImportScreen() {
     setError(null);
     setLoaded(null);
     setAnyway(false);
+    try {
+      await read(file);
+    } catch (error) {
+      // issue #128: nenhum caminho da importação termina sem retorno visível
+      console.error('Importação: arquivo não lido', error);
+      setLoaded(null);
+      setError(t('import.badFile'));
+    }
+  };
+
+  const read = async (file: File) => {
     const bytes = new Uint8Array(await file.arrayBuffer());
     const sha = await sha256Hex(bytes);
     const before = await previousImport(user.db, sha);
@@ -196,6 +207,10 @@ export function ImportScreen() {
         return;
       }
       const result = await commitImport(user.db, plan, loaded.statement?.acctIdMasked ?? null);
+      if (!result.ok && result.error.code === 'STORAGE_FAILED') {
+        // cheio (G11) e indisponível (G12) já têm banner; o resto não pode passar em silêncio (issue #128)
+        setError(t('import.badFile'));
+      }
       if (result.ok) {
         if (loaded.csv && destination) {
           await saveCsvProfile(user.db, loaded.csv.profile, destination);
@@ -213,6 +228,9 @@ export function ImportScreen() {
           },
         });
       }
+    } catch (error) {
+      console.error('Importação: falha ao importar', error);
+      setError(t('import.badFile'));
     } finally {
       setBusy(false);
     }
@@ -236,7 +254,7 @@ export function ImportScreen() {
           <input
             ref={input}
             type="file"
-            accept=".ofx,.csv,text/csv,application/x-ofx"
+            accept=".ofx,.csv,text/csv,text/comma-separated-values,application/csv,application/vnd.ms-excel,text/plain,application/x-ofx"
             hidden
             onChange={(event) => void choose(event.target.files?.[0])}
             data-testid="import-file"

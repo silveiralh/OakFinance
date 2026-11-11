@@ -204,6 +204,9 @@ export class SyncEngine {
       return { ran: true, ok: false, failure: 'auth' };
     }
     this.set({ phase: 'syncing' });
+    // issue #123: este ciclo já sobe a fila; o debounce de uma escrita anterior viraria um 2º ciclo (pull e
+    // releitura ao vivo) que trava a próxima gravação. Escritas que chegarem depois agendam o próprio debounce.
+    this.clearDebounce();
     const started = this.now();
     const device = await deviceId(this.db);
     const push = await pushOutbox(this.db, this.transport, device);
@@ -291,6 +294,13 @@ export class SyncEngine {
     });
   }
 
+  private clearDebounce() {
+    if (this.debounce !== null) {
+      this.clearTimer(this.debounce);
+      this.debounce = null;
+    }
+  }
+
   private clearScheduled() {
     if (this.timer !== null) {
       this.clearTimer(this.timer);
@@ -322,9 +332,7 @@ export class SyncEngine {
   /** Escrita local: push com debounce de 2 s. */
   notifyWrite(): void {
     void this.refreshCounts();
-    if (this.debounce !== null) {
-      this.clearTimer(this.debounce);
-    }
+    this.clearDebounce();
     this.debounce = this.setTimer(() => {
       this.debounce = null;
       void this.syncNow();
@@ -362,10 +370,7 @@ export class SyncEngine {
     return () => {
       this.stopped = true;
       this.clearScheduled();
-      if (this.debounce !== null) {
-        this.clearTimer(this.debounce);
-        this.debounce = null;
-      }
+      this.clearDebounce();
       target.removeEventListener('online', run);
       target.removeEventListener('offline', offline);
       target.removeEventListener('focus', run);

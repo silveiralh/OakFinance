@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { CSV_PRESETS, type CsvProfile, mapCsvRows } from '@oakfinance/domain';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AuthContext, type AuthValue } from '../src/app/auth';
 import type { OakDb } from '../src/data/db';
 import { decodeCsvBytes, tokenizeCsv } from '../src/features/imports/csv-parse';
@@ -16,7 +16,7 @@ import {
   savedProfiles,
 } from '../src/features/imports/csv-profile';
 import { planImport, sha256Hex } from '../src/features/imports/ofx-import';
-import { looksLikeOfx } from '../src/features/imports/parse-file';
+import { inWorkerForTests, looksLikeOfx } from '../src/features/imports/parse-file';
 import { ImportScreen } from '../src/features/imports/screens';
 import { ToastProvider } from '../src/ui';
 import { fakeAuth } from './auth-fixture';
@@ -258,5 +258,108 @@ describe('I03: segundo arquivo logo depois de importar (E08)', () => {
     // a prévia continua depois de a importação anterior terminar
     await new Promise((resolve) => setTimeout(resolve, 50));
     expect(screen.getByTestId('import-summary')).toBeDefined();
+  });
+});
+
+describe('I03: nenhum caminho sem retorno visível (issue #128)', () => {
+  function renderImport() {
+    const auth = fakeAuth();
+    const router = createMemoryRouter([{ path: '/', element: <ImportScreen /> }], {
+      initialEntries: ['/'],
+    });
+    render(
+      <AuthContext.Provider value={auth}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthContext.Provider>,
+    );
+    return auth;
+  }
+
+  it('US-53: arquivo que não pode ser lido mostra o erro da I03 em vez de falhar em silêncio', async () => {
+    const auth = renderImport();
+    await dbOf(auth).accounts.put(
+      makeRow('accounts', { id: 'nu', name: 'Nubank conta', deleted_at: null, archived_at: null }),
+    );
+    const file = new File(['x'], 'extrato.csv');
+    Object.defineProperty(file, 'arrayBuffer', {
+      value: () => Promise.reject(new DOMException('arquivo ilegível', 'NotReadableError')),
+    });
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    fireEvent.change(await screen.findByTestId('import-file'), { target: { files: [file] } });
+    expect((await screen.findByTestId('import-error')).textContent).toBe(
+      'Arquivo não reconhecido. Envie um OFX ou CSV exportado pelo banco.',
+    );
+    expect(screen.queryByTestId('import-preview')).toBeNull();
+    spy.mockRestore();
+  });
+
+  it('US-53: CSV binário (ilegível) mostra o erro na tela', async () => {
+    renderImport();
+    const bytes = new Uint8Array([0x44, 0x61, 0x00, 0x74, 0x61, 0x0a, 0x00]);
+    const file = new File([bytes], 'extrato.csv');
+    Object.defineProperty(file, 'arrayBuffer', {
+      value: () => Promise.resolve(bytes.slice().buffer),
+    });
+    fireEvent.change(await screen.findByTestId('import-file'), { target: { files: [file] } });
+    expect((await screen.findByTestId('import-error')).textContent).toBe(
+      'Arquivo não reconhecido. Envie um OFX ou CSV exportado pelo banco.',
+    );
+  });
+});
+
+describe('Worker da leitura (issue #128)', () => {
+  const CSV = new TextEncoder().encode('Data,Valor\n01/11/2026,-1.00\n');
+  const local = () => ({ ok: true as const, via: 'thread' });
+
+  class FakeWorker {
+    onmessage: ((event: MessageEvent) => void) | null = null;
+    onerror: ((event: { preventDefault(): void }) => void) | null = null;
+    onmessageerror: (() => void) | null = null;
+    terminated = false;
+    constructor(private readonly behavior: 'error' | 'silent' | 'malformed' | 'ok') {}
+    postMessage() {
+      queueMicrotask(() => {
+        if (this.behavior === 'error') {
+          this.onerror?.({ preventDefault: () => undefined });
+        } else if (this.behavior === 'malformed') {
+          this.onmessage?.({ data: 'lixo' } as MessageEvent);
+        } else if (this.behavior === 'ok') {
+          this.onmessage?.({ data: { ok: true, via: 'worker' } } as MessageEvent);
+        }
+      });
+    }
+    terminate() {
+      this.terminated = true;
+    }
+  }
+
+  it('US-53: erro no script, resposta fora do formato, Worker que não cria ou que não responde → leitura na thread', async () => {
+    vi.stubGlobal('Worker', FakeWorker);
+    try {
+      const make = (b: ConstructorParameters<typeof FakeWorker>[0]) => () =>
+        new FakeWorker(b) as unknown as Worker;
+      expect(await inWorkerForTests(make('ok'), CSV, local)).toEqual({ ok: true, via: 'worker' });
+      expect(await inWorkerForTests(make('error'), CSV, local)).toEqual(local());
+      expect(await inWorkerForTests(make('malformed'), CSV, local)).toEqual(local());
+      const failing = () => {
+        throw new DOMException('bloqueado', 'SecurityError');
+      };
+      expect(await inWorkerForTests(failing, CSV, local)).toEqual(local());
+      const silent = new FakeWorker('silent');
+      expect(await inWorkerForTests(() => silent as unknown as Worker, CSV, local, 10)).toEqual(
+        local(),
+      );
+      expect(silent.terminated).toBe(true);
+      // erro também na thread: a promessa rejeita (a tela mostra o aviso)
+      await expect(
+        inWorkerForTests(make('error'), CSV, () => {
+          throw new Error('quebrou');
+        }),
+      ).rejects.toThrow('quebrou');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
