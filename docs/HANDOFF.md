@@ -354,4 +354,4 @@
 | 07/11/2026 | T-097 | PR #114 | done | perf.spec.ts com 5.000 lançamentos: recálculo < 200 ms, painel, lista e busca < 1,5 s e gravação < 200 ms com o app parado; risco da gravação durante o sync no §5 |
 | 07/11/2026 | T-098 | PR #117 | done | roteiro de restauração do dump cifrado (`restore-backup.sh`, só banco local, ensaio sintético), alertas de keepalive/ops_health/gitleaks conferidos, orientações pós-MVP (60 dias) no §5 |
 | 07/11/2026 | T-099 | PR #118 | done | RELEASE.md (DoD 1–16, 65 histórias, checklist M4, pendências), README final, sem LICENSE (D-072); nenhuma tarefa liberada depois dela |
-| 11/11/2026 | T-082 (issue #119) | PR #PRNUM | done | nightly: E19 e E13 com `freshUser`, Diagnóstico repete o toque, perf espera `idle()` antes de medir; E15 e US-49 seguem *flaky* (§5) |
+| 11/11/2026 | T-082 (issue #119) | PR #122 | done | nightly: E19 e E13 com `freshUser`, Diagnóstico repete o toque, perf espera `idle()` antes de medir; E15 e US-49 seguem *flaky* (§5) |
