@@ -21,6 +21,10 @@ import {
 import { documentTitle, type ScreenId, shellText } from '../src/i18n/pt-BR';
 import { fakeAuth } from './auth-fixture';
 
+// Os cenários deste arquivo cobrem o app com o Open Finance ligado (build E2E e v2); sem ele, ver
+// test/open-finance-off.test.tsx (T-115, D-080).
+vi.mock('../src/app/openFinance', () => ({ OPEN_FINANCE_ENABLED: true }));
+
 const here = dirname(fileURLToPath(import.meta.url));
 const ux = readFileSync(join(here, '../../../docs/specs/03-ux-design-system.md'), 'utf8');
 const shellCss = readFileSync(join(here, '../src/app/shell.css'), 'utf8');

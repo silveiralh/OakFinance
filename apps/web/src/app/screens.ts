@@ -2,6 +2,7 @@
 // de `features/`; o `routes.tsx` monta o roteador a partir desta tabela.
 import type { ComponentType } from 'react';
 import type { ScreenId } from '../i18n/pt-BR';
+import { OPEN_FINANCE_ENABLED } from './openFinance';
 
 export type NavKey = 'home' | 'transactions' | 'cards' | 'plan' | 'settings' | 'connections';
 
@@ -146,12 +147,19 @@ export const SHELL_SCREENS: readonly ScreenRoute[] = [
   {
     path: '/ajustes/conexoes',
     handle: { screen: 'I01', nav: 'connections' },
-    load: () => connections().then((m) => m.ConnectionsScreen),
+    // sem o Open Finance (D-080) a I01 só importa extrato e lê nota, e o módulo da conexão nem entra no bundle
+    load: () =>
+      OPEN_FINANCE_ENABLED
+        ? connections().then((m) => m.ConnectionsScreen)
+        : import('../features/connections/ImportCards').then((m) => m.ImportHubScreen),
   },
   {
     path: '/ajustes/conexoes/novo',
     handle: { screen: 'I02', nav: 'connections' },
-    load: () => connections().then((m) => m.ConnectBankScreen),
+    load: () =>
+      OPEN_FINANCE_ENABLED
+        ? connections().then((m) => m.ConnectBankScreen)
+        : import('../features/connections/ImportCards').then((m) => m.RedirectToConnections),
   },
   {
     path: '/importar',

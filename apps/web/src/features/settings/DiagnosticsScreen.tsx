@@ -4,6 +4,7 @@
 import { RotateCcw, Undo2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../app/auth';
+import { OPEN_FINANCE_ENABLED } from '../../app/openFinance';
 import { useSyncSnapshot } from '../../app/SyncStatus';
 import type { OutboxEntry } from '../../data/db';
 import { useLive } from '../../data/live';
@@ -233,28 +234,32 @@ export function DiagnosticsScreen() {
           {t(`diag.push.${permission}` as MessageKey)} ·{' '}
           {t(subscribed ? 'diag.push.subscribed' : 'diag.push.notSubscribed')}
         </p>
-        <h2>{t('diag.connections')}</h2>
-        {live.connections.length === 0 ? (
-          <p>{t('diag.connections.none')}</p>
-        ) : (
-          <ul className="diag-list">
-            {live.connections.map((c) => (
-              <li key={c.id}>
-                <p>
-                  {t('diag.connections.item', {
-                    banco: c.institution ?? c.connector_name ?? c.provider,
-                    status: c.status,
-                    data: formatStamp(c.last_success_at),
-                  })}
-                </p>
-                {c.consent_expires_at && (
-                  <p>
-                    {t('diag.connections.consent', { data: formatStamp(c.consent_expires_at) })}
-                  </p>
-                )}
-              </li>
-            ))}
-          </ul>
+        {OPEN_FINANCE_ENABLED && (
+          <>
+            <h2>{t('diag.connections')}</h2>
+            {live.connections.length === 0 ? (
+              <p>{t('diag.connections.none')}</p>
+            ) : (
+              <ul className="diag-list">
+                {live.connections.map((c) => (
+                  <li key={c.id}>
+                    <p>
+                      {t('diag.connections.item', {
+                        banco: c.institution ?? c.connector_name ?? c.provider,
+                        status: c.status,
+                        data: formatStamp(c.last_success_at),
+                      })}
+                    </p>
+                    {c.consent_expires_at && (
+                      <p>
+                        {t('diag.connections.consent', { data: formatStamp(c.consent_expires_at) })}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
       </GlassCard>
 

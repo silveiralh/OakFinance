@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import { noticeId } from '../_shared/domain/index.ts';
 import {
   DAILY_PUSH_CAP,
+  dueForUser,
   entryOutcome,
   localParts,
+  OPEN_FINANCE_ENABLED,
   planUser,
   refDateOf,
   type SendContext,
@@ -233,7 +235,7 @@ Deno.test('RN-94: conexão expirada ou com erro de login gera um aviso por estad
       ],
     }),
     now,
-    { pushEnabled: false, appOrigin: 'https://app.example.test/' },
+    { pushEnabled: false, appOrigin: 'https://app.example.test/', openFinance: true },
   );
   const bank = plan.notices.filter((n) => n.kind === 'bank_connection');
   assert.deepEqual(bank.map((n) => n.dedupeKey).sort(), [
@@ -248,7 +250,31 @@ Deno.test('RN-94: conexão expirada ou com erro de login gera um aviso por estad
     planUser(snap(), now, {
       pushEnabled: false,
       appOrigin: 'https://app.example.test/',
+      openFinance: true,
     }).notices.filter((n) => n.kind === 'bank_connection').length,
     0,
+  );
+});
+
+Deno.test('RN-94 (D-080): sem o Open Finance, conexão expirada ou com erro não gera aviso nem push', () => {
+  assert.equal(OPEN_FINANCE_ENABLED, false);
+  const now = brt('2026-12-08', '10:00');
+  const base = { institution: 'nubank', connectorName: 'MeuPluggy', consentExpiresOn: null };
+  const connections = [
+    { id: 'c-login', status: 'LOGIN_ERROR', ...base },
+    { id: 'c-exp', status: 'UPDATED', ...base, consentExpiresOn: '2026-12-08' },
+  ];
+  const plan = planUser(snap({ connections }), now, {
+    pushEnabled: true,
+    appOrigin: 'https://app.example.test/',
+  });
+  assert.equal(plan.notices.filter((n) => n.kind === 'bank_connection').length, 0);
+  assert.equal(
+    dueForUser(snap({ connections }), now).filter((n) => n.kind === 'bank_connection').length,
+    0,
+  );
+  assert.equal(
+    dueForUser(snap({ connections }), now, true).filter((n) => n.kind === 'bank_connection').length,
+    2,
   );
 });

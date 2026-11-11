@@ -2,18 +2,19 @@
 // janela de silêncio. Grava no aparelho (sincroniza) e o servidor aplica no tick seguinte.
 import { useId } from 'react';
 import { useAuth } from '../../app/auth';
+import { OPEN_FINANCE_ENABLED } from '../../app/openFinance';
 import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
 import { GlassCard, Select, Switch } from '../../ui';
 import {
   groupEnabled,
-  PREF_GROUPS,
   type PrefGroupId,
   quietHoursOf,
   scheduleOf,
   setGroupEnabled,
   setQuietHours,
   setSchedule,
+  visiblePrefGroups,
 } from './reminder-prefs';
 
 const WEEKDAYS = [
@@ -88,7 +89,7 @@ export function ReminderPrefs() {
         headingLevel={2}
         data-testid="reminder-prefs"
       >
-        {PREF_GROUPS.map((group) => (
+        {visiblePrefGroups(OPEN_FINANCE_ENABLED).map((group) => (
           <div key={group.id} className="reminder-pref" data-testid={`pref-${group.id}`}>
             <Switch
               label={t(group.label)}
