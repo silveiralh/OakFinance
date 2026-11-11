@@ -361,4 +361,4 @@
 | 11/11/2026 | T-082 (issue #119) | PR #122 | done | nightly: E19 e E13 com `freshUser`, Diagnóstico repete o toque, perf espera `idle()` antes de medir; E15 e US-49 seguem *flaky* (§5) |
 | 11/11/2026 | T-076 | PR #124 | done | I01/I02 com Item ID, mapeamento, backfill e card; E10 com FakePluggyConnect; widget real espera o dono aplicar a opção (a) no check-build (§4) |
 | 11/11/2026 | T-077 | PR #125 | done | estados do card, Precisa reconectar, aviso no Início, `bank_connection` no tick e `pluggy-retry` (migração 15); SETUP-13 passa a ser pedido |
-| 11/11/2026 | T-083 | PR #126 | blocked | aguarda o SETUP-13 (Pluggy e Meu Pluggy); nenhuma tarefa liberada |
+| 11/11/2026 | T-083 | PR #127 | blocked | aguarda o SETUP-13 (Pluggy e Meu Pluggy); nenhuma tarefa liberada |
