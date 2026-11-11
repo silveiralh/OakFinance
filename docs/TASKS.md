@@ -163,6 +163,7 @@ flowchart LR
 | T-098 | Operação e resiliência | T-095, T-036 | done |
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
+| T-101 | Agente de auditoria de UX | T-100 | done |
 
 ---
 
@@ -1436,3 +1437,14 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 **Pronto quando:** contraste da §4.3 recalculado e verde nos 2 temas; axe sem violação séria; alvos ≥ 48 px; bundle inicial ≤ 250 KB; E2E verde nos 3 projetos. O snapshot visual do `/__styleguide` muda e exige o rótulo `needs-owner` (baseline protegida).
 
 **Verificar:** `pnpm ci:local`; capturas das telas migradas em 390 px e 1280 px no PR.
+
+### T-101 — Agente de auditoria de UX
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| done | — | P | US-62 | — | T-100 | não |
+
+**Escopo (D-073):** agente `ux-auditor` em `.claude/agents/ux-auditor.md`, com a skill `frontend-design` em `.claude/skills/` (cópia da Anthropic, Apache 2.0); roteiro de capturas `apps/web/ux-audit/capture.mjs` (build E2E, Supabase interceptado, dados pelos ganchos `__oakE2E`, 360/390/1280 px, claro e escuro, estados vazios); primeira auditoria em `docs/ux-audit/`.
+
+**Pronto quando:** o agente roda sobre as capturas e entrega o relatório com achados por severidade, evidência e causa no código.
+
+**Verificar:** `pnpm --filter web exec node ux-audit/capture.mjs` depois do `build:e2e` (ver o cabeçalho do script).

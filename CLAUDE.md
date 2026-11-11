@@ -28,6 +28,7 @@ Guia operacional das sessões automáticas de desenvolvimento. Cada sessão come
 | `docs/HANDOFF.md` | Passagem de bastão entre sessões |
 | `docs/SETUP.md` | O que só o cliente pode fazer (itens `SETUP-xx`) |
 | `docs/DECISIONS.md` | Log de decisões, apontando para os ADRs |
+| `docs/ux-audit/` | Auditorias de UX do agente `ux-auditor` (`.claude/agents/`, D-073); capturas por `apps/web/ux-audit/capture.mjs` |
 
 Precedência: 04-review > RN do PRD (regras e números) > UX (textos e telas) > tech (nomes, contratos, protocolo). Leitura mínima por sessão: este arquivo, `HANDOFF.md`, a sua tarefa em `TASKS.md`, tech §0 e §2 e as seções das specs citadas na tarefa.
 
