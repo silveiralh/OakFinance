@@ -14,7 +14,7 @@ import {
   markAllReviewed,
   unlink,
 } from '../src/features/inbox/model';
-import { InboxScreen } from '../src/features/inbox/screens';
+import { InboxScreen, moneyKindOf } from '../src/features/inbox/screens';
 import { ToastProvider } from '../src/ui';
 import { fakeAuth } from './auth-fixture';
 import { makeRow, tx } from './data/rows';
@@ -290,5 +290,36 @@ describe('I05 — tela (US-49)', () => {
     await waitFor(async () =>
       expect((await db.transactions.get('S'))?.review_state).toBe('ignored'),
     );
+  });
+});
+
+describe('T-116: sinal do valor na conferência (UXC-001)', () => {
+  it('RN-74: o sinal vem do tipo — receita e estorno com "+", despesa com "−", transferência sem sinal', () => {
+    expect(moneyKindOf('income')).toBe('income');
+    expect(moneyKindOf('refund')).toBe('income');
+    expect(moneyKindOf('adjust_in')).toBe('income');
+    expect(moneyKindOf('expense')).toBe('expense');
+    expect(moneyKindOf('adjust_out')).toBe('expense');
+    expect(moneyKindOf('transfer')).toBe('transfer');
+  });
+
+  it('RN-74: receita importada aparece como entrada em "Novos do banco", não como despesa', async () => {
+    const auth = fakeAuth();
+    const db = dbOf(auth);
+    await db.categories.bulkPut(CATEGORIES);
+    await db.transactions.bulkPut([
+      imported('IN', 520000, '2026-11-08', { kind: 'income', description: 'SALARIO EXEMPLO' }),
+      imported('OUT', 2790, '2026-11-08', { description: 'PADARIA EXEMPLO' }),
+    ]);
+    renderScreen(auth);
+    const income = (await screen.findByText('SALARIO EXEMPLO')).closest('.reconcile-side');
+    const expense = screen.getByText('PADARIA EXEMPLO').closest('.reconcile-side');
+    const incomeMoney = income?.querySelector('[data-kind]');
+    const expenseMoney = expense?.querySelector('[data-kind]');
+    expect(incomeMoney?.getAttribute('data-kind')).toBe('income');
+    expect(incomeMoney?.textContent).toContain('+R$');
+    expect(incomeMoney?.textContent).not.toMatch(/\u2212R\$/);
+    expect(expenseMoney?.getAttribute('data-kind')).toBe('expense');
+    expect(expenseMoney?.textContent).toMatch(/\u2212R\$/);
   });
 });
