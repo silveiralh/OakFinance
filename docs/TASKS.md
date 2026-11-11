@@ -147,9 +147,9 @@ flowchart LR
 | T-082 | Fechar o mês (P04) | T-079, T-059 | done |
 | T-083 | Validação real da Pluggy | T-077 | blocked: aguarda cliente — SETUP-13 (Pluggy e Meu Pluggy) |
 | T-084 | Importar OFX | T-022, T-078 | done |
-| T-085 | OFX real do BB anonimizado | T-084 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
+| T-085 | OFX real do BB anonimizado | T-084 | todo |
 | T-086 | Importar CSV | T-084 | done |
-| T-087 | Presets Nubank confirmados | T-086 | blocked: aguarda cliente — SETUP-14 (arquivos reais) |
+| T-087 | Presets Nubank confirmados | T-086 | done |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | done |
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | done |
 | T-090 | Parser da NFC-e com páginas reais | T-089 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
@@ -1277,7 +1277,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-085 — OFX real do BB anonimizado
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
+| todo | S4 | P | US-52 | RN-75 | T-084 | sim — SETUP-14 |
 
 **Escopo:** ler o arquivo pelo canal privado, fora do clone; gerar a fixture anonimizada com README; ajustar o parser se for preciso; E07 usando essa fixture. O original nunca entra no repositório.
 
@@ -1299,7 +1299,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-087 — Presets Nubank confirmados
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-14 (arquivos reais) | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
+| done | S4 | P | US-53 | RN-76 | T-086 | sim — SETUP-14 |
 
 **Escopo:** conferir `nubank-fatura` e `nubank-conta` com os arquivos reais (fora do clone); fixtures anonimizadas; tirar a marca PROVISÓRIO.
 
