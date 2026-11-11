@@ -48,16 +48,17 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
   const data = useLive(
     user
       ? async () => {
+          const [period, goals, recent, reviewRows] = await Promise.all([
+            loadHomePeriodRows(user.db, today),
+            user.db.goals.where('kind').equals('emergency_reserve').toArray(),
+            loadRecentRows(user.db, RECENT),
+            loadReviewRows(user.db),
+          ]);
           const rows: HomeRows & {
             goals: LocalRow<'goals'>[];
             recent: LocalRow<'transactions'>[];
             reviewRows: LocalRow<'transactions'>[];
-          } = {
-            ...(await loadHomePeriodRows(user.db, today)),
-            goals: await user.db.goals.where('kind').equals('emergency_reserve').toArray(),
-            recent: await loadRecentRows(user.db, RECENT),
-            reviewRows: await loadReviewRows(user.db),
-          };
+          } = { ...period, goals, recent, reviewRows };
           return rows;
         }
       : null,

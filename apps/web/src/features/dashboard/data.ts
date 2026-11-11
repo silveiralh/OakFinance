@@ -12,15 +12,16 @@ export async function loadHomeRows(db: OakDb): Promise<HomeRows> {
 }
 
 async function loadOtherRows(db: OakDb): Promise<Omit<HomeRows, 'txRows'>> {
-  return {
-    recurrences: await db.recurrences.toArray(),
-    cards: await db.cards.toArray(),
-    accounts: await db.accounts.toArray(),
-    categories: await db.categories.toArray(),
-    invoices: await db.invoices.toArray(),
-    budgets: await db.budgets.toArray(),
-    profile: (await db.profiles.toCollection().first()) ?? null,
-  };
+  const [recurrences, cards, accounts, categories, invoices, budgets, profile] = await Promise.all([
+    db.recurrences.toArray(),
+    db.cards.toArray(),
+    db.accounts.toArray(),
+    db.categories.toArray(),
+    db.invoices.toArray(),
+    db.budgets.toArray(),
+    db.profiles.toCollection().first(),
+  ]);
+  return { recurrences, cards, accounts, categories, invoices, budgets, profile: profile ?? null };
 }
 
 /** Meses além do número de parcelas em que uma série ainda pode cair numa fatura (fechamento e vencimento). */
@@ -39,13 +40,16 @@ const SERIES_SLACK_MONTHS = 2;
  * As demais tabelas são pequenas e vêm inteiras.
  */
 export async function loadHomePeriodRows(db: OakDb, today: ISODate): Promise<HomeRows> {
-  const other = await loadOtherRows(db);
   const prev = addMonths(today.slice(0, 7) as YearMonth, -1);
   const from = `${prev}-01`;
-  const invoiceIds = (
-    await db.invoices.where('reference_month').aboveOrEqual(prev).primaryKeys()
-  ).map(String);
-  const seriesIds = (await db.installment_plans.toArray())
+  // as leituras saem juntas: no WebKit cada transação do IndexedDB tem um custo fixo perceptível
+  const [other, invoiceKeys, plans, inPeriod] = await Promise.all([
+    loadOtherRows(db),
+    db.invoices.where('reference_month').aboveOrEqual(prev).primaryKeys(),
+    db.installment_plans.toArray(),
+    db.transactions.where('occurred_on').aboveOrEqual(from).toArray(),
+  ]);
+  const seriesIds = plans
     .filter(
       (p) =>
         addMonths(
@@ -54,22 +58,26 @@ export async function loadHomePeriodRows(db: OakDb, today: ISODate): Promise<Hom
         ) >= prev,
     )
     .map((p) => p.id);
-  const recurrenceIds = other.recurrences.map((r) => r.id);
+  const byIndex = (index: 'invoice_id' | 'series_id' | 'recurrence_id', ids: readonly string[]) =>
+    ids.length > 0
+      ? db.transactions
+          .where(index)
+          .anyOf([...ids])
+          .toArray()
+      : Promise.resolve([]);
+  const older = await Promise.all([
+    byIndex('invoice_id', invoiceKeys.map(String)),
+    byIndex('series_id', seriesIds),
+    byIndex(
+      'recurrence_id',
+      other.recurrences.map((r) => r.id),
+    ),
+  ]);
   const byId = new Map<string, LocalRow<'transactions'>>();
-  const add = (rows: readonly LocalRow<'transactions'>[]) => {
+  for (const rows of [inPeriod, ...older]) {
     for (const r of rows) {
       byId.set(r.id, r);
     }
-  };
-  add(await db.transactions.where('occurred_on').aboveOrEqual(from).toArray());
-  if (invoiceIds.length > 0) {
-    add(await db.transactions.where('invoice_id').anyOf(invoiceIds).toArray());
-  }
-  if (seriesIds.length > 0) {
-    add(await db.transactions.where('series_id').anyOf(seriesIds).toArray());
-  }
-  if (recurrenceIds.length > 0) {
-    add(await db.transactions.where('recurrence_id').anyOf(recurrenceIds).toArray());
   }
   return { txRows: [...byId.values()], ...other };
 }
