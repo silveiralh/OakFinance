@@ -188,9 +188,12 @@ describe('US-63: estado vazio', () => {
     expect(await screen.findByText(/^Nenhum lançamento em /)).toBeInTheDocument();
   });
 
-  it('UX §6.5: conexões oferecem também "Importar extrato"', async () => {
+  it('UX §6.5 (UXD-001): conexões oferecem também "Importar extrato", no card logo abaixo do vazio', async () => {
     const router = open(await auth(false), '/ajustes/conexoes');
-    fireEvent.click(await screen.findByRole('button', { name: 'Importar extrato' }));
+    expect(await screen.findByText('Importar extrato')).toBeInTheDocument();
+    fireEvent.change(await screen.findByTestId('connections-import-file'), {
+      target: { files: [new File(['OFXHEADER:100'], 'extrato.ofx')] },
+    });
     await waitFor(() => expect(router.state.location.pathname).toBe('/importar'));
   });
 });

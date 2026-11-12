@@ -42,7 +42,7 @@ test('US-49: decidir "É o mesmo", dar OK num novo do banco e esvaziar a fila', 
   await expect(page.getByTestId('inbox-count')).toHaveText('1 para conferir');
 
   const fresh = page.getByTestId('inbox-fresh-item').filter({ hasText: `NOVO BANCO ${tag}` });
-  await fresh.getByRole('button', { name: 'OK' }).click();
+  await fresh.getByRole('button', { name: 'Revisado' }).click();
   await expect(page.getByTestId('inbox-fresh')).toHaveCount(0);
 
   // o vinculado aparece no grupo dos últimos 7 dias

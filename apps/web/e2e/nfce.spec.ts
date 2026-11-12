@@ -128,6 +128,10 @@ test('E09: offline a nota fica pendente e é lida quando a rede volta', async ({
   await page.context().setOffline(true);
   // o WebKit muda o `navigator.onLine` um pouco depois
   await expect.poll(() => page.evaluate(() => navigator.onLine)).toBe(false);
+  // D-096: antes da câmera, o aviso de que a nota fica guardada até a conexão voltar
+  await expect(page.getByTestId('nfce-offline-before')).toHaveText(
+    'Sem internet. A nota fica guardada e os itens entram no lançamento quando a conexão voltar.',
+  );
   await page.getByTestId('nfce-photo').setInputFiles({
     name: 'nota.png',
     mimeType: 'image/png',

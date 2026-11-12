@@ -407,6 +407,32 @@ body:has(.screen-welcome) .backdrop {
 .cards-invoice-month {
   min-width: 0;
 }
+/* T-126 (UXC-013): regra em duas linhas — termo → categoria e, abaixo, a meta sem quebrar no meio de uma parte */
+.cards-invoice.rule-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.rule-row-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.rule-row-title {
+  font-weight: var(--font-weight-semibold, 600);
+  overflow-wrap: anywhere;
+}
+.rule-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-1);
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.rule-row-meta > span {
+  white-space: nowrap;
+}
+.rule-row-meta > span + span::before {
+  content: "· ";
+}
 .cards-invoice-total {
   text-align: end;
   white-space: nowrap;
@@ -1222,6 +1248,24 @@ body:has(.screen-welcome) .backdrop {
   display: grid;
   gap: var(--space-3);
 }
+/* T-126 (UXC-020): "ou arraste o arquivo para cá" só no computador e contorno ao arrastar por cima */
+.import-drag-hint {
+  display: none;
+}
+@media (min-width: 1024px) and (pointer: fine) {
+  .import-drag-hint {
+    display: block;
+  }
+}
+.import-drop-zone[data-dragging="true"] .import-drop {
+  outline: 2px dashed var(--border-strong);
+  outline-offset: 4px;
+}
+/* UXD-007: o rótulo curto "Escolher arquivo" fica em uma linha também a 360 px */
+.import-drop .btn,
+.connections .btn {
+  white-space: nowrap;
+}
 .csv-preview {
   width: 100%;
   border-collapse: collapse;
@@ -1283,6 +1327,30 @@ body:has(.screen-welcome) .backdrop {
   gap: var(--space-1);
   min-width: 0;
   overflow-wrap: anywhere;
+}
+/* T-126 (UXC-012): pergunta do card sem candidato (pagamento de fatura sugerido) */
+.reconcile-question {
+  font-weight: var(--font-weight-bold);
+}
+/* T-126 (UXC-011): categoria sugerida numa linha própria e ações do item com espaço */
+.inbox-category {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-secondary);
+}
+.inbox-category[data-unclassified="true"] {
+  color: var(--status-warning-fg);
+  font-weight: var(--font-weight-bold);
+}
+.inbox-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.inbox-list > li {
+  display: grid;
+  gap: var(--space-2);
 }
 /* I01/I02 — conexões (T-076, T-077) */
 .bank-connections,
@@ -1570,8 +1638,10 @@ body:has(.screen-welcome) .backdrop {
   flex-wrap: wrap;
   gap: var(--space-2, 8px);
 }
+/* UXC-014: a 360 px os dois botões empilham em vez de quebrar o rótulo em duas linhas */
 .qr-actions > * {
-  flex: 1 1 140px;
+  flex: 1 1 180px;
+  white-space: nowrap;
 }
 .nfce-items ul {
   margin: 8px 0 16px;

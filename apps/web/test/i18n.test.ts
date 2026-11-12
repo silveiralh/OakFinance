@@ -55,3 +55,18 @@ describe('i18n pt-BR (UX §6)', () => {
     expect(t(key)).toBe('Começar');
   });
 });
+
+describe('T-126: plural (UXD-009)', () => {
+  it('US-46 (UXD-009): "1 nova", "1 vinculada", "Expira amanhã" e "1 lançamento importado." no singular', async () => {
+    const { tn } = await import('../src/i18n/pt-BR');
+    expect(tn('conn.summary.fresh', 1)).toBe('1 nova');
+    expect(tn('conn.summary.fresh', 2)).toBe('2 novas');
+    expect(tn('conn.summary.linked', 1)).toBe('1 vinculada');
+    expect(tn('conn.summary.review', 1)).toBe('1 para conferir');
+    expect(tn('conn.expiresIn', 1)).toBe('Expira amanhã');
+    expect(tn('conn.expiresIn', 5)).toBe('Expira em 5 dias');
+    expect(tn('conn.result.imported', 1)).toBe('1 lançamento importado.');
+    expect(tn('conn.result.review', 1)).toBe('1 precisa de conferência.');
+    expect(tn('conn.result.review', 0)).toBe('0 precisam de conferência.');
+  });
+});

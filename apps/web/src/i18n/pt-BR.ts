@@ -722,6 +722,7 @@ export const ptBR = {
   'rules.source.learned': 'Aprendida',
   'rules.source.manual': 'Manual',
   'rules.hits': '{n} acertos',
+  'rules.hits.one': '1 acerto',
   'rules.lastHit': 'último uso {data}',
   'rules.never': 'sem uso',
   'rules.delete': 'Apagar',
@@ -741,9 +742,13 @@ export const ptBR = {
   'conn.explain':
     'A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos.',
   'conn.connected': 'Conectado. Buscando os últimos 90 dias…',
-  'conn.result': '{n} lançamentos importados. {m} precisam de conferência.',
+  'conn.result.imported': '{n} lançamentos importados.',
+  'conn.result.imported.one': '1 lançamento importado.',
+  'conn.result.review': '{n} precisam de conferência.',
+  'conn.result.review.one': '1 precisa de conferência.',
   'conn.updated': 'Atualizado {quando}',
   'conn.expiresIn': 'Expira em {n} dias',
+  'conn.expiresIn.one': 'Expira amanhã',
   'conn.renew': 'Renovar',
   'conn.expired': 'A conexão com o {banco} expirou. Renove para continuar recebendo lançamentos.',
   'conn.bankError':
@@ -759,7 +764,11 @@ export const ptBR = {
   'conn.needsInternet': 'Precisa de internet',
   'conn.refresh': 'Atualizar agora',
   'conn.refreshTooSoon': 'Atualizado há {n} min. Tente de novo em {m} min.',
-  'conn.summary': '{n} novas · {m} vinculadas · {k} para conferir',
+  'conn.summary.fresh': '{n} novas',
+  'conn.summary.fresh.one': '1 nova',
+  'conn.summary.linked': '{n} vinculadas',
+  'conn.summary.linked.one': '1 vinculada',
+  'conn.summary.review': '{n} para conferir',
   'conn.state.active': 'Ativa',
   'conn.state.updating': 'Atualizando',
   'conn.state.expiring': 'Expira em breve',
@@ -795,7 +804,9 @@ export const ptBR = {
     'Precisa reconectar: abra o Meu Pluggy, autorize o {banco} de novo e copie o novo Item ID. Depois toque em Renovar.',
   'conn.importShortcut': 'Importar extrato (OFX/CSV)',
   'conn.banner': 'Sua conexão com o {banco} precisa ser renovada',
-  'import.choose': 'Escolher arquivo OFX ou CSV',
+  'import.choose': 'Escolher arquivo',
+  'import.formats': 'OFX ou CSV, exportado pelo banco.',
+  'import.drag': 'Ou arraste o arquivo para cá.',
   'import.bbHint': 'Banco do Brasil: exporte o extrato em OFX (Money 2000+).',
   'import.local': 'O arquivo é lido no seu aparelho e não é enviado ao servidor.',
   'import.preview':
@@ -838,6 +849,8 @@ export const ptBR = {
   'nfce.use': 'Usar estes dados',
   'nfce.noCamera': 'Sem acesso à câmera. Escolha uma foto da nota ou digite a chave de acesso.',
   'nfce.offline': 'Nota salva. Os itens serão buscados quando a conexão voltar.',
+  'nfce.offlineBefore':
+    'Sem internet. A nota fica guardada e os itens entram no lançamento quando a conexão voltar.',
   'nfce.sefazDown':
     'Não foi possível carregar os detalhes da nota. Complete o valor para continuar.',
   'nfce.invalid':
@@ -893,7 +906,7 @@ export const ptBR = {
   'review.diff.date': 'Data diferente: {a} × {b}',
   'review.pending': 'Para decidir',
   'review.fresh': 'Novos do banco',
-  'review.ok': 'OK',
+  'review.ok': 'Revisado',
   'review.allReviewed': 'Marcar todos como revisados',
   'review.allBlocked': 'Classifique os {n} lançamentos em "A classificar" antes de marcar todos.',
   'review.allDone': '{n} lançamentos revisados.',
@@ -904,6 +917,10 @@ export const ptBR = {
   'review.diff.amount': 'Valor diferente: {a} × {b}',
   'review.diff.method': 'Meio diferente: {a} × {b}',
   'review.noCandidate': 'O lançamento parecido não está mais disponível.',
+  'review.keepNew': 'Manter como novo',
+  'review.paymentQuestion': 'É o pagamento da fatura de {mês}?',
+  'review.paymentYes': 'É o pagamento',
+  'review.unclassified': 'A classificar',
   'detail.linkedTo': 'Vinculado a: {descricao}',
   'detail.duplicateOf': 'Duplicada de: {descricao}',
   'detail.notDuplicate': 'Não é duplicada',
@@ -1266,6 +1283,19 @@ export function documentTitle(screen: ScreenId): string {
 }
 
 /** Texto da chave com os placeholders preenchidos; placeholder sem valor fica como está. */
+/**
+ * UXD-009: plural — usa a chave `<chave>.one` quando `n` é 1 e ela existe ("1 nova", "Expira amanhã"); senão, a
+ * chave normal com `{n}`.
+ */
+export function tn(
+  key: MessageKey,
+  n: number,
+  values: Readonly<Record<string, string | number>> = {},
+): string {
+  const one = `${key}.one`;
+  return t(n === 1 && one in ptBR ? (one as MessageKey) : key, { ...values, n });
+}
+
 export function t(key: MessageKey, values: Readonly<Record<string, string | number>> = {}): string {
   return ptBR[key].replace(/\{([^{}]+)\}/g, (whole, name: string) =>
     name in values ? String(values[name]) : whole,

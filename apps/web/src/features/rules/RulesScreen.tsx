@@ -9,7 +9,7 @@ import {
   ruleMatches,
   todayIn,
 } from '@oakfinance/domain';
-import { Plus, WandSparkles } from 'lucide-react';
+import { ChevronRight, Plus, WandSparkles } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -17,7 +17,7 @@ import { newId } from '../../data/ids';
 import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
-import { emptyStates, type MessageKey, t } from '../../i18n/pt-BR';
+import { emptyStates, type MessageKey, t, tn } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { BottomSheet, Button, EmptyState, GlassCard, Select, TextField, useToast } from '../../ui';
 import { ruleFromRow } from '../quick-entry/model';
@@ -219,30 +219,38 @@ export function RulesScreen({
           <ul className="cards-invoices" data-testid="rules-list">
             {rows.map((row) => (
               <li key={row.id}>
+                {/* UXC-013: termo → categoria em destaque e a meta numa segunda linha, com seta para a edição */}
                 <button
                   type="button"
-                  className="cards-invoice"
+                  className="cards-invoice rule-row"
                   onClick={() => {
                     setError(null);
                     setDraft({ id: row.id, pattern: row.pattern, categoryId: row.category_id });
                   }}
                 >
-                  <span className="cards-invoice-month">
-                    {[
-                      `${row.pattern} → ${categoryName.get(row.category_id) ?? ''}`,
-                      row.account_id ? accountName.get(row.account_id) : null,
-                      row.card_id ? accountName.get(row.card_id) : null,
-                      SOURCE[row.source] ? t(SOURCE[row.source] as MessageKey) : row.source,
-                      t('rules.hits', { n: row.hits }),
-                      row.last_hit_at
-                        ? t('rules.lastHit', {
-                            data: formatDateBR(row.last_hit_at.slice(0, 10) as ISODate),
-                          })
-                        : t('rules.never'),
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')}
+                  <span className="rule-row-text">
+                    <span className="rule-row-title">
+                      {`${row.pattern} → ${categoryName.get(row.category_id) ?? ''}`}
+                    </span>
+                    <span className="rule-row-meta" data-testid="rule-meta">
+                      {[
+                        row.account_id ? accountName.get(row.account_id) : null,
+                        row.card_id ? accountName.get(row.card_id) : null,
+                        SOURCE[row.source] ? t(SOURCE[row.source] as MessageKey) : row.source,
+                        row.hits > 0 ? tn('rules.hits', row.hits) : null,
+                        row.last_hit_at
+                          ? t('rules.lastHit', {
+                              data: formatDateBR(row.last_hit_at.slice(0, 10) as ISODate),
+                            })
+                          : t('rules.never'),
+                      ]
+                        .filter(Boolean)
+                        .map((part) => (
+                          <span key={part}>{part}</span>
+                        ))}
+                    </span>
                   </span>
+                  <ChevronRight size={20} aria-hidden="true" />
                 </button>
               </li>
             ))}

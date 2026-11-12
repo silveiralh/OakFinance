@@ -2,11 +2,12 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { AuthContext, type AuthValue } from '../src/app/auth';
 import type { LocalRow, OakDb } from '../src/data/db';
+import { ImportHubScreen } from '../src/features/connections/ImportCards';
 import {
   commitImport,
   type Destination,
@@ -244,6 +245,56 @@ describe('I03 (US-52)', () => {
       </AuthContext.Provider>,
     );
   }
+
+  it('US-52 (UXD-008): o arquivo escolhido na I01 chega à I03 já carregado, com as dicas abaixo do botão', async () => {
+    const auth = fakeAuth();
+    const db = dbOf(auth);
+    await db.accounts.put(
+      makeRow('accounts', { id: 'bb', name: 'BB', deleted_at: null, archived_at: null }),
+    );
+    const router = createMemoryRouter([{ path: '/importar', element: <ImportScreen /> }], {
+      initialEntries: [{ pathname: '/importar', state: { file: fileOf(BB) } }],
+    });
+    render(
+      <AuthContext.Provider value={auth}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthContext.Provider>,
+    );
+    expect((await screen.findByTestId('import-summary')).textContent).toMatch(/^4 lançamentos/);
+    await waitFor(() => expect(router.state.location.state).toBeNull());
+    const drop = screen.getByTestId('import-drop');
+    expect(within(drop).getByRole('button', { name: 'Escolher arquivo' })).toBeDefined();
+    expect(within(drop).getByText('OFX ou CSV, exportado pelo banco.')).toBeDefined();
+    expect(within(drop).getByText('Ou arraste o arquivo para cá.')).toBeDefined();
+  });
+
+  it('RN-78 (UXD-005): a I01 também lista a importação recente com "Desfazer importação"', async () => {
+    const auth = fakeAuth();
+    const db = dbOf(auth);
+    await db.imports.put(
+      makeRow('imports', {
+        id: 'imp-1',
+        file_name: 'extrato.ofx',
+        stats: { total: 4 },
+        created_at: new Date().toISOString(),
+        deleted_at: null,
+        status: 'committed',
+      }),
+    );
+    const router = createMemoryRouter([{ path: '/', element: <ImportHubScreen /> }]);
+    render(
+      <AuthContext.Provider value={auth}>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthContext.Provider>,
+    );
+    const recent = await screen.findByTestId('import-recent');
+    expect(within(recent).getByText(/^extrato\.ofx · 4 lançamentos · /)).toBeDefined();
+    expect(within(recent).getByRole('button', { name: 'Desfazer importação' })).toBeDefined();
+  });
 
   it('US-52: escolher o arquivo mostra a prévia; importar grava; o mesmo arquivo avisa "já foi importado"', async () => {
     const auth = fakeAuth();

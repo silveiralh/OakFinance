@@ -595,7 +595,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### I03 — Importar OFX/CSV · `/importar` · S4
 
-- **Passos:** 1) Escolher arquivo (`ImportDropzone`; no celular abre o seletor de arquivos; no `lg` aceita arrastar). 2) Para CSV: **mapear colunas** (Data · Descrição · Valor · Tipo), com prévia de 5 linhas e formato detectado ("Data em dd/mm/aaaa · decimal com vírgula") e memória por banco. 3) Escolher conta/cartão de destino. 4) **Prévia**: "52 lançamentos · 3 já existem (serão ignorados) · 7 parecidos com lançamentos seus (vão para conferência)". 5) **Importar** → toast + I05 se houver pendências.
+- **Passos:** 1) Escolher arquivo (`ImportDropzone`; no celular abre o seletor de arquivos; no `lg` aceita arrastar, com "Ou arraste o arquivo para cá." e contorno tracejado durante o arraste; as dicas ficam abaixo do botão, iguais na I01, e o arquivo escolhido na I01 chega aqui já carregado, D-102). 2) Para CSV: **mapear colunas** (Data · Descrição · Valor · Tipo), com prévia de 5 linhas e formato detectado ("Data em dd/mm/aaaa · decimal com vírgula") e memória por banco. 3) Escolher conta/cartão de destino. 4) **Prévia**: "52 lançamentos · 3 já existem (serão ignorados) · 7 parecidos com lançamentos seus (vão para conferência)". 5) **Importar** → toast + I05 se houver pendências.
 - **Erros:** formato inválido ou maior que 5 MB / 5.000 linhas ("Arquivo não reconhecido. Envie um OFX ou CSV exportado pelo banco.") · arquivo vazio · coluna de valor não definida ("Selecione a coluna que contém o valor.") · datas fora do padrão · arquivo já importado ("Este arquivo já foi importado em {dd/mm}." + **Importar mesmo assim**; os lançamentos repetidos são ignorados pela deduplicação).
 - **Depois de importar:** toast "{n} lançamentos importados." com **Desfazer importação** disponível por 24 h também em I01 (RN-78).
 - Funciona offline: grava no aparelho e sincroniza depois.
@@ -614,9 +614,9 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 - **Objetivo:** evitar duplicidade entre lançamentos manuais e automáticos com decisões rápidas.
 - **Conteúdo:** contador "6 para conferir"; um `ReconcileCard` por vez: à esquerda "Lançado por você" (manual) e à direita "Recebido do banco" (importado), com valor, data, descrição e meio; diferenças destacadas com ícone + texto ("Data diferente: 03/11 × 04/11").
 - **Ações (botões grandes, na zona do polegar):** **É o mesmo** (vincula; mantém categoria e descrição do manual e guarda os dados do banco) · **São diferentes** (mantém os dois) · **Ignorar** (descarta o importado). Atalho opcional por gesto: deslizar para a direita = É o mesmo; para a esquerda = São diferentes.
-- Grupo **Novos do banco** (importados sem candidato, `revisado = false`): lista com categoria sugerida editável e **OK** por item; **Marcar todos como revisados** (exige que nenhum esteja em "A classificar"). Corrigir a categoria cria a regra e mostra o toast "Regra criada: '{termo}' → {categoria}" com **Desfazer** e **Editar**, e, se houver, **Aplicar a mais {n} parecidos** (RN-62).
+- Grupo **Novos do banco** (importados sem candidato, `revisado = false`): lista com a categoria sugerida numa linha própria (ícone + nome; "A classificar" em destaque de alerta), **Mudar categoria** e **Revisado** por item (D-084 item 6, D-102); **Marcar todos como revisados** (exige que nenhum esteja em "A classificar"). Corrigir a categoria cria a regra e mostra o toast "Regra criada: '{termo}' → {categoria}" com **Desfazer** e **Editar**, e, se houver, **Aplicar a mais {n} parecidos** (RN-62).
 - Seção recolhível **Vinculados automaticamente** (últimos 7 dias) com **Não é o mesmo** por item (RN-73).
-- Pagamento de fatura e transferências sugeridas aparecem como ReconcileCard com a pergunta "Pagamento da fatura de {mês}?" / "Transferência entre suas contas?".
+- **Card sem candidato** (D-084 item 9, D-102): uma coluna só, com o importado e as ações **Manter como novo** e **Ignorar**; a frase "O lançamento parecido não está mais disponível." aparece quando o candidato existia e foi apagado. Pagamento de fatura sugerido (RN-71) usa a pergunta "É o pagamento da fatura de {mês}?" com **É o pagamento** e **Ignorar**.
 - **Estados:** vazio ("Nenhum lançamento pendente de conferência.") · carregando · erro de sync.
 - **Feedback:** ao decidir, o card sai com fade + deslocamento de 8 px (200 ms) e o próximo entra; o contador atualiza.
 
@@ -2405,6 +2405,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `rules.source.learned` | Aprendida |
 | `rules.source.manual` | Manual |
 | `rules.hits` | {n} acertos |
+| `rules.hits.one` | 1 acerto |
 | `rules.lastHit` | último uso {data} |
 | `rules.never` | sem uso |
 | `rules.delete` | Apagar |
@@ -2573,9 +2574,13 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.connect` | Conectar banco |
 | `conn.explain` | A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos. |
 | `conn.connected` | Conectado. Buscando os últimos 90 dias… |
-| `conn.result` | {n} lançamentos importados. {m} precisam de conferência. |
+| `conn.result.imported` | {n} lançamentos importados. |
+| `conn.result.imported.one` | 1 lançamento importado. |
+| `conn.result.review` | {n} precisam de conferência. |
+| `conn.result.review.one` | 1 precisa de conferência. |
 | `conn.updated` | Atualizado {quando} |
 | `conn.expiresIn` | Expira em {n} dias |
+| `conn.expiresIn.one` | Expira amanhã |
 | `conn.renew` | Renovar |
 | `conn.expired` | A conexão com o {banco} expirou. Renove para continuar recebendo lançamentos. |
 | `conn.bankError` | O {banco} não respondeu. Uma nova tentativa será feita amanhã cedo, ou tente agora. |
@@ -2589,7 +2594,11 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.needsInternet` | Precisa de internet |
 | `conn.refresh` | Atualizar agora |
 | `conn.refreshTooSoon` | Atualizado há {n} min. Tente de novo em {m} min. |
-| `conn.summary` | {n} novas · {m} vinculadas · {k} para conferir |
+| `conn.summary.fresh` | {n} novas |
+| `conn.summary.fresh.one` | 1 nova |
+| `conn.summary.linked` | {n} vinculadas |
+| `conn.summary.linked.one` | 1 vinculada |
+| `conn.summary.review` | {n} para conferir |
 | `conn.state.active` | Ativa |
 | `conn.state.updating` | Atualizando |
 | `conn.state.expiring` | Expira em breve |
@@ -2623,7 +2632,9 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.reconnectSteps` | Precisa reconectar: abra o Meu Pluggy, autorize o {banco} de novo e copie o novo Item ID. Depois toque em Renovar. |
 | `conn.importShortcut` | Importar extrato (OFX/CSV) |
 | `conn.banner` | Sua conexão com o {banco} precisa ser renovada |
-| `import.choose` | Escolher arquivo OFX ou CSV |
+| `import.choose` | Escolher arquivo |
+| `import.formats` | OFX ou CSV, exportado pelo banco. |
+| `import.drag` | Ou arraste o arquivo para cá. |
 | `import.bbHint` | Banco do Brasil: exporte o extrato em OFX (Money 2000+). |
 | `import.local` | O arquivo é lido no seu aparelho e não é enviado ao servidor. |
 | `import.preview` | {n} lançamentos · {d} já existem (serão ignorados) · {s} parecidos com lançamentos seus (vão para conferência) |
@@ -2663,6 +2674,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `nfce.use` | Usar estes dados |
 | `nfce.noCamera` | Sem acesso à câmera. Escolha uma foto da nota ou digite a chave de acesso. |
 | `nfce.offline` | Nota salva. Os itens serão buscados quando a conexão voltar. |
+| `nfce.offlineBefore` | Sem internet. A nota fica guardada e os itens entram no lançamento quando a conexão voltar. |
 | `nfce.sefazDown` | Não foi possível carregar os detalhes da nota. Complete o valor para continuar. |
 | `nfce.invalid` | Este QR code não é de uma nota fiscal (NFC-e). Digite a chave de acesso ou tente outra nota. |
 | `nfce.repeated` | Essa nota já foi lida em {data}. |
@@ -2712,7 +2724,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `review.diff.date` | Data diferente: {a} × {b} |
 | `review.pending` | Para decidir |
 | `review.fresh` | Novos do banco |
-| `review.ok` | OK |
+| `review.ok` | Revisado |
 | `review.allReviewed` | Marcar todos como revisados |
 | `review.allBlocked` | Classifique os {n} lançamentos em "A classificar" antes de marcar todos. |
 | `review.allDone` | {n} lançamentos revisados. |
@@ -2723,6 +2735,10 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `review.diff.amount` | Valor diferente: {a} × {b} |
 | `review.diff.method` | Meio diferente: {a} × {b} |
 | `review.noCandidate` | O lançamento parecido não está mais disponível. |
+| `review.keepNew` | Manter como novo |
+| `review.paymentQuestion` | É o pagamento da fatura de {mês}? |
+| `review.paymentYes` | É o pagamento |
+| `review.unclassified` | A classificar |
 | `detail.linkedTo` | Vinculado a: {descricao} |
 | `detail.duplicateOf` | Duplicada de: {descricao} |
 | `detail.notDuplicate` | Não é duplicada |

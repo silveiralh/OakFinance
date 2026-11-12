@@ -6,7 +6,7 @@ import {
   todayIn,
   type YearMonth,
 } from '@oakfinance/domain';
-import { ChevronDown, ReceiptText } from 'lucide-react';
+import { ChevronDown, QrCode, ReceiptText } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -577,6 +577,18 @@ export function QuickEntrySheet({
               { value: 'income', label: t('quick.type.income') },
             ]}
           />
+        )}
+        {/* D-096 (T-126): "Ler nota" à vista no Q01, sem depender do toque longo no FAB */}
+        {!editing && !nfce && mode === 'expense' && (
+          <Button
+            variant="ghost"
+            size="sm"
+            iconStart={QrCode}
+            onClick={() => void navigate('/nota')}
+            data-testid="quick-read-note"
+          >
+            {t('quick.readNote')}
+          </Button>
         )}
         <AmountInput
           value={amount}

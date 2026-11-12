@@ -188,7 +188,7 @@ flowchart LR
 | T-123 | Cartões (C01/C02) | T-122 | done |
 | T-124 | Planejar (P01–P04) | T-123 | done |
 | T-125 | Ajustes (S01–S11) | T-121 | done |
-| T-126 | Importação, nota e conferência | T-125 | todo |
+| T-126 | Importação, nota e conferência | T-125 | done |
 | T-127 | Onboarding e marca | T-126 | todo |
 | T-128 | Specs sem restos do Aero | T-127 | todo |
 | T-129 | Nova auditoria de UX | T-128 | todo |
@@ -1781,7 +1781,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-126 — Importação, nota e conferência
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-49, US-52..US-56 | RN-74, RN-78 | T-125 | não |
+| done | R | M | US-49, US-52..US-56 | RN-74, RN-78 | T-125 | não |
 
 **Pedido do dono (12/11, D-096):** opção "Ler nota" (QR) dentro do Q01, visível sem toque longo; sem internet, avisar antes da câmera que a nota fica guardada e os itens entram quando a conexão voltar (não lança na hora). Texto no UX §6 e teste E2E offline.
 

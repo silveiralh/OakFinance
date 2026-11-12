@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { useLive } from '../../data/live';
-import { emptyStates, t } from '../../i18n/pt-BR';
+import { emptyStates, t, tn } from '../../i18n/pt-BR';
 import { useOnline } from '../../lib/online';
 import { Button, EmptyState, GlassCard, ProgressBar, Select, TextField } from '../../ui';
 import {
@@ -57,12 +57,12 @@ export function ConnectionsScreen() {
   return (
     <section className="screen connections" data-screen="I01" data-testid="screen-I01">
       <GlassCard level={2} title={t('conn.section.banks')} data-testid="connections-banks">
+        {/* UXD-001: no vazio, "Conectar banco" é a ação do próprio vazio; importar fica no card abaixo */}
         {active.length === 0 ? (
           <EmptyState
             icon={Landmark}
             title={empty.title}
             description={empty.text}
-            secondaryAction={{ label: empty.actions[1], onPress: () => void navigate('/importar') }}
             data-testid="connections-empty"
           />
         ) : (
@@ -324,7 +324,8 @@ export function ConnectBankScreen() {
       {step.kind === 'result' && (
         <GlassCard level={2} data-testid="connect-result">
           <p role="status">
-            {step.failed ?? t('conn.result', { n: step.inserted, m: step.summary?.review ?? 0 })}
+            {step.failed ??
+              `${tn('conn.result.imported', step.inserted)} ${tn('conn.result.review', step.summary?.review ?? 0)}`}
           </p>
           <Button fullWidth onClick={() => void navigate('/conferir')}>
             {t('conn.review')}
