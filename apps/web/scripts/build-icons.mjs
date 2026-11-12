@@ -68,7 +68,7 @@ export async function buildIcons() {
   }
   await save('icons/icon-mono-512.png', render(mono, 512));
   await save('icons/badge-96.png', render(mono, 96));
-  await save('apple-touch-icon.png', render(maskable, 180).flatten({ background: '#053F5F' }));
+  await save('apple-touch-icon.png', render(maskable, 180).flatten({ background: '#0B0D0A' }));
 
   const pngs = [];
   for (const size of [16, 32, 48]) {

@@ -148,6 +148,7 @@ O cliente trocou o Aero (vidro, céu azul, brilho especular) por este visual em 
 - Preto como cor de ação (botão primário, barra de abas, cartão do mês).
 - Lima só para seleção, FAB, aba ativa e destaque pontual, sempre com texto preto.
 - Uma família arredondada (Nunito) com pesos fortes nos números e títulos.
+- O logo é a exceção: o nome em linha em Sora ("Oak" 600 em tinta, "Finance" 200 em oliva), desenhado em contornos, e o monograma "OF" em Sora lima sobre preto (D-108).
 - Pílulas em tudo o que é tocável; cards com 20 px de raio.
 
 ## Colors

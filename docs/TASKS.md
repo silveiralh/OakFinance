@@ -1842,6 +1842,8 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 
 **Verificar:** `pnpm ci:local`; capturas do roteiro a 360 px.
 
+**Logo novo no mesmo PR (D-108, pedido do dono):** o dono recusou a primeira referência (logo pequeno e fonte) e escolheu, no laboratório de marca, o nome em linha em Sora 600/200, preto e oliva, monograma "OF" em Sora; o logo vai em contornos e a referência `tokens-*.png` é refeita uma vez só com o valor sem quebra e o logo novo.
+
 ### T-131 — Impeccable no projeto
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|

@@ -2,6 +2,7 @@ import { act, fireEvent, render, renderHook, screen } from '@testing-library/rea
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BrandLogo, resolveLogoArt, ToastProvider, useToast } from '../../src/ui';
+import { MONOGRAM_OF, WORDMARK_RATIO, WORDMARK_VIEWBOX } from '../../src/ui/brand-paths';
 import { TOAST_MS, TOAST_WITH_ACTION_MS } from '../../src/ui/Toast';
 
 const wrapper = ({ children }: { children: ReactNode }) => (
@@ -137,41 +138,51 @@ describe('BrandLogo (UX §4.11, §5.35)', () => {
     );
     expect(screen.getAllByRole('img', { name: 'OakFinance' })).toHaveLength(2);
     expect(screen.getByTestId('d')).toHaveAttribute('aria-hidden', 'true');
-    const ids = [...document.querySelectorAll('linearGradient')].map((g) => g.id);
+    const ids = [...document.querySelectorAll('title')].map((g) => g.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(screen.getByTestId('a')).toHaveAttribute('width', String(Math.round((40 * 272) / 64)));
+    // D-108: o desenho em contornos ocupa a altura toda (sem a folga do texto antigo)
+    expect(screen.getByTestId('a')).toHaveAttribute(
+      'width',
+      String(Math.round(40 * WORDMARK_RATIO)),
+    );
+    expect(screen.getByTestId('a')).toHaveAttribute('viewBox', WORDMARK_VIEWBOX);
   });
 
   it('cores: tokens no automático; hex do tema quando forçado; sólido derruba o brilho', () => {
     const { rerender } = render(<BrandLogo data-testid="l" />);
-    expect(screen.getByTestId('l').querySelector('tspan')).toHaveAttribute(
-      'fill',
+    const paths = () => [...screen.getByTestId('l').querySelectorAll('path')];
+    expect(paths().map((p) => p.getAttribute('fill'))).toEqual([
       'var(--brand-oak)',
-    );
+      'var(--brand-finance)',
+    ]);
+    // D-108: "Oak" e "Finance" são contornos da Sora, não texto que depende da fonte carregar
+    expect(screen.getByTestId('l').querySelector('text')).toBeNull();
     rerender(<BrandLogo theme="dark" data-testid="l" />);
-    // UXA-013: o hex forçado é o do token de marca do escuro (névoa), não mais o azul-claro do Aero
-    expect(screen.getByTestId('l').querySelector('tspan')).toHaveAttribute('fill', '#F2F7EC');
+    // UXA-013: o hex forçado é o do token de marca do escuro (névoa e lima)
+    expect(paths().map((p) => p.getAttribute('fill'))).toEqual(['#F2F7EC', '#C0E45C']);
     document.documentElement.setAttribute('data-glass', 'solid');
     document.documentElement.setAttribute('data-theme', 'dark');
     rerender(<BrandLogo variant="wordmark-sheen" height={48} data-testid="l" />);
     expect(screen.getByTestId('l')).toHaveAttribute('data-art', 'wordmark');
     document.documentElement.removeAttribute('data-glass');
     rerender(<BrandLogo variant="wordmark-sheen" height={48} data-testid="l" />);
-    const stop = screen.getByTestId('l').querySelector('stop');
-    expect(stop).toHaveAttribute('stop-color', '#FFFFFF');
+    // D-108: sem o brilho em degradê do Aero
+    expect(screen.getByTestId('l').querySelector('stop')).toBeNull();
   });
 
   it('monograma, favicon e mono desenham o OF', () => {
     const { rerender } = render(<BrandLogo variant="monogram" height={48} data-testid="l" />);
     expect(screen.getByTestId('l')).toHaveAttribute('viewBox', '0 0 512 512');
-    // UXA-013: o "O" do OF em lima sobre o quadrado preto (sem o disco de vidro do Aero)
-    expect(screen.getByTestId('l').querySelector('circle[r="74"]')).not.toBeNull();
-    expect(screen.getByTestId('l').querySelector('g')).toHaveAttribute('stroke', '#C0E45C');
+    // D-108: o "OF" da Sora em lima sobre o quadrado preto
+    expect(screen.getByTestId('l').querySelector('path')).toHaveAttribute('fill', '#C0E45C');
+    expect(screen.getByTestId('l').querySelector('path')?.getAttribute('d')).toBe(MONOGRAM_OF);
     rerender(<BrandLogo variant="monogram" height={16} data-testid="l" />);
     expect(screen.getByTestId('l')).toHaveAttribute('viewBox', '0 0 32 32');
     rerender(<BrandLogo variant="mono" glyph="monogram" data-testid="l" />);
-    expect(screen.getByTestId('l').querySelector('g')).toHaveAttribute('stroke', 'currentColor');
+    expect(screen.getByTestId('l').querySelector('path')).toHaveAttribute('fill', 'currentColor');
     rerender(<BrandLogo variant="mono" height={32} data-testid="l" />);
-    expect(screen.getByTestId('l').querySelector('text')).toHaveAttribute('fill', 'currentColor');
+    expect(
+      [...screen.getByTestId('l').querySelectorAll('path')].map((p) => p.getAttribute('fill')),
+    ).toEqual(['currentColor', 'currentColor']);
   });
 });
