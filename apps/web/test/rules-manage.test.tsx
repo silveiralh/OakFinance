@@ -108,10 +108,16 @@ describe('rules — gerenciar (US-29, RN-59, RN-60)', () => {
     ]);
     mount(auth);
     const items = within(await screen.findByTestId('rules-list')).getAllByRole('button');
-    expect(items[0]).toHaveTextContent(
-      'UNIMED PARANA → Saúde · BB · Aprendida · 3 acertos · último uso 05/11/2026',
-    );
-    expect(items[1]).toHaveTextContent('ZAFFARI → Lazer · Manual · 0 acertos · sem uso');
+    // UXC-013: termo → categoria na primeira linha; a meta, parte por parte, na segunda
+    const parts = (item: HTMLElement | undefined) =>
+      Array.from(within(item as HTMLElement).getByTestId('rule-meta').children).map(
+        (el) => el.textContent,
+      );
+    expect(items[0]?.querySelector('.rule-row-title')?.textContent).toBe('UNIMED PARANA → Saúde');
+    expect(parts(items[0])).toEqual(['BB', 'Aprendida', '3 acertos', 'último uso 05/11/2026']);
+    expect(items[1]?.querySelector('.rule-row-title')?.textContent).toBe('ZAFFARI → Lazer');
+    // sem acertos, a meta fica "Manual · sem uso" (sem "0 acertos")
+    expect(parts(items[1])).toEqual(['Manual', 'sem uso']);
   });
 
   it('US-29: editar o termo para "UNIMED" mostra "Casaria com 7 lançamentos dos últimos 90 dias"', async () => {

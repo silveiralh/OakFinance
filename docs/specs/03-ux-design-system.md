@@ -2405,6 +2405,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `rules.source.learned` | Aprendida |
 | `rules.source.manual` | Manual |
 | `rules.hits` | {n} acertos |
+| `rules.hits.one` | 1 acerto |
 | `rules.lastHit` | último uso {data} |
 | `rules.never` | sem uso |
 | `rules.delete` | Apagar |
@@ -2573,9 +2574,13 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.connect` | Conectar banco |
 | `conn.explain` | A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos. |
 | `conn.connected` | Conectado. Buscando os últimos 90 dias… |
-| `conn.result` | {n} lançamentos importados. {m} precisam de conferência. |
+| `conn.result.imported` | {n} lançamentos importados. |
+| `conn.result.imported.one` | 1 lançamento importado. |
+| `conn.result.review` | {n} precisam de conferência. |
+| `conn.result.review.one` | 1 precisa de conferência. |
 | `conn.updated` | Atualizado {quando} |
 | `conn.expiresIn` | Expira em {n} dias |
+| `conn.expiresIn.one` | Expira amanhã |
 | `conn.renew` | Renovar |
 | `conn.expired` | A conexão com o {banco} expirou. Renove para continuar recebendo lançamentos. |
 | `conn.bankError` | O {banco} não respondeu. Uma nova tentativa será feita amanhã cedo, ou tente agora. |
@@ -2589,7 +2594,11 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.needsInternet` | Precisa de internet |
 | `conn.refresh` | Atualizar agora |
 | `conn.refreshTooSoon` | Atualizado há {n} min. Tente de novo em {m} min. |
-| `conn.summary` | {n} novas · {m} vinculadas · {k} para conferir |
+| `conn.summary.fresh` | {n} novas |
+| `conn.summary.fresh.one` | 1 nova |
+| `conn.summary.linked` | {n} vinculadas |
+| `conn.summary.linked.one` | 1 vinculada |
+| `conn.summary.review` | {n} para conferir |
 | `conn.state.active` | Ativa |
 | `conn.state.updating` | Atualizando |
 | `conn.state.expiring` | Expira em breve |

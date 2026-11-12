@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { useLive } from '../../data/live';
-import { emptyStates, t } from '../../i18n/pt-BR';
+import { emptyStates, t, tn } from '../../i18n/pt-BR';
 import { useOnline } from '../../lib/online';
 import { Button, EmptyState, GlassCard, ProgressBar, Select, TextField } from '../../ui';
 import {
@@ -324,7 +324,8 @@ export function ConnectBankScreen() {
       {step.kind === 'result' && (
         <GlassCard level={2} data-testid="connect-result">
           <p role="status">
-            {step.failed ?? t('conn.result', { n: step.inserted, m: step.summary?.review ?? 0 })}
+            {step.failed ??
+              `${tn('conn.result.imported', step.inserted)} ${tn('conn.result.review', step.summary?.review ?? 0)}`}
           </p>
           <Button fullWidth onClick={() => void navigate('/conferir')}>
             {t('conn.review')}

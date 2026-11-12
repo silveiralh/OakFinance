@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
-import { t } from '../../i18n/pt-BR';
+import { t, tn } from '../../i18n/pt-BR';
 import { useOnline } from '../../lib/online';
 import { Badge, Button, GlassCard } from '../../ui';
 import { type MapClient, refreshNow, withE2e } from './api';
@@ -89,12 +89,14 @@ export function BankConnectionCard({ connection }: { connection: LocalRow<'bank_
         <Badge {...BADGES[state]} label={t(`conn.state.${state}`)} />
       </div>
       {updated && <p className="account-meta">{updated}</p>}
-      {days !== null && days > 0 && (
-        <p className="account-meta">{t('conn.expiresIn', { n: days })}</p>
-      )}
+      {days !== null && days > 0 && <p className="account-meta">{tn('conn.expiresIn', days)}</p>}
       {summary && (
         <p className="account-meta" data-testid="bank-connection-summary">
-          {t('conn.summary', { n: summary.fresh, m: summary.linked, k: summary.review })}
+          {[
+            tn('conn.summary.fresh', summary.fresh),
+            tn('conn.summary.linked', summary.linked),
+            tn('conn.summary.review', summary.review),
+          ].join(' · ')}
         </p>
       )}
       {(state === 'expired' || state === 'reconnect') && (

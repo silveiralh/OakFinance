@@ -722,6 +722,7 @@ export const ptBR = {
   'rules.source.learned': 'Aprendida',
   'rules.source.manual': 'Manual',
   'rules.hits': '{n} acertos',
+  'rules.hits.one': '1 acerto',
   'rules.lastHit': 'último uso {data}',
   'rules.never': 'sem uso',
   'rules.delete': 'Apagar',
@@ -741,9 +742,13 @@ export const ptBR = {
   'conn.explain':
     'A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos.',
   'conn.connected': 'Conectado. Buscando os últimos 90 dias…',
-  'conn.result': '{n} lançamentos importados. {m} precisam de conferência.',
+  'conn.result.imported': '{n} lançamentos importados.',
+  'conn.result.imported.one': '1 lançamento importado.',
+  'conn.result.review': '{n} precisam de conferência.',
+  'conn.result.review.one': '1 precisa de conferência.',
   'conn.updated': 'Atualizado {quando}',
   'conn.expiresIn': 'Expira em {n} dias',
+  'conn.expiresIn.one': 'Expira amanhã',
   'conn.renew': 'Renovar',
   'conn.expired': 'A conexão com o {banco} expirou. Renove para continuar recebendo lançamentos.',
   'conn.bankError':
@@ -759,7 +764,11 @@ export const ptBR = {
   'conn.needsInternet': 'Precisa de internet',
   'conn.refresh': 'Atualizar agora',
   'conn.refreshTooSoon': 'Atualizado há {n} min. Tente de novo em {m} min.',
-  'conn.summary': '{n} novas · {m} vinculadas · {k} para conferir',
+  'conn.summary.fresh': '{n} novas',
+  'conn.summary.fresh.one': '1 nova',
+  'conn.summary.linked': '{n} vinculadas',
+  'conn.summary.linked.one': '1 vinculada',
+  'conn.summary.review': '{n} para conferir',
   'conn.state.active': 'Ativa',
   'conn.state.updating': 'Atualizando',
   'conn.state.expiring': 'Expira em breve',
@@ -1272,6 +1281,19 @@ export function documentTitle(screen: ScreenId): string {
 }
 
 /** Texto da chave com os placeholders preenchidos; placeholder sem valor fica como está. */
+/**
+ * UXD-009: plural — usa a chave `<chave>.one` quando `n` é 1 e ela existe ("1 nova", "Expira amanhã"); senão, a
+ * chave normal com `{n}`.
+ */
+export function tn(
+  key: MessageKey,
+  n: number,
+  values: Readonly<Record<string, string | number>> = {},
+): string {
+  const one = `${key}.one`;
+  return t(n === 1 && one in ptBR ? (one as MessageKey) : key, { ...values, n });
+}
+
 export function t(key: MessageKey, values: Readonly<Record<string, string | number>> = {}): string {
   return ptBR[key].replace(/\{([^{}]+)\}/g, (whole, name: string) =>
     name in values ? String(values[name]) : whole,

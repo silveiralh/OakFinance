@@ -407,6 +407,32 @@ body:has(.screen-welcome) .backdrop {
 .cards-invoice-month {
   min-width: 0;
 }
+/* T-126 (UXC-013): regra em duas linhas — termo → categoria e, abaixo, a meta sem quebrar no meio de uma parte */
+.cards-invoice.rule-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.rule-row-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.rule-row-title {
+  font-weight: var(--font-weight-semibold, 600);
+  overflow-wrap: anywhere;
+}
+.rule-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-1);
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+}
+.rule-row-meta > span {
+  white-space: nowrap;
+}
+.rule-row-meta > span + span::before {
+  content: "· ";
+}
 .cards-invoice-total {
   text-align: end;
   white-space: nowrap;
