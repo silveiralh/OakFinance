@@ -190,7 +190,7 @@ flowchart LR
 | T-125 | Ajustes (S01–S11) | T-121 | done |
 | T-126 | Importação, nota e conferência | T-125 | done |
 | T-127 | Onboarding e marca | T-126 | done |
-| T-128 | Specs sem restos do Aero | T-127 | todo |
+| T-128 | Specs sem restos do Aero | T-127 | done |
 | T-129 | Nova auditoria de UX | T-128 | todo |
 | T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
 | T-131 | Impeccable no projeto | T-101 | done |
@@ -1805,7 +1805,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-128 — Specs sem restos do Aero
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | P | — | — | T-127 | não |
+| done | R | P | — | — | T-127 | não |
 
 **Escopo (D-084 itens 5 e 11):** UX §3 do Q01 alinhada à D-043 e à §5.8; §4.4, §4.7, §4.8, §5.9, §5.20, §5.22 e §5.23 reescritas pela §4.0 ou marcadas como substituídas; §5.33 e §4.0 com o rótulo de 13 px e as cores do escuro da T-117. Só documentação.
 
