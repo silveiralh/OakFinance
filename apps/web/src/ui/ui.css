@@ -1298,8 +1298,12 @@
 .sync-badge.glass[data-state="syncing"] {
   background: none;
   border: 0;
-  box-shadow: none;
   padding: 0;
   min-width: var(--touch-min);
   justify-content: center;
+}
+/* sem a sombra do card, mas o anel de foco continua (2.4.7) */
+.sync-badge.glass[data-state="synced"]:not(:focus-visible),
+.sync-badge.glass[data-state="syncing"]:not(:focus-visible) {
+  box-shadow: none;
 }
