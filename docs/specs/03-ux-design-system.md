@@ -42,8 +42,8 @@
 | Números em telas | Sempre com algarismos tabulares (`font-variant-numeric: tabular-nums`) |
 | Tamanho de toque | Mínimo **48×48 px** (CSS) em todo controle; 8 px entre alvos adjacentes |
 | Breakpoints | `sm` < 600 px (celular, layout base) · `md` 600–1023 px (tablet / celular deitado) · `lg` ≥ 1024 px (computador) |
-| Ícones | Phosphor Icons (`@phosphor-icons/react`, licença MIT) |
-| Tema/vidro/movimento | Atributos no `<html>`: `data-theme="light|dark"`, `data-glass="glass|solid"`, `data-motion="full|reduced"`, `data-perf="normal|low"`, `data-values="shown|hidden"` (ver 4.10) |
+| Ícones | Lucide (`lucide-react`, licença ISC), §4.0 e §4.7 |
+| Tema/movimento | Atributos no `<html>`: `data-theme="light|dark"`, `data-glass="glass|solid"` (herança do Aero, hoje sem efeito visual, §4.0), `data-motion="full|reduced"`, `data-perf="normal|low"`, `data-values="shown|hidden"` (ver 4.10) |
 
 ### 0.2 Glossário da interface (usar exatamente estes termos)
 
@@ -78,9 +78,9 @@ Cada princípio tem um **critério verificável**. As sessões de desenvolviment
 | P2 | **Uma mão, polegar primeiro** | Ações primárias no terço inferior da tela. Nada essencial no topo que exija esticar o dedo | FAB, botão "Lançar", teclado numérico e abas na zona inferior (≤ 40% da altura a partir da base). O topo tem só leitura e ações secundárias |
 | P3 | **Offline sem fricção** | Lançar sem internet é normal, não um erro. O app salva na hora e informa o estado com calma | Lançamento salvo em IndexedDB em < 100 ms, sem esperar rede. Nenhum spinner bloqueante por falta de rede. Aviso offline em tom informativo, nunca em vermelho |
 | P4 | **A resposta antes dos detalhes** | A tela inicial responde "quanto ainda posso gastar" em uma olhada; detalhes a 1 toque | Valor "Disponível para gastar" visível sem rolagem em 360×640; primeiro paint com dado local em < 1 s após abrir |
-| P5 | **Sóbrio e premium: movimento só com função** | A estética Aero (vidro, profundidade, gradientes suaves, brilho discreto) dá a sensação de ferramenta financeira moderna. Nada decora por decorar | Nenhuma animação em loop, exceto indicadores de carregamento. Transições entre 150 e 250 ms; feedback de toque ≤ 100 ms. Sem celebrações, confetes, metas gamificadas, contagens de dias seguidos nem ilustrações. Com `prefers-reduced-motion`, nenhum deslocamento: só troca de opacidade ≤ 100 ms |
+| P5 | **Sóbrio e premium: movimento só com função** | O visual menta e lima da §4.0 (cards sólidos, pílulas, sombras discretas) dá a sensação de ferramenta financeira moderna. Nada decora por decorar | Nenhuma animação em loop, exceto indicadores de carregamento. Transições entre 150 e 250 ms; feedback de toque ≤ 100 ms. Sem celebrações, confetes, metas gamificadas, contagens de dias seguidos nem ilustrações. Com `prefers-reduced-motion`, nenhum deslocamento: só troca de opacidade ≤ 100 ms |
 | P6 | **Direto e respeitoso, nunca culpar** | Texto claro e confiante, para adultos. Informa o fato e o próximo passo, sem sermão e sem infantilizar. Despesa não é vermelha | Lista de construções proibidas (6.3) verificada em revisão; nenhum "!" e nenhum emoji em `pt-BR.json` e nos textos de push (teste automatizado); cor de despesa = cor de texto neutra |
-| P7 | **Legível sobre o vidro** | O vidro é moldura, não fundo de texto fino | Pares texto/fundo da 4.3 ≥ 4,5:1 (texto) e ≥ 3:1 (componentes e gráficos), medidos no pior fundo possível |
+| P7 | **Legível em qualquer superfície** | Card branco, menta e escuro são fundos de texto; a lima nunca é texto nem borda sobre branco | Pares texto/fundo da 4.3 ≥ 4,5:1 (texto) e ≥ 3:1 (componentes e gráficos), medidos no pior fundo possível |
 | P8 | **Automático, mas sob controle** | Open Finance, OFX e NFC-e trazem dados; o usuário confere antes de duplicar ou sumir algo | Nenhum lançamento importado altera ou apaga lançamento manual sem ação explícita ou vínculo automático com "Desfazer" |
 | P9 | **Privacidade à vista** | Um toque esconde todos os valores (fila do caixa, transporte público) | Botão olho no topo do Início; com valores ocultos, nenhum valor monetário aparece em tela, notificação de tela bloqueada nem prévia de app |
 | P10 | **Mesmo peso para Android e iPhone** | Fluxos específicos de cada plataforma (instalação, notificação) são de primeira classe | Toda tela testada em Chrome Android e Safari iOS instalados; guia de instalação separado por plataforma |
@@ -91,9 +91,9 @@ Cada princípio tem um **critério verificável**. As sessões de desenvolviment
 
 ### 2.1 Estrutura de navegação
 
-**Celular (`sm`/`md`):** barra de abas inferior em vidro com 4 abas + botão central **+** (FAB).
+**Celular (`sm`/`md`):** barra de abas flutuante (pílula preta, §4.0) com 4 abas + botão central **+** (FAB).
 
-| Posição | Aba | Rota | Ícone Phosphor (inativo `regular` / ativo `fill`) |
+| Posição | Aba | Rota | Ícone (nomes do registro original; a Lucide equivalente vem de `features/quick-entry/icons.ts` e `app/`, traço 2 / 2,5 na ativa) |
 |---|---|---|---|
 | 1 | Início | `/` | `House` |
 | 2 | Lançamentos | `/lancamentos` | `ListBullets` (badge com nº a conferir) |
@@ -103,7 +103,7 @@ Cada princípio tem um **critério verificável**. As sessões de desenvolviment
 
 **Menu da conta (D-076, T-118):** avatar com as iniciais (ou `CircleUser` sem nome) no topo das 4 abas principais (Início, Lançamentos, Cartões e as abas do Planejar) abre uma folha "Sua conta" com **Configurações** (`/ajustes`), **Importar extrato** (`/importar`), **Ler nota fiscal** (`/nota`) e **Sair** (o do S02, com o aviso de pendências da RN-100); **Conexões e importação** só aparece com o Open Finance (D-080). Toque longo no FAB: **Receita**, **Guardar**, **Importar extrato** e **Ler nota** (o toque simples abre a despesa); a alternativa sem gesto (WCAG 2.5.1) é o seletor de tipo do Q01 e o menu da conta. "Importar extrato" também no vazio de Lançamentos; a S01 lista a I01 e a I06. Subtelas têm **Voltar** no TopBar (volta no histórico; aberta direto, vai para a tela-mãe).
 
-**Computador (`lg`):** barra lateral em vidro de 248 px à esquerda (mesmos itens + Configurações + Conexões; sem o Open Finance, o último item é "Importar extrato", que abre a I01), conteúdo com largura máxima de 1.200 px; o lançamento rápido abre como diálogo central de 440 px. Atalhos de teclado: `N` novo lançamento, `/` buscar em Lançamentos, `Esc` fecha sheet/diálogo.
+**Computador (`lg`):** barra lateral branca de 248 px à esquerda (mesmos itens + Configurações + Conexões; sem o Open Finance, o último item é "Importar extrato", que abre a I01), conteúdo em uma coluna que usa a largura toda (D-025, D-026); o lançamento rápido abre como diálogo central de 440 px. Atalhos de teclado: `N` novo lançamento, `/` buscar em Lançamentos, `Esc` fecha sheet/diálogo.
 
 ### 2.2 Mapa geral de telas
 
@@ -262,8 +262,8 @@ stateDiagram-v2
 
 - **Fundo:** `AppBackdrop` fixo atrás de tudo: gradiente estático do tema (`--bg-backdrop`), azul-céu suave no claro e azul-noite profundo no Aero noturno, com um realce radial discreto no topo para dar profundidade. Não muda com dados, horário nem estado do mês, e não tem elementos animados.
 - **Abertura (S00):** fundo `--bg-backdrop` com o wordmark `BrandLogo variant="wordmark"` centralizado (altura 32 px) e uma `ProgressBar` indeterminada fina abaixo, só se o carregamento passar de 400 ms. Sem animação de logo. Some quando os dados locais carregam (meta < 1 s).
-- **Topo (`TopBar`):** 56 px + `env(safe-area-inset-top)`. Três colunas: Voltar (subtelas) à esquerda, título centrado numa linha (com reticências; a S06 usa o título curto "Cálculo e orçamento", D-089) e, à direita, `SyncBadge` (só o ícone quando sincronizado) e o avatar do menu da conta nas raízes das abas (D-076). Transparente até rolar 8 px; depois vira vidro nível 3 (transição de 150 ms).
-- **Abas (`TabBar`):** 64 px + `env(safe-area-inset-bottom)`, vidro nível 3, FAB de 56 px elevado 12 px acima da barra.
+- **Topo (`TopBar`):** 56 px + `env(safe-area-inset-top)`. Três colunas: Voltar (subtelas) à esquerda, título centrado numa linha (com reticências; a S06 usa o título curto "Cálculo e orçamento", D-089) e, à direita, `SyncBadge` (só o ícone quando sincronizado) e o avatar do menu da conta nas raízes das abas (D-076). Sem fundo próprio (fica sobre a menta, §4.0).
+- **Abas (`TabBar`):** pílula preta flutuante de 64 px a 12 px do fundo (mais `env(safe-area-inset-bottom)`), FAB lima de 52 px no meio (§4.0).
 - **Banner global:** abaixo do topo, para offline/erro de sync/atualização (`G01`–`G08`).
 - **Região `aria-live="polite"`** única no AppShell para toasts e mudanças de sync; no celular o toast fica acima da barra de abas flutuante (64 px + 12 px + 12 px), no `lg` a 24 px do fundo.
 - **Landmarks:** `<header>`, `<nav aria-label="Navegação principal">`, `<main id="conteudo">`; no `lg`, link "Pular para o conteúdo" como primeiro foco.
@@ -331,7 +331,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 - **Objetivo:** explicar o valor antes do prompt do sistema e só pedir após um toque.
 - **Conteúdo:**
-  1. Ícone `Bell` 32 px em disco de vidro 64 px.
+  1. Ícone `Bell` 32 px em disco sólido de 64 px, antes do título (UXA-029, D-103).
   2. Título "Lembretes de vencimentos e orçamento".
   3. Lista de lembretes com `Switch`, ligados por padrão: Vencimento de faturas e contas (3 dias antes e no dia) · Lembrete diário para registrar gastos (20:00) · Resumo semanal (domingo, 19:00) · Categoria perto do limite (80%).
   4. Primário **Ativar lembretes** → `Notification.requestPermission()` → assinatura Web Push. Secundário **Agora não**.
@@ -453,14 +453,14 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 - **Celular (T-119, D-090):** a folha abre com o foco no valor; com ponteiro grosso, o teclado numérico e **Lançar** ficam num rodapé fixo da folha (o resto rola acima); o cabeçalho da folha (título e Fechar) fica fixo; o valor é centrado; **Mais** tem forma de chip (com `ChevronDown`) e o grupo de categorias se chama "Categoria". A opção escolhida no segmentado e nos chips tem contorno de 2 px no token `--selection-outline` (preto no claro, claro no escuro), não só a cor.
 - **Objetivo:** registrar valor + categoria + meio de pagamento em ≤ 5 s, com uma mão, com ou sem internet.
 - **Conteúdo e hierarquia (sheet de 88% da altura no celular):**
-  1. Alça de arrasto + `SegmentedControl` **Despesa | Receita | Guardar** (padrão: Despesa; "Guardar" = aporte na faixa Poupança/Reserva).
+  1. Alça de arrasto + `SegmentedControl` **Despesa | Receita** (padrão: Despesa). **Guardar** é uma folha própria (`?novo=guardar`, D-043), aberta pelo menu do FAB ou pelo card do Início. Na despesa, **Ler nota** (ícone `QrCode`) leva à I04 (D-096, T-126).
   2. `AmountInput` grande, centralizado: "R$ 0,00" → digitação estilo caixa eletrônico (dígitos entram pela direita: `3` `2` `9` `0` → R$ 32,90).
   3. Linha de **categorias sugeridas**: 5 `CategoryChip` + chip **Mais** (abre `CategoryPicker` em grade com busca). Ordem: (a) regra aprendida para o meio de pagamento + faixa horária ±2 h; (b) frequência nos últimos 30 dias; (c) padrão por meio (VR → Restaurantes, VA → Mercado). Se a primeira sugestão tem **confiança alta** (mesma regra confirmada ≥ 3 vezes no mesmo contexto), já vem marcada; senão, nenhuma vem marcada.
   4. `PaymentMethodPicker` compacto: chip com o meio atual (padrão = último usado); toque abre a lista. Se for cartão de crédito, aparece abaixo: "Entra na fatura de dezembro, vence 10/12" e o `InstallmentStepper` **À vista | 2x | 3x … 48x** (RN-20), com a alternância **Total | Parcela** para informar o valor total ou o da parcela.
   5. Link **Mais detalhes** (expande na própria sheet): Descrição (com autocompletar; se digitada antes da categoria, sugere a categoria pela regra, RN-61) · Data (`DateChip`: Hoje / Ontem / escolher; data a mais de 60 dias de hoje pede confirmação "Essa data está longe de hoje. Confirmar?") · Observação · Conta (se o meio permitir mais de uma) · "Repetir todo mês" (conta fixa: dia, fim, valor variável, confirmação automática) · **Outro tipo**: Transferência entre contas (origem e destino, cartão não aparece como destino) · Estorno no cartão.
   - Em **Receita**: pergunta "Já caiu na conta?" (**Sim** / **Não**, RN-33). Com **Não**, aparece o `Switch` "Contar antes de receber" (desligado = "A receber", não entra no cálculo; ligado = "Prevista", entra com borda tracejada).
-  6. `NumericKeypad` (4×3: 1–9, `00`, 0, apagar) no terço inferior.
-  7. Botão primário **Lançar** (largura total, 56 px); em modo Guardar, **Guardar**.
+  6. `NumericKeypad` (4×3: 1–9, `00`, 0, apagar) num rodapé fixo da folha, junto com **Lançar**, com ponteiro grosso (§5.8, T-119); com ponteiro fino, o campo usa o teclado do sistema.
+  7. Botão primário **Lançar** (largura total, 56 px), no mesmo rodapé fixo. Na folha do Guardar, **Guardar**.
 - **Componentes:** `BottomSheet`, `SegmentedControl`, `AmountInput`, `NumericKeypad`, `CategoryChip`, `CategoryPicker`, `PaymentMethodPicker`, `InstallmentStepper`, `DateChip`, `TextField`, `Switch`, `Button`, `Toast`.
 - **Estados:**
   - Vazio: "Lançar" desativado; texto auxiliar abaixo do botão: "Informe o valor" / "Escolha a categoria" (o que faltar primeiro).
@@ -498,7 +498,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
   2. Resumo do mês em 3 números: Entradas · Saídas · Guardado.
   3. Filtros em chips roláveis e combináveis: Todos · Despesas · Receitas · Cartões · Pix · Dinheiro · VR/VA · Para conferir · Previstas · Atrasadas; botão **Filtros** abre conta, faixa e categoria (US-15), com o total filtrado. Botão busca (`MagnifyingGlass`): sem acento e por valor ("45,90").
   4. Card "Conferir" se houver pendências (→ I05).
-  5. Lista agrupada por dia (cabeçalho fixo "Hoje · R$ 87,40", "Ontem", "ter, 3 nov") em **um** GlassCard por grupo; linhas `TransactionRow` sem vidro próprio.
+  5. Lista agrupada por dia (cabeçalho fixo "Hoje · R$ 87,40", "Ontem", "ter, 3 nov") em **um** card por grupo; linhas `TransactionRow` sem card próprio.
 - **Estados:** carregando (skeleton de 6 linhas) · vazio do mês · vazio por filtro · busca sem resultado · linhas pendentes de sync (ícone `CloudArrowUp` pequeno + texto para leitor de tela "não sincronizado") · linhas importadas (selo da fonte: "Nubank", "OFX", "Nota").
 - **Interações:** toque na linha → T02. Deslizar a linha para a esquerda revela **Editar** e **Excluir** (alternativa: botão `DotsThree` na linha, sempre visível em `lg` e acessível por teclado). Exclusão mostra toast "Lançamento excluído" + **Desfazer** (8 s).
 - **Acessibilidade:** lista com `<ul>`/`<li>`; cada linha é um botão com rótulo completo (ver TransactionRow). Cabeçalhos de dia são `<h2>`.
@@ -658,7 +658,7 @@ Lista em GlassCards agrupados; cada item leva a uma subtela:
 | G07 | **Nova versão** | Toast persistente | Info | "Nova versão disponível." **Atualizar** |
 | G08 | **Armazenamento local limpo pelo sistema** | Diálogo | Alerta | "O sistema liberou espaço e apagou a cópia local. Seus dados estão na nuvem e serão baixados novamente." **Baixar agora** |
 | G09 | **Erro de tela** | Substitui o conteúdo | `EmptyState variant="error"` | "Não foi possível carregar esta tela. Seus dados estão seguros." **Tentar novamente** |
-| G10 | **Carregando** | Conteúdo | `Skeleton` em vidro | — (`aria-busy="true"`) |
+| G10 | **Carregando** | Conteúdo | `Skeleton` sobre o card | — (`aria-busy="true"`) |
 | G11 | **Armazenamento cheio** | Banner persistente | Alerta | "O armazenamento do aparelho está cheio. Libere espaço para continuar lançando." (o lançamento em digitação não é descartado) |
 | G12 | **Armazenamento local bloqueado** | Banner persistente | Alerta | "Este navegador bloqueou o armazenamento local. Abra pelo app instalado." (modo só online) |
 | G13 | **Serviço lento** | Inline na ação | Info | "O serviço demorou para responder. Tente novamente." **Tentar novamente** |
@@ -683,7 +683,7 @@ Lista em GlassCards agrupados; cada item leva a uma subtela:
 | Fundo (`--bg-base`) | menta `#EEFDE0`, liso | grafite `#0B0D0A` | toda a tela; sem gradiente |
 | Card (`--glass-1/2/3-bg`) | branco `#FFFFFF` | `#1C1F1A` / `#2A2D27` | cards, chips, sheets internos; sólidos, sem desfoque |
 | Destaque (`--accent` / `--on-accent`) | lima `#C0E45C` com texto `#0B0D0A` | igual | seleção, FAB, aba ativa, ação secundária forte |
-| Escuro (`--surface-dark` / `--on-dark`) | `#0B0D0A` com texto branco | `#000000` | cartão do mês no Início, barra de abas, ícone da categoria, botão primário |
+| Escuro (`--surface-dark` / `--on-dark`) | `#0B0D0A` com texto branco | `#2A2D27` (superfície elevada, T-117) | cartão do mês no Início, barra de abas, ícone da categoria, botão primário |
 | Texto | `#0B0D0A` · `#3A3F36` · `#4F5649` | `#F2F7EC` · `#C4CCBB` · `#A9B2A0` | primário · secundário · terciário |
 | Receita / guardado | `#3A5C0B` / `#0B5E58` | `#D4F07E` / `#5FD4C3` | sempre com sinal e ícone, nunca só cor |
 | Faixas 50/30/20 | Necessidades `#0F766E` · Desejos `#7A55D3` · Poupança `#4D7C0F` | `#5FD4C3` · `#9D82F5` · `#C0E45C` | ≥ 3:1 sobre o card |
@@ -721,6 +721,8 @@ Três camadas, todas como CSS custom properties em `src/styles/tokens.css`:
 Resolução do tema: script inline bloqueante no `<head>` do `index.html` lê a preferência salva (`localStorage` com try/catch; padrão "auto") e `matchMedia('(prefers-color-scheme: dark)')`, e grava `data-theme="light"` ou `data-theme="dark"` **resolvido** no `<html>` antes do primeiro paint (escuta mudanças do sistema quando "auto"). Assim o CSS só precisa de `[data-theme="dark"]`. O `<meta name="theme-color">` é atualizado junto (`#EEFDE0` claro, `#0B0D0A` escuro, D-023).
 
 ### 4.2 Tokens CSS (copiar como está)
+
+> **Substituída (D-023, T-128).** O visual Aero descrito abaixo (vidro, desfoque, céu azul, aqua, Manrope, Phosphor) não vale mais; fica como registro. A regra vigente é a §4.0 e a fonte da verdade dos valores é `apps/web/src/styles/tokens.css`.
 
 ```css
 /* ==========================================================
@@ -1150,6 +1152,8 @@ body {
 
 ### 4.3 Verificação de contraste WCAG 2.1 AA
 
+> **Substituída (D-023, T-128).** O visual Aero descrito abaixo (vidro, desfoque, céu azul, aqua, Manrope, Phosphor) não vale mais; fica como registro. A regra vigente é a §4.0 e a fonte da verdade dos valores é `apps/web/src/styles/tokens.css`.
+
 **Método:** razão de contraste WCAG (luminância relativa sRGB). Para o vidro, o fundo efetivo foi calculado compondo a camada de vidro (cor × opacidade) sobre o **pior pixel possível** do `--bg-backdrop` estático: no claro, o topo `#4FB6EC` (o tom mais escuro do gradiente); no escuro, o tom mais claro (`#0E3A57` com o realce aqua) somado a 6% de brilho especular. O desfoque não aumenta o contraste, então o cálculo sem desfoque é conservador. Os valores abaixo são o **mínimo** encontrado.
 
 **Ajustes feitos durante a verificação** (primeira proposta → final):
@@ -1230,23 +1234,24 @@ body {
 
 ### 4.4 Tipografia
 
-| Papel | Fonte | Tamanho / peso / altura | Uso |
-|---|---|---|---|
-| Hero | Manrope | `--font-size-hero` / 700 / 1,15, `-0.025em` | Valor "Disponível para gastar" |
-| Display | Manrope | 32 px / 700 / 1,15 | AmountInput, total da fatura, % da reserva |
-| Title | Manrope | 22 px / 700 / 1,3, `-0.01em` | Título de tela |
-| Heading | Manrope | 18 px / 600 / 1,3 | Título de card, cabeçalho de grupo |
-| Body | Inter | 16 px / 400 / 1,5 | Texto corrido, campos |
-| Body strong | Inter | 16 px / 600 / 1,5 | Valores em linhas, nomes |
-| Label | Inter | 14 px / 500 / 1,4 | Rótulos, chips, abas |
-| Caption | Inter | 13 px / 400 / 1,4 | Data, meio de pagamento, selo de origem |
+Fonte única **Nunito** variável (`--font-display` e `--font-text`), auto-hospedada (`@fontsource-variable/nunito`, latin e latin-ext), empacotada pelo Vite e pré-cacheada pelo Workbox; nada de CDN em tempo de execução. Números com `font-feature-settings: "tnum" 1, "lnum" 1` (`--font-numeric-features`).
 
-- **Fontes gratuitas (Google Fonts, licença OFL):** Manrope (geométrica, limpa, comum em produtos financeiros) para títulos e números grandes; Inter para texto e números em listas.
-- **Carregamento offline:** instalar `@fontsource-variable/manrope` e `@fontsource-variable/inter` (subconjuntos `latin` + `latin-ext`), empacotadas pelo Vite e pré-cacheadas pelo Workbox. Não depender do CDN do Google Fonts em tempo de execução. `font-display: swap`.
-- Todos os valores monetários: `.money` (tabular). Conferir se o arquivo empacotado da Manrope mantém o recurso `tnum`; se não mantiver, usar Inter 700 no herói e no display.
-- Nunca abaixo de 13 px. O texto acompanha o zoom do navegador (tudo em `rem`); o layout deve aguentar 200% sem rolagem horizontal.
+| Papel | Token | Tamanho / peso / altura | Uso |
+|---|---|---|---|
+| Hero | `--font-size-hero` | 36–46 px / 800 / 1,15 | Valor principal do Início |
+| Display | `--font-size-display` | 32 px / 800 / 1,15 | AmountInput do Q01, total da fatura, % da reserva |
+| Title | `--font-size-title` | 22 px / 800 / 1,3 | Título de tela (`h1`) |
+| Heading | `--font-size-heading` | 17 px / 800 / 1,3 | Título de card, cabeçalho de grupo |
+| Body | `--font-size-body` | 16 px / 500 / 1,5 | Texto corrido, campos (≥ 16 px evita zoom no iOS) |
+| Label | `--font-size-label` | 14 px / 600 / 1,4 | Rótulos, chips |
+| Caption | `--font-size-caption` | 13 px / 500 / 1,4 | Data, meio de pagamento, selo de origem, rótulo das abas (D-084 item 3) |
+
+- Pesos: 500 (`regular`), 600 (`medium`), 700 (`semibold`), 800 (`bold`).
+- Nunca abaixo de 13 px. O texto acompanha o zoom do navegador (tudo em `rem`); o layout aguenta 200% sem rolagem horizontal.
 
 ### 4.5 Regras de uso do vidro
+
+> **Substituída (D-023, T-128).** O visual Aero descrito abaixo (vidro, desfoque, céu azul, aqua, Manrope, Phosphor) não vale mais; fica como registro. A regra vigente é a §4.0 e a fonte da verdade dos valores é `apps/web/src/styles/tokens.css`.
 
 | Regra | Detalhe |
 |---|---|
@@ -1276,7 +1281,7 @@ Regras: nenhuma animação em loop além de indicadores de carregamento; nenhuma
 
 ### 4.7 Ícones
 
-- **Biblioteca:** Phosphor Icons (`@phosphor-icons/react`, MIT). Pesos: `regular` na UI e `fill` em aba ativa e estados selecionados. Sem `duotone` decorativo.
+- **Biblioteca:** Lucide (`lucide-react`, ISC), traço 2 na UI e 2,5 no estado ativo ou selecionado (§4.0). A tabela abaixo guarda os **nomes do registro original** (que as categorias continuam salvando); `features/quick-entry/icons.ts` traduz cada nome para o ícone Lucide equivalente, sem migração de dados.
 - Ícone sozinho sempre com `aria-label`; ícone ao lado de texto com `aria-hidden="true"`.
 
 | Uso | Ícone |
@@ -1291,17 +1296,16 @@ Regras: nenhuma animação em loop além de indicadores de carregamento; nenhuma
 
 ### 4.8 Layout e grade
 
-- Celular: 1 coluna, `--gutter` 16 px, cards com `--space-6` entre si, conteúdo útil até 600 px.
-- `md`: 2 colunas de cards (herói ocupa as 2).
-- `lg`: barra lateral 248 px + conteúdo em 12 colunas, gutter 24 px, largura máxima 1.200 px.
-- Zona segura: `padding-bottom: calc(64px + env(safe-area-inset-bottom) + var(--space-6))` no `<main>` para não esconder conteúdo atrás das abas.
+- Celular: 1 coluna, `--gutter` 20 px (`--space-5`), cards com `--space-4` entre si.
+- `md` e `lg`: **uma coluna** que estica (D-026), sem limite de largura (D-025); no `lg`, barra lateral de 248 px e elementos maiores (bloco `@media (min-width: 1024px)` de `shell.css`).
+- Zona segura: `padding-bottom: calc(64px + env(safe-area-inset-bottom) + var(--space-12))` no `<main>` para não esconder conteúdo atrás da barra de abas flutuante (§4.0).
 - `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` (sem `maximum-scale`, sem `user-scalable=no`).
-- Manifest: `name: "OakFinance"`, `short_name: "OakFinance"`, `lang: "pt-BR"`, `display: "standalone"`, `orientation: "any"`, `theme_color: "#4FB6EC"`, `background_color: "#E8F7FF"`, ícones conforme 4.11.5.
+- Manifest: `name: "OakFinance"`, `short_name: "OakFinance"`, `lang: "pt-BR"`, `display: "standalone"`, `orientation: "any"`, `theme_color: "#EEFDE0"` (claro; `#0B0D0A` no escuro, §4.0), `background_color: "#EEFDE0"`, ícones como quadrado preto com o "OF" lima (§4.0).
 
 ### 4.9 Imagens e ícones de estado
 
-- **Sem ilustrações, mascotes ou figuras decorativas.** A identidade vem do vidro, dos gradientes, da tipografia e dos dados.
-- Estados vazios, erros e confirmações usam um ícone Phosphor `regular` de 32 px dentro de um disco de vidro nível 1 de 64 px, em `--text-secondary` (ou na cor de status correspondente), com `aria-hidden="true"`.
+- **Sem ilustrações, mascotes ou figuras decorativas.** A identidade vem da paleta menta e lima, da tipografia e dos dados (§4.0).
+- Estados vazios, erros e confirmações usam um ícone Lucide de 32 px dentro de um disco sólido de 64 px (`--surface-solid-2`), em `--text-secondary` (ou na cor de status correspondente), com `aria-hidden="true"`.
 - Guias de instalação usam capturas estilizadas da interface do navegador (retângulos e rótulos), não ilustrações.
 
 ### 4.10 Atributos de ambiente (resumo para implementação)
@@ -1317,6 +1321,8 @@ Regras: nenhuma animação em loop além de indicadores de carregamento; nenhuma
 Expor também um hook `useEnvironment()` que devolve os 5 valores para componentes JS (BudgetRing, GoalProgress, MoneyText).
 
 ### 4.11 Marca e logo: OakFinance (só tipográfica)
+
+> **Substituída (D-023, T-128).** O visual Aero descrito abaixo (vidro, desfoque, céu azul, aqua, Manrope, Phosphor) não vale mais; fica como registro. A regra vigente é a §4.0 e a fonte da verdade dos valores é `apps/web/src/styles/tokens.css`.
 
 #### 4.11.1 Nome e decisão
 
@@ -1540,10 +1546,10 @@ Convenções: componentes React + TypeScript em `src/ui/`. Props em notação TS
 
 | Prop | Tipo | Padrão | Descrição |
 |---|---|---|---|
-| `variant` | `'primary' \| 'success' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | Primary = ação principal da tela (1 por tela). Success = confirmação positiva em conferência ("É o mesmo"). Secondary = vidro 3 com texto `--text-link`. Ghost = só texto. Danger = excluir |
+| `variant` | `'primary' \| 'success' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | Primary = ação principal da tela (1 por tela). Success = confirmação positiva em conferência ("É o mesmo"). Secondary = pílula branca com contorno sutil (§4.0). Ghost = só texto. Danger = excluir |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Alturas 40 (só em `lg` com mouse; no toque vira 48) / 48 / 56 |
 | `fullWidth` | `boolean` | `false` | |
-| `iconStart` / `iconEnd` | `PhosphorIcon` | — | |
+| `iconStart` / `iconEnd` | `AppIcon` (Lucide) | — | |
 | `loading` | `boolean` | `false` | Spinner circular + `aria-busy`; mantém a largura |
 | `confirmed` | `boolean` | `false` | Troca o rótulo por ícone `Check` (150 ms) para confirmar salvamento |
 | `disabled` | `boolean` | `false` | |
@@ -1556,7 +1562,7 @@ Convenções: componentes React + TypeScript em `src/ui/`. Props em notação TS
 
 ### 5.2 IconButton
 
-`icon: PhosphorIcon` · `label: string` (obrigatório, vira `aria-label`) · `variant: 'glass' | 'plain'` · `size: 48 | 56` · `pressed?: boolean` (vira `aria-pressed`). Área de toque sempre ≥ 48 px mesmo com ícone de 24 px.
+`icon: AppIcon` (Lucide) · `label: string` (obrigatório, vira `aria-label`) · `variant: 'glass' | 'plain'` (o `glass` é um disco sólido, §4.0) · `size: 48 | 56` · `pressed?: boolean` (vira `aria-pressed`). Área de toque sempre ≥ 48 px mesmo com ícone de 24 px.
 
 ### 5.3 FAB
 
@@ -1605,7 +1611,7 @@ Troca de valor: crossfade de 200 ms (sem contagem numérica). A11y: texto já fo
 |---|---|---|---|
 | `value` | `number` (centavos) | `0` | |
 | `onChange` | `(cents: number) => void` | — | |
-| `size` | `'display' \| 'compact'` | `'display'` | Compact para formulários do onboarding |
+| `size` | `'display' \| 'compact'` | `'display'` | Compact para formulários (onboarding, S03), com a moldura dos campos: borda 1 px `--border-strong`, raio 16 px (UXA-016) |
 | `max` | `number` | `99999999` | R$ 999.999,99 (RN-01) |
 | `label` | `string` | `"Valor"` | |
 | `error` | `string` | — | Mensagem inline + `aria-invalid` |
@@ -1614,15 +1620,15 @@ Troca de valor: crossfade de 200 ms (sem contagem numérica). A11y: texto já fo
 
 Estados: vazio ("R$ 0,00" em `--text-tertiary`) · digitando (cursor à direita) · válido · erro · desativado. Entrada estilo caixa eletrônico. Colar texto ("32,90", "R$ 1.234,56", "32.9") é interpretado.
 
-**NumericKeypad:** `onDigit(d: string)`, `onBackspace()`, `onClear()` (toque longo em apagar), `extraKey: '00' | ','` (padrão `00`). Teclas de no mínimo 64×56 px, raio `--radius-sm`, vidro nível 3; pressed = `--surface-pressed` (100 ms). `role="group"`, `aria-label="Teclado numérico"`.
+**NumericKeypad:** `onDigit(d: string)`, `onBackspace()`, `onClear()` (toque longo em apagar), `extraKey: '00' | ','` (padrão `00`). Teclas de no mínimo 64×56 px, raio `--radius-sm`, fundo sólido do card; pressed = `--surface-pressed` (100 ms). `role="group"`, `aria-label="Teclado numérico"`.
 
 ### 5.9 SegmentedControl
 
-`options: { value, label, icon? }[]` · `value` · `onChange` · `size`. Indicador em vidro claro que desliza em 200 ms. `role="radiogroup"`; setas trocam. Usado em Despesa/Receita/Guardar, mês e abas de Planejar.
+`options: { value, label, icon? }[]` · `value` · `onChange` · `size`. Opção marcada com fundo lima, texto preto **e** contorno de 2 px em `--selection-outline` (não depende só da cor, §4.0); o trilho tem fundo próprio nos dois temas; rótulo visível acima do controle (UXC-008). `role="radiogroup"`; setas trocam. Usado em Despesa/Receita, tema da S08, mês e abas de Planejar.
 
 ### 5.10 CategoryChip / CategoryPicker
 
-**CategoryChip:** `category: { id, name, icon, band }` · `selected: boolean` · `suggested?: boolean` (rótulo para leitor de tela "sugerida") · `size: 'md' | 'lg'` · `onPress`. Visual: pílula, vidro nível 1 com texto ink-900 → selecionado: fundo `--status-info-bg`, borda 2 px na cor da faixa (`--band-*`), ícone `fill`, check à direita (seleção não depende só de cor). Altura 48 px. `role="radio"` dentro de `radiogroup`.
+**CategoryChip:** `category: { id, name, icon, band }` · `selected: boolean` · `suggested?: boolean` (rótulo para leitor de tela "sugerida") · `size: 'md' | 'lg'` · `onPress`. Visual: pílula branca com texto `--text-primary` → selecionado: fundo `--status-info-bg`, borda 2 px na cor da faixa (`--band-*`), ícone `fill`, check à direita (seleção não depende só de cor). Altura 48 px. `role="radio"` dentro de `radiogroup`.
 
 **CategoryPicker:** sheet com busca (`TextField` com ícone), grade de 4 colunas agrupada por faixa (cabeçalhos "Necessidades", "Desejos", "Poupança"), recentes no topo, **Criar categoria** no fim (pede nome, ícone e faixa).
 
@@ -1677,7 +1683,7 @@ Anéis concêntricos (necessidades fora, poupança dentro), espessura 12 px (lg)
 | `ticks` | `number[]` | `[0.25, 0.5, 0.75]` | Marcações discretas de 2 px em `--border-strong` |
 | `showLabel` | `boolean` | `true` | Percentual no centro (ring) ou à direita (bar) |
 
-Anel de 12 px em `--band-savings` sobre `--band-track`, percentual em Manrope 700 (`--font-size-display`). Nível = `min(saved/goal, 1)`. Estados: sem meta (trilho tracejado + "Defina uma meta") · vazio · em progresso · meta atingida (anel completo + ícone `CheckCircle` + texto) · retirada (o arco diminui). Mudança de valor: 250 ms; sem animação ao abrir. A11y: `role="progressbar"` com `aria-valuetext`.
+Anel de 12 px em `--band-savings` sobre `--band-track`, percentual em Nunito 800 (`--font-size-display`). Nível = `min(saved/goal, 1)`. Estados: sem meta (trilho tracejado + "Defina uma meta") · vazio · em progresso · meta atingida (anel completo + ícone `CheckCircle` + texto) · retirada (o arco diminui). Mudança de valor: 250 ms; sem animação ao abrir. A11y: `role="progressbar"` com `aria-valuetext`.
 
 ### 5.18 InvoiceCard / InvoiceMini
 
@@ -1712,7 +1718,7 @@ Layout: ícone da categoria em disco de 40 px (`--surface-inset`, ícone na cor 
 | `confirmClose` | `() => boolean \| Promise<boolean>` | — | Para "Descartar este lançamento?" |
 | `variant` | `'sheet' \| 'dialog'` | auto: `dialog` em `lg` | |
 
-Visual: vidro nível 3, raio `--radius-xl` nos cantos superiores, alça 36×4 px, `--scrim` atrás, `padding-bottom: env(safe-area-inset-bottom)`. Abre/fecha em 250 ms. A11y: `role="dialog"`, `aria-modal`, foco preso, `Esc` fecha, foco volta ao gatilho, botão **Fechar** visível, rolagem do fundo travada. Implementar com `<dialog>` nativo + `showModal()` quando possível.
+Visual: fundo menta (§4.0) com cards brancos por cima, raio `--radius-xl` nos cantos superiores, alça 36×4 px, `--scrim` atrás, `padding-bottom: env(safe-area-inset-bottom)`. Abre/fecha em 250 ms. A11y: `role="dialog"`, `aria-modal`, foco preso, `Esc` fecha, foco volta ao gatilho, botão **Fechar** visível, rolagem do fundo travada. Implementar com `<dialog>` nativo + `showModal()` quando possível.
 
 ### 5.21 Dialog (confirmação)
 
@@ -1727,11 +1733,11 @@ Visual: vidro nível 3, raio `--radius-xl` nos cantos superiores, alça 36×4 px
 | `action` | `{ label: 'Desfazer' \| string; onPress }` | — | |
 | `duration` | `number` ms | 4.000; 8.000 com `action` | Pausa com foco/hover; `Infinity` para G07 |
 
-Posição: acima da TabBar, centralizado, vidro nível 3. Entra/sai em 200 ms. Fila: 1 por vez. A11y: anunciado na região `aria-live="polite"`; ação alcançável por teclado; "Desfazer" tem caminho alternativo permanente (editar/excluir em T02), atendendo WCAG 2.2.1.
+Posição: acima da barra de abas flutuante (no `lg`, a 24 px do fundo), centralizado, card sólido com faixa de tom à esquerda (`--status-info-fill`: preto no claro, lima no escuro). Entra/sai em 200 ms. Fila: 1 por vez. A11y: anunciado na região `aria-live="polite"`; ação alcançável por teclado; "Desfazer" tem caminho alternativo permanente (editar/excluir em T02), atendendo WCAG 2.2.1.
 
 ### 5.23 Banner
 
-`tone: 'info' | 'warning'` · `icon` · `message` · `action?` · `dismissible`. Largura total sob a TopBar (vidro nível 3 com faixa de tom). Usado em G01, G04, conexão expirando e configuração pendente. `role="status"` (info) ou `role="alert"` (warning com ação necessária).
+`tone: 'info' | 'warning'` · `icon` · `message` · `action?` · `dismissible`. Largura total sob a TopBar (card sólido com faixa de tom à esquerda; info em `--status-info-fill`, preto no claro e lima no escuro). Usado em G01, G04, conexão expirando e configuração pendente. `role="status"` (info) ou `role="alert"` (warning com ação necessária).
 
 ### 5.24 SyncBadge
 
@@ -1742,11 +1748,11 @@ Posição: acima da TabBar, centralizado, vidro nível 3. Entra/sai em 200 ms. F
 | `lastSyncedAt` | `Date` | Em detalhe ao tocar |
 | `onPress` | | Abre popover/sheet com detalhes e **Sincronizar agora** |
 
-Visual: pílula 32 px (área de toque 48 px) em vidro nível 1 no topo. `synced`: `CloudCheck`, some após 2 s. `pending`: `CloudArrowUp` + número. `syncing`: `ArrowsClockwise` girando. `offline`: `CloudSlash` + "Offline". `error`: `Warning` + "Não sincronizado", tom alerta. A11y: botão com `aria-label` dinâmico ("Offline, 3 lançamentos salvos neste aparelho"); a região live só anuncia `offline`, `error` e a volta a `synced` após erro.
+Visual: pílula 32 px (área de toque 48 px) no topo, sem fundo próprio. `synced`: `CloudCheck`, some após 2 s. `pending`: `CloudArrowUp` + número. `syncing`: `ArrowsClockwise` girando. `offline`: `CloudSlash` + "Offline". `error`: `Warning` + "Não sincronizado", tom alerta. A11y: botão com `aria-label` dinâmico ("Offline, 3 lançamentos salvos neste aparelho"); a região live só anuncia `offline`, `error` e a volta a `synced` após erro.
 
 ### 5.25 EmptyState
 
-`variant: 'empty' | 'filtered' | 'error' | 'offline' | 'done'` · `icon: PhosphorIcon` · `title` · `description` · `primaryAction` · `secondaryAction`. Ícone 32 px em disco de vidro de 64 px (`aria-hidden`); título `<h2>` 18 px; texto 16 px secundário; centralizado com largura máx. 320 px. Textos na 6.5.
+`variant: 'empty' | 'filtered' | 'error' | 'offline' | 'done'` · `icon: AppIcon` (Lucide) · `title` · `description` · `primaryAction` · `secondaryAction`. Ícone 32 px em disco sólido de 64 px (`aria-hidden`); título `<h2>` 18 px; texto 16 px secundário; centralizado com largura máx. 320 px. Textos na 6.5.
 
 ### 5.26 Skeleton
 
@@ -1769,7 +1775,7 @@ Estrutura: lista ordenada de 3 passos, cada um com captura estilizada da interfa
 
 ### 5.29 ImportDropzone
 
-`accept: '.ofx,.csv,text/csv,application/x-ofx'` · `onFile`. Área tracejada em vidro 2 com ícone `FileArrowUp`; em `lg` aceita arrastar; sempre há botão **Escolher arquivo** (input file nativo, acessível).
+`accept: '.ofx,.csv,text/csv,application/x-ofx'` · `onFile`. Card branco com botão **Escolher arquivo** (ícone `FileUp`) e as dicas abaixo; no `lg` aceita arrastar, com "Ou arraste o arquivo para cá." e contorno tracejado durante o arraste (D-102); sempre há botão **Escolher arquivo** (input file nativo, acessível).
 
 ### 5.30 ColumnMapper (CSV)
 
@@ -1785,8 +1791,8 @@ Tabela de prévia (5 linhas) com `Select` acima de cada coluna (Data · Descriç
 
 ### 5.33 TopBar / TabBar
 
-- **TopBar:** `title`, `leading` (voltar `CaretLeft` com rótulo "Voltar"), `trailing` (ações), `transparentUntilScroll` (padrão `true` no Início).
-- **TabBar:** `items: { key, label, icon, href, badge? }[]` + slot central do FAB. Rótulo sempre visível (13 px) sob o ícone. Aba ativa: ícone `fill` + texto 600 + indicador em pílula de vidro atrás do ícone (forma, não só cor). `<nav>` com `aria-current="page"`.
+- **TopBar:** `title`, `leading` (voltar `ChevronLeft` com rótulo "Voltar"), `trailing` (ações), `transparentUntilScroll` (padrão `true` no Início).
+- **TabBar:** `items: { key, label, icon, href, badge? }[]` + slot central do FAB. Rótulo sempre visível (13 px) sob o ícone. Aba ativa: círculo lima atrás do ícone (traço 2,5) e texto 800 (forma, não só cor), sobre a pílula preta (§4.0, D-084 item 3). `<nav>` com `aria-current="page"`.
 
 ### 5.34 Badge
 
@@ -2845,8 +2851,8 @@ Regras (RN-86 a RN-94 do PRD; implementação na técnica 6.4.5): horário silen
 | Data | Decisão | Detalhe |
 |---|---|---|
 | 05/11/2026 | **Nome: OakFinance** | Grafia e uso em 4.11.1 |
-| 05/11/2026 | **Marca só tipográfica** | Wordmark em Manrope 700 ("Oak" em tinta escura + "Finance" em aqua) e monograma OF em disco de vidro. Nenhuma figura ou ilustração (o símbolo ilustrado da v1.1 foi reprovado e removido) |
-| 05/11/2026 | **Tom sóbrio e premium para jovens adultos; sem elementos lúdicos** | Removidos da v1.0: animações decorativas, celebrações, gamificação, fundo que muda com o mês, ilustrações e microcopy efusiva. Mantida a estética Aero (vidro, profundidade, gradientes de céu e aqua, brilho discreto) |
+| 05/11/2026 | **Marca só tipográfica** (cores e fonte substituídas pela D-023, §4.0) | Wordmark em Manrope 700 ("Oak" em tinta escura + "Finance" em aqua) e monograma OF em disco de vidro. Nenhuma figura ou ilustração (o símbolo ilustrado da v1.1 foi reprovado e removido) |
+| 05/11/2026 | **Tom sóbrio e premium para jovens adultos; sem elementos lúdicos** | Removidos da v1.0: animações decorativas, celebrações, gamificação, fundo que muda com o mês, ilustrações e microcopy efusiva. Mantida a estética Aero (vidro, profundidade, gradientes de céu e aqua, brilho discreto), substituída pela D-023 (§4.0) |
 | 05/11/2026 | **Movimento só funcional** | Feedback de toque ≤ 100 ms; transições de 150 a 250 ms; confirmação de salvamento; loops só em indicadores de carregamento |
 | 05/11/2026 | **Indicador de ritmo em texto** | O estado do mês aparece como `PaceIndicator` (ícone + texto) no herói; o fundo é estático |
 | 05/11/2026 | **Reserva com `GoalProgress`** | Anel e barra de progresso com percentual, valores e projeção |
