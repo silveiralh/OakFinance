@@ -1,0 +1,133 @@
+<html><title>DF-e Portal/Pr - Consulta DANFE NFC-e</title><head>
+<script type="text/javascript">
+(function(){
+window["loaderConfig"] = "/TSPD/?type=21";
+})();
+
+</script>
+
+<script type="text/javascript" src="/TSPD/?type=18"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/> <meta http-equiv="X-UA-Compatible" content="IE=9, IE=edge" /> <link rel="stylesheet" type="text/css" href="https://www.dfews.fazenda.pr.gov.br/dfews/css/nfce/danferesponsivo/jquery.mobile-1.4.5.min.css"> <link rel="stylesheet" type="text/css" href="https://www.dfews.fazenda.pr.gov.br/dfews/css/nfce/danferesponsivo/nfceMob.css"> <link rel="stylesheet" type="text/css" href="https://www.dfews.fazenda.pr.gov.br/dfews/css/nfce/danferesponsivo/nfceMob_ie.css"> <link rel="stylesheet" type="text/css" href="https://www.dfews.fazenda.pr.gov.br/dfews/css/print.css"> <script type="text/javascript" src="https://www.dfews.fazenda.pr.gov.br/dfews/js/nfce/danferesponsivo/index.js"></script> <script type="text/javascript" src="https://www.dfews.fazenda.pr.gov.br/dfews/js/nfce/danferesponsivo/jquery.js"></script> <script type="text/javascript" src="https://www.dfews.fazenda.pr.gov.br/dfews/js/nfce/danferesponsivo/jquery.mobile-1.4.5.min.js"></script> <script type="text/javascript" src="https://www.dfews.fazenda.pr.gov.br/dfews/js/nfce/danferesponsivo/jqueryui.js"></script> <script type="text/javascript" src="https://www.dfews.fazenda.pr.gov.br/dfews/js/nfce/danferesponsivo/util.js"></script></head><body>
+<div data-role="header" xmlns:n="http://www.portalfiscal.inf.br/nfe" xmlns:chave="http://exslt.org/chaveacesso" xmlns:r="http://www.serpro.gov.br/nfe/remessanfe.xsd">
+ <h1 class="tit">
+  <div class="notprint">
+   <p align="center"><a href=javascript:window.print()>Imprimir</a></p>
+  </div>
+  <img src="https://www.dfews.fazenda.pr.gov.br/dfews/images/logoNFCe2.PNG" width="90" height="64" alt="NFC-e">
+  </img>
+  <p>DOCUMENTO AUXILIAR DA NOTA FISCAL DE CONSUMIDOR ELETRÔNICA</p>
+  <p></p>
+ </h1>
+</div>
+<div data-role="content" xmlns:n="http://www.portalfiscal.inf.br/nfe" xmlns:chave="http://exslt.org/chaveacesso" xmlns:r="http://www.serpro.gov.br/nfe/remessanfe.xsd">
+ <div id="conteudo">
+  <div id="avisos">
+  </div>
+  <div class="txtCenter">
+   <div id="u20" class="txtTopo">LANCHONETE EXEMPLO</div>
+   <div class="text">
+		    CNPJ:
+		    98.765.432/0001-00</div>
+   <div class="text">AVENIDA TESTE,
+		200,
+		SALA 1,
+		CENTRO,
+		CIDADE EXEMPLO,
+		PR</div>
+  </div>
+  <table border="0" align="center" cellpadding="0" cellspacing="0" id="tabResult" data-filter="true">
+   <tr id="Item + 1">
+    <td valign="top">
+     <span class="txtTit2">LANCHE DO DIA 30 CM</span>
+     <span class="RCod">(Código: 2001)</span>
+     <br></br>
+     <span class="Rqtd">
+      <strong>Qtde.:</strong>1
+     </span>
+     <span class="RUN">
+      <strong>UN: </strong>UN
+     </span>
+     <span class="RvlUnit">
+      <strong>Vl. Unit.:</strong> 38,5
+     </span>
+    </td>
+    <td align="right" valign="top" class="txtTit3 noWrap">Vl. Total
+
+     <br></br>
+     <span class="valor">38,50</span>
+    </td>
+   </tr>
+  </table>
+  <div id="totalNota" class="txtRight">
+   <div id="linhaTotal">
+    <label>Qtd. total de itens:</label>
+    <span class="totalNumb">1</span>
+   </div>
+   <div id="linhaTotal" class="linhaShade">
+    <label>Valor a pagar R$:</label>
+    <span class="totalNumb txtMax">38,50</span>
+   </div>
+   <div id="linhaForma">
+    <label class="txtMax2">Forma de pagamento:</label>
+    <span class="totalNumb txtMax2">Valor pago R$:</span>
+   </div>
+   <div id="linhaTotal">
+    <label class="tx">Cartão de Crédito</label>
+    <span class="totalNumb">38,50</span>
+   </div>
+   <div id="linhaTotal" class="spcTop">
+    <label class="txtObs">Informação dos Tributos Totais Incidentes (Lei Federal 12.741/2012) R$</label>
+    <span class="totalNumb txtObs">12,49</span>
+   </div>
+  </div>
+ </div>
+ <div id="infos" class="txtCenter">
+  <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-collapsed="false">
+   <h4>Informações gerais da Nota</h4>
+   <ul data-role="listview" data-inset="false">
+    <li>
+     <strong>EMISSÃO NORMAL</strong>
+     <br></br>
+     <strong>Número: </strong>654321
+     <strong> Série: </strong>1
+     <strong> Emissão: </strong>29/10/2026 12:30:00  - Via Consumidor
+
+     <br></br>
+     <strong>Protocolo de Autorização: </strong>141260000000002       29/10/2026 12:30:00
+     <br></br>
+     <strong>Ambiente de Produção -
+Versão XML: 4.00 - Versão XSLT: 2.03</strong>
+    </li>
+   </ul>
+  </div>
+  <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-collapsed="false">
+   <h4>Chave de acesso</h4>
+   <ul data-role="listview" data-inset="false">
+    <li>Consulte pela Chave de Acesso em
+						
+							http://www.fazenda.pr.gov.br/
+							
+     <br></br>
+     <strong>Chave de acesso:</strong>
+     <br></br>
+     <span class="chave">4126 1098 7654 3200 0100 6500 1000 6543 2112 0000 0026</span>
+    </li>
+   </ul>
+  </div>
+  <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-collapsed="false">
+   <h4>Consumidor</h4>
+   <ul data-role="listview" data-inset="false">
+    <li>
+     <strong>Consumidor não identificado</strong>
+    </li>
+   </ul>
+  </div>
+  <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-collapsed="false">
+   <h4>Informações de interesse do contribuinte</h4>
+   <ul data-role="listview" data-inset="false">
+    <li>MD-5:00000000000000000000000000000000;ICMS a rec. conf. LC 123/2006-Simples Nacional;Cupom:1/Pdv:1;----------------------------------------------;SOFTWARE FICTICIO LTDA;Aplicativo: EXEMPLO 1.0;Tributos Federal R$5,18 Fonte: IBPT;Tributos Estadual R$7,31 Fonte: IBPT</li>
+   </ul>
+  </div>
+  <div>Secretaria de Estado da Fazenda do Paraná - Data/Hora da Consulta: 11/11/2026 10:00:10</div>
+ </div>
+</div></body></html>

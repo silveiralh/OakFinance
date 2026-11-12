@@ -192,6 +192,8 @@
 
 ## 4. Bloqueios e pendências do cliente
 
+- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (`regressão:`, cabeçalho do Início sobreposto) vem antes da cadeia.
+
 | Item | Quando é necessário | Desbloqueia |
 |---|---|---|
 | SETUP-01 a SETUP-03 (repositório público, opções, credencial sem admin) | agora | operação segura das sessões |
@@ -200,11 +202,10 @@
 | SETUP-10 allowlist, Vault, hook, secrets das funções | feito em 06/11 (comentário na issue #2; a caixa ainda está desmarcada) | M1 (login real) |
 | SETUP-11 VAPID | feito em 11/11 (comentário na issue #2) | M2 (push real) |
 | SETUP-13 Pluggy e Meu Pluggy | adiado para a v2 (D-080) | T-083, M3 |
-| SETUP-14 arquivos reais (canal privado) | BB (OFX) e Nubank (CSV) entregues; as cópias anonimizadas estão em `packages/domain/test/fixtures/*-real-anon.*` (11/11). Faltam as 3 NFC-e | T-085, T-087, T-090 |
+| SETUP-14 arquivos reais (canal privado) | encerrado em 12/11 (D-095): BB e Nubank anonimizados em `packages/domain/test/fixtures/*-real-anon.*`; 2 NFC-e anonimizadas em `packages/nfce-parser/test/fixtures/real-anon-*.html.txt` | T-085, T-087, T-090 |
 | Dono: opção (a) da T-076 no `scripts/check-build.ts` | adiada para a v2 com o Open Finance (D-080) | widget Pluggy Connect |
 | Acesso das sessões ao canal privado | dispensado: as fixtures anonimizadas dos arquivos do BB e do Nubank já estão no repositório (11/11) | T-085, T-087, issue #128 |
-| Dono: referência `tokens.png` do styleguide (T-130, needs-owner, D-088) | quando quiser o valor sem quebra entre "R$" e o número | T-130 (G4 da auditoria: `formatBRL` com U+00A0 e tamanho adaptável do valor grande) |
-| Dono: decidir como o Início obtém o "Saldo nas contas" sem ler todo o histórico (D-092, opções a/b/c) | quando quiser retomar a T-102 | T-102 |
+| Dono: conferir as capturas e fazer o merge do PR da T-130 (referência `tokens-*.png` aprovada na D-094) | quando a sessão abrir o PR com `needs-owner` | T-130 |
 | SETUP-15 licença; SETUP-16 decisões pendentes | feito em 06/11 (sem licença; 6=manter, 7=ok, 8=depois de 2 semanas de uso) | T-099 (done) |
 
 - Conferido pela API em 06/11: SETUP-01, 02 e 04 feitos (só squash, auto-merge e exclusão automática de branch ligados; issue #2 reaberta com 01–04 marcados). SETUP-03 substituído pela D-012 (as sessões herdam o admin do dono; valem as salvaguardas).
@@ -417,3 +418,4 @@
 | 12/11/2026 | T-119 | PR #145 | done | Q01: foco no valor, teclado e Lançar no rodapé fixo, cabeçalho fixo da folha, seleção com contorno (`--selection-outline`), "Mais" como chip (D-090) |
 | 12/11/2026 | T-120 | PR #146 | done | Início pelo gasto do mês: herói "Gasto em {mês}", saldo nas contas, "Ainda vai sair" e "Saúde do mês"; resumo semanal com "Gasto no mês" (D-081, D-091) |
 | 12/11/2026 | T-121 | PR #148 | done | limiares de aviso configuráveis na S06 (D-082, D-092); T-102 bloqueada para decisão sobre o saldo nas contas |
+| 12/11/2026 | — | — | docs | decisões do dono: T-102 encerrada (D-093), T-130 liberada com merge do dono (D-094), T-090 liberada com 2 NFC-e anonimizadas (D-095) |
