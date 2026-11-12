@@ -194,7 +194,7 @@ flowchart LR
 | T-129 | Nova auditoria de UX | T-128 | done |
 | T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
 | T-131 | Impeccable no projeto | T-101 | done |
-| T-132 | Q01 no celular pequeno (auditoria 12/11) | T-129 | todo |
+| T-132 | Q01 no celular pequeno (auditoria 12/11) | T-129 | done |
 | T-133 | Renda do mês sem soma dupla (auditoria 12/11) | T-129 | todo |
 | T-134 | Início e textos depois da D-081 (auditoria 12/11) | T-129 | todo |
 | T-135 | Lançamentos, Cartões e Planejar: cortes e totais (auditoria 12/11) | T-129 | todo |
@@ -1856,7 +1856,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-132 — Q01 no celular pequeno (auditoria 12/11)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-12, US-13, US-33 | RN-01 | T-129 | não |
+| done | R | M | US-12, US-13, US-33 | RN-01 | T-129 | não |
 
 **Escopo (D-105, `docs/ux-audit/2026-11-12.md`):** UX2A-001 (S1: a 360×640 o rodapé fixo cobre o valor; a 390 px esconde a 5ª categoria, o "Mais", o meio e "Mais detalhes" — levar o valor para dentro do rodapé, logo acima do teclado, e "Ler nota" sem linha própria); UX2A-002 (`?novo=receita` respeita o modo pedido mesmo com rascunho guardado); UX2A-005 (folha do Guardar com o mesmo rodapé fixo do Q01); UX2A-008 (teclado numérico some enquanto a descrição está em foco). Impeccable: `adapt` e `polish`.
 

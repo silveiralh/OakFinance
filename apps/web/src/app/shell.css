@@ -1959,6 +1959,65 @@ body:has(.screen-welcome) .backdrop {
 .quick-footer .keypad .key {
   min-height: var(--touch-min);
 }
+/* UX2A-001: no rodapé, o valor ocupa uma linha só, logo acima do teclado */
+.quick-footer .amount {
+  gap: 0;
+}
+/* o rótulo "Valor" continua para o leitor de tela; na tela, o próprio "R$" diz o que é */
+.quick-footer .amount .field-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.quick-footer .amount-input {
+  min-height: var(--touch-min);
+  font-size: clamp(1.5rem, 8vw, var(--font-size-display));
+}
+/* UX2A-001: em tela baixa, tudo o que importa cabe sem rolar: chips em grade de 3, teclado mais junto e
+   "Ler nota" só com o ícone (o nome continua para o leitor de tela) */
+@media (max-height: 720px), (max-width: 380px) {
+  .quick-read-note-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (max-height: 720px) {
+  .quick-entry {
+    gap: var(--space-3);
+  }
+  .quick-entry .quick-chips {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .quick-entry .quick-chips .chip {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .quick-entry .quick-chips .chip svg {
+    flex: none;
+  }
+  .quick-footer .keypad {
+    gap: 4px;
+  }
+  .quick-footer > .btn {
+    min-height: var(--touch-min);
+  }
+}
+.quick-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
 .quick-more {
   gap: var(--space-1);
 }
