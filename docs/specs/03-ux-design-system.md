@@ -632,7 +632,7 @@ Lista em GlassCards agrupados; cada item leva a uma subtela:
 | S03 | Contas e cartões | CRUD de contas (BB, Nubank, carteira, VR, VA; nome único entre as ativas) e cartões (fechamento, vencimento, regra do dia do fechamento, limite, conta que paga, cor); **Arquivar** (conta com lançamentos) ou **Excluir** (sem lançamentos); arquivadas em seção recolhível com **Desarquivar** |
 | S04 | Categorias | Lista por faixa; criar/editar (nome, ícone, faixa obrigatória, limite mensal opcional); trocar faixa avisa "Isso muda os totais de todos os meses"; **Arquivar**; **Excluir** pede categoria de destino quando há uso; categorias de sistema sem edição. Link **Regras** → `I06` |
 | S05 | Renda e contas fixas | Receitas recorrentes, contas fixas (editar, pular, encerrar), receitas a receber e previstas |
-| S06 | Disponível para gastar e orçamento | Percentuais 50/30/20 (inteiros, soma obrigatória de 100%, sliders com valor em texto); **Compras no cartão contam no mês**: **do vencimento da fatura** (padrão) / **da compra**; `Switch` "Considerar VR/VA nos cálculos" (ligado); `Switch` "Incluir receitas previstas" (ligado: respeita o "Contar antes de receber" de cada receita); `Switch` "Descontar a poupança do mês (20%)" (ligado); `Switch` "Descontar faturas e contas que ainda vencem no mês" (ligado), todos com prévia do valor resultante |
+| S06 | Disponível para gastar e orçamento | Percentuais 50/30/20 (inteiros, soma obrigatória de 100%, sliders com valor em texto); **Compras no cartão contam no mês**: **do vencimento da fatura** (padrão) / **da compra**; `Switch` "Considerar VR/VA nos cálculos" (ligado); `Switch` "Incluir receitas previstas" (ligado: respeita o "Contar antes de receber" de cada receita); `Switch` "Descontar a poupança do mês (20%)" (ligado); `Switch` "Descontar faturas e contas que ainda vencem no mês" (ligado), todos com prévia do valor resultante; card **Avisos do orçamento** (D-082, T-121): "Avisar com atenção a partir de (%)" (padrão 80) e "Avisar que passou do planejado a partir de (%)" (padrão 100), inteiros com 1 ≤ atenção < passou ≤ 200; fora disso, "Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200." e **Salvar** desativado |
 | S07 | Lembretes | Status da permissão; toggles e horários por tipo: vencimento de faturas (3 dias antes e no dia, 09:00) · fatura fechou · contas fixas (véspera) · conta fixa atrasada e receita não confirmada (dia seguinte) · limite de faixa ou categoria (80% e 100%) · diário (20:00) · resumo semanal (domingo 19:00) · conexão bancária; horário silencioso 22:00–08:00; **Enviar notificação de teste** |
 | S08 | Aparência | Tema: **Automático / Claro / Aero noturno** · Transparência: **Automática / Sempre sólida** · Movimento: **Automático / Reduzido** · `Switch` "Abrir com valores ocultos" |
 | S09 | Instalar app | Reabre ON02a/b/c conforme a plataforma; mostra "App instalado" quando standalone |
@@ -2735,6 +2735,11 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `home.health.line` | {gasto} de {meta} |
 | `home.health.adjust` | Ajustar percentuais |
 | `home.health.noIncome` | Cadastre sua renda para acompanhar as faixas do mês. |
+| `calc.alerts.title` | Avisos do orçamento |
+| `calc.alerts.hint` | Valem para Necessidades, Desejos, os limites por categoria e a Saúde do mês. |
+| `calc.alerts.attention` | Avisar com atenção a partir de (%) |
+| `calc.alerts.over` | Avisar que passou do planejado a partir de (%) |
+| `calc.alerts.error` | Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200. |
 
 ### 6.5 Estados vazios
 

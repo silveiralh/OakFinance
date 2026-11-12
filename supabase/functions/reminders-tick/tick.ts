@@ -4,9 +4,11 @@
 // categoria (RN-92) e resumo semanal (RN-93) — T-092; a conexão bancária (RN-94) fica desligada até a tarefa dela.
 import {
   type Account,
+  alertThresholdsBp,
   type BankConnectionState,
   type Card,
   type Category,
+  categoryThresholdsBp,
   DEFAULT_REMINDERS,
   type DueNotification,
   deliverAt,
@@ -366,7 +368,12 @@ export function invoicesWithTotals(
 const BUCKETS = ['needs', 'wants', 'savings'] as const;
 
 /** Percentuais e limiares do mês (RN-43): o registro do mês sobrepõe o padrão. */
-export function budgetOf(budgets: readonly SnapshotBudget[], month: YearMonth) {
+export function budgetOf(
+  budgets: readonly SnapshotBudget[],
+  month: YearMonth,
+  /** D-082: limiares do perfil (`settings.alerts`); sem eles, os guardados no orçamento. */
+  profileThresholdsBp?: readonly number[],
+) {
   return resolveBudgetConfig(
     budgets.map((b) => ({
       month: b.month,
@@ -376,11 +383,16 @@ export function budgetOf(budgets: readonly SnapshotBudget[], month: YearMonth) {
       alertThresholdsBp: b.alertThresholdsBp,
     })),
     month,
+    profileThresholdsBp,
   );
 }
 
 /** Limites por categoria vigentes no mês (RN-45): o do mês, senão o padrão; só os maiores que zero. */
-export function categoryLimitsOf(budgets: readonly SnapshotBudget[], month: YearMonth) {
+export function categoryLimitsOf(
+  budgets: readonly SnapshotBudget[],
+  month: YearMonth,
+  profileThresholdsBp?: readonly number[],
+) {
   const rows = budgets.filter(
     (b) => b.scope === 'category' && b.categoryId !== null && b.limitCents !== null,
   );
@@ -393,7 +405,9 @@ export function categoryLimitsOf(budgets: readonly SnapshotBudget[], month: Year
           {
             categoryId,
             limitCents: row.limitCents as number,
-            alertThresholdsBp: row.alertThresholdsBp,
+            alertThresholdsBp: profileThresholdsBp
+              ? [...categoryThresholdsBp(row.alertThresholdsBp, profileThresholdsBp)]
+              : row.alertThresholdsBp,
           },
         ]
       : [];
@@ -444,7 +458,7 @@ export function dueForUser(
       kinds.includes(p.kind) ? p : { ...p, enabled: false },
     ),
     month,
-    budget: budgetOf(budgets, ym),
+    budget: budgetOf(budgets, ym, alertThresholdsBp(settings.alerts)),
     spendable: settings.spendable,
     invoices: invoicesWithTotals(snap),
     recurrences,
@@ -454,7 +468,7 @@ export function dueForUser(
       categories: Object.fromEntries((m?.categories ?? []).map((c) => [c.id, c.name])),
     },
     loggedOn: snap.loggedOn,
-    categoryLimits: categoryLimitsOf(budgets, ym),
+    categoryLimits: categoryLimitsOf(budgets, ym, alertThresholdsBp(settings.alerts)),
     connections: (snap.connections ?? []).map(toConnectionState),
   });
   return due.filter((n) => kinds.includes(n.kind));

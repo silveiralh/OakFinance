@@ -2,12 +2,14 @@
 // (inteiros, soma 100%), mês do cartão, VR/VA, receitas previstas, poupança e faturas que ainda vencem, com a
 // prévia do valor do mês calculada com o rascunho antes de salvar.
 import {
+  type AlertPcts,
   type Bucket,
   formatBRL,
   type ISODate,
   resolveBudgetConfig,
   resolveProfileSettings,
   type SpendableConfig,
+  validAlertPcts,
   type YearMonth,
 } from '@oakfinance/domain';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,7 +21,7 @@ import { saveRow } from '../../data/repositories/rows';
 import { seedBudgetId } from '../../data/seeds';
 import { t, uiText } from '../../i18n/pt-BR';
 import { useToday } from '../../lib/useToday';
-import { Button, GlassCard, SegmentedControl, Switch, useToast } from '../../ui';
+import { Button, GlassCard, SegmentedControl, Switch, TextField, useToast } from '../../ui';
 import { loadHomeRows } from '../dashboard/data';
 import { type HomeRows, homeModel } from '../dashboard/model';
 import { MONTH_NAMES } from '../transactions/list';
@@ -36,6 +38,17 @@ export interface CalcDraft {
   spendable: SpendableConfig;
   /** Percentuais inteiros (0–100). */
   pct: Record<Band, number>;
+  /** D-082: limiares de aviso em % (texto do campo, validado por `alertsProblem`). */
+  alerts: { attention: string; over: string };
+}
+
+/** D-082: os limiares digitados, ou `null` se não forem inteiros com 1 ≤ atenção < passou ≤ 200. */
+export function parseAlerts(alerts: CalcDraft['alerts']): AlertPcts | null {
+  const toInt = (text: string) =>
+    /^\d{1,3}$/.test(text.trim()) ? Number(text.trim()) : Number.NaN;
+  const attentionPct = toInt(alerts.attention);
+  const overPct = toInt(alerts.over);
+  return validAlertPcts(attentionPct, overPct) ? { attentionPct, overPct } : null;
 }
 
 /** Rascunho a partir do perfil e dos `budgets` do mês. */
@@ -44,6 +57,10 @@ export function draftFrom(rows: HomeRows, month: YearMonth): CalcDraft {
   const budget = resolveBudgetConfig(budgetInputs(rows.budgets), month);
   return {
     spendable: settings.spendable,
+    alerts: {
+      attention: String(settings.alerts.attentionPct),
+      over: String(settings.alerts.overPct),
+    },
     pct: {
       needs: Math.round(budget.pctBp.needs / 100),
       wants: Math.round(budget.pctBp.wants / 100),
@@ -120,6 +137,7 @@ export function applyDraft(rows: HomeRows, draft: CalcDraft, userId: string): Ho
           settings: {
             ...raw,
             spendable: { ...draft.spendable },
+            alerts: { ...(parseAlerts(draft.alerts) ?? resolveProfileSettings(raw).alerts) },
           } as LocalRow<'profiles'>['settings'],
         }
       : rows.profile,
@@ -168,12 +186,15 @@ export function CalcSettingsScreen({ today: fixedToday }: { today?: ISODate }) {
     return <section className="screen" data-screen="S06" data-testid="screen-S06" />;
   }
   const sum = percentProblem(draft.pct);
+  const alertsOk = parseAlerts(draft.alerts) !== null;
+  const setAlert = (key: 'attention' | 'over', value: string) =>
+    setDraft({ ...draft, alerts: { ...draft.alerts, [key]: value } });
   const set = (change: Partial<SpendableConfig>) =>
     setDraft({ ...draft, spendable: { ...draft.spendable, ...change } });
   const setPct = (band: Band, value: number) =>
     setDraft({ ...draft, pct: { ...draft.pct, [band]: value } });
   const save = async () => {
-    if (sum !== null) {
+    if (sum !== null || !alertsOk) {
       return;
     }
     await saveDraft(user.db, rows, draft, user.userId);
@@ -243,6 +264,24 @@ export function CalcSettingsScreen({ today: fixedToday }: { today?: ISODate }) {
           {...(draft.spendable.includeUpcoming ? {} : { description: t('calc.upcomingOff') })}
         />
       </GlassCard>
+      <GlassCard level={2} className="calc-block" title={t('calc.alerts.title')} headingLevel={2}>
+        <p className="account-meta">{t('calc.alerts.hint')}</p>
+        <TextField
+          label={t('calc.alerts.attention')}
+          inputMode="numeric"
+          value={draft.alerts.attention}
+          onChange={(value) => setAlert('attention', value)}
+          data-testid="calc-alert-attention"
+        />
+        <TextField
+          label={t('calc.alerts.over')}
+          inputMode="numeric"
+          value={draft.alerts.over}
+          onChange={(value) => setAlert('over', value)}
+          data-testid="calc-alert-over"
+          {...(alertsOk ? {} : { error: t('calc.alerts.error') })}
+        />
+      </GlassCard>
       <p className="calc-preview money" role="status" data-testid="calc-preview">
         {s && s.status !== 'no_income'
           ? t('calc.preview', {
@@ -251,7 +290,12 @@ export function CalcSettingsScreen({ today: fixedToday }: { today?: ISODate }) {
             })
           : t('calc.previewNoIncome')}
       </p>
-      <Button fullWidth disabled={sum !== null} onClick={() => void save()} data-testid="calc-save">
+      <Button
+        fullWidth
+        disabled={sum !== null || !alertsOk}
+        onClick={() => void save()}
+        data-testid="calc-save"
+      >
         {t('calc.save')}
       </Button>
     </section>

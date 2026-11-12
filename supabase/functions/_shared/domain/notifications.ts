@@ -464,8 +464,12 @@ function budgetNotes(input: DueNotificationsInput): DueNotification[] {
     if (crossed === undefined || target <= 0) {
       return;
     }
+    // D-082: o maior limiar é o "passou do planejado". A chave guarda o limiar (tech §6.4, contrato): o mesmo limiar
+    // nunca avisa duas vezes no mês, mesmo depois de mudar os outros
+    const overBp = Math.max(10000, ...thresholds);
+    const isOver = crossed >= overBp;
     const key = `budget:${ref}:${month.month}:${crossed}`;
-    if (crossed >= 10000) {
+    if (isOver) {
       out.push(
         note(
           'budget_threshold',
