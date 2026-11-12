@@ -186,7 +186,7 @@ flowchart LR
 | T-121 | Limiares de aviso configuráveis | T-120 | done |
 | T-122 | Lançamentos (T01/T02) | T-119 | done |
 | T-123 | Cartões (C01/C02) | T-122 | done |
-| T-124 | Planejar (P01–P04) | T-123 | todo |
+| T-124 | Planejar (P01–P04) | T-123 | done |
 | T-125 | Ajustes (S01–S11) | T-121 | todo |
 | T-126 | Importação, nota e conferência | T-125 | todo |
 | T-127 | Onboarding e marca | T-126 | todo |
@@ -1754,7 +1754,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-124 — Planejar (P01–P04)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-34..US-36 | RN-77 | T-123 | não |
+| done | R | M | US-34..US-36 | RN-77 | T-123 | não |
 
 **Escopo:** UXB-015 (renda sem repetir no anel; sem renda, um vazio com ação em vez de faixas zeradas); UXB-016 (texto duplicado na Reserva); UXB-017 ("Defina uma meta" no tamanho certo e um só botão primário); UXB-018 (Fechar o mês com o resumo do mês); UXB-020 (barras do Futuro com valores e legenda; "Ver como tabela" depois do gráfico); parte do P03 do UXB-012. D-084 item 8 para o P03 vazio.
 

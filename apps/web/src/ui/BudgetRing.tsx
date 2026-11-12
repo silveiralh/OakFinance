@@ -19,6 +19,11 @@ export interface BudgetRingProps extends BaseProps {
   incomeCents: number;
   size?: 'sm' | 'lg';
   showLegend?: boolean;
+  /** Rótulo pequeno sobre o valor do centro (P01: "Renda do mês", UXB-015). */
+  centerLabel?: string;
+  /** Sem renda o centro fica vazio (P01, UXB-015). */
+  showCenter?: boolean;
+  amountTestId?: string;
 }
 
 const NAME: Record<BandKey, string> = {
@@ -44,6 +49,9 @@ export function BudgetRing({
   incomeCents,
   size = 'lg',
   showLegend = size === 'lg',
+  centerLabel,
+  showCenter = true,
+  amountTestId,
   className,
   'data-testid': testId,
 }: BudgetRingProps) {
@@ -122,11 +130,18 @@ export function BudgetRing({
           );
         })}
       </svg>
-      <figcaption className="budget-ring-center">
-        <span className="money-text" data-size={size === 'lg' ? 'display' : 'label'}>
-          {money(incomeCents)}
-        </span>
-      </figcaption>
+      {showCenter && (
+        <figcaption className="budget-ring-center">
+          {centerLabel && <span className="budget-ring-label">{centerLabel}</span>}
+          <span
+            className="money-text"
+            data-size={size === 'lg' ? 'display' : 'label'}
+            data-testid={amountTestId}
+          >
+            {money(incomeCents)}
+          </span>
+        </figcaption>
+      )}
       {showLegend && (
         <table className="budget-ring-legend">
           <tbody>

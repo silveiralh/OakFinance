@@ -254,7 +254,19 @@ describe('P03 — Futuro (UX §3 P03)', () => {
     expect(await screen.findByTestId('future-summary')).toHaveTextContent(
       'Comprometido nos próximos 3 meses: R$ 790,00',
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Ver como tabela' }));
+    // T-124 (UXB-020): legenda, valor de cada mês na barra e "Ver como tabela" depois do gráfico
+    expect(screen.getByTestId('future-legend')).toHaveTextContent('ParcelasContas fixas');
+    const bars = screen.getByTestId('future-bars');
+    expect(bars.querySelectorAll('.future-bar-value')).toHaveLength(12);
+    const toggle = screen.getByRole('button', { name: 'Ver como tabela' });
+    expect(bars.compareDocumentPosition(toggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // T-124 (UXB-012, P03): cada item com o valor à direita, fora da frase
+    const janItem = within(screen.getByTestId('future-2027-01')).getByRole('button', {
+      name: /Geladeira/,
+    });
+    expect(janItem.querySelector('.future-item-title')?.textContent).toBe('Geladeira');
+    expect(janItem.querySelector('.cards-invoice-total')?.textContent).toMatch(/^R\$/);
+    fireEvent.click(toggle);
     const table = screen.getByTestId('future-table');
     expect(within(table).getAllByRole('row')).toHaveLength(13);
     const jan = screen.getByTestId('future-2027-01');

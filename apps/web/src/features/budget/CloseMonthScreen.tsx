@@ -4,8 +4,9 @@
 import { formatBRL, type ISODate, type YearMonth } from '@oakfinance/domain';
 import { Link, useParams } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { maskMoney, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
-import { t } from '../../i18n/pt-BR';
+import { t, uiText } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { trackUsage } from '../../lib/telemetry';
 import { useToday } from '../../lib/useToday';
@@ -16,6 +17,7 @@ import {
   closeMonth,
   closingChecklist,
   closingOf,
+  closingSummary,
   confirmOpenInvoice,
   monthName,
   monthTitle,
@@ -30,6 +32,7 @@ export function CloseMonthScreen({ today: fixedToday }: { today?: ISODate } = {}
   const month = (MONTH_RE.test(mes) ? mes : today.slice(0, 7)) as YearMonth;
   const { user } = useAuth();
   const showToast = useToast();
+  const hidden = useValuesHidden();
   const data = useLive(
     user
       ? async () => ({
@@ -47,6 +50,7 @@ export function CloseMonthScreen({ today: fixedToday }: { today?: ISODate } = {}
   const list = closingChecklist(data.rows, data.closings, month, today);
   const closing = closingOf(data.closings, month);
   const ready = canClose(list);
+  const summary = closingSummary(data.rows, month, today);
   const invoiceMonth = (id: string) =>
     data.rows.invoices.find((inv) => inv.id === id)?.reference_month.slice(0, 7) ?? month;
   const cardOf = (id: string) => data.rows.invoices.find((inv) => inv.id === id)?.card_id ?? '';
@@ -144,6 +148,26 @@ export function CloseMonthScreen({ today: fixedToday }: { today?: ISODate } = {}
               ))}
             </ul>
           )}
+          {/* UXB-018: o que está sendo fechado, com os números do snapshot, antes do botão */}
+          <section className="close-summary" aria-label={t('close.summary', { mes: name })}>
+            <h3>{t('close.summary', { mes: name })}</h3>
+            <dl className="detail-list" data-testid="close-summary">
+              <div>
+                <dt>{t('budget.income')}</dt>
+                <dd>{maskMoney(formatBRL(summary.incomeCents), hidden)}</dd>
+              </div>
+              {summary.bands.map((band) => (
+                <div key={band.bucket}>
+                  <dt>{band.bucket === 'needs' ? uiText.bandNeeds : uiText.bandWants}</dt>
+                  <dd>{maskMoney(formatBRL(band.spentCents), hidden)}</dd>
+                </div>
+              ))}
+              <div>
+                <dt>{t('list.summary.saved')}</dt>
+                <dd>{maskMoney(formatBRL(summary.savingsDoneCents), hidden)}</dd>
+              </div>
+            </dl>
+          </section>
           <Button
             fullWidth
             disabled={!ready}

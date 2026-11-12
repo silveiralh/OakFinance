@@ -83,9 +83,6 @@ export function FutureScreen({
             <p className="cards-line" data-testid="future-summary">
               {t('future.summary', { valor: money(committedNext(months)) })}
             </p>
-            <Button variant="ghost" onClick={() => setTable((v) => !v)}>
-              {table ? t('future.chart') : t('future.table')}
-            </Button>
             {table ? (
               <table className="future-table" data-testid="future-table">
                 <thead>
@@ -108,26 +105,44 @@ export function FutureScreen({
                 </tbody>
               </table>
             ) : (
-              <ul className="future-bars" aria-hidden="true" data-testid="future-bars">
-                {months.map((m) => (
-                  <li key={m.month}>
-                    <span className="future-bar-label">{monthLabel(m.month)}</span>
-                    <span className="future-bar">
-                      <span
-                        className="future-seg"
-                        data-kind="installment"
-                        style={{ width: `${(m.installmentsCents / max) * 100}%` }}
-                      />
-                      <span
-                        className="future-seg"
-                        data-kind="fixed"
-                        style={{ width: `${(m.fixedCents / max) * 100}%` }}
-                      />
-                    </span>
+              <>
+                {/* UXB-020: legenda das duas séries (padrão além da cor) e o valor de cada mês */}
+                <ul className="future-legend" aria-hidden="true" data-testid="future-legend">
+                  <li>
+                    <span className="future-seg" data-kind="installment" />
+                    {t('future.installments')}
                   </li>
-                ))}
-              </ul>
+                  <li>
+                    <span className="future-seg" data-kind="fixed" />
+                    {t('future.fixed')}
+                  </li>
+                </ul>
+                <ul className="future-bars" aria-hidden="true" data-testid="future-bars">
+                  {months.map((m) => (
+                    <li key={m.month}>
+                      <span className="future-bar-label">{monthLabel(m.month)}</span>
+                      <span className="future-bar">
+                        <span
+                          className="future-seg"
+                          data-kind="installment"
+                          style={{ width: `${(m.installmentsCents / max) * 100}%` }}
+                        />
+                        <span
+                          className="future-seg"
+                          data-kind="fixed"
+                          style={{ width: `${(m.fixedCents / max) * 100}%` }}
+                        />
+                      </span>
+                      <span className="future-bar-value">{money(m.totalCents)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
             )}
+            {/* UXB-020: a alternativa em tabela vem depois do gráfico */}
+            <Button variant="ghost" onClick={() => setTable((v) => !v)}>
+              {table ? t('future.chart') : t('future.table')}
+            </Button>
           </GlassCard>
           {months
             .filter((m) => m.items.length > 0)
@@ -136,33 +151,33 @@ export function FutureScreen({
                 <ul className="cards-invoices" data-testid={`future-${m.month}`}>
                   {m.items.map((item) => {
                     const Icon = item.kind === 'installment' ? CreditCard : Repeat;
-                    const label = [
-                      item.description,
+                    const detail =
                       item.kind === 'installment'
                         ? item.detail
-                        : t('future.every', { dia: item.detail }),
-                      <Amount key="v" text={formatBRL(item.amountCents)} hidden={hidden} />,
-                      item.cardId ? cardName.get(item.cardId) : null,
-                    ];
+                        : t('future.every', { dia: item.detail });
                     return (
                       <li key={item.key}>
                         <button
                           type="button"
-                          className="cards-invoice"
+                          className="cards-invoice future-item"
                           onClick={() =>
                             void navigate(
                               item.txId ? `/lancamentos/${item.txId}` : '/ajustes/renda',
                             )
                           }
                         >
+                          {/* UXB-012 (P03): ícone | descrição e detalhe em 2 linhas | valor à direita */}
                           <Icon size={20} aria-hidden="true" />
-                          <span className="cards-invoice-month">
-                            {label.filter(Boolean).map((part, i) => (
-                              <span key={typeof part === 'string' ? `${i}-${part}` : i}>
-                                {i > 0 ? ' · ' : ''}
-                                {part}
-                              </span>
-                            ))}
+                          <span className="future-item-text">
+                            <span className="future-item-title">{item.description}</span>
+                            <span className="future-item-meta">
+                              {[detail, item.cardId ? cardName.get(item.cardId) : null]
+                                .filter(Boolean)
+                                .join(' · ')}
+                            </span>
+                          </span>
+                          <span className="cards-invoice-total">
+                            <Amount text={formatBRL(item.amountCents)} hidden={hidden} />
                           </span>
                         </button>
                       </li>

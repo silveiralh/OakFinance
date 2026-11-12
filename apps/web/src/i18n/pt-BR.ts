@@ -160,6 +160,7 @@ export const ptBR = {
   'close.invoice': 'Fatura {cartao} com {valor} em aberto',
   'close.confirmInvoice': 'Confirmar saldo em aberto',
   'close.ready': 'Nenhuma pendência. O mês pode ser fechado.',
+  'close.summary': 'Resumo de {mes}',
   'close.cta': 'Fechar mês',
   'close.blocked': 'Resolva as pendências para fechar o mês.',
   'close.closed': '{mes} fechado em {data}.',
@@ -383,6 +384,8 @@ export const ptBR = {
   'categories.limit': 'Limite mensal (opcional)',
   'reserve.goalHint': 'Meta sugerida: 6× a média mensal de Necessidades ({valor}).',
   'reserve.goalNoData': 'Estimativa provisória, recalculada com seus gastos.',
+  'reserve.goalProvisional':
+    'Meta sugerida: 6× a meta de Necessidades do mês ({valor}), estimativa provisória, recalculada com seus gastos.',
   'reserve.suggestionChanged': 'Sugestão atualizada: {valor}. Usar?',
   'reserve.negative': 'Os resgates passaram do que foi guardado.',
   'reserve.pace': 'No ritmo atual, a meta é atingida em cerca de {n} meses.',
