@@ -20,12 +20,19 @@ function mount() {
   return auth;
 }
 
+/** UXC-007: "Adicionar conta" abre a folha com o formulário. */
+async function openAdd() {
+  fireEvent.click(await screen.findByTestId('account-add'));
+  return screen.findByTestId('account-add-sheet');
+}
+
 async function add(name: string, typeLabel?: string) {
-  fireEvent.change(screen.getByLabelText('Nome'), { target: { value: name } });
+  const sheet = await openAdd();
+  fireEvent.change(within(sheet).getByLabelText('Nome'), { target: { value: name } });
   if (typeLabel) {
-    fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: typeLabel } });
+    fireEvent.change(within(sheet).getByLabelText('Tipo'), { target: { value: typeLabel } });
   }
-  fireEvent.click(screen.getByRole('button', { name: 'Adicionar conta' }));
+  fireEvent.click(within(sheet).getByRole('button', { name: 'Adicionar conta' }));
 }
 
 describe('S03 contas (US-09)', () => {
@@ -68,8 +75,9 @@ describe('S03 contas (US-09)', () => {
   it('nome vazio pede o nome', async () => {
     mount();
     await screen.findByText('Nenhuma conta cadastrada');
-    fireEvent.click(screen.getByRole('button', { name: 'Adicionar conta' }));
-    expect(await screen.findByText('Informe o nome da conta.')).toBeInTheDocument();
+    const sheet = await openAdd();
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Adicionar conta' }));
+    expect(await within(sheet).findByText('Informe o nome da conta.')).toBeInTheDocument();
   });
 });
 
@@ -86,6 +94,38 @@ describe('T-125: S03 (UXC-015, UXC-017)', () => {
     expect(screen.queryByText('Onde está o seu dinheiro?')).toBeNull();
     // com os dias vazios, "Adicionar cartão" fica desativado sem a mensagem de erro
     expect(screen.queryByText('Escolha um dia entre 1 e 31.')).toBeNull();
+  });
+});
+
+describe('T-125: formulários em folhas (UXC-007)', () => {
+  it('US-09 (UXC-007): a S03 abre sem formulário nem teclado; "Adicionar conta" abre a folha, que fecha ao salvar', async () => {
+    mount();
+    await screen.findByText('Nenhuma conta cadastrada');
+    expect(screen.queryByLabelText('Saldo atual')).toBeNull();
+    expect(screen.queryByTestId('card-form')).toBeNull();
+    expect(document.querySelector('fieldset.keypad')).toBeNull();
+    const sheet = await openAdd();
+    expect(within(sheet).getByLabelText('Saldo atual')).toBeInTheDocument();
+    fireEvent.change(within(sheet).getByLabelText('Nome'), { target: { value: 'BB' } });
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Adicionar conta' }));
+    expect(await screen.findByText('BB', { selector: '.account-name' })).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByTestId('account-add-sheet')).toBeNull());
+  });
+
+  it('US-12 (UXC-007): "?adicionar=conta" (vindo do Q01) abre a folha de conta', async () => {
+    const auth = fakeAuth('signedIn');
+    const router = createMemoryRouter([{ path: '*', element: <AccountsScreen /> }], {
+      initialEntries: ['/ajustes/contas?adicionar=conta'],
+    });
+    render(
+      <AuthContext.Provider value={auth}>
+        <RouterProvider router={router} />
+      </AuthContext.Provider>,
+    );
+    const sheet = await screen.findByTestId('account-add-sheet');
+    expect(within(sheet).getByLabelText('Nome')).toBeInTheDocument();
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Fechar' }));
+    await waitFor(() => expect(router.state.location.search).toBe(''));
   });
 });
 

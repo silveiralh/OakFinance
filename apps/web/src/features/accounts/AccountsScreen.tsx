@@ -1,6 +1,7 @@
 import { todayIn } from '@oakfinance/domain';
 import { Archive, Landmark, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
@@ -158,6 +159,9 @@ export function AccountsScreen() {
       : null,
     [user],
   );
+  // UXC-007: o formulário fica numa folha aberta pelo botão; `?adicionar=conta` abre a folha (Q01 sem conta)
+  const [params, setParams] = useSearchParams();
+  const [adding, setAdding] = useState(() => params.get('adicionar') === 'conta');
   const [name, setName] = useState('');
   const [type, setType] = useState<AccountType>('checking');
   const [institution, setInstitution] = useState('');
@@ -202,8 +206,19 @@ export function AccountsScreen() {
     setName('');
     setInstitution('');
     setBalance(0);
+    closeAdd();
     after(true);
   };
+
+  function closeAdd() {
+    setAdding(false);
+    setNameError(null);
+    if (params.get('adicionar') === 'conta') {
+      const next = new URLSearchParams(params);
+      next.delete('adicionar');
+      setParams(next, { replace: true });
+    }
+  }
 
   const saveEdit = async () => {
     if (!editing) {
@@ -279,36 +294,15 @@ export function AccountsScreen() {
           <ul className="account-list">{active.map(row)}</ul>
         )}
       </GlassCard>
-      <GlassCard level={2}>
-        <form className="account-form" onSubmit={(event) => void submit(event)}>
-          <TextField
-            label={t('accounts.name')}
-            value={name}
-            onChange={setName}
-            {...(nameError ? { error: nameError } : {})}
-          />
-          <Select
-            label={t('accounts.type')}
-            value={type}
-            onChange={(value) => setType(value as AccountType)}
-            options={ACCOUNT_TYPES.map((value) => ({ value, label: t(TYPE_LABEL[value]) }))}
-          />
-          <TextField
-            label={t('accounts.institution')}
-            value={institution}
-            onChange={setInstitution}
-          />
-          <AmountInput
-            size="compact"
-            label={t('accounts.balance')}
-            value={balance}
-            onChange={setBalance}
-          />
-          <Button type="submit" iconStart={Plus} fullWidth>
-            {t('accounts.add')}
-          </Button>
-        </form>
-      </GlassCard>
+      <Button
+        variant="secondary"
+        iconStart={Plus}
+        fullWidth
+        onClick={() => setAdding(true)}
+        data-testid="account-add"
+      >
+        {t('accounts.add')}
+      </Button>
       {archived.length > 0 && (
         <details className="account-archived">
           <summary>{t('accounts.archived')}</summary>
@@ -316,6 +310,45 @@ export function AccountsScreen() {
         </details>
       )}
       <CardsSection />
+      <BottomSheet
+        open={adding}
+        onClose={closeAdd}
+        title={t('accounts.add')}
+        data-testid="account-add-sheet"
+      >
+        {adding && (
+          <form className="account-form" onSubmit={(event) => void submit(event)}>
+            <TextField
+              label={t('accounts.name')}
+              value={name}
+              onChange={setName}
+              {...(nameError ? { error: nameError } : {})}
+            />
+            <Select
+              label={t('accounts.type')}
+              value={type}
+              onChange={(value) => setType(value as AccountType)}
+              options={ACCOUNT_TYPES.map((value) => ({ value, label: t(TYPE_LABEL[value]) }))}
+            />
+            <TextField
+              label={t('accounts.institution')}
+              value={institution}
+              onChange={setInstitution}
+            />
+            {/* UXC-007: sem o teclado próprio embutido na folha; o do aparelho basta */}
+            <AmountInput
+              size="compact"
+              keypad="native"
+              label={t('accounts.balance')}
+              value={balance}
+              onChange={setBalance}
+            />
+            <Button type="submit" iconStart={Plus} fullWidth>
+              {t('accounts.add')}
+            </Button>
+          </form>
+        )}
+      </BottomSheet>
       <BottomSheet
         open={editing !== null}
         onClose={() => setEditing(null)}

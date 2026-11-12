@@ -740,7 +740,7 @@ export function QuickEntrySheet({
           <Button
             variant="secondary"
             fullWidth
-            onClick={() => void navigate('/ajustes/contas')}
+            onClick={() => void navigate('/ajustes/contas?adicionar=conta')}
             data-testid="quick-add-account"
           >
             {t('accounts.add')}

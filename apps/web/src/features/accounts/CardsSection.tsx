@@ -1,6 +1,7 @@
 import { monthLabel, todayIn } from '@oakfinance/domain';
 import { Archive, CreditCard, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
@@ -16,7 +17,16 @@ import {
 } from '../../data/repositories/cards';
 import { emptyStates, type MessageKey, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
-import { AmountInput, Button, EmptyState, GlassCard, Select, Switch, TextField } from '../../ui';
+import {
+  AmountInput,
+  BottomSheet,
+  Button,
+  EmptyState,
+  GlassCard,
+  Select,
+  Switch,
+  TextField,
+} from '../../ui';
 import { CardEditSheet } from './CardEditSheet';
 
 const NAME_ERROR: Record<'required' | 'tooLong' | 'duplicate', MessageKey> = {
@@ -75,6 +85,9 @@ export function CardsSection({
     [user],
   );
   const [editing, setEditing] = useState<LocalRow<'cards'> | null>(null);
+  // UXC-007: o formulário fica numa folha aberta pelo botão; `?adicionar=cartao` abre a folha (vazio da C01)
+  const [params, setParams] = useSearchParams();
+  const [adding, setAdding] = useState(() => params.get('adicionar') === 'cartao');
   const [name, setName] = useState('');
   const [closing, setClosing] = useState('');
   const [due, setDue] = useState('');
@@ -121,8 +134,19 @@ export function CardsSection({
     setDue('');
     setToNext(true);
     setLimit(0);
+    closeAdd();
     user.engine.notifyWrite();
   };
+
+  function closeAdd() {
+    setAdding(false);
+    setNameError(null);
+    if (params.get('adicionar') === 'cartao') {
+      const next = new URLSearchParams(params);
+      next.delete('adicionar');
+      setParams(next, { replace: true });
+    }
+  }
 
   const act = async (id: string, run: () => Promise<{ ok: boolean; error?: { code: string } }>) => {
     const result = await run();
@@ -234,71 +258,94 @@ export function CardsSection({
           onClose={() => setEditing(null)}
         />
       )}
-      <GlassCard level={2}>
-        <form
-          className="account-form"
-          onSubmit={(event) => void submit(event)}
-          data-testid="card-form"
-        >
-          <TextField
-            label={t('cards.name')}
-            value={name}
-            onChange={setName}
-            {...(nameError ? { error: nameError } : {})}
-          />
-          <TextField
-            label={t('cards.closing')}
-            value={closing}
-            onChange={setClosing}
-            inputMode="numeric"
-            {...(closingError ? { error: closingError } : {})}
-          />
-          {closingDay === 31 && <p className="account-meta">{t('cards.day31')}</p>}
-          <TextField
-            label={t('cards.due')}
-            value={due}
-            onChange={setDue}
-            inputMode="numeric"
-            {...(dueError ? { error: dueError } : {})}
-          />
-          {valid && closingDay === dueDay && (
-            <p className="account-meta" role="status">
-              {t('cards.sameDay')}
-            </p>
-          )}
-          <Switch
-            label={t('cards.rule')}
-            description={t('cards.ruleHint')}
-            checked={toNext}
-            onChange={setToNext}
-          />
-          {valid && (
-            <p className="account-meta" data-testid="card-preview">
-              {previewText(closingDay, dueDay, toNext, today)}
-            </p>
-          )}
-          <AmountInput size="compact" label={t('cards.limit')} value={limit} onChange={setLimit} />
-          <Select
-            label={t('cards.payer')}
-            value={payer}
-            onChange={setPayer}
-            options={[
-              { value: '', label: t('cards.noPayer') },
-              ...payers.map((a) => ({ value: a.id, label: a.name })),
-            ]}
-          />
-          <Button
-            type="submit"
-            iconStart={Plus}
-            fullWidth
-            disabled={!valid}
-            // UXC-017: com os dias ainda vazios não há erro a mostrar; o aviso só vem depois de digitar errado
-            disabledReason={closingError ?? dueError ?? ''}
+      <Button
+        variant="secondary"
+        iconStart={Plus}
+        fullWidth
+        onClick={() => setAdding(true)}
+        data-testid="card-add"
+      >
+        {t('cards.add')}
+      </Button>
+      <BottomSheet
+        open={adding}
+        onClose={closeAdd}
+        title={t('cards.add')}
+        data-testid="card-add-sheet"
+      >
+        {adding && (
+          <form
+            className="account-form"
+            onSubmit={(event) => void submit(event)}
+            data-testid="card-form"
           >
-            {t('cards.add')}
-          </Button>
-        </form>
-      </GlassCard>
+            <TextField
+              label={t('cards.name')}
+              value={name}
+              onChange={setName}
+              {...(nameError ? { error: nameError } : {})}
+            />
+            <TextField
+              label={t('cards.closing')}
+              value={closing}
+              onChange={setClosing}
+              inputMode="numeric"
+              {...(closingError ? { error: closingError } : {})}
+            />
+            {closingDay === 31 && <p className="account-meta">{t('cards.day31')}</p>}
+            <TextField
+              label={t('cards.due')}
+              value={due}
+              onChange={setDue}
+              inputMode="numeric"
+              {...(dueError ? { error: dueError } : {})}
+            />
+            {valid && closingDay === dueDay && (
+              <p className="account-meta" role="status">
+                {t('cards.sameDay')}
+              </p>
+            )}
+            <Switch
+              label={t('cards.rule')}
+              description={t('cards.ruleHint')}
+              checked={toNext}
+              onChange={setToNext}
+            />
+            {valid && (
+              <p className="account-meta" data-testid="card-preview">
+                {previewText(closingDay, dueDay, toNext, today)}
+              </p>
+            )}
+            {/* UXC-007: sem o teclado próprio embutido na folha; o do aparelho basta */}
+            <AmountInput
+              size="compact"
+              keypad="native"
+              label={t('cards.limit')}
+              value={limit}
+              onChange={setLimit}
+            />
+            <Select
+              label={t('cards.payer')}
+              value={payer}
+              onChange={setPayer}
+              options={[
+                { value: '', label: t('cards.noPayer') },
+                ...payers.map((a) => ({ value: a.id, label: a.name })),
+              ]}
+            />
+            <Button
+              type="submit"
+              iconStart={Plus}
+              fullWidth
+              disabled={!valid}
+              // UXC-017: com os dias ainda vazios não há erro a mostrar; o aviso só vem depois de digitar errado
+              disabledReason={closingError ?? dueError ?? ''}
+            >
+              {t('cards.add')}
+            </Button>
+          </form>
+        )}
+      </BottomSheet>
     </>
   );
 }

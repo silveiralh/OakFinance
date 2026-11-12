@@ -84,7 +84,7 @@ export function CardsScreen({
           description={emptyStates.cards.text}
           primaryAction={{
             label: emptyStates.cards.actions[0],
-            onPress: () => void navigate('/ajustes/contas'),
+            onPress: () => void navigate('/ajustes/contas?adicionar=cartao'),
           }}
         />
       </section>
@@ -202,7 +202,11 @@ export function CardsScreen({
           />
         </GlassCard>
       )}
-      <Button variant="ghost" iconStart={Plus} onClick={() => void navigate('/ajustes/contas')}>
+      <Button
+        variant="ghost"
+        iconStart={Plus}
+        onClick={() => void navigate('/ajustes/contas?adicionar=cartao')}
+      >
         {t('cards.add')}
       </Button>
     </section>
