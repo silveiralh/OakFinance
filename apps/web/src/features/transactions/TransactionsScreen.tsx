@@ -18,6 +18,7 @@ import { deleteRow, restoreRow } from '../../data/repositories/rows';
 import { emptyStates, fill, type MessageKey, t, uiText } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import {
+  Button,
   Dialog,
   EmptyState,
   GlassCard,
@@ -115,14 +116,21 @@ function signed(cents: number): string {
   return cents > 0 ? `+${formatBRL(cents)}` : formatBRL(0);
 }
 
-/** "Hoje", "Ontem" ou dd/mm/aaaa. */
+function shiftDay(date: ISODate, days: number): string {
+  const d = new Date(`${date}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+/** "Hoje", "Ontem", "Amanhã" ou dd/mm/aaaa (D-084 item 1: relativa só para as datas vizinhas). */
 export function dayLabel(date: ISODate, today: ISODate): string {
   if (date === today) {
     return t('list.today');
   }
-  const y = new Date(`${today}T12:00:00Z`);
-  y.setUTCDate(y.getUTCDate() - 1);
-  return date === y.toISOString().slice(0, 10) ? t('list.yesterday') : formatDateBR(date);
+  if (date === shiftDay(today, -1)) {
+    return t('list.yesterday');
+  }
+  return date === shiftDay(today, 1) ? t('list.tomorrow') : formatDateBR(date);
 }
 
 function rowState(tx: Tx, today: ISODate, planned: boolean): RowTx['state'] {
@@ -166,6 +174,7 @@ export function toRow(
   category: Category | undefined,
   today: ISODate,
   planned = false,
+  inDayGroup = false,
 ): RowTx {
   const kind =
     tx.kind === 'income' || tx.kind === 'refund' || tx.kind === 'adjust_in'
@@ -192,6 +201,8 @@ export function toRow(
     },
     method: methodLabel(tx.payment_method),
     when: formatDateBR(tx.occurred_on),
+    // UXB-003: dentro do grupo do dia, a data já está no cabeçalho (continua no rótulo lido pelo leitor de tela)
+    ...(inDayGroup ? { hideWhen: true } : {}),
     ...(tx.installment_number && tx.installment_count
       ? { installment: { n: tx.installment_number, total: tx.installment_count } }
       : {}),
@@ -294,6 +305,23 @@ export function TransactionsScreen({
     [homeRows, month, today],
   );
   const summary = impactSummary(monthSummary(live, categories, planned), byImpact);
+  // UXB-005: o mesmo contador do Início (importados novos ou sugeridos, de qualquer mês)
+  const toReview = useMemo(
+    () =>
+      (homeRows?.txRows ?? []).filter(
+        (r) =>
+          r.deleted_at === null &&
+          r.source !== 'manual' &&
+          (r.review_state === 'new' || r.review_state === 'suggested'),
+      ).length,
+    [homeRows],
+  );
+  const activeFilters = [
+    filters.accountId,
+    filters.band,
+    filters.categoryId,
+    filters.status,
+  ].filter((v) => v !== null).length;
   const narrowed = filters !== NO_FILTERS && JSON.stringify(filters) !== JSON.stringify(NO_FILTERS);
   const set = (patch: Partial<ListFilters>) => setFilters((f) => ({ ...f, ...patch }));
   const windowed = visibleWindow(entries.length, scrollTop, VIEWPORT, ROW_HEIGHT);
@@ -359,12 +387,38 @@ export function TransactionsScreen({
           </div>
         </dl>
       </GlassCard>
-      <TextField
-        label={t('list.search')}
-        value={filters.query}
-        onChange={(query) => set({ query })}
-        prefixIcon={Search}
-      />
+      {toReview > 0 && (
+        <GlassCard level={1} className="list-review" data-testid="list-review">
+          <p>{t('review.count', { n: toReview })}</p>
+          <Button variant="secondary" onClick={() => void navigate('/conferir')}>
+            {t('conn.review')}
+          </Button>
+        </GlassCard>
+      )}
+      {/* UXB-006: busca compacta (o rótulo fica para o leitor de tela) e Filtros fixo ao lado, fora dos chips */}
+      <div className="list-tools">
+        <TextField
+          className="list-search"
+          label={t('list.search')}
+          placeholder={t('list.search')}
+          type="search"
+          value={filters.query}
+          onChange={(query) => set({ query })}
+          prefixIcon={Search}
+        />
+        <button
+          type="button"
+          className="chip list-chip list-filters"
+          data-selected={panel || activeFilters > 0}
+          aria-expanded={panel}
+          onClick={() => setPanel((open) => !open)}
+          data-testid="list-filters"
+        >
+          <Funnel size={18} aria-hidden="true" />
+          {t('list.filters')}
+          {activeFilters > 0 && <span className="list-filters-count">{activeFilters}</span>}
+        </button>
+      </div>
       <fieldset className="list-chips">
         <legend className="sr-only">{t('list.filters')}</legend>
         <div className="quick-chips">
@@ -380,15 +434,6 @@ export function TransactionsScreen({
               {t(CHIP_LABEL[chip])}
             </button>
           ))}
-          <button
-            type="button"
-            className="chip list-chip"
-            data-selected={panel}
-            aria-expanded={panel}
-            onClick={() => setPanel((open) => !open)}
-          >
-            {t('list.filters')}
-          </button>
         </div>
       </fieldset>
       {panel && (
@@ -428,7 +473,7 @@ export function TransactionsScreen({
               value={filters.status ?? ''}
               onChange={(v) => set({ status: (v || null) as StatusFilter | null })}
               options={[
-                { value: '', label: t('list.filter.any') },
+                { value: '', label: t('list.filter.anyStatus') },
                 ...(['forecast', 'late', 'cancelled'] as const).map((value) => ({
                   value,
                   label: STATUS_LABEL[value],
@@ -479,6 +524,7 @@ export function TransactionsScreen({
                   entry.tx.category_id ? categories.get(entry.tx.category_id) : undefined,
                   today,
                   planned.has(entry.tx.id),
+                  true,
                 )}
                 onPress={() => void navigate(`/lancamentos/${entry.tx.id}`)}
                 onActions={() => setActing(entry.tx)}

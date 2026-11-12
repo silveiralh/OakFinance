@@ -2165,10 +2165,11 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `list.filters` | Filtros |
 | `list.filter.account` / `.band` / `.category` / `.status` | Conta / Faixa / Categoria / Status |
 | `list.filter.any` | Todas |
+| `list.filter.anyStatus` | Todos |
 | `list.filteredTotal` | Total filtrado: {valor} |
 | `list.search` | Buscar lançamentos |
 | `list.prevMonth` / `.nextMonth` | Mês anterior / Próximo mês |
-| `list.today` / `.yesterday` | Hoje / Ontem |
+| `list.today` / `.yesterday` / `.tomorrow` | Hoje / Ontem / Amanhã |
 | `list.empty` | Nenhum lançamento em {mês} |
 | `list.noResult` | Nenhum resultado para "{termo}" |
 | `list.edit` / `.delete` | Editar / Excluir |
@@ -2192,6 +2193,8 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `detail.field.notes` | Observação |
 | `detail.field.origin` | Origem |
 | `detail.field.amount` | Valor |
+| `detail.field.installment` | Parcela |
+| `detail.installmentOf` | {n} de {total} |
 | `detail.invoice` | {mês}, vence {data} |
 | `detail.origin.manual` | Manual |
 | `detail.origin.pluggy` | Open Finance |

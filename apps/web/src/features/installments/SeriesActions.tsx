@@ -34,6 +34,8 @@ export interface SeriesActionsProps {
   tx: LocalRow<'transactions'>;
   categories: readonly LocalRow<'categories'>[];
   today: ISODate;
+  /** Qual botão mostrar (UXB-022: na T02, Editar vem primeiro e Excluir por último, com as outras ações entre). */
+  part?: 'edit' | 'delete' | 'both';
 }
 
 interface Form {
@@ -45,7 +47,7 @@ interface Form {
   scope: FieldScope;
 }
 
-export function SeriesActions({ user, tx, categories, today }: SeriesActionsProps) {
+export function SeriesActions({ user, tx, categories, today, part = 'both' }: SeriesActionsProps) {
   const navigate = useNavigate();
   const showToast = useToast();
   const [data, setData] = useState<SeriesData | null>(null);
@@ -159,12 +161,21 @@ export function SeriesActions({ user, tx, categories, today }: SeriesActionsProp
   const options = expenseCategories(categories).map((c) => ({ value: c.id, label: c.name }));
   return (
     <>
-      <Button variant="secondary" iconStart={Pencil} onClick={() => void openEdit()}>
-        {t('list.edit')}
-      </Button>
-      <Button variant="danger" iconStart={Trash2} onClick={() => void openDelete()}>
-        {t('list.delete')}
-      </Button>
+      {part !== 'delete' && (
+        <Button variant="secondary" iconStart={Pencil} onClick={() => void openEdit()}>
+          {t('list.edit')}
+        </Button>
+      )}
+      {part !== 'edit' && (
+        <Button
+          variant="secondary"
+          iconStart={Trash2}
+          className="detail-delete"
+          onClick={() => void openDelete()}
+        >
+          {t('list.delete')}
+        </Button>
+      )}
       <BottomSheet
         open={form !== null}
         onClose={() => setForm(null)}

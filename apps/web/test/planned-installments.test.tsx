@@ -1,6 +1,6 @@
 // T-116 (UXB-001): parcelas futuras de uma compra no cartão aparecem como "Prevista" (RN-23, D-034), em ordem na
 // série, e não somam no dia da compra nem no resumo do mês da compra.
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it } from 'vitest';
@@ -166,7 +166,12 @@ describe('US-24: telas com a parcela prevista', () => {
     // −R$ 615,00 = parcela 1 (R$ 600,00) + padaria (R$ 15,00); sem as parcelas 2 e 3
     expect(screen.getByTestId('list-day')).toHaveTextContent('615,00');
     expect(screen.getByTestId('list-day')).not.toHaveTextContent('1.815,00');
-    expect(screen.getByTestId('list-summary')).toHaveTextContent('615,00');
+    // T-122 (D-084 item 2, D-097): o resumo segue o mês de impacto e o "Gasto" do Início; a parcela 1 está na
+    // fatura de novembro ainda não paga (vai para "Ainda vai sair"), então só a padaria entra em Saídas
+    const summary = screen.getByTestId('list-summary');
+    await waitFor(() =>
+      expect(within(summary).getByText('Saídas').nextElementSibling?.textContent).toBe('R$ 15,00'),
+    );
   });
 
   it('US-24: a T02 da parcela 2/3 (fatura de dezembro) mostra "Prevista", não "Efetivada"', async () => {
