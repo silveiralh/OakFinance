@@ -39,7 +39,7 @@ test('RN-51: com 5.000 lançamentos, o painel recalcula em menos de 200 ms e abr
   // painel com os dados locais (DoD 7)
   const started = Date.now();
   await page.goto('/');
-  await expect(page.getByTestId('home-hero')).toHaveAttribute('data-available', /^-?\d+$/, {
+  await expect(page.getByTestId('home-hero')).toHaveAttribute('data-spent', /^-?\d+$/, {
     timeout: 10_000,
   });
   const elapsed = Date.now() - started;

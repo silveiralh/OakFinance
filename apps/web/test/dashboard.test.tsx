@@ -1,4 +1,5 @@
-// T-058: painel "Disponível para gastar" (H01, H01-S) — US-30, RN-44, RN-46..RN-51, E02 e E17 no nível de componente.
+// T-058/T-120: Início (H01) — gasto do mês, saldo nas contas e Saúde do mês (D-081); US-30, RN-44, RN-46..RN-51, E02
+// e E17 no nível de componente. A fórmula do "Disponível para gastar" continua testada no domínio (spendable.ts).
 import {
   act,
   fireEvent,
@@ -56,52 +57,37 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('H01 — Disponível para gastar (US-30)', () => {
-  it('US-30: caso de referência — R$ 1.210,00, R$ 75,62 por dia até 30/11 e "No ritmo do mês"', async () => {
+describe('H01 — gasto do mês e saldo nas contas (US-30, D-081)', () => {
+  it('US-30 (D-081): caso de referência — "Gasto em novembro" R$ 3.350,00, ainda vai sair R$ 280,00 e saldo nas contas R$ 2.450,00', async () => {
     await renderHome(rows(referenceTxs()));
-    expect(screen.getByText('Disponível para gastar em novembro')).toBeInTheDocument();
-    expect(hero()).toHaveTextContent('R$ 1.210,00');
-    expect(screen.getByTestId('home-per-day')).toHaveTextContent('R$ 75,62 por dia até 30/11');
-    expect(screen.getByTestId('home-pace')).toHaveTextContent('No ritmo do mês');
-    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-status', 'on_track');
+    expect(screen.getByText('Gasto em novembro')).toBeInTheDocument();
+    expect(hero()).toHaveTextContent('R$ 3.350,00');
+    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-spent', '335000');
+    expect(screen.getByTestId('home-upcoming-month')).toHaveTextContent(
+      'Ainda vai sair este mês: R$ 280,00',
+    );
+    expect(screen.getByTestId('home-balance')).toHaveTextContent('Saldo nas contas');
+    expect(screen.getByTestId('home-balance')).toHaveTextContent('R$ 2.450,00');
     expect(
-      screen.getByRole('heading', { name: 'Disponível para gastar: R$ 1.210,00' }),
+      screen.getByRole('heading', { name: 'Gasto em novembro: R$ 3.350,00' }),
     ).toBeInTheDocument();
+    // D-081: o "Disponível para gastar" e o selo da RN-50 saíram do Início
+    expect(screen.queryByText(/Disponível para gastar/)).toBeNull();
+    expect(screen.queryByTestId('home-pace')).toBeNull();
+    expect(screen.queryByTestId('home-per-day')).toBeNull();
   });
-
-  it('RN-49: H01-S — receitas R$ 5.800,00 (fixa + variável), já gasto R$ 3.350,00, ainda vai sair R$ 280,00, poupança R$ 960,00', async () => {
+  it('RN-49 (D-081): sem a folha H01-S — as previstas ficam fora do herói e o saldo abre a lista de contas', async () => {
     const { router } = await renderHome(rows(referenceTxs()));
-    fireEvent.click(screen.getByTestId('home-how'));
-    const sheet = await screen.findByTestId('home-formula');
-    const line = (key: string) => sheet.querySelector(`[data-line="${key}"] a`) as HTMLElement;
-    expect(line('fixed')).toHaveTextContent('Receita fixa do mês');
-    expect(line('fixed')).toHaveTextContent('+ R$ 5.000,00');
-    expect(line('variable')).toHaveTextContent('+ R$ 800,00');
-    expect(line('expected')).toHaveTextContent('+ R$ 0,00');
-    expect(sheet.querySelector('[data-line="withdrawals"]')).toBeNull();
-    expect(line('spent')).toHaveTextContent('Gastos realizados');
-    expect(line('spent')).toHaveTextContent('− R$ 3.350,00');
-    expect(line('upcoming')).toHaveTextContent('− R$ 280,00');
-    expect(line('savings')).toHaveTextContent('Poupança do mês (20%)');
-    expect(line('savings')).toHaveTextContent('− R$ 960,00');
-    expect(screen.getByTestId('home-formula-total')).toHaveTextContent('R$ 1.210,00');
-    expect(sheet).toHaveTextContent(
-      'Você pode ajustar o cálculo em Ajustes › Disponível para gastar.',
-    );
-    // "ainda vencem" mostra as próximas saídas por data
-    const next = within(sheet.querySelector('.home-formula-next') as HTMLElement);
-    expect(next.getByText('20/11 · Luz')).toBeInTheDocument();
-    expect(next.getByText('25/11 · Internet')).toBeInTheDocument();
-    // cada linha abre a T01 filtrada
-    fireEvent.click(line('spent'));
-    await waitFor(() => expect(router.state.location.search).toBe('?filtro=expense'));
+    expect(screen.queryByTestId('home-how')).toBeNull();
+    expect(screen.queryByTestId('home-formula')).toBeNull();
+    // a conta de luz (R$ 280,00, prevista para 20/11) não entra no gasto, só no "ainda vai sair"
+    expect(hero()).toHaveTextContent('R$ 3.350,00');
+    expect(hero()).not.toHaveTextContent('R$ 3.630,00');
+    fireEvent.click(screen.getByTestId('home-balance'));
+    await waitFor(() => expect(router.state.location.pathname).toBe('/ajustes/contas'));
   });
-
-  it('US-30: compra no cartão A em 15/11 (fatura dez) não muda o valor e soma R$ 150,00 em "No cartão para os próximos meses"', async () => {
+  it('US-30 (D-081): compra no cartão A em 15/11 (fatura dez) não muda o gasto de novembro nem o saldo nas contas', async () => {
     const { auth } = await renderHome(rows(referenceTxs()));
-    expect(screen.getByTestId('home-future-card')).toHaveTextContent(
-      'No cartão para os próximos meses: R$ 0,00',
-    );
     await act(async () => {
       await saveRow(
         auth.user?.db as never,
@@ -118,15 +104,13 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         }),
       );
     });
+    // o mês de impacto da compra é dezembro (vencimento da fatura, RN-46)
     await waitFor(() =>
-      expect(screen.getByTestId('home-future-card')).toHaveTextContent(
-        'No cartão para os próximos meses: R$ 150,00',
-      ),
+      expect(screen.getByTestId('home-balance')).toHaveAttribute('data-balance', '245000'),
     );
-    expect(hero()).toHaveTextContent('R$ 1.210,00');
+    expect(hero()).toHaveTextContent('R$ 3.350,00');
   });
-
-  it('US-30/E02: R$ 50,00 no débito em 15/11 → R$ 1.160,00 na hora, sem rede (RN-51)', async () => {
+  it('US-30/E02 (D-081): R$ 50,00 no débito em 15/11 → gasto R$ 3.400,00 e saldo R$ 2.400,00 na hora, sem rede (RN-51)', async () => {
     const { auth } = await renderHome(rows(referenceTxs()));
     await act(async () => {
       await saveRow(
@@ -141,10 +125,10 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         }),
       );
     });
-    await waitFor(() => expect(hero()).toHaveTextContent('R$ 1.160,00'));
+    await waitFor(() => expect(hero()).toHaveTextContent('R$ 3.400,00'));
+    expect(screen.getByTestId('home-balance')).toHaveTextContent('R$ 2.400,00');
   });
-
-  it('RN-51 (issue #136): com o histórico inteiro lido, despesas de anos anteriores não mudam os R$ 1.210,00 do mês', async () => {
+  it('RN-51 (issue #136): com o histórico inteiro lido, despesas de anos anteriores não mudam os R$ 3.350,00 gastos no mês', async () => {
     const old = ['2023-11-15', '2024-03-02', '2025-11-30'].map((occurred_on, i) =>
       tx(`antigo-${i}`, {
         ...base,
@@ -155,8 +139,8 @@ describe('H01 — Disponível para gastar (US-30)', () => {
       }),
     );
     const { auth } = await renderHome(rows([...referenceTxs(), ...old]));
-    expect(hero()).toHaveTextContent('R$ 1.210,00');
-    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-available', '121000');
+    expect(hero()).toHaveTextContent('R$ 3.350,00');
+    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-spent', '335000');
     // a leitura do Início segue ao vivo: um gasto de hoje entra na hora
     await act(async () => {
       await saveRow(
@@ -171,7 +155,7 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         }),
       );
     });
-    await waitFor(() => expect(hero()).toHaveTextContent('R$ 1.200,00'));
+    await waitFor(() => expect(hero()).toHaveTextContent('R$ 3.360,00'));
   });
 
   it('US-30: "Contar antes de receber" no freela de R$ 300,00 → Base R$ 6.100,00 e o valor sobe R$ 240,00', async () => {
@@ -184,7 +168,7 @@ describe('H01 — Disponível para gastar (US-30)', () => {
     expect(model.spendable.availableCents).toBe(121000 + 24000);
   });
 
-  it('RN-48: mês sem renda — sem o valor, com "Cadastrar renda", "Lançar receita" e "Você já gastou R$ X este mês"', async () => {
+  it('RN-48 (D-081): mês sem renda — o herói mostra o gasto e a Saúde do mês pede a renda com "Cadastrar renda"', async () => {
     await renderHome(
       rows(
         [
@@ -198,20 +182,18 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         { recurrences: [] },
       ),
     );
-    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-status', 'no_income');
-    expect(screen.getByTestId('home-hero')).not.toHaveAttribute('data-available');
-    expect(screen.getByText('Cadastre sua renda para ver quanto pode gastar')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Cadastrar renda' })).toHaveAttribute(
+    expect(hero()).toHaveTextContent('R$ 45,90');
+    const health = screen.getByTestId('home-health');
+    expect(within(health).getByTestId('home-health-no-income')).toHaveTextContent(
+      'Cadastre sua renda para acompanhar as faixas do mês.',
+    );
+    expect(within(health).getByRole('link', { name: 'Cadastrar renda' })).toHaveAttribute(
       'href',
       '/ajustes/renda',
     );
-    expect(screen.getByRole('link', { name: 'Lançar receita' })).toBeInTheDocument();
-    expect(hero()).toHaveTextContent('Você já gastou R$ 45,90 este mês');
-    expect(screen.queryByTestId('home-per-day')).toBeNull();
-    expect(screen.queryByTestId('home-pace')).toBeNull();
+    expect(screen.queryByTestId('home-health-needs')).toBeNull();
   });
-
-  it('RN-48/RN-50: negativo — "−R$ 120,00", "Acima do planejado em R$ 120,00", "Ver onde ajustar" e sem valor por dia', async () => {
+  it('RN-44 (D-081): Necessidades acima da meta → "Passou do planejado" com ícone, e o atalho "Ajustar percentuais"', async () => {
     await renderHome(
       rows(
         [
@@ -232,16 +214,19 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         { recurrences: [] },
       ),
     );
-    expect(hero()).toHaveTextContent('−R$ 120,00');
-    expect(screen.getByTestId('home-pace')).toHaveTextContent('Acima do planejado em R$ 120,00');
-    expect(screen.getByRole('link', { name: /Ver onde ajustar/ })).toHaveAttribute(
-      'href',
-      '/planejar/orcamento',
-    );
-    expect(screen.queryByTestId('home-per-day')).toBeNull();
+    expect(hero()).toHaveTextContent('R$ 920,00');
+    const needs = screen.getByTestId('home-health-needs');
+    expect(needs).toHaveAttribute('data-health', 'over');
+    expect(needs).toHaveTextContent('Passou do planejado');
+    expect(needs.querySelector('.home-health-state svg')).not.toBeNull();
+    expect(screen.getByTestId('home-health-wants')).toHaveTextContent('No caminho');
+    expect(
+      within(screen.getByTestId('home-health')).getAllByRole('link', {
+        name: /Ajustar percentuais/,
+      })[0],
+    ).toHaveAttribute('href', '/planejar/orcamento');
   });
-
-  it('RN-48/RN-50: zero — "R$ 0,00" e "No limite do planejado" (attention), sem valor por dia', async () => {
+  it('RN-44 (D-081): Necessidades entre 80% e 100% da meta → "Atenção" (limiar fixo até a T-121)', async () => {
     await renderHome(
       rows(
         [
@@ -255,19 +240,18 @@ describe('H01 — Disponível para gastar (US-30)', () => {
           tx('gasto', {
             ...base,
             category_id: 'mercado',
-            amount_cents: 80000,
+            amount_cents: 45000,
             occurred_on: '2026-11-03',
           }),
         ],
         { recurrences: [] },
       ),
     );
-    expect(hero()).toHaveTextContent('R$ 0,00');
-    expect(screen.getByTestId('home-hero')).toHaveAttribute('data-status', 'attention');
-    expect(screen.getByTestId('home-pace')).toHaveTextContent('No limite do planejado');
-    expect(screen.queryByTestId('home-per-day')).toBeNull();
+    const needs = screen.getByTestId('home-health-needs');
+    expect(needs).toHaveAttribute('data-health', 'attention');
+    expect(needs).toHaveTextContent('Atenção');
+    expect(needs).toHaveTextContent('R$ 450,00 de R$ 500,00');
   });
-
   it('RN-50: atenção abaixo de 20% da Base — "Atenção: restam R$ 100,00"', () => {
     const model = homeModel(
       rows(
@@ -318,7 +302,7 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         </ToastProvider>
       </AuthContext.Provider>,
     );
-    await screen.findByText('Disponível para gastar em novembro');
+    await screen.findByText('Gasto em novembro');
     const dec = createMemoryRouter([{ path: '/', element: <HomeOverview today="2026-12-01" /> }]);
     await act(async () => {
       router.dispose();
@@ -330,7 +314,7 @@ describe('H01 — Disponível para gastar (US-30)', () => {
         </ToastProvider>
       </AuthContext.Provider>,
     );
-    expect(await screen.findByText('Disponível para gastar em dezembro')).toBeInTheDocument();
+    expect(await screen.findByText('Gasto em dezembro')).toBeInTheDocument();
   });
 
   it('E17: useToday vira de 31/10 23:59 para 01/11 00:00 no fuso America/Sao_Paulo', () => {
@@ -383,15 +367,17 @@ describe('H01 — cards e saudação', () => {
     expect(invoice?.href).toBe('/cartoes/a/fatura/2026-11');
   });
 
-  it('RN-44: card 50/30/20 com as metas sobre a Base de R$ 5.800,00', async () => {
+  it('RN-44 (D-081): Saúde do mês com uma barra por faixa e as metas sobre a renda de R$ 5.800,00', async () => {
     await renderHome(rows(referenceTxs()));
-    const card = screen.getByTestId('home-budget');
-    expect(card).toHaveTextContent('Necessidades');
-    expect(card).toHaveTextContent('de R$ 2.900,00');
-    expect(card).toHaveTextContent('de R$ 1.740,00');
-    expect(card).toHaveTextContent('R$ 200,00 de R$ 1.160,00');
+    const card = screen.getByTestId('home-health');
+    expect(card).toHaveTextContent('Saúde do mês');
+    expect(screen.getByTestId('home-health-needs')).toHaveTextContent('R$ 3.150,00 de R$ 2.900,00');
+    expect(screen.getByTestId('home-health-needs')).toHaveTextContent('Passou do planejado');
+    expect(screen.getByTestId('home-health-wants')).toHaveTextContent('R$ 0,00 de R$ 1.740,00');
+    expect(screen.getByTestId('home-health-savings')).toHaveTextContent('R$ 200,00 de R$ 1.160,00');
+    expect(screen.getByTestId('home-health-savings')).toHaveTextContent('No caminho');
+    expect(card.querySelectorAll('[role="progressbar"]')).toHaveLength(3);
   });
-
   it('saudação pelo período do dia em São Paulo e primeiro nome', () => {
     expect(dayPeriod(new Date('2026-11-15T11:00:00.000Z'))).toBe('morning'); // 08:00
     expect(dayPeriod(new Date('2026-11-15T16:00:00.000Z'))).toBe('afternoon'); // 13:00
