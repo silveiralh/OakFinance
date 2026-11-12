@@ -347,6 +347,33 @@ describe('ON04–ON08 (US-08)', () => {
     expect(state.skipped).not.toContain('cards');
   });
 
+  it('US-08 (UXA-031): ON07 sem placeholder; as sugestões em chips preenchem o nome e "Não uso cartão" é link', async () => {
+    const auth = await setup({ step: 'cards' });
+    open(auth, '/boas-vindas/cartoes');
+    const name = (await screen.findByLabelText('Nome do cartão')) as HTMLInputElement;
+    expect(name.placeholder).toBe('');
+    const chips = within(screen.getByRole('group', { name: 'Sugestões de nome' }));
+    expect(chips.getAllByRole('button').map((b) => b.textContent)).toEqual(['Nubank', 'Ourocard']);
+    fireEvent.click(chips.getByRole('button', { name: 'Ourocard' }));
+    expect(name.value).toBe('Ourocard');
+    expect(screen.queryByRole('group', { name: 'Sugestões de nome' })).toBeNull();
+    expect(screen.getByTestId('onb-cards-none').dataset.variant).toBe('ghost');
+    // US-08: "Pular" continua em todos os passos
+    expect(screen.getByTestId('onb-skip')).toBeInTheDocument();
+  });
+
+  it('US-08 (UXA-029): no ON04 o ícone vem antes do título, como nos outros passos', async () => {
+    const auth = await setup();
+    open(auth, '/boas-vindas/lembretes');
+    const step = await screen.findByTestId('screen-ON04');
+    const icon = step.querySelector('.onb-icon');
+    const title = within(step).getByRole('heading', { level: 1 });
+    expect(icon).not.toBeNull();
+    expect(
+      (icon as Element).compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
   it('ON07b sem renda: a meta é sugerida depois; "Definir outra meta" grava a meta manual', async () => {
     const auth = await setup({ step: 'reserve' });
     open(auth, '/boas-vindas/reserva');

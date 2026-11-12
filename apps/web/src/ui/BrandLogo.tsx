@@ -47,20 +47,28 @@ export function resolveLogoArt(
   return art;
 }
 
+/**
+ * UXA-013: as cores fixas (quando `theme` não é `auto`) seguem os tokens de marca da UX §4.0 — `--brand-oak` e
+ * `--brand-finance` (preto e lima-700 no claro; névoa e lima no escuro) —, sem os azuis do Aero.
+ */
 const COLORS = {
   light: {
-    oak: '#0A2540',
-    finance: '#0A5F8C',
-    oakSheen: ['#2B4A66', '#0A2540'],
-    financeSheen: ['#0B76AE', '#075884'],
+    oak: '#0B0D0A',
+    finance: '#4D7C0F',
+    oakSheen: ['#151813', '#0B0D0A'],
+    financeSheen: ['#4D7C0F', '#3A5C0B'],
   },
   dark: {
-    oak: '#EAF6FF',
-    finance: '#5CCFFF',
-    oakSheen: ['#FFFFFF', '#A9C8DE'],
-    financeSheen: ['#7FDBFF', '#2FB6EE'],
+    oak: '#F2F7EC',
+    finance: '#C0E45C',
+    oakSheen: ['#FFFFFF', '#F2F7EC'],
+    financeSheen: ['#C0E45C', '#AED246'],
   },
 } as const;
+
+/** UXA-013: monograma e favicon como quadrado preto com o "OF" em lima (UX §4.0), iguais ao `public/favicon.svg`. */
+const ICON_BG = '#0B0D0A';
+const ICON_INK = '#C0E45C';
 
 const MONOGRAM_PATH = 'M330 182 V330 M330 182 H392 M330 256 H376';
 
@@ -152,40 +160,8 @@ export function BrandLogo({
       )}
       {art === 'monogram' && (
         <>
-          <defs>
-            <linearGradient id={id('bg')} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#0B76AE" />
-              <stop offset="1" stopColor="#053F5F" />
-            </linearGradient>
-            <radialGradient id={id('light')} cx="0.3" cy="0.15" r="0.75">
-              <stop offset="0" stopColor="#5CCFFF" stopOpacity="0.30" />
-              <stop offset="1" stopColor="#5CCFFF" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id={id('disc')} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.12" />
-              <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.04" />
-            </linearGradient>
-            <linearGradient id={id('gloss')} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.10" />
-              <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <rect width="512" height="512" rx="112" fill={`url(#${id('bg')})`} />
-          <rect width="512" height="512" rx="112" fill={`url(#${id('light')})`} />
-          <circle
-            cx="256"
-            cy="256"
-            r="182"
-            fill={`url(#${id('disc')})`}
-            stroke="#FFFFFF"
-            strokeOpacity="0.35"
-            strokeWidth="3"
-          />
-          <path
-            d="M90 230 A182 182 0 0 1 422 230 Q256 196 90 230 Z"
-            fill={`url(#${id('gloss')})`}
-          />
-          <g fill="none" stroke="#FFFFFF" strokeWidth="40" strokeLinecap="round">
+          <rect width="512" height="512" rx="112" fill={ICON_BG} />
+          <g fill="none" stroke={ICON_INK} strokeWidth="40" strokeLinecap="round">
             <circle cx="194" cy="256" r="74" />
             <path d={MONOGRAM_PATH} />
           </g>
@@ -193,14 +169,8 @@ export function BrandLogo({
       )}
       {art === 'favicon' && (
         <>
-          <defs>
-            <linearGradient id={id('fv')} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#0B76AE" />
-              <stop offset="1" stopColor="#053F5F" />
-            </linearGradient>
-          </defs>
-          <rect width="32" height="32" rx="8" fill={`url(#${id('fv')})`} />
-          <g fill="none" stroke="#FFFFFF" strokeWidth="3.4" strokeLinecap="round">
+          <rect width="32" height="32" rx="8" fill={ICON_BG} />
+          <g fill="none" stroke={ICON_INK} strokeWidth="3.4" strokeLinecap="round">
             <circle cx="11.6" cy="16" r="5.6" />
             <path d="M21.6 10.4 V21.6 M21.6 10.4 H26.2 M21.6 16 H25.2" />
           </g>

@@ -137,10 +137,12 @@ export function RemindersStep({ environment }: { environment?: PushEnvironment }
         )
       }
       skipLabel={t('onb.install.later')}
+      icon={
+        <span className="onb-icon" aria-hidden="true">
+          <Bell size={32} />
+        </span>
+      }
     >
-      <span className="onb-icon" aria-hidden="true">
-        <Bell size={32} />
-      </span>
       {iosBlocked ? (
         <p role="status" data-testid="onb-notif-ios">
           {t('onb.notif.iosNotInstalled')}

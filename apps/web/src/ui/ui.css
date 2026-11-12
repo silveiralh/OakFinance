@@ -623,6 +623,19 @@
 .amount[data-size="compact"] .amount-input {
   font-size: var(--font-size-heading);
 }
+/* UXA-016: no compacto (formulários do onboarding e da S03), o valor tem a moldura dos outros campos */
+.amount[data-size="compact"] .amount-input {
+  min-height: 52px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid-3);
+  font-size: var(--font-size-body);
+  text-align: end;
+}
+.amount[data-size="compact"] .amount-input:focus-visible {
+  box-shadow: var(--focus-ring);
+}
 .amount-input[data-empty="true"] {
   color: var(--text-tertiary);
 }

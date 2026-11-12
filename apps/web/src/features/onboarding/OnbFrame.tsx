@@ -38,6 +38,8 @@ export interface OnbFrameProps {
   secondary?: ReactNode;
   onSkip: () => void;
   skipLabel?: string;
+  /** UXA-029: ícone do passo, desenhado antes do título (igual em todos os passos). */
+  icon?: ReactNode;
 }
 
 export function OnbFrame({
@@ -48,6 +50,7 @@ export function OnbFrame({
   secondary,
   onSkip,
   skipLabel,
+  icon,
 }: OnbFrameProps) {
   const screen = STEP_SCREEN[step];
   const label = stepLabel(step);
@@ -65,6 +68,7 @@ export function OnbFrame({
           label={label}
         />
       </header>
+      {icon}
       <h1 className="screen-title">{title}</h1>
       <div className="onb-body">{children}</div>
       <footer className="onb-actions">

@@ -6,7 +6,7 @@ import { Plus } from 'lucide-react';
 import type { OakDb } from '../../data/db';
 import { isActive } from '../../data/repositories/accounts';
 import { createCard, draftCard, parseDay, previewInvoice } from '../../data/repositories/cards';
-import { t } from '../../i18n/pt-BR';
+import { type MessageKey, t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { useToday } from '../../lib/useToday';
 import { AmountInput, Button, Switch, TextField } from '../../ui';
@@ -59,6 +59,9 @@ export async function defaultPayer(db: OakDb): Promise<string | null> {
   return accounts.find((a) => a.id === pix)?.id ?? accounts[0]?.id ?? null;
 }
 
+/** Sugestões de nome do ON07 (UXA-031). */
+const CARD_SUGGESTIONS: readonly MessageKey[] = ['onb.accounts.nubank', 'onb.cards.ourocard'];
+
 export function CardsStep({ today: fixedToday }: { today?: ISODate }) {
   const today = useToday(fixedToday);
   const { user, busy, advance } = useOnbStep('cards');
@@ -102,9 +105,10 @@ export function CardsStep({ today: fixedToday }: { today?: ISODate }) {
           {t('common.continue')}
         </Button>
       }
+      // UXA-031: "Não uso cartão de crédito" como link, sem competir com o Continuar; o "Pular" fica (US-08)
       secondary={
         <Button
-          variant="secondary"
+          variant="ghost"
           fullWidth
           disabled={busy}
           onClick={() => void advance('done')}
@@ -128,9 +132,28 @@ export function CardsStep({ today: fixedToday }: { today?: ISODate }) {
               label={t('cards.name')}
               value={form.name}
               onChange={(name) => update(i, { name })}
-              placeholder="Nubank"
               data-testid={`onb-card-${i}-name`}
             />
+            {/* UXA-031: sugestões em chips, sem placeholder que pareça valor já escrito */}
+            {form.name === '' && (
+              // fieldset sem flex (WebKit, ver HANDOFF): o layout fica no div de dentro
+              <fieldset className="onb-group">
+                <legend className="sr-only">{t('onb.cards.suggestions')}</legend>
+                <div className="onb-chips">
+                  {CARD_SUGGESTIONS.map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className="chip onb-chip"
+                      onClick={() => update(i, { name: t(key) })}
+                      data-testid={`onb-card-${i}-suggest`}
+                    >
+                      {t(key)}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
             <TextField
               label={t('cards.closing')}
               value={form.closing}

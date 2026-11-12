@@ -96,6 +96,21 @@ describe('Toast (UX §5.22)', () => {
 });
 
 describe('BrandLogo (UX §4.11, §5.35)', () => {
+  it('UXA-013: monograma e favicon em quadrado preto com o "OF" lima, sem os azuis do Aero', () => {
+    const { container } = render(
+      <>
+        <BrandLogo variant="monogram" height={48} data-testid="m" />
+        <BrandLogo variant="monogram" height={20} data-testid="f" />
+      </>,
+    );
+    const html = container.innerHTML;
+    expect(screen.getByTestId('m').dataset.art).toBe('monogram');
+    expect(screen.getByTestId('f').dataset.art).toBe('favicon');
+    expect(html).toContain('#0B0D0A');
+    expect(html).toContain('#C0E45C');
+    expect(html).not.toMatch(/#0B76AE|#5CCFFF|#053F5F/i);
+  });
+
   it.each([
     ['wordmark', 'wordmark', 32, false, 'wordmark'],
     ['wordmark', 'wordmark', 21, false, 'favicon'],
@@ -134,7 +149,8 @@ describe('BrandLogo (UX §4.11, §5.35)', () => {
       'var(--brand-oak)',
     );
     rerender(<BrandLogo theme="dark" data-testid="l" />);
-    expect(screen.getByTestId('l').querySelector('tspan')).toHaveAttribute('fill', '#EAF6FF');
+    // UXA-013: o hex forçado é o do token de marca do escuro (névoa), não mais o azul-claro do Aero
+    expect(screen.getByTestId('l').querySelector('tspan')).toHaveAttribute('fill', '#F2F7EC');
     document.documentElement.setAttribute('data-glass', 'solid');
     document.documentElement.setAttribute('data-theme', 'dark');
     rerender(<BrandLogo variant="wordmark-sheen" height={48} data-testid="l" />);
@@ -148,7 +164,9 @@ describe('BrandLogo (UX §4.11, §5.35)', () => {
   it('monograma, favicon e mono desenham o OF', () => {
     const { rerender } = render(<BrandLogo variant="monogram" height={48} data-testid="l" />);
     expect(screen.getByTestId('l')).toHaveAttribute('viewBox', '0 0 512 512');
-    expect(screen.getByTestId('l').querySelector('circle[r="182"]')).not.toBeNull();
+    // UXA-013: o "O" do OF em lima sobre o quadrado preto (sem o disco de vidro do Aero)
+    expect(screen.getByTestId('l').querySelector('circle[r="74"]')).not.toBeNull();
+    expect(screen.getByTestId('l').querySelector('g')).toHaveAttribute('stroke', '#C0E45C');
     rerender(<BrandLogo variant="monogram" height={16} data-testid="l" />);
     expect(screen.getByTestId('l')).toHaveAttribute('viewBox', '0 0 32 32');
     rerender(<BrandLogo variant="mono" glyph="monogram" data-testid="l" />);

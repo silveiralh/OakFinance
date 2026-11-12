@@ -161,6 +161,9 @@ body:has(.screen-welcome) .backdrop {
   --text-primary: var(--on-accent);
   --text-link: var(--on-accent);
   --brand-mono: var(--on-accent);
+  /* UXA-014: o ON01 é lima nos dois temas; o primário fica preto com texto branco também no escuro */
+  --grad-primary: var(--ink-950);
+  --text-on-primary: var(--white);
 }
 .screen-welcome .screen-title {
   align-self: start;
@@ -185,6 +188,9 @@ body:has(.screen-welcome) .backdrop {
 }
 .welcome-actions .btn[data-variant="ghost"] {
   padding: 0 var(--space-2);
+  /* UXA-032: "Já uso em outro aparelho" numa linha só */
+  white-space: nowrap;
+  text-align: start;
 }
 .welcome-actions {
   display: flex;
@@ -192,6 +198,12 @@ body:has(.screen-welcome) .backdrop {
   justify-content: space-between;
   gap: var(--space-3);
   padding-top: var(--space-6);
+}
+@media (max-width: 379px) {
+  .welcome-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
 }
 
 .screen-error {
@@ -210,7 +222,8 @@ body:has(.screen-welcome) .backdrop {
   position: relative;
   z-index: var(--z-content);
   display: grid;
-  align-content: center;
+  /* UXA-029: conteúdo a partir do topo; o cabeçalho de passos não muda de lugar entre os passos */
+  align-content: start;
   max-width: 600px;
   min-height: 100dvh;
   margin: 0 auto;
@@ -1730,8 +1743,14 @@ body:has(.screen-welcome) .backdrop {
 
 /* ---------- Onboarding ON04–ON08 (UX §2.3, T-065) ---------- */
 .onb-step {
-  display: grid;
+  /* UXA-029: coluna da altura da tela; o rodapé com as ações desce para perto do polegar */
+  display: flex;
+  flex-direction: column;
   gap: var(--space-5);
+  min-height: calc(100dvh - 2 * var(--space-6));
+}
+.onb-step > .onb-actions {
+  margin-top: auto;
 }
 .onb-stepper {
   display: grid;
