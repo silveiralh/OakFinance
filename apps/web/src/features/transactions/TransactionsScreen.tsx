@@ -426,6 +426,7 @@ export function TransactionsScreen({
           month={title}
           onClear={() => setFilters(NO_FILTERS)}
           onNew={() => void navigate('?novo=despesa')}
+          onImport={() => void navigate('/importar')}
         />
       ) : (
         <div ref={listRef} className="list-rows" data-testid="list-rows">
@@ -510,11 +511,13 @@ function ListEmpty({
   month,
   onClear,
   onNew,
+  onImport,
 }: {
   filters: ListFilters;
   month: string;
   onClear: () => void;
   onNew: () => void;
+  onImport: () => void;
 }) {
   const kind = emptyKind(filters);
   const state = emptyStates[kind];
@@ -545,6 +548,7 @@ function ListEmpty({
       title={fill(state.title, { mês: month })}
       description={state.text}
       primaryAction={{ label: emptyStates.listMonth.actions[0], onPress: onNew }}
+      secondaryAction={{ label: emptyStates.listMonth.actions[1], onPress: onImport }}
     />
   );
 }

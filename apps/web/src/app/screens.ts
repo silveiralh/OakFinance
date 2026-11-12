@@ -244,3 +244,67 @@ export const PLAN_INDEX = '/planejar/orcamento';
 
 /** Parâmetro do lançamento rápido (Q01 como sheet, UX §3 Q01). */
 export const QUICK_ENTRY_PARAM = 'novo';
+
+/**
+ * Navegação no celular (D-076, T-118). Raízes das abas: mostram o avatar do menu da conta e não têm Voltar. As
+ * telas do Planejar são abas internas (Orçamento · Reserva · Futuro · Fechar o mês), então também são raízes.
+ */
+export const TAB_ROOTS: ReadonlySet<ScreenId> = new Set<ScreenId>([
+  'H01',
+  'T01',
+  'C01',
+  'P01',
+  'P02',
+  'P03',
+  'P04',
+]);
+
+/** Abas internas do Planejar (UX §2.1 e §5.9). */
+export const PLAN_TABS = ['P01', 'P02', 'P03', 'P04'] as const;
+export type PlanTab = (typeof PLAN_TABS)[number];
+
+/** Mês anterior (`aaaa-mm`), o que o "Fechar o mês" abre a partir do dia 1 (UX §3 P01, item 5). */
+export function previousMonth(today: string): string {
+  const [y, m] = today.slice(0, 7).split('-').map(Number) as [number, number];
+  return m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`;
+}
+
+/** Caminho de cada aba interna do Planejar. */
+export function planTabPath(tab: PlanTab, today: string): string {
+  switch (tab) {
+    case 'P01':
+      return PLAN_INDEX;
+    case 'P02':
+      return '/planejar/reserva';
+    case 'P03':
+      return '/planejar/futuro';
+    case 'P04':
+      return `/planejar/fechar/${previousMonth(today)}`;
+  }
+}
+
+/**
+ * UXA-012: destino do Voltar de cada subtela quando não há histórico (aberta por link ou recarregada); com
+ * histórico o Voltar só volta. Raízes e telas fora da moldura devolvem `null`.
+ */
+export function backTarget(screen: ScreenId): string | null {
+  if (TAB_ROOTS.has(screen)) {
+    return null;
+  }
+  if (screen === 'H02' || screen === 'S01') {
+    return '/';
+  }
+  if (screen === 'T02' || screen === 'I05') {
+    return '/lancamentos';
+  }
+  if (screen === 'C02') {
+    return '/cartoes';
+  }
+  if (screen === 'I02' || screen === 'I03' || screen === 'I04') {
+    return '/ajustes/conexoes';
+  }
+  if (/^S\d\d$/.test(screen) || screen === 'I01' || screen === 'I06') {
+    return '/ajustes';
+  }
+  return null;
+}

@@ -1,4 +1,4 @@
-import { QrCode } from 'lucide-react';
+import { FileUp, QrCode } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { QUICK_ENTRY_PARAM } from '../../app/screens';
@@ -56,10 +56,13 @@ export interface FabMenuProps {
   onPick: (href: string) => void;
 }
 
-/** Toque longo no FAB (UX §3 H01): Despesa, Receita, Guardar e Ler nota. */
+/**
+ * Toque longo no FAB (UX §3 H01, D-076): Receita, Guardar, Importar extrato e Ler nota (o toque simples já abre a
+ * despesa). Alternativa sem gesto (WCAG 2.5.1): Receita e Guardar pelo seletor de tipo do Q01; Importar extrato e
+ * Ler nota fiscal pelo menu da conta.
+ */
 export function FabMenu({ open, onClose, onPick }: FabMenuProps) {
   const items = [
-    { label: t('quick.type.expense'), href: `?${QUICK_ENTRY_PARAM}=despesa` },
     { label: t('quick.type.income'), href: `?${QUICK_ENTRY_PARAM}=receita` },
     { label: t('quick.type.save'), href: `?${QUICK_ENTRY_PARAM}=guardar` },
   ];
@@ -71,6 +74,14 @@ export function FabMenu({ open, onClose, onPick }: FabMenuProps) {
             {item.label}
           </Button>
         ))}
+        <Button
+          variant="secondary"
+          fullWidth
+          iconStart={FileUp}
+          onClick={() => onPick('/importar')}
+        >
+          {t('account.import')}
+        </Button>
         <Button variant="secondary" fullWidth iconStart={QrCode} onClick={() => onPick('/nota')}>
           {t('quick.readNote')}
         </Button>

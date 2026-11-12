@@ -1677,3 +1677,25 @@ body:has(.screen-welcome) .backdrop {
   right: 30%;
   background: var(--ink-950);
 }
+
+/* Menu da conta (D-076, T-118): avatar com as iniciais no topo das abas principais */
+.account-avatar .account-initials {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-dark);
+  color: var(--on-dark);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-bold);
+}
+.account-menu {
+  display: grid;
+  gap: var(--space-2);
+}
+/* Abas internas do Planejar (UXB-002) */
+.plan-tabs {
+  margin-bottom: var(--space-4);
+}

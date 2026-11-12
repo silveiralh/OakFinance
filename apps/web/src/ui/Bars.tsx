@@ -35,11 +35,13 @@ export function TopBar({
       data-transparent={transparentUntilScroll && !scrolled}
       data-testid={testId}
     >
-      {onBack && (
-        <button type="button" className="icon-btn" aria-label={uiText.back} onClick={onBack}>
-          <ChevronLeft size={24} aria-hidden="true" />
-        </button>
-      )}
+      <div className="topbar-leading">
+        {onBack && (
+          <button type="button" className="icon-btn" aria-label={uiText.back} onClick={onBack}>
+            <ChevronLeft size={24} aria-hidden="true" />
+          </button>
+        )}
+      </div>
       <h1 className="topbar-title">{title}</h1>
       <div className="topbar-trailing">{trailing}</div>
     </header>

@@ -99,11 +99,11 @@ Cada princípio tem um **critério verificável**. As sessões de desenvolviment
 | 2 | Lançamentos | `/lancamentos` | `ListBullets` (badge com nº a conferir) |
 | 3 | **+** (FAB) | abre `Q01` como sheet (`?novo=despesa`) | `Plus` (bold) |
 | 4 | Cartões | `/cartoes` | `CreditCard` |
-| 5 | Planejar | `/planejar` (abas internas: Orçamento · Reserva · Futuro) | `ChartDonut` |
+| 5 | Planejar | `/planejar` (abas internas: Orçamento · Reserva · Futuro · Fechar o mês, D-076) | `ChartDonut` |
 
-Configurações: avatar no topo do Início → `/ajustes`. Conexões, importação e leitura de nota: em `/ajustes/conexoes`, no menu de toque longo do FAB e nos atalhos dos estados vazios.
+**Menu da conta (D-076, T-118):** avatar com as iniciais (ou `CircleUser` sem nome) no topo das 4 abas principais (Início, Lançamentos, Cartões e as abas do Planejar) abre uma folha "Sua conta" com **Configurações** (`/ajustes`), **Importar extrato** (`/importar`), **Ler nota fiscal** (`/nota`) e **Sair** (o do S02, com o aviso de pendências da RN-100); **Conexões e importação** só aparece com o Open Finance (D-080). Toque longo no FAB: **Receita**, **Guardar**, **Importar extrato** e **Ler nota** (o toque simples abre a despesa); a alternativa sem gesto (WCAG 2.5.1) é o seletor de tipo do Q01 e o menu da conta. "Importar extrato" também no vazio de Lançamentos; a S01 lista a I01 e a I06. Subtelas têm **Voltar** no TopBar (volta no histórico; aberta direto, vai para a tela-mãe).
 
-**Computador (`lg`):** barra lateral em vidro de 248 px à esquerda (mesmos itens + Configurações + Conexões), conteúdo com largura máxima de 1.200 px; o lançamento rápido abre como diálogo central de 440 px. Atalhos de teclado: `N` novo lançamento, `/` buscar em Lançamentos, `Esc` fecha sheet/diálogo.
+**Computador (`lg`):** barra lateral em vidro de 248 px à esquerda (mesmos itens + Configurações + Conexões; sem o Open Finance, o último item é "Importar extrato", que abre a I01), conteúdo com largura máxima de 1.200 px; o lançamento rápido abre como diálogo central de 440 px. Atalhos de teclado: `N` novo lançamento, `/` buscar em Lançamentos, `Esc` fecha sheet/diálogo.
 
 ### 2.2 Mapa geral de telas
 
@@ -262,10 +262,10 @@ stateDiagram-v2
 
 - **Fundo:** `AppBackdrop` fixo atrás de tudo: gradiente estático do tema (`--bg-backdrop`), azul-céu suave no claro e azul-noite profundo no Aero noturno, com um realce radial discreto no topo para dar profundidade. Não muda com dados, horário nem estado do mês, e não tem elementos animados.
 - **Abertura (S00):** fundo `--bg-backdrop` com o wordmark `BrandLogo variant="wordmark"` centralizado (altura 32 px) e uma `ProgressBar` indeterminada fina abaixo, só se o carregamento passar de 400 ms. Sem animação de logo. Some quando os dados locais carregam (meta < 1 s).
-- **Topo (`TopBar`):** 56 px + `env(safe-area-inset-top)`. Título da tela em `--font-size-title`, `SyncBadge` à direita. Transparente até rolar 8 px; depois vira vidro nível 3 (transição de 150 ms).
+- **Topo (`TopBar`):** 56 px + `env(safe-area-inset-top)`. Três colunas: Voltar (subtelas) à esquerda, título centrado numa linha (com reticências; a S06 usa o título curto "Cálculo e orçamento", D-089) e, à direita, `SyncBadge` (só o ícone quando sincronizado) e o avatar do menu da conta nas raízes das abas (D-076). Transparente até rolar 8 px; depois vira vidro nível 3 (transição de 150 ms).
 - **Abas (`TabBar`):** 64 px + `env(safe-area-inset-bottom)`, vidro nível 3, FAB de 56 px elevado 12 px acima da barra.
 - **Banner global:** abaixo do topo, para offline/erro de sync/atualização (`G01`–`G08`).
-- **Região `aria-live="polite"`** única no AppShell para toasts e mudanças de sync.
+- **Região `aria-live="polite"`** única no AppShell para toasts e mudanças de sync; no celular o toast fica acima da barra de abas flutuante (64 px + 12 px + 12 px), no `lg` a 24 px do fundo.
 - **Landmarks:** `<header>`, `<nav aria-label="Navegação principal">`, `<main id="conteudo">`; no `lg`, link "Pular para o conteúdo" como primeiro foco.
 - Rolagem: só o `<main>` rola; topo e abas fixos. Nada de `backdrop-filter` dentro de listas que rolam (ver 4.5).
 
@@ -2713,13 +2713,24 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `detail.duplicateOf` | Duplicada de: {descricao} |
 | `detail.notDuplicate` | Não é duplicada |
 | `review.separated` | Lançamento separado. |
+| `account.open` | Abrir menu da conta |
+| `account.title` | Sua conta |
+| `account.settings` | Configurações |
+| `account.import` | Importar extrato |
+| `account.readNote` | Ler nota fiscal |
+| `account.connections` | Conexões e importação |
+| `plan.tabs` | Seções do Planejar |
+| `plan.tab.budget` | Orçamento |
+| `plan.tab.reserve` | Reserva |
+| `plan.tab.future` | Futuro |
+| `plan.tab.close` | Fechar o mês |
 
 ### 6.5 Estados vazios
 
 | Tela | Título | Texto | Ação | Ícone |
 |---|---|---|---|---|
 | Início, mês sem lançamentos | Nenhum lançamento em {mês} | Registre um gasto para começar a acompanhar o mês. | **Novo lançamento** | `ListBullets` |
-| Lançamentos, mês vazio | Nenhum lançamento em {mês} | Despesas e receitas do mês aparecem aqui. | **Novo lançamento** | `ListBullets` |
+| Lançamentos, mês vazio | Nenhum lançamento em {mês} | Despesas e receitas do mês aparecem aqui. | **Novo lançamento** · **Importar extrato** | `ListBullets` |
 | Lançamentos, filtro | Nenhum lançamento com este filtro | Altere o filtro ou o mês. | **Limpar filtros** | `FunnelSimple` |
 | Busca | Nenhum resultado para "{termo}" | Tente outro termo ou outro mês. | — | `MagnifyingGlass` |
 | Cartões | Nenhum cartão cadastrado | Cadastre um cartão para acompanhar faturas e parcelas. | **Adicionar cartão** | `CreditCard` |

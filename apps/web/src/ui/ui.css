@@ -581,7 +581,8 @@
 .toast-region {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--space-16) + env(safe-area-inset-bottom));
+  /* UXA-028: acima da barra de abas flutuante (12 px + 64 px) com folga; no lg (sem abas) fica a 24 px */
+  bottom: calc(64px + var(--space-3) + var(--space-3) + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: var(--z-toast);
   width: min(100% - 2 * var(--gutter), 480px);
@@ -1148,7 +1149,9 @@
   position: sticky;
   top: 0;
   z-index: var(--z-topbar);
-  display: flex;
+  /* UXA-019: três colunas, título no centro de verdade (o lado direito não empurra mais o título) */
+  display: grid;
+  grid-template-columns: minmax(48px, 1fr) minmax(0, auto) minmax(48px, 1fr);
   align-items: center;
   gap: var(--space-2);
   min-height: 56px;
@@ -1159,13 +1162,22 @@
   background: transparent;
   backdrop-filter: none;
 }
+.topbar-leading {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+}
 .topbar-title {
-  flex: 1;
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--font-size-heading);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
   text-align: center;
+  /* UXC-021: título longo não quebra a barra; fica numa linha com reticências */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .tabbar,
 .tabbar.glass {
@@ -1264,4 +1276,30 @@
 /* D-084 item 4: no escuro a seleção ganha contorno na cor do texto (o preto some no grafite) */
 :root[data-theme="dark"] .chip[data-selected="true"] {
   border-color: var(--_band, var(--text-primary));
+}
+
+@media (min-width: 1024px) {
+  .toast-region {
+    bottom: var(--space-6);
+  }
+}
+
+/* UXA-019: as ações ficam à direita da terceira coluna */
+.topbar-trailing {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  justify-self: end;
+  min-width: 0;
+}
+/* UXA-020: sincronizado é só o ícone, como os vizinhos; a pílula branca fica para quando há texto */
+.sync-badge.glass[data-state="synced"],
+.sync-badge.glass[data-state="syncing"] {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  min-width: var(--touch-min);
+  justify-content: center;
 }
