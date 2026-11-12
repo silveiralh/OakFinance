@@ -63,7 +63,7 @@ export function budgetView(rows: HomeRows, today: ISODate): BudgetView {
   }).totalCents;
   const statuses = bucketBudget(input, budget, incomeCents);
   const consumption = categoryConsumption(input);
-  const limits = monthLimits(rows.budgets, month);
+  const limits = monthLimits(rows.budgets, month, budget.alertThresholdsBp);
   const limitById = new Map(categoryBudgets(input, limits).map((c) => [c.categoryId, c]));
   const bands = BAND_ORDER.map((bucket) => {
     const categories = rows.categories
@@ -128,7 +128,7 @@ export function budgetAlerts(
     labels: {
       categories: Object.fromEntries(rows.categories.map((c) => [c.id, c.name])),
     },
-    categoryLimits: monthLimits(rows.budgets, month),
+    categoryLimits: monthLimits(rows.budgets, month, budget.alertThresholdsBp),
   });
 }
 

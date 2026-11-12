@@ -3,6 +3,7 @@
 import {
   accountsBalance,
   addDays,
+  alertThresholdsBp,
   type BandHealth,
   type BucketStatus,
   bandHealth,
@@ -223,6 +224,7 @@ export function monthContext(rows: HomeRows, today: ISODate) {
       alertThresholdsBp: b.alert_thresholds_bp,
     })),
     month,
+    alertThresholdsBp(settings.alerts),
   );
   const input = monthInputFromRows(
     rows,

@@ -911,6 +911,14 @@ export const ptBR = {
   'home.health.line': '{gasto} de {meta}',
   'home.health.adjust': 'Ajustar percentuais',
   'home.health.noIncome': 'Cadastre sua renda para acompanhar as faixas do mês.',
+  // Limiares de aviso configuráveis (T-121, D-082)
+  'calc.alerts.title': 'Avisos do orçamento',
+  'calc.alerts.hint':
+    'Valem para Necessidades, Desejos, os limites por categoria e a Saúde do mês.',
+  'calc.alerts.attention': 'Avisar com atenção a partir de (%)',
+  'calc.alerts.over': 'Avisar que passou do planejado a partir de (%)',
+  'calc.alerts.error':
+    'Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200.',
 } as const;
 
 export type MessageKey = keyof typeof ptBR;

@@ -164,7 +164,7 @@ flowchart LR
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 | T-101 | Agente de auditoria de UX | T-100 | done |
-| T-102 | Início lê só o período necessário | T-058, T-097 | todo |
+| T-102 | Início lê só o período necessário | T-058, T-097 | blocked: precisa de decisão — o saldo nas contas da D-081 lê o histórico inteiro (D-092) |
 | T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | blocked: substituída pela T-116 (D-085) |
 | T-104 | Base visual e componentes | T-101 | blocked: substituída pela T-117 e T-119 (D-085) |
 | T-105 | Navegação: menu da conta e abas do Planejar | T-101 | blocked: substituída pela T-118 (D-085) |
@@ -183,7 +183,7 @@ flowchart LR
 | T-118 | Navegação no celular | T-117 | done |
 | T-119 | Lançamento rápido (Q01) e folhas | T-117 | done |
 | T-120 | Início pelo gasto do mês | T-118 | done |
-| T-121 | Limiares de aviso configuráveis | T-120 | todo |
+| T-121 | Limiares de aviso configuráveis | T-120 | done |
 | T-122 | Lançamentos (T01/T02) | T-119 | todo |
 | T-123 | Cartões (C01/C02) | T-122 | todo |
 | T-124 | Planejar (P01–P04) | T-123 | todo |
@@ -1485,7 +1485,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-102 — Início lê só o período necessário
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+| blocked: precisa de decisão — o saldo nas contas da D-081 lê o histórico inteiro (D-092) | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
 
 **Reaberta em 11/11 (issue #136):** a primeira entrega (PR #133) deixou o painel com 5.000 lançamentos em ~2,1 s no projeto `iphone` (limite de 1,5 s, RN-51) e o `e2e` vermelho em `main`. A correção devolveu a leitura completa ao Início, ao `BudgetAlerts` e ao `measureHome`; `loadHomePeriodRows`, `loadRecentRows` e `loadReviewRows` e a propriedade de `test/dashboard-period.test.ts` ficaram no código, sem uso nas telas. Para refazer: PR `[WIP]` cedo e medir o RN-51 no `iphone` do CI antes do resto (o WebKit não roda na sessão); evitar cursores (`filter`, `anyOf`, `orderBy().reverse()`) e várias transações em paralelo; ver HANDOFF §3.
 
@@ -1717,7 +1717,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-121 — Limiares de aviso configuráveis
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-60 | RN-92 | T-120 | não |
+| done | R | M | US-60 | RN-92 | T-120 | não |
 
 **Escopo (D-082):** em Ajustes (seção de orçamento ou de notificações, a que ficar mais natural), "Avisar com atenção a partir de" (padrão 80%) e "Avisar que passou do planejado a partir de" (padrão 100%), inteiros com 1 ≤ atenção < alerta ≤ 200 e mensagem de validação; o card "Saúde do mês", os toasts e o `budget_threshold` do `reminders-tick` usam os valores do perfil; mudar no meio do mês não repete aviso já dado no mesmo limiar. Atualiza a RN-92 e a UX da tela escolhida.
 

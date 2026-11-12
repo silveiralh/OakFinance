@@ -13,6 +13,34 @@ export interface ProfileSettings {
   quietHours: { start: string; end: string }; // 'HH:MM'; padrão 22:00–08:00 (RN-86)
   csvProfiles: CsvProfile[]; // mapeamentos salvos por conta (RN-76)
   reconciliation: ReconOptions;
+  /** Limiares de aviso do orçamento em % (D-082, RN-92): 1 ≤ atenção < passou ≤ 200; padrão 80 e 100. */
+  alerts: AlertPcts;
+}
+
+export interface AlertPcts {
+  attentionPct: number;
+  overPct: number;
+}
+
+export const DEFAULT_ALERT_PCTS: Readonly<AlertPcts> = { attentionPct: 80, overPct: 100 };
+export const MAX_ALERT_PCT = 200;
+
+/** D-082: os dois limiares são inteiros e 1 ≤ atenção < passou do planejado ≤ 200. */
+export function validAlertPcts(attentionPct: unknown, overPct: unknown): boolean {
+  return (
+    typeof attentionPct === 'number' &&
+    typeof overPct === 'number' &&
+    Number.isInteger(attentionPct) &&
+    Number.isInteger(overPct) &&
+    attentionPct >= 1 &&
+    attentionPct < overPct &&
+    overPct <= MAX_ALERT_PCT
+  );
+}
+
+/** Limiares em pontos-base, na ordem do orçamento ([atenção, passou]). */
+export function alertThresholdsBp(alerts: AlertPcts): [number, number] {
+  return [alerts.attentionPct * 100, alerts.overPct * 100];
 }
 
 export const DEFAULT_PROFILE_SETTINGS: Readonly<ProfileSettings> = {
@@ -24,6 +52,7 @@ export const DEFAULT_PROFILE_SETTINGS: Readonly<ProfileSettings> = {
   quietHours: { ...DEFAULT_QUIET_HOURS },
   csvProfiles: [],
   reconciliation: DEFAULT_RECON_OPTIONS,
+  alerts: { ...DEFAULT_ALERT_PCTS },
 };
 
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -102,5 +131,11 @@ export function resolveProfileSettings(raw: unknown): ProfileSettings {
       },
       lookbackDays: int(recon.lookbackDays, d.reconciliation.lookbackDays),
     },
+    alerts: validAlertPcts(record(s.alerts).attentionPct, record(s.alerts).overPct)
+      ? {
+          attentionPct: record(s.alerts).attentionPct as number,
+          overPct: record(s.alerts).overPct as number,
+        }
+      : { ...d.alerts },
   };
 }
