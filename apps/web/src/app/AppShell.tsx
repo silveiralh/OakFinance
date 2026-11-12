@@ -1,8 +1,8 @@
-import { ChartPie, CreditCard, House, List, Plug, Plus, Settings } from 'lucide-react';
+import { ChartPie, CreditCard, FileUp, House, List, Plug, Plus, Settings } from 'lucide-react';
 import { lazy, Suspense, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate, useNavigation } from 'react-router';
 import { markQuickEntryStart } from '../features/quick-entry/clock';
-import { shellText, uiText } from '../i18n/pt-BR';
+import { type ScreenId, shellText, t, uiText } from '../i18n/pt-BR';
 import {
   AppBackdrop,
   type AppIcon,
@@ -14,15 +14,26 @@ import {
   ToastProvider,
   TopBar,
 } from '../ui';
+import { AccountMenu } from './AccountMenu';
 import { AppTelemetry } from './AppTelemetry';
 import { AutoPosts } from './AutoPosts';
 import { NoticesBell } from './NoticesBell';
 import { OnboardingGate } from './OnboardingGate';
+import { OPEN_FINANCE_ENABLED } from './openFinance';
+import { PlanTabs } from './PlanTabs';
 import { RemoteEditsToast } from './RemoteEditsToast';
 import { SessionExpired } from './SessionExpired';
 import { StorageBanners } from './StorageBanners';
 import { ShellSyncBadge, SyncBanners, WipedDialog } from './SyncStatus';
-import { type NavKey, PLAN_INDEX, QUICK_ENTRY_PARAM } from './screens';
+import {
+  backTarget,
+  type NavKey,
+  PLAN_INDEX,
+  PLAN_TABS,
+  type PlanTab,
+  QUICK_ENTRY_PARAM,
+  TAB_ROOTS,
+} from './screens';
 import { UpdatePrompt } from './UpdatePrompt';
 import { useCurrentScreen, useDocumentTitle } from './useScreen';
 import { HideValuesButton, ValuesFromProfile } from './values';
@@ -63,11 +74,21 @@ export const TAB_ITEMS: readonly NavItem[] = [
   { key: 'plan', label: shellText.nav.plan, icon: ChartPie, href: PLAN_INDEX },
 ];
 
-/** Barra lateral do `lg`: os mesmos itens + Configurações + Conexões (UX §2.1). */
+/**
+ * Barra lateral do `lg`: os mesmos itens + Configurações + Conexões (UX §2.1). Sem o Open Finance (D-080) o último
+ * item é "Importar extrato", que leva à mesma I01 (importar extrato e ler nota).
+ */
 export const SIDEBAR_ITEMS: readonly NavItem[] = [
   ...TAB_ITEMS,
   { key: 'settings', label: shellText.nav.settings, icon: Settings, href: '/ajustes' },
-  { key: 'connections', label: shellText.nav.connections, icon: Plug, href: '/ajustes/conexoes' },
+  OPEN_FINANCE_ENABLED
+    ? {
+        key: 'connections',
+        label: shellText.nav.connections,
+        icon: Plug,
+        href: '/ajustes/conexoes',
+      }
+    : { key: 'connections', label: t('account.import'), icon: FileUp, href: '/ajustes/conexoes' },
 ];
 
 /** Abre o Q01 como sheet sobre a tela atual (`?novo=despesa`, UX §2.1). */
@@ -107,7 +128,19 @@ export function AppShell() {
     markQuickEntryStart();
     void navigate(quickEntryHref(location.pathname, location.search));
   };
-  const title = screen ? shellText.screens[screen] : shellText.appName;
+  const title = screen
+    ? ((shellText.shortTitles as Partial<Record<ScreenId, string>>)[screen] ??
+      shellText.screens[screen])
+    : shellText.appName;
+  const root = screen !== null && TAB_ROOTS.has(screen);
+  const back = screen ? backTarget(screen) : null;
+  // UXA-012: com histórico o Voltar só volta; aberta direto (sem histórico), vai para a tela-mãe
+  const goBack = back
+    ? () => void (location.key === 'default' ? navigate(back) : navigate(-1))
+    : undefined;
+  const planTab = (PLAN_TABS as readonly string[]).includes(screen ?? '')
+    ? (screen as PlanTab)
+    : null;
   return (
     <ToastProvider>
       <AppTelemetry />
@@ -145,11 +178,13 @@ export function AppShell() {
           <TopBar
             title={title}
             transparentUntilScroll={screen === 'H01'}
+            {...(goBack ? { onBack: goBack } : {})}
             trailing={
               <>
                 {screen === 'H01' && <HideValuesButton />}
                 {screen === 'H01' && <NoticesBell />}
                 <ShellSyncBadge />
+                {root && <AccountMenu />}
               </>
             }
           />
@@ -161,6 +196,7 @@ export function AppShell() {
             tabIndex={-1}
             aria-busy={navigation.state === 'loading'}
           >
+            {planTab && <PlanTabs current={planTab} />}
             <Outlet />
           </main>
         </div>

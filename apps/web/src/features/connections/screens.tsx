@@ -2,7 +2,7 @@
 // O fluxo segue a tech §6.1.3: token → Pluggy Connect sob demanda (ou "Tenho um Item ID") → `pluggy-link-item`
 // → mapeamento das contas (RPC `map_external_account`) → `pluggy-sync` backfill de 90 dias → resultado.
 import { type ISODate, todayIn } from '@oakfinance/domain';
-import { FileUp, Landmark, QrCode } from 'lucide-react';
+import { Landmark } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -19,6 +19,7 @@ import {
   withE2e,
 } from './api';
 import { BankConnectionCard } from './BankConnectionCard';
+import { ImportCards } from './ImportCards';
 import {
   bankName,
   type ConnectTokenResponse,
@@ -81,30 +82,7 @@ export function ConnectionsScreen() {
           {t('conn.connect')}
         </Button>
       </GlassCard>
-      <GlassCard level={2} title={t('conn.section.import')}>
-        <Button
-          variant="secondary"
-          iconStart={FileUp}
-          fullWidth
-          onClick={() => void navigate('/importar')}
-        >
-          {t('import.choose')}
-        </Button>
-        <p className="account-meta">{t('import.bbHint')}</p>
-      </GlassCard>
-      <GlassCard level={2} title={t('conn.section.nfce')}>
-        <Button
-          variant="secondary"
-          iconStart={QrCode}
-          fullWidth
-          disabled={!online}
-          disabledReason={t('conn.needsInternet')}
-          onClick={() => void navigate('/nota')}
-        >
-          {t('conn.nfce.read')}
-        </Button>
-        <p className="account-meta">{t('conn.nfce.hint')}</p>
-      </GlassCard>
+      <ImportCards />
     </section>
   );
 }

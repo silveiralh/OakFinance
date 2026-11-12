@@ -42,6 +42,7 @@ import {
   monthSummary,
   monthTitle,
   NO_FILTERS,
+  plannedIds,
   type StatusFilter,
   visibleWindow,
 } from './list';
@@ -122,9 +123,13 @@ export function dayLabel(date: ISODate, today: ISODate): string {
   return date === y.toISOString().slice(0, 10) ? t('list.yesterday') : formatDateBR(date);
 }
 
-function rowState(tx: Tx, today: ISODate): RowTx['state'] {
+function rowState(tx: Tx, today: ISODate, planned: boolean): RowTx['state'] {
   if (tx.status === 'cancelled') {
     return 'cancelled';
+  }
+  if (planned) {
+    // RN-23: parcela futura (fatura ainda aberta ou futura) é "Prevista", não efetivada
+    return 'forecast';
   }
   if (tx.status !== 'pending') {
     return undefined;
@@ -154,7 +159,12 @@ export function methodLabel(method: string | null): string {
   return key ? t(key) : '';
 }
 
-export function toRow(tx: Tx, category: Category | undefined, today: ISODate): RowTx {
+export function toRow(
+  tx: Tx,
+  category: Category | undefined,
+  today: ISODate,
+  planned = false,
+): RowTx {
   const kind =
     tx.kind === 'income' || tx.kind === 'refund' || tx.kind === 'adjust_in'
       ? 'income'
@@ -164,7 +174,7 @@ export function toRow(tx: Tx, category: Category | undefined, today: ISODate): R
           ? 'saving'
           : 'expense';
   const band = category?.bucket;
-  const state = rowState(tx, today);
+  const state = rowState(tx, today, planned);
   return {
     id: tx.id,
     kind,
@@ -217,17 +227,32 @@ export function TransactionsScreen({
   const { from, to } = monthRange(month);
   const data = useLive(
     user
-      ? async () => ({
-          rows: await user.db.transactions
+      ? async () => {
+          const rows = await user.db.transactions
             .where('occurred_on')
             .between(from, to, true, true)
-            .toArray(),
-          categories: await user.db.categories.toArray(),
-          accounts: [
-            ...(await user.db.accounts.toArray()),
-            ...(await user.db.cards.toArray()),
-          ].filter((a) => a.deleted_at === null),
-        })
+            .toArray();
+          // RN-23: o fechamento da fatura de cada parcela diz se ela ainda é prevista
+          const invoiceIds = [
+            ...new Set(
+              rows.flatMap((r) =>
+                (r.installment_number ?? 0) > 1 && r.invoice_id ? [r.invoice_id] : [],
+              ),
+            ),
+          ];
+          const invoices = invoiceIds.length > 0 ? await user.db.invoices.bulkGet(invoiceIds) : [];
+          return {
+            rows,
+            closing: new Map(
+              invoices.flatMap((i) => (i && i.deleted_at === null ? [[i.id, i.closing_date]] : [])),
+            ) as ReadonlyMap<string, string>,
+            categories: await user.db.categories.toArray(),
+            accounts: [
+              ...(await user.db.accounts.toArray()),
+              ...(await user.db.cards.toArray()),
+            ].filter((a) => a.deleted_at === null),
+          };
+        }
       : null,
     [user, from, to],
   );
@@ -236,12 +261,16 @@ export function TransactionsScreen({
     [data?.categories],
   );
   const live = useMemo(() => (data?.rows ?? []).filter((r) => r.deleted_at === null), [data?.rows]);
-  const filtered = useMemo(
-    () => filterTransactions(live, filters, categories, today),
-    [live, filters, categories, today],
+  const planned = useMemo(
+    () => plannedIds(live, data?.closing ?? new Map(), today),
+    [live, data?.closing, today],
   );
-  const entries = useMemo(() => flatten(groupByDay(filtered)), [filtered]);
-  const summary = monthSummary(live, categories);
+  const filtered = useMemo(
+    () => filterTransactions(live, filters, categories, today, planned),
+    [live, filters, categories, today, planned],
+  );
+  const entries = useMemo(() => flatten(groupByDay(filtered, planned)), [filtered, planned]);
+  const summary = monthSummary(live, categories, planned);
   const narrowed = filters !== NO_FILTERS && JSON.stringify(filters) !== JSON.stringify(NO_FILTERS);
   const set = (patch: Partial<ListFilters>) => setFilters((f) => ({ ...f, ...patch }));
   const windowed = visibleWindow(entries.length, scrollTop, VIEWPORT, ROW_HEIGHT);
@@ -397,6 +426,7 @@ export function TransactionsScreen({
           month={title}
           onClear={() => setFilters(NO_FILTERS)}
           onNew={() => void navigate('?novo=despesa')}
+          onImport={() => void navigate('/importar')}
         />
       ) : (
         <div ref={listRef} className="list-rows" data-testid="list-rows">
@@ -425,6 +455,7 @@ export function TransactionsScreen({
                   entry.tx,
                   entry.tx.category_id ? categories.get(entry.tx.category_id) : undefined,
                   today,
+                  planned.has(entry.tx.id),
                 )}
                 onPress={() => void navigate(`/lancamentos/${entry.tx.id}`)}
                 onActions={() => setActing(entry.tx)}
@@ -480,11 +511,13 @@ function ListEmpty({
   month,
   onClear,
   onNew,
+  onImport,
 }: {
   filters: ListFilters;
   month: string;
   onClear: () => void;
   onNew: () => void;
+  onImport: () => void;
 }) {
   const kind = emptyKind(filters);
   const state = emptyStates[kind];
@@ -515,6 +548,7 @@ function ListEmpty({
       title={fill(state.title, { mês: month })}
       description={state.text}
       primaryAction={{ label: emptyStates.listMonth.actions[0], onPress: onNew }}
+      secondaryAction={{ label: emptyStates.listMonth.actions[1], onPress: onImport }}
     />
   );
 }

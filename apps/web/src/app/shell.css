@@ -132,6 +132,8 @@
   font-family: var(--font-display);
   font-size: var(--font-size-title);
   font-weight: var(--font-weight-bold);
+  /* UXA-030: entrelinha de título, não a do corpo */
+  line-height: var(--line-height-snug);
 }
 /* ON01 na referência D-023: tela lima inteira, título grande e ação em pílula preta */
 .onboarding:has(.screen-welcome) {
@@ -308,6 +310,7 @@ body:has(.screen-welcome) .backdrop {
 .list-month-title {
   margin: 0;
   font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
 }
 .list-summary {
   display: grid;
@@ -535,7 +538,7 @@ body:has(.screen-welcome) .backdrop {
   box-shadow: var(--shadow-1);
 }
 .list-chip[data-selected="true"] {
-  border-color: var(--ink-950);
+  border-color: var(--selection-outline);
 }
 .list-chips {
   min-width: 0;
@@ -1138,7 +1141,6 @@ body:has(.screen-welcome) .backdrop {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.reconcile-diffs,
 /* I01/I02 — conexões (T-076, T-077) */
 .bank-connections,
 .connect-mapping {
@@ -1168,6 +1170,7 @@ body:has(.screen-welcome) .backdrop {
   margin-top: var(--space-2);
 }
 
+.reconcile-diffs,
 .inbox-list {
   display: grid;
   gap: var(--space-3);
@@ -1256,7 +1259,8 @@ body:has(.screen-welcome) .backdrop {
 .calc-pct input[type="range"] {
   width: 100%;
   min-height: var(--touch-min);
-  accent-color: var(--surface-dark);
+  /* UXC-009: no escuro o preto sumia no grafite; o preenchimento "info" é lima lá */
+  accent-color: var(--status-info-fill);
 }
 .calc-pct output {
   font-weight: var(--font-weight-bold);
@@ -1672,4 +1676,119 @@ body:has(.screen-welcome) .backdrop {
 .analysis-day-actual {
   right: 30%;
   background: var(--ink-950);
+}
+
+/* Menu da conta (D-076, T-118): avatar com as iniciais no topo das abas principais */
+.account-avatar .account-initials {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-dark);
+  color: var(--on-dark);
+  font-family: var(--font-display);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-bold);
+}
+.account-menu {
+  display: grid;
+  gap: var(--space-2);
+}
+/* Abas internas do Planejar (UXB-002): a 360 px as quatro abas não cabem; a faixa rola sozinha, sem rolar a página
+   (1.4.10), e a aba atual fica à vista (PlanTabs) */
+.plan-tabs {
+  margin-bottom: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 100%;
+  /* espaço para o anel de foco, que a rolagem cortaria */
+  padding: 4px;
+}
+.plan-tabs::-webkit-scrollbar {
+  display: none;
+}
+.plan-tabs .segmented label {
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+}
+
+/* Q01 (T-119): teclado e Lançar num rodapé fixo da folha (UXA-003); o resto rola acima */
+.quick-footer {
+  position: sticky;
+  bottom: calc(-1 * (var(--space-4) + env(safe-area-inset-bottom)));
+  z-index: 1;
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 calc(-1 * var(--space-4));
+  padding: var(--space-2) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+  background: var(--bg-base);
+}
+.quick-footer .keypad .key {
+  min-height: var(--touch-min);
+}
+.quick-more {
+  gap: var(--space-1);
+}
+
+/* Início pelo gasto do mês (T-120, D-081) */
+.home-balance {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.home-balance .money {
+  margin-left: auto;
+  font-weight: var(--font-weight-bold);
+}
+.home-health {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+.home-health-bands {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-health-band {
+  display: grid;
+  gap: var(--space-1);
+}
+.home-health-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.home-health-name {
+  font-weight: var(--font-weight-semibold);
+}
+.home-health-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+}
+.home-health-state[data-health="attention"] {
+  color: var(--status-warning-fg);
+}
+.home-health-state[data-health="over"] {
+  color: var(--status-danger-fg);
+}
+.home-health-line {
+  margin: 0;
+  font-size: var(--font-size-label);
+  color: var(--text-secondary);
+}
+.home-health-empty {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+.home-health-empty p {
+  margin: 0;
 }

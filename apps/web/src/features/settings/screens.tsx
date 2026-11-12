@@ -47,6 +47,13 @@ function SettingsLinks() {
       <Button variant="secondary" onClick={() => void navigate('/ajustes/diagnostico')}>
         {shellText.screens.S11}
       </Button>
+      {/* UXC-002: importar extrato, ler nota e (com o Open Finance) conexões ficam na I01 */}
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/conexoes')}>
+        {shellText.screens.I01}
+      </Button>
+      <Button variant="secondary" onClick={() => void navigate('/ajustes/regras')}>
+        {shellText.screens.I06}
+      </Button>
     </>
   );
 }

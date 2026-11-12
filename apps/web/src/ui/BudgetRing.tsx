@@ -56,7 +56,7 @@ export function BudgetRing({
   const sorted = ORDER.flatMap((key) => bands.filter((b) => b.key === key));
   const money = (c: number) => (hidden ? HIDDEN_AMOUNT : formatBRL(c));
   return (
-    <figure className={cx('ring', className)} data-size={size} data-testid={testId}>
+    <figure className={cx('budget-ring', className)} data-size={size} data-testid={testId}>
       <svg
         width={px}
         height={px}
@@ -91,20 +91,23 @@ export function BudgetRing({
                 stroke="var(--band-track)"
                 strokeWidth={stroke}
               />
-              <circle
-                className="ring-arc"
-                cx={px / 2}
-                cy={px / 2}
-                r={r}
-                fill="none"
-                stroke={`var(--band-${b.key})`}
-                strokeWidth={stroke}
-                strokeLinecap="round"
-                strokeDasharray={`${base * c} ${c}`}
-              />
+              {/* UXB-019: arco de 0% com ponta redonda vira um ponto; sem valor, só o trilho */}
+              {base > 0 && (
+                <circle
+                  className="budget-ring-arc"
+                  cx={px / 2}
+                  cy={px / 2}
+                  r={r}
+                  fill="none"
+                  stroke={`var(--band-${b.key})`}
+                  strokeWidth={stroke}
+                  strokeLinecap="round"
+                  strokeDasharray={`${base * c} ${c}`}
+                />
+              )}
               {excess > 0 && (
                 <circle
-                  className="ring-arc"
+                  className="budget-ring-arc"
                   data-excess="true"
                   cx={px / 2}
                   cy={px / 2}
@@ -119,13 +122,13 @@ export function BudgetRing({
           );
         })}
       </svg>
-      <figcaption className="ring-center">
+      <figcaption className="budget-ring-center">
         <span className="money-text" data-size={size === 'lg' ? 'display' : 'label'}>
           {money(incomeCents)}
         </span>
       </figcaption>
       {showLegend && (
-        <table className="ring-legend">
+        <table className="budget-ring-legend">
           <tbody>
             {sorted.map((b) => {
               const pct = percentOf(b.spentCents, b.plannedCents);

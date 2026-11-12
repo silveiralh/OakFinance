@@ -7,7 +7,7 @@ import { cardFromRow } from '../../data/mappers';
 import { createCard } from '../../data/repositories/cards';
 import { deleteRow, saveRow } from '../../data/repositories/rows';
 import { pendingCount } from '../../data/sync/outbox';
-import { loadHomePeriodRows } from '../../features/dashboard/data';
+import { loadHomeRows } from '../../features/dashboard/data';
 import { homeModel } from '../../features/dashboard/model';
 import { installmentRows, saveInstallmentPurchase } from '../../features/quick-entry/installments';
 import { buildInvoice } from '../../features/quick-entry/model';
@@ -147,7 +147,7 @@ export function installE2eHooks(user: UserSession): () => void {
     async measureHome(runs: number) {
       const today = todayIn('America/Sao_Paulo', new Date()) as ISODate;
       // RN-51: o recálculo (a leitura do banco local fica fora, como no painel ao vivo)
-      const rows = await loadHomePeriodRows(user.db, today);
+      const rows = await loadHomeRows(user.db);
       const times: number[] = [];
       for (let i = 0; i < runs; i++) {
         const started = performance.now();

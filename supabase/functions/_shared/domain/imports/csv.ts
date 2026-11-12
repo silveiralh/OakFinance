@@ -34,7 +34,8 @@ export interface CsvProfile {
 }
 
 /**
- * Presets da RN-76. Os dois do Nubank são PROVISÓRIOS: confirmar com arquivos reais do cliente (Q1, SETUP-14).
+ * Presets da RN-76. Os dois do Nubank foram conferidos com as cópias anonimizadas dos arquivos reais do cliente
+ * (SETUP-14, `test/fixtures/nubank-*-real-anon.csv`): a fatura mudou para vírgula decimal (D-086); a conta já batia.
  * 'generico-br' é o ponto de partida do mapeamento manual na UI.
  */
 export const CSV_PRESETS: readonly CsvProfile[] = [
@@ -46,7 +47,8 @@ export const CSV_PRESETS: readonly CsvProfile[] = [
     headerRow: 0,
     columns: { date: 'date', description: 'title', amount: 'amount' },
     dateFormat: 'YYYY-MM-DD',
-    decimal: '.',
+    // issue #128: a fatura real traz o valor entre aspas, com vírgula decimal, ponto de milhar e "- 29,90" (D-086)
+    decimal: ',',
     amountSign: 'expense_positive',
     target: 'card',
   },

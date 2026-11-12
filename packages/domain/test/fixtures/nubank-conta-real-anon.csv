@@ -1,0 +1,14 @@
+Data,Valor,Identificador,Descrição
+02/01/2026,-150.00,77ed1c80-7c2f-42d6-8109-d013dce52bef,Transferência enviada pelo Pix - MARIA FICTICIA SOUZA - •••.123.456-•• - BANCO EXEMPLO S.A. (0000) Agência: 1 Conta: 12345-6
+03/01/2026,2500.00,afbd4675-7739-4ab6-a290-6bf4b77dbc4f,Transferência recebida pelo Pix - EMPRESA FICTICIA LTDA - 12.345.678/0001-00 - BANCO TESTE S.A. (0000) Agência: 1 Conta: 98765-4
+05/01/2026,300.00,b3957d5c-b736-4a64-b942-f89e21fc0d40,Valor adicionado na conta por cartão de crédito - Recarga Exemplo
+05/01/2026,-45.90,6a620968-2a9a-436e-aabc-85a233da39f6,Compra no débito - Mercado Teste
+08/01/2026,-37.50,7db8ff60-78dc-4acc-afc4-40955acd34ec,Transferência enviada pelo Pix - JOAO TESTE LIMA - •••.654.321-•• - BANCO EXEMPLO S.A. (0000) Agência: 1 Conta: 54321-0
+10/01/2026,120.00,30d47956-c83e-4609-9cac-c133caba8507,Resgate RDB
+10/01/2026,-980.40,4942f4a3-ab72-4a37-a95e-254cb253abeb,Pagamento de fatura
+12/01/2026,-20.00,9aad1f05-2354-47ae-88e4-23a9d4088971,Recarga de celular - Operadora Exemplo
+15/01/2026,75.00,250aa1e2-6713-4575-b314-2ed244ebf707,Transferência recebida pelo Pix - ANA EXEMPLO COSTA - •••.111.222-•• - BANCO TESTE S.A. (0000) Agência: 1 Conta: 11223-3
+18/01/2026,-1250.00,f45034ea-446a-4a33-9f8c-c32af21e5383,Transferência enviada pelo Pix - IMOBILIARIA FICTICIA LTDA - 98.765.432/0001-00 - BANCO EXEMPLO S.A. (0000) Agência: 1 Conta: 77889-1
+20/01/2026,50.00,a34e100d-6150-4517-a562-dba107c470c1,Valor adicionado na conta por cartão de crédito - Recarga Exemplo
+22/01/2026,60.00,553c2e51-10f7-4db9-b604-459cb399ee29,Resgate RDB
+28/01/2026,-12.99,c9f2035f-8b3f-4378-bbb7-6284e21aed36,Transferência enviada pelo Pix - CARLOS FICTICIO - •••.333.444-•• - BANCO TESTE S.A. (0000) Agência: 1 Conta: 33445-5

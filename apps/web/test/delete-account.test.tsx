@@ -8,6 +8,10 @@ import { DeleteAccountCard } from '../src/features/settings/DeleteAccountCard';
 import { ToastProvider } from '../src/ui';
 import { fakeAuth } from './auth-fixture';
 
+// Os cenários deste arquivo cobrem o app com o Open Finance ligado (build E2E e v2); sem ele, ver
+// test/open-finance-off.test.tsx (T-115, D-080).
+vi.mock('../src/app/openFinance', () => ({ OPEN_FINANCE_ENABLED: true }));
+
 function withClient(response: { data: unknown; error: unknown }) {
   const invoke = vi.fn(() => Promise.resolve(response));
   const auth = fakeAuth('signedIn', {

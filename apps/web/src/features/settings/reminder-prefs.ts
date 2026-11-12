@@ -67,6 +67,13 @@ export const PREF_GROUPS = [
 
 export type PrefGroupId = (typeof PREF_GROUPS)[number]['id'];
 
+/** Grupos mostrados na S07: sem o Open Finance (D-080) some o lembrete de conexão bancária. */
+export function visiblePrefGroups(
+  openFinance: boolean,
+): ReadonlyArray<(typeof PREF_GROUPS)[number]> {
+  return openFinance ? PREF_GROUPS : PREF_GROUPS.filter((g) => g.id !== 'bank');
+}
+
 const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 /** "20:00:00" (Postgres) ou "20:00" → "20:00". */

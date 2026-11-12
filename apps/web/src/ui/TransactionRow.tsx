@@ -112,7 +112,11 @@ export function TransactionRow({
                 {STATE_TEXT[tx.state]}
               </span>
             )}
-            {tx.needsReview && <span className="tx-seal">{uiText.needsReview}</span>}
+            {tx.needsReview && (
+              <span className="tx-seal" data-seal="review">
+                {uiText.needsReview}
+              </span>
+            )}
             {tx.linked && (
               <span className="tx-seal">
                 <Link size={12} />

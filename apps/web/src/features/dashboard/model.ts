@@ -1,8 +1,12 @@
-// H01 — "Disponível para gastar" (US-30, RN-44, RN-46..RN-51): monta a entrada do domínio a partir das linhas locais
-// do Dexie e devolve tudo o que o Início mostra. Puro e síncrono: o recálculo roda a cada mudança local (RN-51).
+// H01 — Início pelo gasto do mês (D-081; US-30, RN-44, RN-46..RN-51): monta a entrada do domínio a partir das linhas
+// locais do Dexie e devolve tudo o que o Início mostra (gasto do mês, saldo nas contas, previstas e saúde por faixa). Puro e síncrono: o recálculo roda a cada mudança local (RN-51).
 import {
+  accountsBalance,
   addDays,
+  alertThresholdsBp,
+  type BandHealth,
   type BucketStatus,
+  bandHealth,
   bucketBudget,
   type CardAttribution,
   clampDay,
@@ -65,6 +69,10 @@ export interface HomeModel {
   /** Card "Próximos 7 dias": até 4 saídas de hoje a hoje + 6. */
   upcoming: Outflow[];
   buckets: Record<'needs' | 'wants' | 'savings', BucketStatus>;
+  /** D-081: estado de cada faixa no card "Saúde do mês". */
+  health: Record<'needs' | 'wants' | 'savings', BandHealth>;
+  /** D-081: "Saldo nas contas" (saldo atual das contas; cartões não entram). */
+  balanceCents: number;
   /** Lançamentos no mês civil (para o card "Nenhum lançamento em {mês}"). */
   monthHasEntries: boolean;
 }
@@ -216,6 +224,7 @@ export function monthContext(rows: HomeRows, today: ISODate) {
       alertThresholdsBp: b.alert_thresholds_bp,
     })),
     month,
+    alertThresholdsBp(settings.alerts),
   );
   const input = monthInputFromRows(
     rows,
@@ -230,6 +239,7 @@ export function monthContext(rows: HomeRows, today: ISODate) {
 export function homeModel(rows: HomeRows, today: ISODate): HomeModel {
   const { month, config, budget, input } = monthContext(rows, today);
   const spendable = spendableThisMonth(input, budget, config);
+  const buckets = bucketBudget(input, budget, spendable.income.totalCents);
   const last = clampDay(month, daysInMonth(month));
   const firstOfMonth = clampDay(month, 1);
   return {
@@ -241,7 +251,13 @@ export function homeModel(rows: HomeRows, today: ISODate): HomeModel {
     spentAndUpcomingCents: spendable.spentCents + spendable.upcoming.totalCents,
     nextOutflows: outflowsBetween(rows, input, today, last).slice(0, NEXT_OUTFLOWS),
     upcoming: outflowsBetween(rows, input, today, addDays(today, 6)).slice(0, UPCOMING_MAX),
-    buckets: bucketBudget(input, budget, spendable.income.totalCents),
+    buckets,
+    health: {
+      needs: bandHealth(buckets.needs, today),
+      wants: bandHealth(buckets.wants, today),
+      savings: bandHealth(buckets.savings, today),
+    },
+    balanceCents: accountsBalance(input.accounts, input.txs, today),
     monthHasEntries: rows.txRows.some(
       (r) => r.deleted_at === null && r.occurred_on >= firstOfMonth && r.occurred_on <= last,
     ),

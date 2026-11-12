@@ -18,7 +18,7 @@ Coisas que só você pode fazer. As sessões automáticas nunca criam contas nem
 | SETUP-10 Pós-deploy: e-mails, Vault, hook, secrets | depois da T-036 | M1 |
 | SETUP-11 Chaves VAPID | depois da T-064 | M2 |
 | SETUP-12 Senha dos backups | junto com o SETUP-09 | T-036 |
-| SETUP-13 Pluggy e Meu Pluggy | quando a T-077 estiver pronta (semana 3) | T-083, M3 |
+| SETUP-13 Pluggy e Meu Pluggy | **adiado para a v2 (D-080)** | T-083, M3 |
 | SETUP-14 Arquivos reais por canal privado | antes da semana 4 | T-085, T-087, T-090 |
 | SETUP-15 Licença | até o fim | T-099 |
 | SETUP-16 Decisões pendentes | quando puder | T-099 |
@@ -137,6 +137,8 @@ Coisas que só você pode fazer. As sessões automáticas nunca criam contas nem
 - **Avise:** "SETUP-12 feito".
 
 ## SETUP-13 — Pluggy e Meu Pluggy (semana 3, atenção ao trial de 15 dias)
+> **Adiado para a v2 (D-080, 11/11/2026).** Não faça este item no MVP: o Open Finance está escondido no app.
+
 - **Por quê:** é o que traz as transações do BB e do Nubank. Pela documentação conhecida, só dá para **conectar** o Meu Pluggy durante o trial de 15 dias da conta de desenvolvedor. Por isso, comece só quando o HANDOFF disser que a T-077 está pronta.
 - **Decida (Q2):** quem cria a conta de desenvolvedor. A recomendação é uma conta só, sua; a T-083 confirma se os itens da outra pessoa ficam acessíveis.
 - **Passo a passo:**
@@ -173,7 +175,7 @@ Enquanto você não responder, as sessões implementam o padrão indicado.
 5. Endereço definitivo: SETUP-08.
 6. **Opção não conservadora em Ajustes** ("Descontar faturas e contas que ainda vencem no mês", que pode ser desligada). Padrão: **manter**. Responda "remover" se preferir.
 7. **Notificações:** teto de 3 push por dia, e os avisos pós-MVP (salário recebido, aporte pendente, início e fechamento do mês, sync parada) ficam fora. Padrão: **confirmado**.
-8. **Depois de 2 semanas de uso:** validar o limite de 20% do selo "No ritmo do mês" e aprovar o wordmark e o monograma OF. Responda quando puder; isso não bloqueia nada antes da T-099.
+8. **Depois de 2 semanas de uso:** aprovar o wordmark e o monograma OF (o selo "No ritmo do mês" saiu do Início pela D-081). Responda quando puder; isso não bloqueia nada.
 
 - **Avise:** "SETUP-16: 6=<manter|remover>, 7=<ok|ajuste>, 8=<ok|ajuste>".
 

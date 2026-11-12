@@ -179,6 +179,16 @@
 }
 
 /* ---------- GlassCard (5.4) e AppBackdrop (5.5) ---------- */
+/* UXC-006/UXD-006: o corpo do card empilha os filhos com espaço (o preflight zera a margem dos <p>). Com :where a
+   regra não pesa: um card com classe própria de layout continua mandando. */
+:where(.card:not([data-interactive="true"]):not([data-padding="none"])) {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+:where(.card:not([data-interactive="true"]):not([data-padding="none"])) > .card-head {
+  margin-bottom: 0;
+}
 .card[data-padding="none"] {
   padding: 0;
 }
@@ -192,7 +202,7 @@
   border-left: 3px solid var(--_tone);
 }
 .card[data-tone="info"] {
-  --_tone: var(--status-info-fg);
+  --_tone: var(--status-info-fill);
 }
 .card[data-tone="warning"] {
   --_tone: var(--status-warning-fill);
@@ -333,6 +343,22 @@
   outline: none;
   appearance: none;
 }
+/* campo de busca sem o contorno nem os enfeites do navegador (seletor de categoria, T-117) */
+.field-box input[type="search"]::-webkit-search-decoration,
+.field-box input[type="search"]::-webkit-search-cancel-button {
+  appearance: none;
+}
+/* UXB-007: a lista de seleção ganha a seta (ícone do Select) e espaço para ela */
+.field-box select {
+  padding-right: var(--space-10);
+  cursor: pointer;
+}
+.field-chevron {
+  position: absolute;
+  right: var(--space-3);
+  pointer-events: none;
+  color: var(--text-secondary);
+}
 .field-prefix {
   display: grid;
   place-items: center;
@@ -390,7 +416,7 @@
   height: 25px;
   border-radius: 50%;
   background: var(--white);
-  color: var(--aqua-700);
+  color: var(--ink-950);
   box-shadow: var(--shadow-1);
   transition: transform var(--motion-duration-fast) var(--motion-ease-standard);
 }
@@ -406,7 +432,8 @@
   gap: var(--space-1);
   padding: var(--space-1);
   border-radius: var(--radius-pill);
-  background: var(--surface-solid-3);
+  /* UXC-008: o trilho é rebaixado; branco sobre o card branco ele sumia no claro */
+  background: var(--surface-inset);
 }
 .segmented label {
   display: inline-flex;
@@ -429,7 +456,16 @@
 .segmented label[data-checked="true"] {
   background: var(--accent);
   color: var(--on-accent);
-  box-shadow: var(--shadow-1);
+  /* G5 (UXA-009): a escolha não depende só da cor: contorno de 2 px na cor de seleção */
+  box-shadow:
+    inset 0 0 0 2px var(--selection-outline),
+    var(--shadow-1);
+  font-weight: var(--font-weight-semibold);
+}
+.segmented label[data-checked="true"]:has(input:focus-visible) {
+  box-shadow:
+    inset 0 0 0 2px var(--selection-outline),
+    var(--focus-ring);
 }
 
 /* ---------- Badge (5.34) ---------- */
@@ -520,6 +556,8 @@
 .empty h2 {
   margin: 0;
   font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
 }
 .empty p {
   margin: 0;
@@ -532,7 +570,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  border-left: 3px solid var(--_tone, var(--status-info-fg));
+  border-left: 3px solid var(--_tone, var(--status-info-fill));
 }
 .banner {
   width: 100%;
@@ -553,7 +591,8 @@
 .toast-region {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--space-16) + env(safe-area-inset-bottom));
+  /* UXA-028: acima da barra de abas flutuante (12 px + 64 px) com folga; no lg (sem abas) fica a 24 px */
+  bottom: calc(64px + var(--space-3) + var(--space-3) + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: var(--z-toast);
   width: min(100% - 2 * var(--gutter), 480px);
@@ -577,7 +616,8 @@
   font-size: var(--font-size-display);
   font-weight: var(--font-weight-bold);
   font-feature-settings: var(--font-numeric-features);
-  text-align: right;
+  /* UXA-027: o valor do lançamento fica centrado */
+  text-align: center;
   caret-color: var(--text-link);
 }
 .amount[data-size="compact"] .amount-input {
@@ -627,10 +667,12 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
 }
-.chip[data-selected="true"] {
+.chip[data-selected="true"],
+.chip[aria-pressed="true"] {
+  /* UXA-011: os chips de data marcam com aria-pressed; G5/UXB-023: contorno pelo token, também no escuro */
   background: var(--accent);
   color: var(--on-accent);
-  border: 2px solid var(--_band, var(--ink-950));
+  border: 2px solid var(--_band, var(--selection-outline));
 }
 .chip[data-band="needs"] {
   --_band: var(--band-needs);
@@ -667,9 +709,16 @@
   color: var(--text-secondary);
 }
 .chip-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* pílulas que fluem conforme a largura (pedido do dono, D-085): nome inteiro numa linha, ícone sem encolher */
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
+}
+.chip-grid .chip {
+  white-space: nowrap;
+}
+.chip-grid .chip svg {
+  flex-shrink: 0;
 }
 .date-native {
   min-height: 40px;
@@ -764,11 +813,18 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  /* UXA-010: o título e o Fechar ficam à vista quando a folha rola */
+  position: sticky;
+  top: calc(-1 * var(--space-3));
+  z-index: 1;
+  background: var(--_bg, var(--bg-base));
 }
 .sheet-title {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
 }
 .dialog-description {
   color: var(--text-secondary);
@@ -832,7 +888,7 @@
 .progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: var(--_fill, var(--status-info-fg));
+  background: var(--_fill, var(--status-info-fill));
   transition: width var(--motion-duration-slow) var(--motion-ease-standard);
 }
 .progress[data-tone="band-needs"] {
@@ -875,17 +931,18 @@
   width: 2px;
   background: var(--border-strong);
 }
-.ring {
+/* G2 (UXA-005, UXB-014): a classe era `.ring`, nome de utilitário do Tailwind (moldura quadrada) */
+.budget-ring {
   position: relative;
   display: grid;
   justify-items: center;
   gap: var(--space-3);
   margin: 0;
 }
-.ring-arc {
+.budget-ring-arc {
   transition: stroke-dasharray var(--motion-duration-slow) var(--motion-ease-standard);
 }
-.ring-center,
+.budget-ring-center,
 .goal-center {
   position: absolute;
   top: 0;
@@ -894,15 +951,15 @@
   height: var(--_size, 240px);
   width: var(--_size, 240px);
 }
-.ring[data-size="sm"] .ring-center {
+.budget-ring[data-size="sm"] .budget-ring-center {
   --_size: 96px;
 }
-.ring-legend {
+.budget-ring-legend {
   border-collapse: collapse;
   font-size: var(--font-size-label);
 }
-.ring-legend th,
-.ring-legend td {
+.budget-ring-legend th,
+.budget-ring-legend td {
   padding: var(--space-1) var(--space-2);
   text-align: left;
 }
@@ -1061,6 +1118,14 @@
   font-size: var(--font-size-caption);
   color: var(--text-secondary);
 }
+/* UXA-024: "Conferir" com forma de selo (pílula com fundo), não só texto */
+.tx-seal[data-seal="review"] {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--status-info-bg);
+  color: var(--status-info-fg);
+  font-weight: var(--font-weight-semibold);
+}
 .tx-seal[data-seal="forecast"] {
   outline: 1px dashed var(--border-strong);
   border-radius: var(--radius-xs);
@@ -1102,7 +1167,9 @@
   position: sticky;
   top: 0;
   z-index: var(--z-topbar);
-  display: flex;
+  /* UXA-019: três colunas, título no centro de verdade (o lado direito não empurra mais o título) */
+  display: grid;
+  grid-template-columns: minmax(48px, 1fr) minmax(0, auto) minmax(48px, 1fr);
   align-items: center;
   gap: var(--space-2);
   min-height: 56px;
@@ -1113,13 +1180,22 @@
   background: transparent;
   backdrop-filter: none;
 }
+.topbar-leading {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+}
 .topbar-title {
-  flex: 1;
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--font-size-heading);
   font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
   text-align: center;
+  /* UXC-021: título longo não quebra a barra; fica numa linha com reticências */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .tabbar,
 .tabbar.glass {
@@ -1152,13 +1228,15 @@
   gap: 2px;
   min-width: 56px;
   min-height: 52px;
-  padding: 2px 10px;
+  /* D-084 item 3: com o rótulo em 13 px, o espaço lateral encolhe nas telas estreitas para a barra caber em 360 px */
+  padding: 2px clamp(4px, 1.5vw, 10px);
   border-radius: var(--radius-pill);
   color: var(--on-dark-muted);
   text-decoration: none;
 }
 .tab-label {
-  font-size: 11px;
+  /* D-084 item 3: 13 px, o mínimo de legibilidade da spec */
+  font-size: var(--font-size-caption);
   font-weight: var(--font-weight-semibold);
   line-height: 1;
 }
@@ -1201,8 +1279,44 @@
   gap: var(--space-2);
   margin: 0;
   padding-left: var(--space-5);
+  /* UXA-015: o preflight tira os números dos passos */
+  list-style: decimal;
+}
+.install-steps:has(> li:only-child) {
+  list-style: none;
+  padding-left: 0;
 }
 .install-pointer {
   color: var(--text-link);
   justify-self: center;
+}
+
+@media (min-width: 1024px) {
+  .toast-region {
+    bottom: var(--space-6);
+  }
+}
+
+/* UXA-019: as ações ficam à direita da terceira coluna */
+.topbar-trailing {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  justify-self: end;
+  min-width: 0;
+}
+/* UXA-020: sincronizado é só o ícone, como os vizinhos; a pílula branca fica para quando há texto */
+.sync-badge.glass[data-state="synced"],
+.sync-badge.glass[data-state="syncing"] {
+  background: none;
+  border: 0;
+  padding: 0;
+  min-width: var(--touch-min);
+  justify-content: center;
+}
+/* sem a sombra do card, mas o anel de foco continua (2.4.7) */
+.sync-badge.glass[data-state="synced"]:not(:focus-visible),
+.sync-badge.glass[data-state="syncing"]:not(:focus-visible) {
+  box-shadow: none;
 }

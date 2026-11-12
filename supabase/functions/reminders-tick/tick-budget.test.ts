@@ -130,6 +130,36 @@ Deno.test('US-42: Desejos a 80% com R$ 1.380,00 + R$ 20,00 em Lazer (meta R$ 1.7
   assert.equal(due[0]?.navigate, '/planejar/orcamento');
 });
 
+Deno.test('RN-92 (D-082): limiares do perfil — 70% avisa antes, e com 120% passar a meta ainda não é "acima do planejado"', () => {
+  const custom = { alerts: { attentionPct: 70, overPct: 120 } };
+  // Desejos: meta R$ 1.740,00; 70% = R$ 1.218,00
+  const seventy = month([salary(), tx({ amountCents: 122000, categoryId: 'cat-lazer' })]);
+  assert.equal(budgetNotes(snap(seventy), brt('2026-11-10', '14:15')).length, 0);
+  const early = budgetNotes(snap(seventy, { settings: custom }), brt('2026-11-10', '14:15'));
+  assert.equal(early.length, 1);
+  assert.equal(early[0]?.title, 'Desejos atingiu 70% do planejado');
+  assert.equal(early[0]?.dedupeKey, 'budget:wants:2026-11:7000');
+  // R$ 1.900,00 (109%): no padrão já passou; com 120% ainda é o aviso de atenção
+  const past = month([salary(), tx({ amountCents: 190000, categoryId: 'cat-lazer' })]);
+  assert.equal(
+    budgetNotes(snap(past), brt('2026-11-12', '09:30'))[0]?.title,
+    'Desejos acima do planejado',
+  );
+  const notYet = budgetNotes(snap(past, { settings: custom }), brt('2026-11-12', '09:30'));
+  assert.equal(notYet[0]?.title, 'Desejos atingiu 70% do planejado');
+  // R$ 2.100,00 (> 120%)
+  const over = month([salary(), tx({ amountCents: 210000, categoryId: 'cat-lazer' })]);
+  const overDue = budgetNotes(snap(over, { settings: custom }), brt('2026-11-12', '09:30'));
+  assert.equal(overDue[0]?.title, 'Desejos acima do planejado');
+  assert.equal(overDue[0]?.dedupeKey, 'budget:wants:2026-11:12000');
+  // limiares inválidos no perfil voltam ao padrão (80%/100%)
+  const invalid = { alerts: { attentionPct: 120, overPct: 100 } };
+  assert.equal(
+    budgetNotes(snap(seventy, { settings: invalid }), brt('2026-11-10', '14:15')).length,
+    0,
+  );
+});
+
 Deno.test('US-42: ao passar de R$ 1.740,00, "Desejos acima do planejado" (UX #6) e não de novo em novembro', () => {
   const over = month([salary(), tx({ amountCents: 175000, categoryId: 'cat-lazer' })]);
   const first = budgetNotes(snap(over), brt('2026-11-12', '09:30'));
@@ -264,7 +294,7 @@ Deno.test('US-43 Domingo à noite: total, 3 maiores categorias, disponível e "D
   assert.equal(due[0]?.title, 'Resumo da semana');
   assert.match(
     due[0]?.body ?? '',
-    /^R\$ 545,00 em gastos, maiores: Mercado, Lazer, Farmácia\. Dias com lançamento: 6\/7\. Disponível: R\$ [\d.]+,\d{2}\.$/,
+    /^R\$ 545,00 em gastos, maiores: Mercado, Lazer, Farmácia\. Dias com lançamento: 6\/7\. Gasto no mês: R\$ [\d.]+,\d{2}\.( \S+: (passou do planejado|atenção)\.)?$/,
   );
   assert.equal(due[0]?.dedupeKey, 'weekly:2026-W46');
   assert.equal(due[0]?.navigate, '/');

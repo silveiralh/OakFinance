@@ -247,15 +247,23 @@ function consumption(input: MonthInput): Consumption {
   return out;
 }
 
+/**
+ * Nível pela RN-92 e pelos limiares da D-082: o maior limiar é o "passou do planejado" (padrão 100%: passa quando o
+ * consumo excede a meta) e o menor abaixo dele é o "atenção" (padrão 80%).
+ */
 function level(
   usageBp: BasisPoints,
-  overflow: boolean,
+  consumed: number,
+  target: Cents,
   thresholds: readonly BasisPoints[],
 ): BucketStatus['level'] {
-  if (overflow) {
+  // sem limiar ≥ 100% (limites antigos com só "atenção"), passar do planejado continua sendo exceder a meta
+  const overBp = Math.max(10000, ...thresholds);
+  if (consumed * 10000 > target * overBp) {
     return 'over';
   }
-  const first = Math.min(...thresholds.filter((t) => t < 10000), 10000);
+  const below = thresholds.filter((t) => t < overBp);
+  const first = below.length > 0 ? Math.min(...below) : overBp;
   return usageBp >= first ? 'warning' : 'ok';
 }
 
@@ -304,7 +312,7 @@ export function bucketBudget(
       level:
         incomeTotalCents <= 0 || bucket === 'savings'
           ? 'ok'
-          : level(usageBp, consumed > targetCents, config.alertThresholdsBp),
+          : level(usageBp, consumed, targetCents, config.alertThresholdsBp),
     };
   }
   return out;
@@ -379,9 +387,7 @@ export function categoryBudgets(
       limitCents: lim.limitCents,
       usageBp,
       level:
-        lim.limitCents > 0
-          ? level(usageBp, consumed > lim.limitCents, lim.alertThresholdsBp)
-          : 'ok',
+        lim.limitCents > 0 ? level(usageBp, consumed, lim.limitCents, lim.alertThresholdsBp) : 'ok',
     };
   });
 }
@@ -424,6 +430,8 @@ export function resolveBudgetConfig(
     alertThresholdsBp: number[];
   }>,
   month: YearMonth,
+  /** D-082: limiares do perfil; quando vêm, valem para as faixas no lugar dos guardados nos registros do orçamento. */
+  profileThresholdsBp?: readonly BasisPoints[],
 ): BudgetConfig {
   const pctBp: Record<Bucket, BasisPoints> = { ...DEFAULT_PCT_BP };
   let alertThresholdsBp: readonly BasisPoints[] = DEFAULT_THRESHOLDS_BP;
@@ -437,5 +445,19 @@ export function resolveBudgetConfig(
       alertThresholdsBp = row.alertThresholdsBp;
     }
   }
-  return { pctBp, alertThresholdsBp };
+  return { pctBp, alertThresholdsBp: profileThresholdsBp ?? alertThresholdsBp };
+}
+
+/**
+ * D-082: os limites por categoria com os limiares padrão (80%/100%) seguem os do perfil; limites com limiares próprios
+ * (RN-92) ficam como estão.
+ */
+export function categoryThresholdsBp(
+  rowThresholdsBp: readonly BasisPoints[],
+  profileThresholdsBp: readonly BasisPoints[],
+): readonly BasisPoints[] {
+  const isDefault =
+    rowThresholdsBp.length === DEFAULT_THRESHOLDS_BP.length &&
+    rowThresholdsBp.every((t, i) => t === DEFAULT_THRESHOLDS_BP[i]);
+  return isDefault ? profileThresholdsBp : rowThresholdsBp;
 }

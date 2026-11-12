@@ -887,6 +887,38 @@ export const ptBR = {
   'detail.duplicateOf': 'Duplicada de: {descricao}',
   'detail.notDuplicate': 'Não é duplicada',
   'review.separated': 'Lançamento separado.',
+  // Navegação no celular (T-118, D-076, D-089)
+  'account.open': 'Abrir menu da conta',
+  'account.title': 'Sua conta',
+  'account.settings': 'Configurações',
+  'account.import': 'Importar extrato',
+  'account.readNote': 'Ler nota fiscal',
+  'account.connections': 'Conexões e importação',
+  'plan.tabs': 'Seções do Planejar',
+  'plan.tab.budget': 'Orçamento',
+  'plan.tab.reserve': 'Reserva',
+  'plan.tab.future': 'Futuro',
+  'plan.tab.close': 'Fechar o mês',
+  // Início pelo gasto do mês (T-120, D-081)
+  'home.spent.label': 'Gasto em {mês}',
+  'home.spent.heading': 'Gasto em {mês}: {valor}',
+  'home.balance': 'Saldo nas contas',
+  'home.upcomingMonth': 'Ainda vai sair este mês: {valor}',
+  'home.health.title': 'Saúde do mês',
+  'home.health.on_track': 'No caminho',
+  'home.health.attention': 'Atenção',
+  'home.health.over': 'Passou do planejado',
+  'home.health.line': '{gasto} de {meta}',
+  'home.health.adjust': 'Ajustar percentuais',
+  'home.health.noIncome': 'Cadastre sua renda para acompanhar as faixas do mês.',
+  // Limiares de aviso configuráveis (T-121, D-082)
+  'calc.alerts.title': 'Avisos do orçamento',
+  'calc.alerts.hint':
+    'Valem para Necessidades, Desejos, os limites por categoria e a Saúde do mês.',
+  'calc.alerts.attention': 'Avisar com atenção a partir de (%)',
+  'calc.alerts.over': 'Avisar que passou do planejado a partir de (%)',
+  'calc.alerts.error':
+    'Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200.',
 } as const;
 
 export type MessageKey = keyof typeof ptBR;
@@ -1049,6 +1081,10 @@ export const shellText = {
     S11: 'Diagnóstico',
     I06: 'Regras',
   },
+  /** Títulos curtos da TopBar quando o nome da tela não cabe a 360 px (UXC-021, D-089); o `<title>` e a S01 usam o nome inteiro. */
+  shortTitles: {
+    S06: 'Cálculo e orçamento',
+  },
 } as const;
 
 export type ScreenId = keyof typeof shellText.screens;
@@ -1098,7 +1134,7 @@ export const emptyStates = {
   listMonth: {
     title: 'Nenhum lançamento em {mês}',
     text: 'Despesas e receitas do mês aparecem aqui.',
-    actions: ['Novo lançamento'],
+    actions: ['Novo lançamento', 'Importar extrato'],
   },
   listFilter: {
     title: 'Nenhum lançamento com este filtro',

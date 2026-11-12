@@ -706,23 +706,35 @@ describe('weekly_summary (US-43, RN-93)', () => {
     '2026-11-08',
   ];
 
-  it('US-43: domingo 15/11 às 19:00 — total, 3 maiores categorias, disponível e "dias com lançamento: 6/7"', () => {
+  it('US-43: domingo 15/11 às 19:00 — total, 3 maiores categorias, gasto no mês e "dias com lançamento: 6/7"', () => {
     const data = input('2026-11-15', '19:00', { txs: week, loggedOn: logged });
-    const available = spendableThisMonth(
-      data.month,
-      budget,
-      DEFAULT_SPENDABLE_CONFIG,
-    ).availableCents;
+    // RN-93 (D-081): "Gasto no mês" (GR da RN-47) no lugar do "Disponível"
+    const spent = spendableThisMonth(data.month, budget, DEFAULT_SPENDABLE_CONFIG).spentCents;
     const list = only(dueNotifications(data), 'weekly_summary');
     expect(list).toEqual([
       {
         kind: 'weekly_summary',
         dedupeKey: 'weekly:2026-W46',
         title: 'Resumo da semana',
-        body: `R$ 650,00 em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Disponível: ${formatBRL(available)}.`,
+        body: `R$ 650,00 em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Gasto no mês: ${formatBRL(spent)}.`,
         navigate: '/',
       },
     ]);
+  });
+
+  it('RN-93 (D-081): com uma faixa acima do planejado, o resumo diz qual e corta categorias para caber em 120', () => {
+    const over = [
+      ...week,
+      tx({ categoryId: 'mercado', amountCents: 900_000, occurredOn: '2026-11-14' }),
+    ];
+    const [note] = only(
+      dueNotifications(input('2026-11-15', '19:00', { txs: over, loggedOn: logged })),
+      'weekly_summary',
+    );
+    expect(note?.body).toContain('Necessidades: passou do planejado.');
+    expect(note?.body).toContain('Gasto no mês: R$');
+    expect(note?.body).not.toContain('Disponível');
+    expect((note?.body ?? '').length).toBeLessThanOrEqual(120);
   });
 
   it('US-43: semana sem lançamentos → versão curta', () => {
@@ -761,7 +773,7 @@ describe('weekly_summary (US-43, RN-93)', () => {
       'weekly_summary',
     );
     expect(hidden[0]?.body).toBe(
-      'R$ •••• em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Disponível: R$ ••••.',
+      'R$ •••• em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Gasto no mês: R$ ••••.',
     );
     const long = 'Categoria com nome comprido';
     const names = { mercado: long, lazer: `${long} 2`, moradia: `${long} 3` };

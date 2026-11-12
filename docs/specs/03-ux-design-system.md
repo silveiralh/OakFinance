@@ -99,11 +99,11 @@ Cada princípio tem um **critério verificável**. As sessões de desenvolviment
 | 2 | Lançamentos | `/lancamentos` | `ListBullets` (badge com nº a conferir) |
 | 3 | **+** (FAB) | abre `Q01` como sheet (`?novo=despesa`) | `Plus` (bold) |
 | 4 | Cartões | `/cartoes` | `CreditCard` |
-| 5 | Planejar | `/planejar` (abas internas: Orçamento · Reserva · Futuro) | `ChartDonut` |
+| 5 | Planejar | `/planejar` (abas internas: Orçamento · Reserva · Futuro · Fechar o mês, D-076) | `ChartDonut` |
 
-Configurações: avatar no topo do Início → `/ajustes`. Conexões, importação e leitura de nota: em `/ajustes/conexoes`, no menu de toque longo do FAB e nos atalhos dos estados vazios.
+**Menu da conta (D-076, T-118):** avatar com as iniciais (ou `CircleUser` sem nome) no topo das 4 abas principais (Início, Lançamentos, Cartões e as abas do Planejar) abre uma folha "Sua conta" com **Configurações** (`/ajustes`), **Importar extrato** (`/importar`), **Ler nota fiscal** (`/nota`) e **Sair** (o do S02, com o aviso de pendências da RN-100); **Conexões e importação** só aparece com o Open Finance (D-080). Toque longo no FAB: **Receita**, **Guardar**, **Importar extrato** e **Ler nota** (o toque simples abre a despesa); a alternativa sem gesto (WCAG 2.5.1) é o seletor de tipo do Q01 e o menu da conta. "Importar extrato" também no vazio de Lançamentos; a S01 lista a I01 e a I06. Subtelas têm **Voltar** no TopBar (volta no histórico; aberta direto, vai para a tela-mãe).
 
-**Computador (`lg`):** barra lateral em vidro de 248 px à esquerda (mesmos itens + Configurações + Conexões), conteúdo com largura máxima de 1.200 px; o lançamento rápido abre como diálogo central de 440 px. Atalhos de teclado: `N` novo lançamento, `/` buscar em Lançamentos, `Esc` fecha sheet/diálogo.
+**Computador (`lg`):** barra lateral em vidro de 248 px à esquerda (mesmos itens + Configurações + Conexões; sem o Open Finance, o último item é "Importar extrato", que abre a I01), conteúdo com largura máxima de 1.200 px; o lançamento rápido abre como diálogo central de 440 px. Atalhos de teclado: `N` novo lançamento, `/` buscar em Lançamentos, `Esc` fecha sheet/diálogo.
 
 ### 2.2 Mapa geral de telas
 
@@ -262,10 +262,10 @@ stateDiagram-v2
 
 - **Fundo:** `AppBackdrop` fixo atrás de tudo: gradiente estático do tema (`--bg-backdrop`), azul-céu suave no claro e azul-noite profundo no Aero noturno, com um realce radial discreto no topo para dar profundidade. Não muda com dados, horário nem estado do mês, e não tem elementos animados.
 - **Abertura (S00):** fundo `--bg-backdrop` com o wordmark `BrandLogo variant="wordmark"` centralizado (altura 32 px) e uma `ProgressBar` indeterminada fina abaixo, só se o carregamento passar de 400 ms. Sem animação de logo. Some quando os dados locais carregam (meta < 1 s).
-- **Topo (`TopBar`):** 56 px + `env(safe-area-inset-top)`. Título da tela em `--font-size-title`, `SyncBadge` à direita. Transparente até rolar 8 px; depois vira vidro nível 3 (transição de 150 ms).
+- **Topo (`TopBar`):** 56 px + `env(safe-area-inset-top)`. Três colunas: Voltar (subtelas) à esquerda, título centrado numa linha (com reticências; a S06 usa o título curto "Cálculo e orçamento", D-089) e, à direita, `SyncBadge` (só o ícone quando sincronizado) e o avatar do menu da conta nas raízes das abas (D-076). Transparente até rolar 8 px; depois vira vidro nível 3 (transição de 150 ms).
 - **Abas (`TabBar`):** 64 px + `env(safe-area-inset-bottom)`, vidro nível 3, FAB de 56 px elevado 12 px acima da barra.
 - **Banner global:** abaixo do topo, para offline/erro de sync/atualização (`G01`–`G08`).
-- **Região `aria-live="polite"`** única no AppShell para toasts e mudanças de sync.
+- **Região `aria-live="polite"`** única no AppShell para toasts e mudanças de sync; no celular o toast fica acima da barra de abas flutuante (64 px + 12 px + 12 px), no `lg` a 24 px do fundo.
 - **Landmarks:** `<header>`, `<nav aria-label="Navegação principal">`, `<main id="conteudo">`; no `lg`, link "Pular para o conteúdo" como primeiro foco.
 - Rolagem: só o `<main>` rola; topo e abas fixos. Nada de `backdrop-filter` dentro de listas que rolam (ver 4.5).
 
@@ -376,25 +376,24 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ---
 
-### H01 — Início · "Disponível para gastar" · `/` · S1–2
+### H01 — Início · "Gasto em {mês}" · `/` · S1–2
 
-- **Objetivo:** responder em uma olhada quanto ainda dá para gastar no mês e o que vence em breve.
+- **Objetivo (D-081):** responder em uma olhada quanto já foi gasto no mês, como está a conta e o que vence em breve.
 - **Conteúdo e hierarquia (de cima para baixo, celular):**
   1. `TopBar`: saudação curta ("Boa tarde, {nome}", primeiro nome do Google; período do dia pelo fuso `America/Sao_Paulo`), botão olho (`Eye`/`EyeSlash`, ocultar valores), sino (`Bell` com `Badge` de não lidos → `H02`), `SyncBadge`, avatar (→ `/ajustes`).
-  2. **Herói "Disponível para gastar"** em `GlassCard level=2 padding="lg"`:
-     - Rótulo: "Disponível para gastar em novembro" (`--font-size-label`, `--text-secondary`).
-     - Valor: `MoneyText size="hero"` (`--font-size-hero`, Manrope 700).
-     - Linha de apoio: "R$ 42,00 por dia até 30/11" (`floor(D ÷ dias restantes)`, incluindo hoje; oculta se D ≤ 0).
-     - `PaceIndicator` (selo de status do mês, ícone + texto, ver regra abaixo).
-     - Linha informativa (fora da conta, só no padrão "mês do vencimento"): "No cartão para os próximos meses: R$ 980,00" → `P03` (RN-49).
-     - Botão texto "Ver cálculo" → abre sheet `H01-S` com a fórmula linha a linha.
+  2. **Herói "Gasto em {mês}"** (D-081, T-120) no cartão escuro:
+     - Rótulo: "Gasto em novembro"; valor: `MoneyText` grande = GR da RN-47 (efetivadas pelo mês de impacto, menos estornos).
+     - Linha de apoio: "Ainda vai sair este mês: R$ 280,00" (previstas, só informativa).
+     - Linha "Saldo nas contas R$ 2.450,00" com chevron → lista de contas (`S03`).
+     - Botão **Novo lançamento**. Saíram (D-081): o "Disponível para gastar", o valor por dia, o `PaceIndicator`, a linha "No cartão para os próximos meses" e o "Ver cálculo" (`H01-S`).
   3. **Card "Próximos 7 dias"** (GlassCard nível 2): até 4 itens (faturas, contas fixas, parcelas) com data relativa, valor e ícone; link "Ver tudo" → `P03`.
-  4. **Card 50/30/20:** `BudgetRing size="sm"` + 3 linhas "Necessidades R$ 1.200 de R$ 2.250" → `P01`.
+  4. **Card "Saúde do mês"** (D-081): uma barra por faixa (Necessidades, Desejos, Poupança) com "R$ 1.200,00 de R$ 2.250,00" e o estado em texto e ícone — "No caminho" (`CircleCheck`), "Atenção" (`TriangleAlert`, ≥ 80%) ou "Passou do planejado" (`CircleAlert`, ≥ 100%; Poupança é mínimo e nunca passa) — e o atalho **Ajustar percentuais** → `P01`. Sem renda: "Cadastre sua renda para acompanhar as faixas do mês." + **Cadastrar renda**.
   5. **Card Reserva:** `GoalProgress variant="bar"` + "R$ 3.400 de R$ 13.500 · 25%" + botão **Guardar** → Q01 em modo Guardar.
   6. **Card "Conferir"** (só se houver pendências em I05): "3 lançamentos do Nubank para conferir" → `I05`.
   7. **Últimos lançamentos:** 3 `TransactionRow` + "Ver todos".
   8. Cards de configuração pendente (instalar, renda, cartões) acima dos demais cards, dispensáveis.
 - **Layout `lg`:** grade de 12 colunas: herói (5 col) e cards (7 col); gráfico de barras de gastos por dia do mês (12 col) abaixo.
+- **`H01-S` removida (D-081):** a sheet "Como o valor é calculado" saiu com o "Disponível para gastar"; o texto abaixo fica como registro da fórmula da RN-47, que continua no domínio.
 - **Cálculo exibido (`H01-S`, sheet "Como o valor é calculado"):**
   ```
   Receita fixa do mês           + R$ 4.500,00
@@ -451,6 +450,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### Q01 — Lançamento rápido · sheet `?novo=despesa|receita|guardar` · S1–2
 
+- **Celular (T-119, D-090):** a folha abre com o foco no valor; com ponteiro grosso, o teclado numérico e **Lançar** ficam num rodapé fixo da folha (o resto rola acima); o cabeçalho da folha (título e Fechar) fica fixo; o valor é centrado; **Mais** tem forma de chip (com `ChevronDown`) e o grupo de categorias se chama "Categoria". A opção escolhida no segmentado e nos chips tem contorno de 2 px no token `--selection-outline` (preto no claro, claro no escuro), não só a cor.
 - **Objetivo:** registrar valor + categoria + meio de pagamento em ≤ 5 s, com uma mão, com ou sem internet.
 - **Conteúdo e hierarquia (sheet de 88% da altura no celular):**
   1. Alça de arrasto + `SegmentedControl` **Despesa | Receita | Guardar** (padrão: Despesa; "Guardar" = aporte na faixa Poupança/Reserva).
@@ -577,6 +577,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### I01 — Conexões e importação · `/ajustes/conexoes` · S3–S4
 
+- **MVP sem Open Finance (D-080, D-087):** com `OPEN_FINANCE_ENABLED` desligado (produção até a v2), a I01 mostra só as seções 2 (**Importar extrato**) e 3 (**Nota fiscal (NFC-e)**); a seção 1, o botão **Conectar banco** e o estado vazio "Nenhum banco conectado" não aparecem. A descrição abaixo é a da v2.
 - **Conteúdo:** três seções em GlassCard:
   1. **Bancos conectados (Open Finance)**: `BankConnectionCard` para BB e Nubank: estado, "Atualizado hoje às 07:40", "Expira em 12 dias" (só quando o consentimento tem data), botões **Atualizar agora** (no máximo 1 vez por hora: "Atualizado há {n} min. Tente de novo em {m} min.") / **Renovar** / **Desconectar**. Botão **Conectar banco**. Após cada sincronização: "{n} novas · {m} vinculadas · {k} para conferir".
   2. **Importar extrato**: **Escolher arquivo OFX ou CSV** + dica "Banco do Brasil: exporte o extrato em OFX (Money 2000+)."
@@ -586,6 +587,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### I02 — Conectar banco · `/ajustes/conexoes/novo` · S3
 
+- **MVP sem Open Finance (D-080, D-087):** a rota redireciona para a I01; nenhum caminho visível leva a esta tela.
 - **Fluxo:** tela de explicação ("A autorização é feita no Meu Pluggy. Suas credenciais bancárias não passam pelo OakFinance; o app recebe apenas os lançamentos.") → **Continuar** abre o fluxo do Meu Pluggy/Pluggy Connect → retorno → "Conectado. Buscando os últimos 90 dias…" (`ProgressBar` indeterminada) → resultado "48 lançamentos importados. 6 precisam de conferência." → **Conferir agora** (I05) / **Depois**.
 - **Mapeamento de contas** (após o retorno): para cada conta do banco, **Vincular a uma conta ou cartão existente** / **Criar nova** (pré-preenchida com nome, fechamento, vencimento e limite) / **Ignorar**.
 - **Plano B:** link **Tenho um Item ID** (campo de texto + **Validar**), para quando o widget falhar no iPhone instalado. Código inválido: "Não encontramos essa conexão no Meu Pluggy. Confira o código."
@@ -630,7 +632,7 @@ Lista em GlassCards agrupados; cada item leva a uma subtela:
 | S03 | Contas e cartões | CRUD de contas (BB, Nubank, carteira, VR, VA; nome único entre as ativas) e cartões (fechamento, vencimento, regra do dia do fechamento, limite, conta que paga, cor); **Arquivar** (conta com lançamentos) ou **Excluir** (sem lançamentos); arquivadas em seção recolhível com **Desarquivar** |
 | S04 | Categorias | Lista por faixa; criar/editar (nome, ícone, faixa obrigatória, limite mensal opcional); trocar faixa avisa "Isso muda os totais de todos os meses"; **Arquivar**; **Excluir** pede categoria de destino quando há uso; categorias de sistema sem edição. Link **Regras** → `I06` |
 | S05 | Renda e contas fixas | Receitas recorrentes, contas fixas (editar, pular, encerrar), receitas a receber e previstas |
-| S06 | Disponível para gastar e orçamento | Percentuais 50/30/20 (inteiros, soma obrigatória de 100%, sliders com valor em texto); **Compras no cartão contam no mês**: **do vencimento da fatura** (padrão) / **da compra**; `Switch` "Considerar VR/VA nos cálculos" (ligado); `Switch` "Incluir receitas previstas" (ligado: respeita o "Contar antes de receber" de cada receita); `Switch` "Descontar a poupança do mês (20%)" (ligado); `Switch` "Descontar faturas e contas que ainda vencem no mês" (ligado), todos com prévia do valor resultante |
+| S06 | Disponível para gastar e orçamento | Percentuais 50/30/20 (inteiros, soma obrigatória de 100%, sliders com valor em texto); **Compras no cartão contam no mês**: **do vencimento da fatura** (padrão) / **da compra**; `Switch` "Considerar VR/VA nos cálculos" (ligado); `Switch` "Incluir receitas previstas" (ligado: respeita o "Contar antes de receber" de cada receita); `Switch` "Descontar a poupança do mês (20%)" (ligado); `Switch` "Descontar faturas e contas que ainda vencem no mês" (ligado), todos com prévia do valor resultante; card **Avisos do orçamento** (D-082, T-121): "Avisar com atenção a partir de (%)" (padrão 80) e "Avisar que passou do planejado a partir de (%)" (padrão 100), inteiros com 1 ≤ atenção < passou ≤ 200; fora disso, "Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200." e **Salvar** desativado |
 | S07 | Lembretes | Status da permissão; toggles e horários por tipo: vencimento de faturas (3 dias antes e no dia, 09:00) · fatura fechou · contas fixas (véspera) · conta fixa atrasada e receita não confirmada (dia seguinte) · limite de faixa ou categoria (80% e 100%) · diário (20:00) · resumo semanal (domingo 19:00) · conexão bancária; horário silencioso 22:00–08:00; **Enviar notificação de teste** |
 | S08 | Aparência | Tema: **Automático / Claro / Aero noturno** · Transparência: **Automática / Sempre sólida** · Movimento: **Automático / Reduzido** · `Switch` "Abrir com valores ocultos" |
 | S09 | Instalar app | Reabre ON02a/b/c conforme a plataforma; mostra "App instalado" quando standalone |
@@ -693,7 +695,7 @@ Botão primário: pílula preta com texto branco (no escuro, pílula lima com te
 
 **Forma e tipografia.** Fonte única arredondada: **Nunito** variável (auto-hospedada, latin e latin-ext), pesos 500–800. Botões, chips, campos de busca e barra de abas em pílula (`--radius-md: 999px`); cards com raio 20 px; campos com raio 16 px e borda 1 px `--border-strong`. Sombras discretas (`--shadow-1/2`); sem brilho especular, sem vidro.
 
-**Moldura.** Barra de abas flutuante: pílula preta centrada a 12 px do fundo (mais a área segura), itens em círculo com rótulo de 11 px, aba ativa em lima, FAB lima de 52 px no meio. A zona segura do conteúdo passa a `64px + env(safe-area-inset-bottom) + var(--space-12)`. TopBar sem fundo próprio (fundo menta) e título centralizado em 17 px negrito. No `lg`, barra lateral branca com o item ativo em pílula lima. Sheets e diálogos com fundo menta e cards brancos por cima.
+**Moldura.** Barra de abas flutuante: pílula preta centrada a 12 px do fundo (mais a área segura), itens em círculo com rótulo de 13 px (D-084 item 3), aba ativa em lima, FAB lima de 52 px no meio. A zona segura do conteúdo passa a `64px + env(safe-area-inset-bottom) + var(--space-12)`. TopBar sem fundo próprio (fundo menta) e título centralizado em 17 px negrito. No `lg`, barra lateral branca com o item ativo em pílula lima. Sheets e diálogos com fundo menta e cards brancos por cima.
 
 **Telas de referência.** ON01: tela lima inteira, logo monocromática, frase de abertura em 30–40 px negrito, benefícios com ícone em círculo preto e, embaixo, "Já uso em outro aparelho" à esquerda e "Começar" em pílula preta com seta à direita. H01 (até a T-058 trazer o Disponível para gastar): cartão preto com o mês, botão lima "Novo lançamento", Saídas em destaque e Entradas e Guardado abaixo; quatro atalhos em pílula (Despesa, Receita, Lançamentos, Contas e cartões, o último em lima); "Últimos lançamentos" com "Ver todos". Linha de lançamento: ícone branco em círculo preto com anel na cor da faixa, divisória de 1 px entre linhas, cards brancos. T01: chips em uma linha com rolagem horizontal.
 
@@ -703,6 +705,8 @@ Botão primário: pílula preta com texto branco (no escuro, pílula lima com te
 
 **Contraste.** Verificado em `test/tokens.test.ts` a partir do `tokens.css`: todo texto ≥ 4,5:1 sobre o card branco **e** direto sobre a menta (ex.: primário 19,51:1 no branco e 18,36:1 na menta; terciário 7,61:1; preto sobre lima 13,47:1); elementos não textuais ≥ 3:1. A lima não serve de texto nem de borda sobre branco (1,4:1): seleção sempre leva o contorno preto.
 
+
+**Base visual (T-117, D-084 itens 3 e 4, D-088).** Escuro: o cartão do mês (`--surface-dark`) é uma superfície elevada `#2A2D27` (`--ink-800`), não `#000`, e a seleção (chip selecionado) ganha contorno na cor do texto (`--text-primary`) quando não há cor de faixa. Preenchimento e faixa "info" (barra de progresso, faixa do banner e do toast, controle deslizante) usam `--status-info-fill`: preto no claro, lima no escuro. Títulos `h1`–`h3` em Nunito 800 com entrelinha 1,3 (o `h2` solto em 17 px); o corpo do card empilha os filhos com 12 px de espaço; listas de seleção com seta (`ChevronDown`); passos de instalação numerados; "Conferir" como selo em pílula (fundo lima, texto preto); pílulas de categoria em linhas que fluem, com o nome inteiro e o ícone sem encolher.
 
 ### 4.1 Arquitetura de tokens
 
@@ -2709,13 +2713,40 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `detail.duplicateOf` | Duplicada de: {descricao} |
 | `detail.notDuplicate` | Não é duplicada |
 | `review.separated` | Lançamento separado. |
+| `account.open` | Abrir menu da conta |
+| `account.title` | Sua conta |
+| `account.settings` | Configurações |
+| `account.import` | Importar extrato |
+| `account.readNote` | Ler nota fiscal |
+| `account.connections` | Conexões e importação |
+| `plan.tabs` | Seções do Planejar |
+| `plan.tab.budget` | Orçamento |
+| `plan.tab.reserve` | Reserva |
+| `plan.tab.future` | Futuro |
+| `plan.tab.close` | Fechar o mês |
+| `home.spent.label` | Gasto em {mês} |
+| `home.spent.heading` | Gasto em {mês}: {valor} |
+| `home.balance` | Saldo nas contas |
+| `home.upcomingMonth` | Ainda vai sair este mês: {valor} |
+| `home.health.title` | Saúde do mês |
+| `home.health.on_track` | No caminho |
+| `home.health.attention` | Atenção |
+| `home.health.over` | Passou do planejado |
+| `home.health.line` | {gasto} de {meta} |
+| `home.health.adjust` | Ajustar percentuais |
+| `home.health.noIncome` | Cadastre sua renda para acompanhar as faixas do mês. |
+| `calc.alerts.title` | Avisos do orçamento |
+| `calc.alerts.hint` | Valem para Necessidades, Desejos, os limites por categoria e a Saúde do mês. |
+| `calc.alerts.attention` | Avisar com atenção a partir de (%) |
+| `calc.alerts.over` | Avisar que passou do planejado a partir de (%) |
+| `calc.alerts.error` | Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200. |
 
 ### 6.5 Estados vazios
 
 | Tela | Título | Texto | Ação | Ícone |
 |---|---|---|---|---|
 | Início, mês sem lançamentos | Nenhum lançamento em {mês} | Registre um gasto para começar a acompanhar o mês. | **Novo lançamento** | `ListBullets` |
-| Lançamentos, mês vazio | Nenhum lançamento em {mês} | Despesas e receitas do mês aparecem aqui. | **Novo lançamento** | `ListBullets` |
+| Lançamentos, mês vazio | Nenhum lançamento em {mês} | Despesas e receitas do mês aparecem aqui. | **Novo lançamento** · **Importar extrato** | `ListBullets` |
 | Lançamentos, filtro | Nenhum lançamento com este filtro | Altere o filtro ou o mês. | **Limpar filtros** | `FunnelSimple` |
 | Busca | Nenhum resultado para "{termo}" | Tente outro termo ou outro mês. | — | `MagnifyingGlass` |
 | Cartões | Nenhum cartão cadastrado | Cadastre um cartão para acompanhar faturas e parcelas. | **Adicionar cartão** | `CreditCard` |

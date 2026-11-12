@@ -1,6 +1,6 @@
 // Limite mensal por categoria (US-32, RN-45, RN-92): `budgets` com `scope = 'category'`. O limite padrão vale para
 // todos os meses (`month = null`); um registro do mês, se existir, prevalece.
-import { DEFAULT_THRESHOLDS_BP, type YearMonth } from '@oakfinance/domain';
+import { categoryThresholdsBp, DEFAULT_THRESHOLDS_BP, type YearMonth } from '@oakfinance/domain';
 import type { LocalRow, OakDb } from '../db';
 import { newId } from '../ids';
 import { deleteRow, saveRow } from './rows';
@@ -32,6 +32,8 @@ export function categoryLimit(
 export function monthLimits(
   budgets: readonly Budget[],
   month: YearMonth,
+  /** D-082: limiares do perfil; limites com o padrão (80%/100%) passam a usá-los. */
+  profileThresholdsBp?: readonly number[],
 ): Array<{ categoryId: string; limitCents: number; alertThresholdsBp: number[] }> {
   const ids = new Set(
     budgets
@@ -45,7 +47,9 @@ export function monthLimits(
           {
             categoryId,
             limitCents: row.limit_cents as number,
-            alertThresholdsBp: row.alert_thresholds_bp,
+            alertThresholdsBp: profileThresholdsBp
+              ? [...categoryThresholdsBp(row.alert_thresholds_bp, profileThresholdsBp)]
+              : row.alert_thresholds_bp,
           },
         ]
       : [];

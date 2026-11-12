@@ -118,6 +118,38 @@ describe('S06 — ajustes do cálculo (US-34)', () => {
     expect(model.buckets.wants.targetCents).toBe(232000);
   });
 
+  it('RN-92 (D-082): limiares 80%/120% — Necessidades a 118% deixa de "passar do planejado" e fica em atenção', async () => {
+    const auth = await renderCalc(rows(referenceTxs()));
+    expect(homeModel(await saved(auth), TODAY).health.needs).toBe('over');
+    const attention = screen.getByLabelText('Avisar com atenção a partir de (%)');
+    const over = screen.getByLabelText('Avisar que passou do planejado a partir de (%)');
+    expect(attention).toHaveValue('80');
+    expect(over).toHaveValue('100');
+    fireEvent.change(over, { target: { value: '120' } });
+    fireEvent.click(screen.getByTestId('calc-save'));
+    await screen.findByText('Ajustes salvos.');
+    const model = homeModel(await saved(auth), TODAY);
+    expect(model.buckets.needs.usageBp).toBe(11827);
+    expect(model.health.needs).toBe('attention');
+    expect(model.buckets.needs.level).toBe('warning');
+  });
+
+  it('RN-92 (D-082): atenção maior que o passou do planejado mostra o erro e não salva', async () => {
+    const auth = await renderCalc(rows(referenceTxs()));
+    fireEvent.change(screen.getByLabelText('Avisar com atenção a partir de (%)'), {
+      target: { value: '120' },
+    });
+    expect(
+      await screen.findByText(
+        'Use números inteiros, com a atenção menor que o passou do planejado e no máximo 200.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('calc-save')).toHaveAttribute('aria-disabled', 'true');
+    fireEvent.click(screen.getByTestId('calc-save'));
+    const profile = (await saved(auth)).profile;
+    expect((profile?.settings as { alerts?: unknown } | undefined)?.alerts).toBeUndefined();
+  });
+
   it('US-34/RN-35: desligar VR/VA — a Base cai R$ 600,00 e os gastos considerados caem R$ 400,00', async () => {
     const vr = makeRow('accounts', {
       id: 'vr',

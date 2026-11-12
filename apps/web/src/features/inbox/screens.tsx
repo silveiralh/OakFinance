@@ -30,11 +30,22 @@ import {
 
 type TxRow = LocalRow<'transactions'>;
 
+/**
+ * UXC-001 (UX §5.7, RN-103): o sinal vem do tipo da transação, como na T01 (`toRow`). `amount_cents` é sempre
+ * positivo; receita, estorno e ajuste de entrada aparecem com "+", transferência sem sinal, o resto com "−".
+ */
+export function moneyKindOf(kind: TxRow['kind']): 'income' | 'expense' | 'transfer' {
+  if (kind === 'income' || kind === 'refund' || kind === 'adjust_in') {
+    return 'income';
+  }
+  return kind === 'transfer' ? 'transfer' : 'expense';
+}
+
 function TxSummary({ row, label }: { row: TxRow; label: string }) {
   return (
     <div className="reconcile-side">
       <p className="account-meta">{label}</p>
-      <MoneyText value={row.amount_cents} kind="expense" size="body" />
+      <MoneyText value={row.amount_cents} kind={moneyKindOf(row.kind)} size="body" />
       <p>{row.description ?? row.description_raw ?? ''}</p>
       <p className="account-meta">
         {formatDateBR(row.occurred_on as ISODate)} · {methodLabel(row.payment_method)}
