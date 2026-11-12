@@ -191,9 +191,14 @@ flowchart LR
 | T-126 | Importação, nota e conferência | T-125 | done |
 | T-127 | Onboarding e marca | T-126 | done |
 | T-128 | Specs sem restos do Aero | T-127 | done |
-| T-129 | Nova auditoria de UX | T-128 | todo |
+| T-129 | Nova auditoria de UX | T-128 | done |
 | T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
 | T-131 | Impeccable no projeto | T-101 | done |
+| T-132 | Q01 no celular pequeno (auditoria 12/11) | T-129 | todo |
+| T-133 | Renda do mês sem soma dupla (auditoria 12/11) | T-129 | todo |
+| T-134 | Início e textos depois da D-081 (auditoria 12/11) | T-129 | todo |
+| T-135 | Lançamentos, Cartões e Planejar: cortes e totais (auditoria 12/11) | T-129 | todo |
+| T-136 | S05, segmentado e foco dos campos (auditoria 12/11) | T-129 | todo |
 
 ---
 
@@ -1816,7 +1821,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-129 — Nova auditoria de UX
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | — | — | T-128 | não |
+| done | R | M | — | — | T-128 | não |
 
 **Escopo:** rodar de novo o agente `ux-auditor` e o roteiro de capturas em todas as telas com rota, nos 4 tamanhos, com lançamentos de exemplo **com categoria** (limite da rodada anterior) e com receitas e contas fixas na S05. Registrar o resultado em `docs/ux-audit/` com data. Achado S1 ou S2 que sobrar vira tarefa nova no fim desta seção.
 
@@ -1847,3 +1852,58 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 **Pronto quando:** a skill aparece nas sessões, os dois arquivos de contexto refletem as specs e as tarefas de interface em `todo` citam os comandos.
 
 **Verificar:** `ls .claude/skills/impeccable && head PRODUCT.md DESIGN.md`.
+
+### T-132 — Q01 no celular pequeno (auditoria 12/11)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-12, US-13, US-33 | RN-01 | T-129 | não |
+
+**Escopo (D-105, `docs/ux-audit/2026-11-12.md`):** UX2A-001 (S1: a 360×640 o rodapé fixo cobre o valor; a 390 px esconde a 5ª categoria, o "Mais", o meio e "Mais detalhes" — levar o valor para dentro do rodapé, logo acima do teclado, e "Ler nota" sem linha própria); UX2A-002 (`?novo=receita` respeita o modo pedido mesmo com rascunho guardado); UX2A-005 (folha do Guardar com o mesmo rodapé fixo do Q01); UX2A-008 (teclado numérico some enquanto a descrição está em foco). Impeccable: `adapt` e `polish`.
+
+**Pronto quando:** a 360×640 o valor, as 5 categorias e "Lançar" aparecem sem rolar com o teclado visível; E2E do Q01 verde nos 3 projetos.
+
+**Verificar:** `pnpm e2e -- quick-entry`; capturas do Q01 a 360 e 390 px.
+
+### T-133 — Renda do mês sem soma dupla (auditoria 12/11)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | P | US-23, US-30 | RN-27, RN-32 | T-129 | não |
+
+**Escopo (D-105):** UX2B-001 (S1, causa a confirmar): `monthlyIncome` (`packages/domain/src/budget.ts`) soma a receita fixa não realizada e um lançamento de receita manual do mesmo mês, não ligado a ela, e a P01 mostra a renda em dobro (metas das faixas e da Reserva infladas). Conferir a RN-27/RN-32 e a T-076/US-23; se a spec não prevê a soma, a ocorrência da receita fixa do mês conta como realizada quando há receita manual equivalente (mesma conta, valor e mês, ±dias da RN), com teste de domínio e linha no Apêndice A. Se a spec for ambígua, registrar a dúvida para o dono no HANDOFF e manter só o teste que documenta o caso.
+
+**Pronto quando:** P01, P02 e o Início mostram a mesma renda do mês; testes `RN-27`/`RN-32` do caso verdes.
+
+**Verificar:** `pnpm test -- budget`.
+
+### T-134 — Início e textos depois da D-081 (auditoria 12/11)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-14, US-01 | — | T-129 | não |
+
+**Escopo (D-105):** UX2A-003 ("Ajustar percentuais" legível no card "Saúde do mês"); UX2A-004 ("Hoje"/"Ontem" nos últimos lançamentos, sem data cortada, D-084 item 1); UX2A-007 e UX2C-012 (ON01 e resumo semanal sem prometer "quanto ainda pode gastar"/"o disponível"; texto novo na UX §6.4 com DECISIONS); UX2C-001 ("Saldo nas contas" leva a um lugar que mostra o saldo por conta: a S03 passa a mostrar o saldo de cada conta); abertos da rodada anterior UXA-004 (sem Title Case), UXA-017 (card Reserva), UXA-018 ("Novo lançamento" numa linha) e UXA-021 (atalhos a 360 px). O texto da S06 sobre o "disponível" é decisão do dono (ver "Para o dono decidir" no relatório) e não entra aqui. Impeccable: `clarify` e `polish`.
+
+**Pronto quando:** os achados somem nas capturas do H01, ON01 e S03; E2E do Início verde.
+
+**Verificar:** `pnpm e2e -- home onboarding accounts`.
+
+### T-135 — Lançamentos, Cartões e Planejar: cortes e totais (auditoria 12/11)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-15, US-18, US-30, US-35 | RN-23, RN-46 | T-129 | não |
+
+**Escopo (D-105):** UX2B-002 (nome do lançamento em até duas linhas na T01, sem cortar em 10 letras); UX2B-003 (abas do Planejar sem corte no celular); UX2B-004 (total do dia coerente com as Saídas: decidir pelo mês de impacto da RN-46 ou rotular o total do dia; parcelas futuras fora do total do dia); UX2B-005 (parcela futura com "Prevista" na C02 e sem o cabeçalho "Hoje"); UX2B-006 (valor do centro do anel cabe no miolo); UX2B-007 (título curto da P03 no TopBar); UX2B-008 (barra das faixas 50/30/20 na C02, UX §3). Impeccable: `adapt` e `polish`.
+
+**Pronto quando:** os achados somem nas capturas a 360 e 390 px; E2E de lançamentos, cartões e planejar verdes.
+
+**Verificar:** `pnpm e2e -- transactions invoices budget`.
+
+### T-136 — S05, segmentado e foco dos campos (auditoria 12/11)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| todo | R | M | US-23, US-24, US-62 | — | T-129 | não |
+
+**Escopo (D-105):** UX2C-002 (S05: ações da ocorrência agrupadas, a principal visível e as outras num menu, card compacto); UX2C-003 (receitas e contas fixas com a mesma estrutura: regra, "Próximas" e títulos no mesmo nível); UX2C-004 (`SegmentedControl` com opções que dividem a largura, sem quebra na S06 e sem trilho vazio na S08; card da S08 dentro da coluna a 360 px); UX2A-006 (um só anel de foco nos campos: o `:focus-visible` global não se soma ao `.field-box:focus-within`). Os S3 da parte C (UX2C-005 a UX2C-013) entram quando a tela for tocada. Impeccable: `harden` e `polish`.
+
+**Pronto quando:** os achados somem nas capturas da S05, S06, S08 e dos campos; E2E de ajustes verde; axe sem violação séria.
+
+**Verificar:** `pnpm e2e -- settings recurrences`.

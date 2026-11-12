@@ -11,6 +11,7 @@ import { loadHomeRows } from '../../features/dashboard/data';
 import { homeModel } from '../../features/dashboard/model';
 import { installmentRows, saveInstallmentPurchase } from '../../features/quick-entry/installments';
 import { buildInvoice } from '../../features/quick-entry/model';
+import { buildFixedExpense, buildFixedIncome } from '../../features/recurrences/model';
 import { applyUpdate } from '../../lib/sw-update';
 import type { UserSession } from '../auth';
 
@@ -58,6 +59,16 @@ declare global {
       ): Promise<string>;
       /** Edita o valor de um lançamento como o Q01 faria (linha inteira, relógio híbrido). */
       setAmount(id: string, cents: number): Promise<void>;
+      /** T-129: põe o lançamento na categoria do slug dado (capturas da auditoria com categoria). */
+      setCategory(id: string, slug: string): Promise<boolean>;
+      /** T-129: receita fixa ou conta fixa mensal na conta (S05 com dados nas capturas). */
+      addFixed(
+        kind: 'income' | 'expense',
+        accountId: string,
+        cents: number,
+        description: string,
+        day: number,
+      ): Promise<string>;
       amountOf(id: string): Promise<number | null>;
       /** Cartão (S03) com fechamento e vencimento. */
       addCard(name: string, closingDay: number, dueDay: number): Promise<string>;
@@ -289,6 +300,40 @@ export function installE2eHooks(user: UserSession): () => void {
       }
       await saveRow(user.db, 'transactions', { ...current, amount_cents: cents });
       user.engine.notifyWrite();
+    },
+    async setCategory(id: string, slug: string) {
+      const row = await user.db.transactions.get(id);
+      const category = await user.db.categories.filter((c) => c.slug === slug).first();
+      if (!row || !category) {
+        return false;
+      }
+      await saveRow(user.db, 'transactions', {
+        ...row,
+        category_id: category.id,
+        category_source: 'manual',
+        client_updated_at: new Date().toISOString(),
+      });
+      user.engine.notifyWrite();
+      return true;
+    },
+    async addFixed(kind, accountId, cents, description, day) {
+      const nowIso = new Date().toISOString();
+      const input = {
+        userId: user.userId,
+        description,
+        amountCents: cents,
+        dayOfMonth: day,
+        categoryId: null,
+        startOn: todayIn('America/Sao_Paulo', new Date()).slice(0, 8).concat('01') as ISODate,
+        nowIso,
+      };
+      const row =
+        kind === 'income'
+          ? buildFixedIncome({ ...input, accountId })
+          : buildFixedExpense({ ...input, accountId, cardId: null, variable: false });
+      await saveRow(user.db, 'recurrences', row);
+      user.engine.notifyWrite();
+      return row.id;
     },
     amountOf: async (id: string) => (await user.db.transactions.get(id))?.amount_cents ?? null,
     async addCard(name: string, closingDay: number, dueDay: number) {
