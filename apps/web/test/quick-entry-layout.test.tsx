@@ -203,6 +203,6 @@ describe('T-132: Q01 no celular pequeno (auditoria 12/11)', () => {
     const income = await screen.findByRole('radio', { name: 'Receita' });
     await new Promise((r) => setTimeout(r, 50));
     expect(income).toBeChecked();
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 0,00');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A00,00');
   });
 });
