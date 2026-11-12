@@ -194,7 +194,7 @@
 
 ## 4. Bloqueios e pendências do cliente
 
-- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (cabeçalho do Início sobreposto) corrigida no PR da sessão de 12/11 05h UTC; as issues #151 (E05/E15 instáveis) e #152 (perfil CSV antigo do Nubank salvo no cartão) vêm antes da cadeia.
+- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (cabeçalho do Início sobreposto) corrigida no PR #153; as issues #151 (E05/E15 instáveis) e #152 (perfil CSV antigo do Nubank salvo no cartão) vêm antes da cadeia.
 
 | Item | Quando é necessário | Desbloqueia |
 |---|---|---|
@@ -422,4 +422,4 @@
 | 12/11/2026 | T-120 | PR #146 | done | Início pelo gasto do mês: herói "Gasto em {mês}", saldo nas contas, "Ainda vai sair" e "Saúde do mês"; resumo semanal com "Gasto no mês" (D-081, D-091) |
 | 12/11/2026 | T-121 | PR #148 | done | limiares de aviso configuráveis na S06 (D-082, D-092); T-102 bloqueada para decisão sobre o saldo nas contas |
 | 12/11/2026 | — | — | docs | decisões do dono: T-102 encerrada (D-093), T-130 liberada com merge do dono (D-094), T-090 liberada com 2 NFC-e anonimizadas (D-095) |
-| 12/11/2026 | T-118 (issue #150) | PR #NN | done | topo das abas principais sem sobreposição: colunas laterais do TopBar medem o próprio conteúdo; `e2e/topbar.spec.ts` a 320 e 360 px |
+| 12/11/2026 | T-118 (issue #150) | PR #153 | done | topo das abas principais sem sobreposição: colunas laterais do TopBar medem o próprio conteúdo; `e2e/topbar.spec.ts` a 320 e 360 px |
