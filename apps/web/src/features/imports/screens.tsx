@@ -11,7 +11,14 @@ import { formatDateBR } from '../../lib/format';
 import { Button, GlassCard, Select, useToast } from '../../ui';
 import { ColumnMapper } from './ColumnMapper';
 import { tokenizeCsv } from './csv-parse';
-import { initialProfile, profileIdFor, saveCsvProfile, savedProfiles } from './csv-profile';
+import {
+  initialProfile,
+  profileIdFor,
+  readableCount,
+  rememberCsvProfile,
+  savedOrPreset,
+  savedProfiles,
+} from './csv-profile';
 import {
   commitImport,
   type Destination,
@@ -120,6 +127,7 @@ export function ImportScreen() {
         savedProfiles(settings),
         first,
         parsed.delimiter,
+        (p) => readableCount(parsed.text, p, parsed),
       );
       const preferred =
         profile.target === 'card' && data.cards[0]
@@ -160,11 +168,16 @@ export function ImportScreen() {
     }
     const own = savedProfiles(data.settings).find((p) => p.id === profileIdFor(next));
     if (own) {
+      const { text } = loaded.csv;
+      const sniffed = tokenizeCsv(text);
+      const { profile, detected } = savedOrPreset(own, sniffed.rows[0] ?? [], (p) =>
+        readableCount(text, p, sniffed),
+      );
       const rows =
-        own.delimiter === loaded.csv.profile.delimiter
+        profile.delimiter === loaded.csv.profile.delimiter
           ? loaded.csv.rows
-          : tokenizeCsv(loaded.csv.text, own.delimiter).rows;
-      setLoaded({ ...loaded, csv: { ...loaded.csv, rows, profile: own, detected: own.name } });
+          : tokenizeCsv(text, profile.delimiter).rows;
+      setLoaded({ ...loaded, csv: { ...loaded.csv, rows, profile, detected } });
     }
   };
 
@@ -213,7 +226,7 @@ export function ImportScreen() {
       }
       if (result.ok) {
         if (loaded.csv && destination) {
-          await saveCsvProfile(user.db, loaded.csv.profile, destination);
+          await rememberCsvProfile(user.db, loaded.csv.profile, destination, result.value);
         }
         user.engine.notifyWrite();
         const importId = plan.importRow.id;
