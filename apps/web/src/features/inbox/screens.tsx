@@ -1,8 +1,8 @@
 // I05 — Conferir importados (UX §3 I05; US-49, RN-67, RN-68, RN-73, RN-74): "Para decidir" (um ReconcileCard
 // por vez), "Novos do banco" (categoria editável, OK e "Marcar todos como revisados") e "Vinculados
 // automaticamente" (últimos 7 dias, "Não é o mesmo"). Sem nada pendente, o vazio da UX §6.5.
-import type { ISODate } from '@oakfinance/domain';
-import { CheckCircle, EqualNot } from 'lucide-react';
+import { type ISODate, monthLabel, UNCLASSIFIED_SLUG, type YearMonth } from '@oakfinance/domain';
+import { CheckCircle, CircleAlert, EqualNot, Tag } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -41,12 +41,35 @@ export function moneyKindOf(kind: TxRow['kind']): 'income' | 'expense' | 'transf
   return kind === 'transfer' ? 'transfer' : 'expense';
 }
 
-function TxSummary({ row, label }: { row: TxRow; label: string }) {
+function TxSummary({
+  row,
+  label,
+  category,
+}: {
+  row: TxRow;
+  label?: string;
+  /** UXC-011: categoria sugerida numa linha própria; `null` = "A classificar" (destaque com ícone). */
+  category?: string | null;
+}) {
   return (
     <div className="reconcile-side">
-      <p className="account-meta">{label}</p>
+      {label && <p className="account-meta">{label}</p>}
       <MoneyText value={row.amount_cents} kind={moneyKindOf(row.kind)} size="body" />
       <p>{row.description ?? row.description_raw ?? ''}</p>
+      {category !== undefined && (
+        <p
+          className="inbox-category"
+          data-unclassified={category === null ? 'true' : undefined}
+          data-testid="inbox-category"
+        >
+          {category === null ? (
+            <CircleAlert size={16} aria-hidden="true" />
+          ) : (
+            <Tag size={16} aria-hidden="true" />
+          )}
+          {category ?? t('review.unclassified')}
+        </p>
+      )}
       <p className="account-meta">
         {formatDateBR(row.occurred_on as ISODate)} · {methodLabel(row.payment_method)}
       </p>
@@ -56,9 +79,12 @@ function TxSummary({ row, label }: { row: TxRow; label: string }) {
 
 function ReconcileCard({
   decision,
+  paymentMonth,
   onDone,
 }: {
   decision: Decision;
+  /** RN-71: pagamento de fatura sugerido (mês da fatura); pergunta própria no lugar do lado manual. */
+  paymentMonth: string | null;
   onDone: (message: string) => void;
 }) {
   const { user } = useAuth();
@@ -78,37 +104,64 @@ function ReconcileCard({
       setBusy(false);
     }
   };
-  return (
-    <GlassCard level={2} className="reconcile-card" data-testid="reconcile-card">
-      <div className="reconcile-sides">
-        {manual ? (
-          <TxSummary row={manual} label={t('review.manual')} />
+  // D-084 item 9 (UXC-012): sem candidato, uma coluna só com o importado e ações que dizem o resultado
+  if (!manual) {
+    return (
+      <GlassCard
+        level={2}
+        className="reconcile-card"
+        data-testid="reconcile-card"
+        data-single="true"
+      >
+        {paymentMonth ? (
+          <p className="reconcile-question" data-testid="reconcile-question">
+            {t('review.paymentQuestion', { mês: paymentMonth })}
+          </p>
         ) : (
-          <p className="reconcile-side">{t('review.noCandidate')}</p>
+          <p className="account-meta">{t('review.noCandidate')}</p>
         )}
         <TxSummary row={imported} label={t('review.imported')} />
-      </div>
-      {manual && (
-        <ul className="reconcile-diffs" data-testid="reconcile-diffs">
-          {differences(manual, imported).map((text) => (
-            <li key={text}>
-              <EqualNot size={16} aria-hidden="true" /> {text}
-            </li>
-          ))}
-        </ul>
-      )}
-      <div className="dialog-actions">
-        {manual && (
+        <div className="dialog-actions">
           <Button
             fullWidth
             loading={busy}
-            onClick={() =>
-              void run(() => decideSame(user.db, imported, manual), t('review.merged'))
-            }
+            onClick={() => void run(() => decideDifferent(user.db, imported), t('review.kept'))}
           >
-            {t('review.same')}
+            {paymentMonth ? t('review.paymentYes') : t('review.keepNew')}
           </Button>
-        )}
+          <Button
+            variant="ghost"
+            fullWidth
+            loading={busy}
+            onClick={() => void run(() => ignoreImported(user.db, imported), t('review.ignored'))}
+          >
+            {t('review.ignore')}
+          </Button>
+        </div>
+      </GlassCard>
+    );
+  }
+  return (
+    <GlassCard level={2} className="reconcile-card" data-testid="reconcile-card">
+      <div className="reconcile-sides">
+        <TxSummary row={manual} label={t('review.manual')} />
+        <TxSummary row={imported} label={t('review.imported')} />
+      </div>
+      <ul className="reconcile-diffs" data-testid="reconcile-diffs">
+        {differences(manual, imported).map((text) => (
+          <li key={text}>
+            <EqualNot size={16} aria-hidden="true" /> {text}
+          </li>
+        ))}
+      </ul>
+      <div className="dialog-actions">
+        <Button
+          fullWidth
+          loading={busy}
+          onClick={() => void run(() => decideSame(user.db, imported, manual), t('review.merged'))}
+        >
+          {t('review.same')}
+        </Button>
         <Button
           variant="secondary"
           fullWidth
@@ -157,7 +210,17 @@ export function InboxScreen({ today: fixedToday }: { today?: ISODate } = {}) {
     return <section className="screen" data-screen="I05" data-testid="screen-I05" />;
   }
   const count = inboxCount(groups);
-  const categoryName = new Map(data.categories.map((c) => [c.id, c.name]));
+  const categoryName = new Map(
+    data.categories.filter((c) => c.slug !== UNCLASSIFIED_SLUG).map((c) => [c.id, c.name]),
+  );
+  /** RN-71: o importado virou pagamento de fatura (transferência para o cartão); devolve o mês da fatura. */
+  const paymentMonthOf = (row: TxRow): string | null => {
+    if (row.kind !== 'transfer' || !row.counterpart_card_id || !row.invoice_id) {
+      return null;
+    }
+    const invoice = data.invoices.find((i) => i.id === row.invoice_id);
+    return invoice ? monthLabel(invoice.reference_month.slice(0, 7) as YearMonth) : null;
+  };
   const done = (message: string) => {
     setBlocked(null);
     showToast({ message, tone: 'success' });
@@ -197,7 +260,12 @@ export function InboxScreen({ today: fixedToday }: { today?: ISODate } = {}) {
       {first && (
         <section className="home-block" data-testid="inbox-pending">
           <h2>{t('review.pending')}</h2>
-          <ReconcileCard key={first.imported.id} decision={first} onDone={done} />
+          <ReconcileCard
+            key={first.imported.id}
+            decision={first}
+            paymentMonth={paymentMonthOf(first.imported)}
+            onDone={done}
+          />
         </section>
       )}
 
@@ -207,20 +275,23 @@ export function InboxScreen({ today: fixedToday }: { today?: ISODate } = {}) {
           <ul className="inbox-list">
             {groups.fresh.map((row) => (
               <li key={row.id} data-testid="inbox-fresh-item">
-                <TxSummary row={row} label={categoryName.get(row.category_id ?? '') ?? ''} />
-                <CategoryCorrection user={user} tx={row} categories={data.categories} />
-                <Button
-                  variant="secondary"
-                  onClick={() =>
-                    void markReviewed(user.db, row).then((r) => {
-                      if (r.ok) {
-                        user.engine.notifyWrite();
-                      }
-                    })
-                  }
-                >
-                  {t('review.ok')}
-                </Button>
+                <TxSummary row={row} category={categoryName.get(row.category_id ?? '') ?? null} />
+                {/* UXC-011: ações do item lado a lado, com espaço entre elas */}
+                <div className="inbox-item-actions">
+                  <CategoryCorrection user={user} tx={row} categories={data.categories} />
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      void markReviewed(user.db, row).then((r) => {
+                        if (r.ok) {
+                          user.engine.notifyWrite();
+                        }
+                      })
+                    }
+                  >
+                    {t('review.ok')}
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>

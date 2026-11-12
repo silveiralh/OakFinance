@@ -1284,6 +1284,30 @@ body:has(.screen-welcome) .backdrop {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+/* T-126 (UXC-012): pergunta do card sem candidato (pagamento de fatura sugerido) */
+.reconcile-question {
+  font-weight: var(--font-weight-bold);
+}
+/* T-126 (UXC-011): categoria sugerida numa linha própria e ações do item com espaço */
+.inbox-category {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-secondary);
+}
+.inbox-category[data-unclassified="true"] {
+  color: var(--status-warning-fg);
+  font-weight: var(--font-weight-bold);
+}
+.inbox-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.inbox-list > li {
+  display: grid;
+  gap: var(--space-2);
+}
 /* I01/I02 — conexões (T-076, T-077) */
 .bank-connections,
 .connect-mapping {

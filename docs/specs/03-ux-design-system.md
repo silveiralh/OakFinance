@@ -2712,7 +2712,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `review.diff.date` | Data diferente: {a} × {b} |
 | `review.pending` | Para decidir |
 | `review.fresh` | Novos do banco |
-| `review.ok` | OK |
+| `review.ok` | Revisado |
 | `review.allReviewed` | Marcar todos como revisados |
 | `review.allBlocked` | Classifique os {n} lançamentos em "A classificar" antes de marcar todos. |
 | `review.allDone` | {n} lançamentos revisados. |
@@ -2723,6 +2723,10 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `review.diff.amount` | Valor diferente: {a} × {b} |
 | `review.diff.method` | Meio diferente: {a} × {b} |
 | `review.noCandidate` | O lançamento parecido não está mais disponível. |
+| `review.keepNew` | Manter como novo |
+| `review.paymentQuestion` | É o pagamento da fatura de {mês}? |
+| `review.paymentYes` | É o pagamento |
+| `review.unclassified` | A classificar |
 | `detail.linkedTo` | Vinculado a: {descricao} |
 | `detail.duplicateOf` | Duplicada de: {descricao} |
 | `detail.notDuplicate` | Não é duplicada |

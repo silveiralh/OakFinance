@@ -254,7 +254,7 @@ describe('I05 — tela (US-49)', () => {
     );
 
     const fresh = screen.getByTestId('inbox-fresh-item');
-    fireEvent.click(within(fresh).getByRole('button', { name: 'OK' }));
+    fireEvent.click(within(fresh).getByRole('button', { name: 'Revisado' }));
     await waitFor(async () => expect((await db.transactions.get('N'))?.review_state).toBe('ok'));
 
     fireEvent.click(screen.getByText('Vinculados automaticamente'));
@@ -282,10 +282,13 @@ describe('I05 — tela (US-49)', () => {
     expect((await screen.findByTestId('inbox-blocked')).textContent).toBe(
       'Classifique os 1 lançamentos em "A classificar" antes de marcar todos.',
     );
-    // sugestão sem candidato: só "São diferentes" e "Ignorar"
+    // D-084 item 9 (UXC-012): o candidato foi apagado → uma coluna, "Manter como novo" e "Ignorar"
     const card = screen.getByTestId('reconcile-card');
     expect(within(card).getByText('O lançamento parecido não está mais disponível.')).toBeDefined();
     expect(within(card).queryByRole('button', { name: 'É o mesmo' })).toBeNull();
+    expect(within(card).queryByRole('button', { name: 'São diferentes' })).toBeNull();
+    expect(within(card).getByRole('button', { name: 'Manter como novo' })).toBeDefined();
+    expect(within(card).queryByText('Lançado por você')).toBeNull();
     fireEvent.click(within(card).getByRole('button', { name: 'Ignorar' }));
     await waitFor(async () =>
       expect((await db.transactions.get('S'))?.review_state).toBe('ignored'),
@@ -321,5 +324,59 @@ describe('T-116: sinal do valor na conferência (UXC-001)', () => {
     expect(incomeMoney?.textContent).not.toMatch(/\u2212R\$/);
     expect(expenseMoney?.getAttribute('data-kind')).toBe('expense');
     expect(expenseMoney?.textContent).toMatch(/\u2212R\$/);
+  });
+});
+
+describe('T-126: conferência (UXC-011, UXC-012, D-084 itens 6 e 9)', () => {
+  it('US-49 (UXC-011): "Novos do banco" mostra a categoria sugerida e "A classificar" em destaque; o botão diz Revisado', async () => {
+    const auth = fakeAuth();
+    const db = dbOf(auth);
+    await db.categories.bulkPut(CATEGORIES);
+    await db.transactions.bulkPut([
+      imported('N1', 100, '2026-11-08'),
+      imported('N2', 200, '2026-11-07', { category_id: 'unc' }),
+    ]);
+    renderScreen(auth);
+    const items = await screen.findAllByTestId('inbox-fresh-item');
+    const [first, second] = items.map((item) => within(item).getByTestId('inbox-category'));
+    expect(first?.textContent).toBe('Mercado');
+    expect(first?.dataset.unclassified).toBeUndefined();
+    expect(second?.textContent).toBe('A classificar');
+    expect(second?.dataset.unclassified).toBe('true');
+    expect(within(items[0] as HTMLElement).getByRole('button', { name: 'Revisado' })).toBeDefined();
+    expect(screen.queryByRole('button', { name: 'OK' })).toBeNull();
+  });
+
+  it('RN-71 (UXC-012): pagamento de fatura sugerido pergunta "É o pagamento da fatura de {mês}?"', async () => {
+    const auth = fakeAuth();
+    const db = dbOf(auth);
+    await db.categories.bulkPut(CATEGORIES);
+    await db.invoices.put(
+      makeRow('invoices', {
+        id: 'inv-out',
+        card_id: 'nu',
+        reference_month: '2026-10-01',
+        closing_date: '2026-10-03',
+        due_date: '2026-10-10',
+        deleted_at: null,
+      }),
+    );
+    await db.transactions.put(
+      imported('P', 45_000, '2026-11-08', {
+        kind: 'transfer',
+        counterpart_card_id: 'nu',
+        invoice_id: 'inv-out',
+        category_id: null,
+        review_state: 'suggested',
+      }),
+    );
+    renderScreen(auth);
+    const card = await screen.findByTestId('reconcile-card');
+    expect(within(card).getByTestId('reconcile-question').textContent).toBe(
+      'É o pagamento da fatura de out/2026?',
+    );
+    expect(within(card).queryByText('O lançamento parecido não está mais disponível.')).toBeNull();
+    fireEvent.click(within(card).getByRole('button', { name: 'É o pagamento' }));
+    await waitFor(async () => expect((await db.transactions.get('P'))?.review_state).toBe('new'));
   });
 });
