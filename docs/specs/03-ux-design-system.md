@@ -2242,6 +2242,8 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `accounts.archive` / `.unarchive` / `.delete` | Arquivar / Desarquivar / Excluir |
 | `accounts.archived` | Contas arquivadas |
 | `accounts.empty` | Nenhuma conta cadastrada |
+| `accounts.emptyHint` | Cadastre a conta corrente, a carteira ou o VR para lançar despesas e receitas. |
+| `accounts.listTitle` | Contas |
 | `accounts.duplicate` | Você já tem uma conta com esse nome |
 | `accounts.nameRequired` | Informe o nome da conta. |
 | `accounts.nameTooLong` | Use até 40 caracteres. |
@@ -2262,6 +2264,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `cards.sameDay` | Fechamento e vencimento no mesmo dia. Confira na sua fatura. |
 | `cards.closesDue` | Fecha dia {f} · vence dia {v} |
 | `cards.empty` | Nenhum cartão cadastrado |
+| `cards.listTitle` | Cartões |
 | `cards.duplicate` | Você já tem um cartão com esse nome |
 | `cards.emptyHint` | Cadastre um cartão para acompanhar faturas e parcelas. |
 | `invoice.closesIn` | Fecha em {data} ({n} dias) |

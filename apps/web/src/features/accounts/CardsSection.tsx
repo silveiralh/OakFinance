@@ -142,7 +142,7 @@ export function CardsSection({
 
   return (
     <>
-      <GlassCard level={2}>
+      <GlassCard level={2} title={t('cards.listTitle')} headingLevel={2}>
         {active.length === 0 ? (
           <EmptyState
             icon={CreditCard}
@@ -292,7 +292,8 @@ export function CardsSection({
             iconStart={Plus}
             fullWidth
             disabled={!valid}
-            disabledReason={t('cards.invalidDay')}
+            // UXC-017: com os dias ainda vazios não há erro a mostrar; o aviso só vem depois de digitar errado
+            disabledReason={closingError ?? dueError ?? ''}
           >
             {t('cards.add')}
           </Button>

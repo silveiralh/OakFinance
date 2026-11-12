@@ -72,3 +72,19 @@ describe('S03 contas (US-09)', () => {
     expect(await screen.findByText('Informe o nome da conta.')).toBeInTheDocument();
   });
 });
+
+describe('T-125: S03 (UXC-015, UXC-017)', () => {
+  it('US-09 (UXC-015/UXC-017): listas com título, vazio de contas com texto próprio e sem aviso de dia antes de digitar', async () => {
+    mount();
+    expect(await screen.findByRole('heading', { name: 'Contas', level: 2 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Cartões', level: 2 })).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Cadastre a conta corrente, a carteira ou o VR para lançar despesas e receitas.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Onde está o seu dinheiro?')).toBeNull();
+    // com os dias vazios, "Adicionar cartão" fica desativado sem a mensagem de erro
+    expect(screen.queryByText('Escolha um dia entre 1 e 31.')).toBeNull();
+  });
+});

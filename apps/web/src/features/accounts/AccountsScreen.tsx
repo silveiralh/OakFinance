@@ -216,12 +216,13 @@ export function AccountsScreen() {
 
   return (
     <section className="screen" data-screen="S03" data-testid="screen-S03">
-      <GlassCard level={2}>
+      {/* UXC-017: a lista tem título; UXC-015: o vazio diz para que servem as contas */}
+      <GlassCard level={2} title={t('accounts.listTitle')} headingLevel={2}>
         {active.length === 0 ? (
           <EmptyState
             icon={Landmark}
             title={t('accounts.empty')}
-            description={t('onb.accounts.title')}
+            description={t('accounts.emptyHint')}
           />
         ) : (
           <ul className="account-list">{active.map(row)}</ul>
