@@ -74,6 +74,8 @@ const NON_TEXT = [
   'focus-ring-color',
   // UXA-006: preenchimento "info" (barra, faixa do banner, controle) precisa aparecer nos dois temas
   'status-info-fill',
+  // G5/UXB-023: contorno da opção escolhida precisa aparecer sobre o card nos dois temas
+  'selection-outline',
 ] as const;
 
 describe('US-62: contraste do tema claro (UX §4.3)', () => {

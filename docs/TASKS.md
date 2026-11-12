@@ -181,7 +181,7 @@ flowchart LR
 | T-116 | Dinheiro mostrado errado | T-115 | done |
 | T-117 | Base visual: CSS, tokens e componentes | T-116 | done |
 | T-118 | Navegação no celular | T-117 | done |
-| T-119 | Lançamento rápido (Q01) e folhas | T-117 | todo |
+| T-119 | Lançamento rápido (Q01) e folhas | T-117 | done |
 | T-120 | Início pelo gasto do mês | T-118 | todo |
 | T-121 | Limiares de aviso configuráveis | T-120 | todo |
 | T-122 | Lançamentos (T01/T02) | T-119 | todo |
@@ -1695,7 +1695,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-119 — Lançamento rápido (Q01) e folhas
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-12 | — | T-117 | não |
+| done | R | M | US-12 | — | T-117 | não |
 
 **Escopo:** UXA-003 ("Lançar" e categorias visíveis sem rolar a 360×640); UXA-008 (foco inicial no valor); G5 seleção só por cor no SegmentedControl e nos chips (UXA-009, UXC-008 parte do componente, UXA-011, UXB-023: contorno e check, também no escuro); UXA-010 (cabeçalho da folha fixo, Fechar sempre visível); UXA-027 ("Mais" com forma de chip, rótulo acessível certo).
 

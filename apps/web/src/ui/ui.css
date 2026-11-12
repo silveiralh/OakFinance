@@ -432,7 +432,8 @@
   gap: var(--space-1);
   padding: var(--space-1);
   border-radius: var(--radius-pill);
-  background: var(--surface-solid-3);
+  /* UXC-008: o trilho é rebaixado; branco sobre o card branco ele sumia no claro */
+  background: var(--surface-inset);
 }
 .segmented label {
   display: inline-flex;
@@ -455,7 +456,16 @@
 .segmented label[data-checked="true"] {
   background: var(--accent);
   color: var(--on-accent);
-  box-shadow: var(--shadow-1);
+  /* G5 (UXA-009): a escolha não depende só da cor: contorno de 2 px na cor de seleção */
+  box-shadow:
+    inset 0 0 0 2px var(--selection-outline),
+    var(--shadow-1);
+  font-weight: var(--font-weight-semibold);
+}
+.segmented label[data-checked="true"]:has(input:focus-visible) {
+  box-shadow:
+    inset 0 0 0 2px var(--selection-outline),
+    var(--focus-ring);
 }
 
 /* ---------- Badge (5.34) ---------- */
@@ -606,7 +616,8 @@
   font-size: var(--font-size-display);
   font-weight: var(--font-weight-bold);
   font-feature-settings: var(--font-numeric-features);
-  text-align: right;
+  /* UXA-027: o valor do lançamento fica centrado */
+  text-align: center;
   caret-color: var(--text-link);
 }
 .amount[data-size="compact"] .amount-input {
@@ -656,10 +667,12 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
 }
-.chip[data-selected="true"] {
+.chip[data-selected="true"],
+.chip[aria-pressed="true"] {
+  /* UXA-011: os chips de data marcam com aria-pressed; G5/UXB-023: contorno pelo token, também no escuro */
   background: var(--accent);
   color: var(--on-accent);
-  border: 2px solid var(--_band, var(--ink-950));
+  border: 2px solid var(--_band, var(--selection-outline));
 }
 .chip[data-band="needs"] {
   --_band: var(--band-needs);
@@ -800,6 +813,11 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  /* UXA-010: o título e o Fechar ficam à vista quando a folha rola */
+  position: sticky;
+  top: calc(-1 * var(--space-3));
+  z-index: 1;
+  background: var(--_bg, var(--bg-base));
 }
 .sheet-title {
   margin: 0;
@@ -1271,11 +1289,6 @@
 .install-pointer {
   color: var(--text-link);
   justify-self: center;
-}
-
-/* D-084 item 4: no escuro a seleção ganha contorno na cor do texto (o preto some no grafite) */
-:root[data-theme="dark"] .chip[data-selected="true"] {
-  border-color: var(--_band, var(--text-primary));
 }
 
 @media (min-width: 1024px) {

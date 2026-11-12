@@ -1,6 +1,6 @@
 import { formatBRL, MAX_TX_CENTS, parseBRL, parseSignedCents } from '@oakfinance/domain';
 import { CircleAlert } from 'lucide-react';
-import { type ClipboardEvent, type KeyboardEvent, useId } from 'react';
+import { type ClipboardEvent, type KeyboardEvent, type Ref, useId } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { NumericKeypad } from './NumericKeypad';
 import { type BaseProps, cx } from './types';
@@ -14,6 +14,10 @@ export interface AmountInputProps extends BaseProps {
   error?: string;
   autoFocus?: boolean;
   keypad?: 'custom' | 'native';
+  /** `false`: o teclado próprio fica a cargo de quem usa (o Q01 o põe no rodapé fixo, UXA-003). */
+  showKeypad?: boolean;
+  /** Ref do `<input>` (o Q01 abre com o foco nele, UXA-008). */
+  inputRef?: Ref<HTMLInputElement>;
   disabled?: boolean;
 }
 
@@ -42,7 +46,7 @@ export function parsePastedAmount(text: string, max: number): number | null {
   return cents === null || cents < 0 || cents > max ? null : cents;
 }
 
-function preferredKeypad(): 'custom' | 'native' {
+export function preferredKeypad(): 'custom' | 'native' {
   try {
     return window.matchMedia?.('(pointer: coarse)').matches ? 'custom' : 'native';
   } catch {
@@ -60,6 +64,8 @@ export function AmountInput({
   error,
   autoFocus = false,
   keypad,
+  showKeypad = true,
+  inputRef,
   disabled = false,
   className,
   'data-testid': testId,
@@ -97,6 +103,7 @@ export function AmountInput({
         {label}
       </label>
       <input
+        ref={inputRef}
         id={id}
         className="amount-input"
         type="text"
@@ -129,7 +136,7 @@ export function AmountInput({
           {error}
         </p>
       )}
-      {mode === 'custom' && !disabled && (
+      {mode === 'custom' && showKeypad && !disabled && (
         <NumericKeypad
           onDigit={(d) => set(appendDigits(value, d, max))}
           onBackspace={() => set(Math.floor(value / 10))}
