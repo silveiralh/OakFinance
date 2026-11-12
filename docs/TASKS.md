@@ -193,6 +193,7 @@ flowchart LR
 | T-128 | Specs sem restos do Aero | T-127 | todo |
 | T-129 | Nova auditoria de UX | T-128 | todo |
 | T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
+| T-131 | Impeccable no projeto | T-101 | done |
 
 ---
 
@@ -1652,6 +1653,8 @@ Quem precisa do histórico inteiro continua lendo tudo ou passa a ler um agregad
 
 Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB-…`, `UXC-…`, `UXD-…`) estão em `docs/ux-audit/` (resumo em `docs/ux-audit/2026-11-11.md`; se a pasta ainda não estiver na `main`, leia da branch `task/T-101-agente-ux`). Cada tarefa fecha os achados listados: o PR cita os IDs e mostra capturas em 360 px e 1280 px, claro e escuro, das telas tocadas. Textos novos entram na UX §6 e em `i18n/pt-BR.ts`. Nenhum teste é apagado (o guard reprova).
 
+**Impeccable nas tarefas que faltam (D-100, pedido do dono em 12/11).** Toda tarefa de interface desta seção ainda em `todo` carrega a skill `impeccable` (`.claude/skills/impeccable/`; leia antes o `OAKFINANCE.md` da pasta: sem lançador, siga "Launcher unavailable" e leia `PRODUCT.md` e `DESIGN.md` na raiz). O app é modo **Operate** e o trabalho é refinamento da identidade atual: nada de `bolder`, `delight`, `overdrive` ou troca do `DESIGN.md`. Comandos por tarefa, além do escopo dela: T-125 `clarify` (rótulos e erros de Ajustes), `harden` (vazios e validação) e `polish`; T-126 `harden` (erros e arquivo inválido na importação e na nota), `clarify` e `polish`; T-127 `onboard` (primeira vez e vazios) e `polish`; T-128 mantém `DESIGN.md` igual à UX reescrita; T-129 é a auditoria pelo agente `ux-auditor`, que usa `critique` e `audit`; T-130 `polish` no valor em dinheiro. Antes de qualquer edição de interface, leia `reference/craft-floor.md`. No PR, liste os comandos usados e o que cada um mudou.
+
 ### T-115 — Open Finance fora do MVP
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
@@ -1834,3 +1837,13 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 
 **Verificar:** `pnpm ci:local`; capturas do roteiro a 360 px.
 
+### T-131 — Impeccable no projeto
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| done | — | P | US-62 | — | T-101 | não |
+
+**Escopo (D-100):** skill Impeccable em `.claude/skills/impeccable/` (só `SKILL.md`, `reference/`, licença e aviso; sem o lançador, os scripts e os hooks, ver `OAKFINANCE.md`); `PRODUCT.md` e `DESIGN.md` na raiz, resumindo as specs e o visual atual para a skill; o agente `ux-auditor` passa a usar `critique` e `audit` do Impeccable; a seção R ganha os comandos por tarefa.
+
+**Pronto quando:** a skill aparece nas sessões, os dois arquivos de contexto refletem as specs e as tarefas de interface em `todo` citam os comandos.
+
+**Verificar:** `ls .claude/skills/impeccable && head PRODUCT.md DESIGN.md`.

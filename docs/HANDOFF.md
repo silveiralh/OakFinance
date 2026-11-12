@@ -141,6 +141,8 @@
 
 ## 3. Próximos passos
 
+- **Impeccable (T-131, D-100):** as tarefas de interface em `todo` (T-125 a T-130) usam a skill `impeccable` com os comandos listados na abertura da seção R de `TASKS.md`; leia `.claude/skills/impeccable/OAKFINANCE.md` (sem lançador: siga "Launcher unavailable" e leia `PRODUCT.md` e `DESIGN.md`).
+
 - **Triagem de 12/11:** as issues #150 (PR #153), #152 (PR #154) e #151 (PR #155) entraram. A #152 veio antes da #151 porque a #151 pede rodar E05 e E15 20× localmente, e o ambiente da sessão não sobe o Supabase local nem tem WebKit (ver §5 para o que foi possível conferir). A T-122 (PR #156) e a T-123 (PR #157) entraram; a T-124 (PR #158) também. **A T-125 (Ajustes) está em andamento no PR #159 `[WIP]`** (branch `task/T-125-ajustes`): já tem S01 em grupos, "Meios:", sem "Transparência", editar conta, títulos e vazio da S03, limite nas categorias, títulos da S05, pergunta da S06 e GB no diagnóstico (D-100). Falta a UXC-007 (formulários "Nova conta" e "Novo cartão" em folhas abertas por botão; vários testes de `cards-screen` e `accounts-screen` preenchem os campos direto e precisam abrir a folha antes) e, no fim, TASKS, HANDOFF e capturas. A próxima sessão retoma esse PR (triagem 3.2) e tira o `[WIP]` do título. **As issues #150, #151 e #152 continuam abertas no GitHub** porque o "Fecha #n" em português não fecha issue no merge e a sessão não teve permissão para fechá-las: já estão corrigidas (PRs #153, #155 e #154); a próxima sessão não deve tratá-las de novo na triagem. Peça ao dono para fechá-las.
 - **T-102 bloqueada para decisão (D-092):** o "Saldo nas contas" do novo Início soma o histórico inteiro; a T-102 quer não ler o histórico. Opções na D-092: (a) agregado de saldo guardado no aparelho, (b) aceitar a leitura completa (hoje o RN-51 passa nos 3 projetos) e encerrar a T-102, (c) saldo numa leitura separada e assíncrona. A próxima tarefa liberada é a T-122.
 - **Sessão de 11/11 23h → 12/11 01h40 UTC:** entraram T-115 a T-120 (PRs #141 a #146). Parou às 01:40 UTC com ~50 min de janela: a próxima da fila é a T-102 (reaberta), que precisa de várias rodadas de CI para medir o RN-51 no `iphone` e agora também de um agregado do "Saldo nas contas"; não cabia na janela. A sessão seguinte começa por ela (ou, se ela bloquear, pela T-121).
@@ -225,6 +227,8 @@
 - **Depois de 2 semanas de uso (SETUP-16 item 8):** validar o limite de 20% do selo "No ritmo do mês" e aprovar o wordmark e o monograma OF; responder na issue `Setup do cliente`.
 
 ## 5. Riscos conhecidos
+
+- **E04 instável no `iphone` (12/11, PR #161):** `e2e/invoices.spec.ts:96` ("compra à vista no cartão e Registrar pagamento") falhou uma vez e passou na repetição; o `getByTestId('tx-…')` não apareceu depois de "Ver fatura". Hipótese: o usuário `e2e-a` acumula cartões entre testes e o clique em "Ver fatura" acontece antes de o `selectCard` deixar o cartão certo selecionado, abrindo a fatura de outro. Correção sugerida (`fix:` com o teste): esperar o cartão selecionado (ou conferir o nome no `invoice-head`) antes de clicar, sem aumentar timeout nem `retries`.
 
 - **E04 (`invoices.spec.ts:75`) *flaky* no `iphone` (12/11, PR #160, run 43177955807):** depois de "Ver fatura", a compra à vista não apareceu na C02 em 5 s e passou na repetição. A T-123 mudou a seleção do cartão (`selectCard` só toca se não estiver selecionado), mas o passo que falhou é a lista da C02 (`useEnsureCardData` ainda gravando a fatura). Se repetir, esperar o `invoice-items` antes de procurar a linha, sem aumentar o tempo.
 - **`test/onboarding.test.tsx` ("US-08 Pular passos") instável:** falhou 1 em 4 rodadas locais também em `main` (sem relação com a T-124). Se derrubar o `unit`, investigar a espera do card "Complete a configuração" depois do último Pular.
@@ -442,3 +446,4 @@
 | 12/11/2026 | T-123 | PR #157 | done | C01 sólida com datas rotuladas e toque que abre a fatura; C02 com pagamento certo no rodapé fixo e fechamento numa linha (D-098) |
 | 12/11/2026 | T-124 | PR #158 | done | P01 com renda só no anel e vazio sem faixas; P02 com frase única e um só primário; P04 com o resumo do mês; P03 com legenda, valores e itens alinhados (D-099) |
 | 12/11/2026 | T-125 | PR #159 | em andamento | S01 em grupos, editar conta, limite nas categorias e outros achados da S03–S11; falta a UXC-007 (D-100 no PR) |
+| 12/11/2026 | T-131 | PR | aberto | skill Impeccable (só texto), `PRODUCT.md`, `DESIGN.md`, agente de UX com `critique`/`audit` e comandos nas tarefas T-125 a T-130 |
