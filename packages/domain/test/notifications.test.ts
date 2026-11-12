@@ -315,7 +315,7 @@ describe('invoice_due e invoice_closed (US-40, RN-88, RN-89)', () => {
         kind: 'invoice_due',
         dedupeKey: `invoice_due:${dez.id}:d3`,
         title: 'Fatura Nubank vence em 3 dias',
-        body: 'R$ 980,00 com vencimento em 10/12.',
+        body: 'R$\u00A0980,00 com vencimento em 10/12.',
         navigate: '/cartoes/nubank/fatura/2026-12',
       },
     ]);
@@ -325,7 +325,7 @@ describe('invoice_due e invoice_closed (US-40, RN-88, RN-89)', () => {
         kind: 'invoice_due',
         dedupeKey: `invoice_due:${dez.id}:d0`,
         title: 'Fatura Nubank vence hoje',
-        body: 'R$ 980,00. Após pagar, registre o pagamento no app.',
+        body: 'R$\u00A0980,00. Após pagar, registre o pagamento no app.',
         navigate: '/cartoes/nubank/fatura/2026-12',
       },
     ]);
@@ -341,7 +341,7 @@ describe('invoice_due e invoice_closed (US-40, RN-88, RN-89)', () => {
     const partial = dueNotifications(
       input('2026-12-07', '09:00', { invoices: [invoice(68_000, 30_000)] }),
     );
-    expect(partial[0]?.body).toBe('R$ 680,00 com vencimento em 10/12.');
+    expect(partial[0]?.body).toBe('R$\u00A0680,00 com vencimento em 10/12.');
     expect(
       dueNotifications(input('2026-12-07', '09:00', { invoices: [invoice(0, 98_000)] })),
     ).toEqual([]);
@@ -371,7 +371,7 @@ describe('invoice_due e invoice_closed (US-40, RN-88, RN-89)', () => {
         kind: 'invoice_closed',
         dedupeKey: `invoice_closed:${dez.id}`,
         title: 'Fatura Nubank de dez/2026 fechou',
-        body: 'Total de R$ 980,00, com vencimento em 10/12.',
+        body: 'Total de R$\u00A0980,00, com vencimento em 10/12.',
         navigate: '/cartoes/nubank/fatura/2026-12',
       },
     ]);
@@ -397,7 +397,7 @@ describe('invoice_due e invoice_closed (US-40, RN-88, RN-89)', () => {
     ];
     expect(list).toHaveLength(2);
     for (const n of list) {
-      expect(n.body).toContain('R$ ••••');
+      expect(n.body).toContain('R$\u00A0••••');
       expect(n.body).not.toContain('980');
     }
   });
@@ -412,18 +412,18 @@ describe('bill_due, bill_overdue e income_unconfirmed (US-41, RN-90, RN-91)', ()
         kind: 'bill_due',
         dedupeKey: 'bill_due:rec-luz:2026-11-20:d1',
         title: 'Luz vence amanhã',
-        body: '≈ R$ 180,00 em 20/11.',
+        body: '≈ R$\u00A0180,00 em 20/11.',
         navigate: `/lancamentos/${recurrenceTxId('rec-luz', '2026-11-20')}`,
       },
     ]);
     const fixed = dueNotifications(
       input('2026-11-19', '09:00', { recurrences: [rec({ isVariableAmount: false })] }),
     );
-    expect(fixed[0]?.body).toBe('R$ 180,00 em 20/11.');
+    expect(fixed[0]?.body).toBe('R$\u00A0180,00 em 20/11.');
     const hidden = dueNotifications(
       input('2026-11-19', '09:00', { recurrences: [luz], hideValues: true }),
     );
-    expect(hidden[0]?.body).toBe('R$ •••• em 20/11.');
+    expect(hidden[0]?.body).toBe('R$\u00A0•••• em 20/11.');
   });
 
   it('RN-90: dias configurados (hoje, 3 dias) e ocorrência já confirmada não geram lembrete de véspera', () => {
@@ -449,7 +449,7 @@ describe('bill_due, bill_overdue e income_unconfirmed (US-41, RN-90, RN-91)', ()
       input('2026-11-19', '09:00', { recurrences: [rec({})], txs: [scheduled] }),
     );
     expect(still[0]).toMatchObject({
-      body: '≈ R$ 190,00 em 20/11.',
+      body: '≈ R$\u00A0190,00 em 20/11.',
       navigate: '/lancamentos/agendada',
     });
   });
@@ -583,7 +583,7 @@ describe('budget_threshold (US-42, RN-92)', () => {
         kind: 'budget_threshold',
         dedupeKey: 'budget:wants:2026-11:8000',
         title: 'Desejos atingiu 80% do planejado',
-        body: 'Restam R$ 340,00 até o fim do mês.',
+        body: 'Restam R$\u00A0340,00 até o fim do mês.',
         navigate: '/planejar/orcamento',
       },
     ]);
@@ -599,7 +599,7 @@ describe('budget_threshold (US-42, RN-92)', () => {
         kind: 'budget_threshold',
         dedupeKey: 'budget:wants:2026-11:10000',
         title: 'Desejos acima do planejado',
-        body: 'R$ 10,00 acima do previsto para nov/2026. Veja onde ajustar.',
+        body: 'R$\u00A010,00 acima do previsto para nov/2026. Veja onde ajustar.',
         navigate: '/planejar/orcamento',
       },
     ]);
@@ -659,7 +659,7 @@ describe('budget_threshold (US-42, RN-92)', () => {
         kind: 'budget_threshold',
         dedupeKey: 'budget:mercado:2026-11:9000',
         title: 'Mercado atingiu 90% do planejado',
-        body: 'Restam R$ 50,00 até o fim do mês.',
+        body: 'Restam R$\u00A050,00 até o fim do mês.',
         navigate: '/planejar/orcamento',
       },
     ]);
@@ -679,7 +679,7 @@ describe('budget_threshold (US-42, RN-92)', () => {
     expect(unnamed.map((n) => [n.title, n.body])).toEqual([
       [
         'Categoria acima do planejado',
-        'R$ 50,00 acima do previsto para nov/2026. Veja onde ajustar.',
+        'R$\u00A050,00 acima do previsto para nov/2026. Veja onde ajustar.',
       ],
     ]);
   });
@@ -716,7 +716,7 @@ describe('weekly_summary (US-43, RN-93)', () => {
         kind: 'weekly_summary',
         dedupeKey: 'weekly:2026-W46',
         title: 'Resumo da semana',
-        body: `R$ 650,00 em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Gasto no mês: ${formatBRL(spent)}.`,
+        body: `R$\u00A0650,00 em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Gasto no mês: ${formatBRL(spent)}.`,
         navigate: '/',
       },
     ]);
@@ -773,7 +773,7 @@ describe('weekly_summary (US-43, RN-93)', () => {
       'weekly_summary',
     );
     expect(hidden[0]?.body).toBe(
-      'R$ •••• em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Gasto no mês: R$ ••••.',
+      'R$\u00A0•••• em gastos, maiores: Mercado, Lazer, Moradia. Dias com lançamento: 6/7. Gasto no mês: R$\u00A0••••.',
     );
     const long = 'Categoria com nome comprido';
     const names = { mercado: long, lazer: `${long} 2`, moradia: `${long} 3` };
@@ -793,7 +793,9 @@ describe('weekly_summary (US-43, RN-93)', () => {
       dueNotifications(input('2026-11-15', '19:00', { txs: week, loggedOn: logged, labels: {} })),
       'weekly_summary',
     );
-    expect(noCats[0]?.body.startsWith('R$ 650,00 em gastos. Dias com lançamento: 6/7.')).toBe(true);
+    expect(noCats[0]?.body.startsWith('R$\u00A0650,00 em gastos. Dias com lançamento: 6/7.')).toBe(
+      true,
+    );
   });
 });
 

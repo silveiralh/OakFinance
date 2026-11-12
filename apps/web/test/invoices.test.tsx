@@ -130,7 +130,7 @@ describe('faturas do cartão (US-18, RN-13..RN-15)', () => {
       '2026-12-05',
     );
     expect(partial.status).toBe('partial');
-    expect(invoiceStateLine(partial, false)).toBe('R$ 60,00 em aberto');
+    expect(invoiceStateLine(partial, false)).toBe('R$\u00A060,00 em aberto');
   });
 
   it('US-18: fatura nov/2026 de R$ 1.200,00 sem pagamento, hoje 11/11/2026 → vencida com "R$ 1.200,00 em aberto"', () => {
@@ -142,8 +142,8 @@ describe('faturas do cartão (US-18, RN-13..RN-15)', () => {
       '2026-11-11',
     );
     expect(view.status).toBe('overdue');
-    expect(invoiceStateLine(view, false)).toBe('R$ 1.200,00 em aberto');
-    expect(invoiceStateLine(view, true)).toBe('R$ •••• em aberto');
+    expect(invoiceStateLine(view, false)).toBe('R$\u00A01.200,00 em aberto');
+    expect(invoiceStateLine(view, true)).toBe('R$\u00A0•••• em aberto');
   });
 
   it('US-18: fatura nov/2026 fechada com total −R$ 30,00 → dez/2026 recebe "Saldo credor da fatura anterior" de −R$ 30,00', () => {

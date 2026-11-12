@@ -49,12 +49,12 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
   it('US-12: digitar "4590" mostra "R$ 45,90" e anuncia o valor', () => {
     render(<Amount />);
     const input = screen.getByLabelText('Valor');
-    expect(input).toHaveValue('R$ 0,00');
+    expect(input).toHaveValue('R$\u00A00,00');
     expect(input).toHaveAttribute('data-empty', 'true');
     for (const key of '4590') {
       fireEvent.keyDown(input, { key });
     }
-    expect(input).toHaveValue('R$ 45,90');
+    expect(input).toHaveValue('R$\u00A045,90');
     expect(input).toHaveAttribute('data-empty', 'false');
     expect(live()).toHaveAttribute('aria-live', 'polite');
     expect(live()).toHaveTextContent('Valor: R$ 45,90');
@@ -69,29 +69,29 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
       fireEvent.click(screen.getByRole('button', { name: d }));
     }
     fireEvent.click(screen.getByRole('button', { name: '00' }));
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 12,00');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A012,00');
     const back = screen.getByRole('button', { name: 'Apagar' });
     fireEvent.click(back);
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 1,20');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A01,20');
     fireEvent.pointerDown(back);
     act(() => {
       vi.advanceTimersByTime(CLEAR_HOLD_MS);
     });
     fireEvent.pointerUp(back);
     fireEvent.click(back);
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 0,00');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A00,00');
     fireEvent.click(screen.getByRole('button', { name: '7' }));
     fireEvent.pointerDown(back);
     fireEvent.pointerLeave(back);
     fireEvent.click(back);
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 0,00');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A00,00');
   });
 
   it('RN-01: não passa de R$ 999.999,99', () => {
     render(<Amount initial={MAX} />);
     const input = screen.getByLabelText('Valor');
     fireEvent.keyDown(input, { key: '1' });
-    expect(input).toHaveValue('R$ 999.999,99');
+    expect(input).toHaveValue('R$\u00A0999.999,99');
     expect(appendDigits(9_999_999, '99', MAX)).toBe(99_999_999);
     expect(appendDigits(99_999_999, '0', MAX)).toBe(99_999_999);
   });
@@ -100,18 +100,18 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
     render(<Amount initial={4590} />);
     const input = screen.getByLabelText('Valor');
     fireEvent.keyDown(input, { key: 'Backspace' });
-    expect(input).toHaveValue('R$ 4,59');
+    expect(input).toHaveValue('R$\u00A04,59');
     fireEvent.keyDown(input, { key: 'a' });
-    expect(input).toHaveValue('R$ 4,59');
+    expect(input).toHaveValue('R$\u00A04,59');
     fireEvent.keyDown(input, { key: 'Delete' });
-    expect(input).toHaveValue('R$ 0,00');
+    expect(input).toHaveValue('R$\u00A00,00');
     fireEvent.keyDown(input, { key: '3' });
     fireEvent.keyDown(input, { key: 'Escape' });
-    expect(input).toHaveValue('R$ 0,00');
+    expect(input).toHaveValue('R$\u00A00,00');
   });
 
   it.each([
-    ['R$ 1.234,56', 123_456],
+    ['R$\u00A01.234,56', 123_456],
     ['32,90', 3290],
     ['32.9', 3290],
     ['1.234', 123_400],
@@ -125,10 +125,10 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
   it('colar interpreta o texto; colagem inválida é ignorada', () => {
     render(<Amount />);
     const input = screen.getByLabelText('Valor');
-    fireEvent.paste(input, { clipboardData: { getData: () => 'R$ 1.234,56' } });
-    expect(input).toHaveValue('R$ 1.234,56');
+    fireEvent.paste(input, { clipboardData: { getData: () => 'R$\u00A01.234,56' } });
+    expect(input).toHaveValue('R$\u00A01.234,56');
     fireEvent.paste(input, { clipboardData: { getData: () => 'banana' } });
-    expect(input).toHaveValue('R$ 1.234,56');
+    expect(input).toHaveValue('R$\u00A01.234,56');
   });
 
   it('teclado nativo (lg): inputmode decimal e reinterpretação dos dígitos', () => {
@@ -136,8 +136,8 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
     const input = screen.getByLabelText('Valor');
     expect(input).toHaveAttribute('inputmode', 'decimal');
     expect(screen.queryByRole('group', { name: 'Teclado numérico' })).toBeNull();
-    fireEvent.change(input, { target: { value: 'R$ 0,0123' } });
-    expect(input).toHaveValue('R$ 1,23');
+    fireEvent.change(input, { target: { value: 'R$\u00A00,0123' } });
+    expect(input).toHaveValue('R$\u00A01,23');
   });
 
   it('erro com aria-invalid; desativado não muda nem mostra o teclado', () => {
@@ -148,7 +148,7 @@ describe('AmountInput e NumericKeypad (UX §5.8, RN-01, US-12)', () => {
     unmount();
     render(<Amount disabled initial={100} />);
     fireEvent.keyDown(screen.getByLabelText('Valor'), { key: '5' });
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 1,00');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A01,00');
     expect(screen.queryByRole('group', { name: 'Teclado numérico' })).toBeNull();
   });
 

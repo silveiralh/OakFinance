@@ -53,11 +53,11 @@ describe('T-122: total do mês igual na T01, na P01 e no Início', () => {
     const { spentCents, savingsCents } = monthSpent(DATA, '2026-11', TODAY);
     const summary = await screen.findByTestId('list-summary');
     await waitFor(() =>
-      expect(within(summary).getByText('Saídas').nextElementSibling).toHaveTextContent(
+      expect(within(summary).getByText('Saídas').nextElementSibling?.textContent).toBe(
         formatBRL(spentCents - savingsCents),
       ),
     );
-    expect(within(summary).getByText('Guardado').nextElementSibling).toHaveTextContent(
+    expect(within(summary).getByText('Guardado').nextElementSibling?.textContent).toBe(
       formatBRL(savingsCents),
     );
     expect(spentCents).toBe(homeModel(DATA, TODAY).spendable.spentCents);

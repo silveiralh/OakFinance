@@ -93,7 +93,7 @@ describe('T-119: Q01 no celular', () => {
     fireEvent.click(within(footer).getByRole('button', { name: '5' }));
     fireEvent.click(within(footer).getByRole('button', { name: '9' }));
     fireEvent.click(within(footer).getByRole('button', { name: '0' }));
-    expect(screen.getByLabelText('Valor')).toHaveValue('R$ 45,90');
+    expect(screen.getByLabelText('Valor')).toHaveValue('R$\u00A045,90');
     // o teclado não fica mais colado ao valor: as categorias vêm antes dele na folha
     const chips = screen.getByRole('radiogroup', { name: 'Categoria' });
     expect(chips.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

@@ -101,7 +101,7 @@ test('E09: página quebrada cai no fallback, que pede o valor no Q01', async ({ 
   await page.getByTestId('nfce-use').click();
   const sheet = page.getByTestId('quick-entry');
   await expect(sheet.getByTestId('quick-from-note')).toHaveText('Dados da nota fiscal');
-  await expect(sheet.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 0,00');
+  await expect(sheet.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00A00,00');
   await expect(sheet.getByLabel('Descrição')).toHaveValue('12.345.678/0001-00');
 });
 

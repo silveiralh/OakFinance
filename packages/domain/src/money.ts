@@ -8,7 +8,12 @@ export const MAX_TX_CENTS: Cents = 99_999_999;
 
 /** Sinal de menos tipográfico (U+2212) usado nos valores negativos. */
 export const MINUS_SIGN = '−';
-export const HIDDEN_AMOUNT = 'R$ ••••';
+/**
+ * Espaço não separável (U+00A0) entre "R$" e o número: o valor nunca quebra em duas linhas (G4 da auditoria,
+ * UXA-002/UXB-004, T-130).
+ */
+export const MONEY_SPACE = '\u00A0';
+export const HIDDEN_AMOUNT = `R$${MONEY_SPACE}••••`;
 
 const AMOUNT_RE = /^(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d{1,2}))?$/;
 
@@ -56,7 +61,7 @@ function groupThousands(digits: string): string {
   return out;
 }
 
-/** "R$ 1.234,56"; negativo "−R$ 120,00" (U+2212); `signed` mostra "+" nos positivos; `hidden` → "R$ ••••". */
+/** "R$ 1.234,56" (com U+00A0 depois do "R$"); negativo "−R$ 120,00" (U+2212); `signed` mostra "+" nos positivos; `hidden` → "R$ ••••". */
 export function formatBRL(c: Cents, opts: { hidden?: boolean; signed?: boolean } = {}): string {
   if (opts.hidden) {
     return HIDDEN_AMOUNT;
@@ -65,7 +70,7 @@ export function formatBRL(c: Cents, opts: { hidden?: boolean; signed?: boolean }
   const abs = Math.abs(c);
   const reais = Math.floor(abs / 100);
   const cents = abs % 100;
-  const body = `R$ ${groupThousands(String(reais))},${String(cents).padStart(2, '0')}`;
+  const body = `R$${MONEY_SPACE}${groupThousands(String(reais))},${String(cents).padStart(2, '0')}`;
   if (c < 0) {
     return `${MINUS_SIGN}${body}`;
   }

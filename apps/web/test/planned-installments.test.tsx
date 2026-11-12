@@ -170,7 +170,9 @@ describe('US-24: telas com a parcela prevista', () => {
     // fatura de novembro ainda não paga (vai para "Ainda vai sair"), então só a padaria entra em Saídas
     const summary = screen.getByTestId('list-summary');
     await waitFor(() =>
-      expect(within(summary).getByText('Saídas').nextElementSibling?.textContent).toBe('R$ 15,00'),
+      expect(within(summary).getByText('Saídas').nextElementSibling?.textContent).toBe(
+        'R$\u00A015,00',
+      ),
     );
   });
 

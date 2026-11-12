@@ -69,7 +69,7 @@ describe('H01 — gasto do mês e saldo nas contas (US-30, D-081)', () => {
     expect(screen.getByTestId('home-balance')).toHaveTextContent('Saldo nas contas');
     expect(screen.getByTestId('home-balance')).toHaveTextContent('R$ 2.450,00');
     expect(
-      screen.getByRole('heading', { name: 'Gasto em novembro: R$ 3.350,00' }),
+      screen.getByRole('heading', { name: 'Gasto em novembro: R$\u00A03.350,00' }),
     ).toBeInTheDocument();
     // D-081: o "Disponível para gastar" e o selo da RN-50 saíram do Início
     expect(screen.queryByText(/Disponível para gastar/)).toBeNull();

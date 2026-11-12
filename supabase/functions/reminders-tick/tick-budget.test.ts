@@ -68,7 +68,7 @@ const CATEGORIES = [
   category('cat-reserva', 'Reserva', 'savings'),
 ];
 
-/** Renda de R$ 5.800,00 → Desejos (30%) = R$ 1.740,00. */
+/** Renda de R$\u00A05.800,00 → Desejos (30%) = R$\u00A01.740,00. */
 const salary = () =>
   tx({ kind: 'income', amountCents: 580000, occurredOn: '2026-11-05', categoryId: 'cat-salario' });
 
@@ -125,7 +125,7 @@ Deno.test('US-42: Desejos a 80% com R$ 1.380,00 + R$ 20,00 em Lazer (meta R$ 1.7
   const due = budgetNotes(snap(after), brt('2026-11-10', '14:15'));
   assert.equal(due.length, 1);
   assert.equal(due[0]?.title, 'Desejos atingiu 80% do planejado');
-  assert.equal(due[0]?.body, 'Restam R$ 340,00 até o fim do mês.');
+  assert.equal(due[0]?.body, 'Restam R$\u00A0340,00 até o fim do mês.');
   assert.equal(due[0]?.dedupeKey, 'budget:wants:2026-11:8000');
   assert.equal(due[0]?.navigate, '/planejar/orcamento');
 });
@@ -165,7 +165,7 @@ Deno.test('US-42: ao passar de R$ 1.740,00, "Desejos acima do planejado" (UX #6)
   const first = budgetNotes(snap(over), brt('2026-11-12', '09:30'));
   assert.equal(first.length, 1);
   assert.equal(first[0]?.title, 'Desejos acima do planejado');
-  assert.equal(first[0]?.body, 'R$ 10,00 acima do previsto para nov/2026. Veja onde ajustar.');
+  assert.equal(first[0]?.body, 'R$\u00A010,00 acima do previsto para nov/2026. Veja onde ajustar.');
   // RN-92: máximo 1 por (faixa, limiar, mês) — a mesma chave em todo tick do mês (a central e a fila ignoram)
   const later = budgetNotes(snap(over), brt('2026-11-20', '18:45'));
   assert.deepEqual(

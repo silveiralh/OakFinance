@@ -90,10 +90,10 @@ describe('recurrences — contas fixas e assinaturas (US-25, RN-26..RN-31)', () 
     const approx = approxAmount(rec, []);
     expect(
       occurrenceText(nov, undefined, '2026-11-05', false, { kind: 'expense', approxCents: approx }),
-    ).toBe('Prevista para 20/11/2026 · ≈ R$ 180,00');
+    ).toBe('Prevista para 20/11/2026 · ≈ R$\u00A0180,00');
     expect(
       occurrenceText(nov, undefined, '2026-11-21', false, { kind: 'expense', approxCents: approx }),
-    ).toBe('Atrasada desde 20/11/2026 · ≈ R$ 180,00');
+    ).toBe('Atrasada desde 20/11/2026 · ≈ R$\u00A0180,00');
   });
 
   it('US-25: confirmar a luz de novembro com R$ 203,45 efetiva e a próxima mostra "≈ R$ 203,45" (RN-31)', async () => {
@@ -119,7 +119,7 @@ describe('recurrences — contas fixas e assinaturas (US-25, RN-26..RN-31)', () 
     }
     expect(
       occurrenceText(dec, undefined, '2026-12-01', false, { kind: 'expense', approxCents: 20_345 }),
-    ).toBe('Prevista para 20/12/2026 · ≈ R$ 203,45');
+    ).toBe('Prevista para 20/12/2026 · ≈ R$\u00A0203,45');
   });
 
   it('US-25: "Streaming" R$ 39,90 todo dia 15 no cartão A vem com confirmação automática e 15/11/2026 entra na fatura dez/2026', async () => {

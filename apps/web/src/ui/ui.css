@@ -296,7 +296,8 @@
 }
 .money-text[data-size="display"] {
   font-family: var(--font-display);
-  font-size: var(--font-size-display);
+  /* T-130 (G4): o valor não quebra mais (U+00A0), então encolhe para caber em 320–360 px */
+  font-size: clamp(1.5rem, 8vw, var(--font-size-display));
   font-weight: var(--font-weight-bold);
 }
 .money-text[data-size="label"] {

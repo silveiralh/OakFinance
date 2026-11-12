@@ -20,7 +20,7 @@ describe('parseBRL (RN-01)', () => {
     ['1.234,56', 123456],
     ['1234,5', 123450],
     ['12', 1200],
-    ['R$ 12,00', 1200],
+    ['R$\u00A012,00', 1200],
     ['R$ 1.000.000,01', 100000001],
     ['0,01', 1],
     ['  7,9 ', 790],
@@ -51,26 +51,26 @@ describe('parseBRL (RN-01)', () => {
 
 describe('formatBRL (RN-01)', () => {
   it('RN-01: formato pt-BR com milhar e vírgula', () => {
-    expect(formatBRL(123456)).toBe('R$ 1.234,56');
-    expect(formatBRL(0)).toBe('R$ 0,00');
-    expect(formatBRL(5)).toBe('R$ 0,05');
-    expect(formatBRL(100000000)).toBe('R$ 1.000.000,00');
+    expect(formatBRL(123456)).toBe('R$\u00A01.234,56');
+    expect(formatBRL(0)).toBe('R$\u00A00,00');
+    expect(formatBRL(5)).toBe('R$\u00A00,05');
+    expect(formatBRL(100000000)).toBe('R$\u00A01.000.000,00');
   });
 
   it('RN-01: negativo usa o sinal de menos U+2212', () => {
-    expect(formatBRL(-12000)).toBe(`${MINUS_SIGN}R$ 120,00`);
+    expect(formatBRL(-12000)).toBe(`${MINUS_SIGN}R$\u00A0120,00`);
     expect(formatBRL(-12000).charCodeAt(0)).toBe(0x2212);
   });
 
   it('signed mostra "+" só nos positivos', () => {
-    expect(formatBRL(100, { signed: true })).toBe('+R$ 1,00');
-    expect(formatBRL(0, { signed: true })).toBe('R$ 0,00');
-    expect(formatBRL(-100, { signed: true })).toBe(`${MINUS_SIGN}R$ 1,00`);
+    expect(formatBRL(100, { signed: true })).toBe('+R$\u00A01,00');
+    expect(formatBRL(0, { signed: true })).toBe('R$\u00A00,00');
+    expect(formatBRL(-100, { signed: true })).toBe(`${MINUS_SIGN}R$\u00A01,00`);
   });
 
   it('valores ocultos viram "R$ ••••"', () => {
     expect(formatBRL(123456, { hidden: true })).toBe(HIDDEN_AMOUNT);
-    expect(HIDDEN_AMOUNT).toBe('R$ ••••');
+    expect(HIDDEN_AMOUNT).toBe('R$\u00A0••••');
   });
 
   it('recusa valor que não é inteiro seguro', () => {
@@ -169,5 +169,15 @@ describe('sumCents', () => {
   it('lança UNSAFE_INTEGER para fração ou estouro', () => {
     expect(() => sumCents([1.5])).toThrowError(DomainError);
     expect(() => sumCents([Number.MAX_SAFE_INTEGER, 1])).toThrowError(DomainError);
+  });
+});
+
+describe('T-130: valor sem quebra (G4)', () => {
+  it('RN-01 (UXA-002/UXB-004): entre "R$" e o número vai o espaço não separável U+00A0', () => {
+    expect(formatBRL(123456)).toBe('R$ 1.234,56');
+    expect(formatBRL(-12000)).toBe('−R$ 120,00');
+    expect(formatBRL(1, { hidden: true })).toBe('R$ ••••');
+    expect(formatBRL(123456)).not.toContain('R$ ');
+    expect(parseBRL(formatBRL(123456))).toBe(123456);
   });
 });
