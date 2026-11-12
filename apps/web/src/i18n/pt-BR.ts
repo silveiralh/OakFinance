@@ -387,6 +387,7 @@ export const ptBR = {
   'budget.toast.bucket': '{faixa} atingiu {p}% do planejado',
   'budget.toast.over': '{nome} acima do planejado',
   'categories.limit': 'Limite mensal (opcional)',
+  'categories.limitShort': 'Limite {valor}',
   'reserve.goalHint': 'Meta sugerida: 6× a média mensal de Necessidades ({valor}).',
   'reserve.goalNoData': 'Estimativa provisória, recalculada com seus gastos.',
   'reserve.goalProvisional':

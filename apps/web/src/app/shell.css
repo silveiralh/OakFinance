@@ -2055,3 +2055,20 @@ body:has(.screen-welcome) .backdrop {
   display: grid;
   justify-items: start;
 }
+/* UXC-018: códigos de evento na fonte do app, com números tabulares */
+.diag-code {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+}
+/* UXC-019: ícone | nome | limite | seta (a linha de categoria tem a sua grade, não a das faturas) */
+.cards-invoice.category-row {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+.category-limit {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.category-row > svg:last-child {
+  color: var(--text-secondary);
+}

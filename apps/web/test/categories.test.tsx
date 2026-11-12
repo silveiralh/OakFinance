@@ -111,6 +111,14 @@ describe('categories (US-27, RN-39..RN-42)', () => {
     await waitFor(async () =>
       expect(categoryLimit(await db.budgets.toArray(), restaurantes.id)?.limit_cents).toBe(40000),
     );
+    // T-125 (UXC-019): a linha mostra o limite e a seta de que abre a edição
+    await waitFor(() =>
+      expect(
+        within(screen.getByTestId('categories-wants')).getByRole('button', {
+          name: /^Restaurantes e delivery/,
+        }),
+      ).toHaveTextContent('Restaurantes e deliveryLimite R$ 400,00'),
+    );
   });
 
   it('US-27: excluir "Viagens" com 4 lançamentos pede o destino e move lançamentos, recorrências e regras', async () => {
