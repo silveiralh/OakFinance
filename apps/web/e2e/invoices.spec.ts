@@ -93,6 +93,8 @@ test('E04: invoices — compra à vista no cartão e "Registrar pagamento" deixa
   await page.goto('/cartoes');
   await selectCard(page, name);
   await page.getByRole('button', { name: 'Ver fatura' }).click();
+  // a fatura aberta é a do cartão criado aqui (o e2e-a acumula cartões de outros testes)
+  await expect(page).toHaveURL(new RegExp(`/cartoes/${card}/fatura/\\d{4}-\\d{2}$`));
   await expect(page.getByTestId(`tx-${id}`)).toBeVisible();
   await page.getByRole('button', { name: 'Registrar pagamento' }).click();
   const sheet = page.getByTestId('pay-sheet');
