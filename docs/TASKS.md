@@ -152,7 +152,7 @@ flowchart LR
 | T-087 | Presets Nubank confirmados | T-086 | done |
 | T-088 | nfce-fetch e fallback | T-023, T-011 | done |
 | T-089 | Leitor de QR e fluxo da nota | T-088, T-078 | done |
-| T-090 | Parser da NFC-e com páginas reais | T-089 | blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) |
+| T-090 | Parser da NFC-e com páginas reais | T-089 | todo |
 | T-091 | Lembretes de contas fixas e receitas | T-064, T-055 | done |
 | T-092 | Alertas de limite e resumo semanal | T-091, T-059 | done |
 | T-093 | Preferências de notificação | T-092 | done |
@@ -164,7 +164,7 @@ flowchart LR
 | T-099 | Checklist de lançamento | T-096, T-097, T-098 | done |
 | T-100 | Redesign visual (nova referência do cliente) | T-043 | done |
 | T-101 | Agente de auditoria de UX | T-100 | done |
-| T-102 | Início lê só o período necessário | T-058, T-097 | blocked: precisa de decisão — o saldo nas contas da D-081 lê o histórico inteiro (D-092) |
+| T-102 | Início lê só o período necessário | T-058, T-097 | done |
 | T-103 | Dinheiro mostrado certo (auditoria S1) | T-101 | blocked: substituída pela T-116 (D-085) |
 | T-104 | Base visual e componentes | T-101 | blocked: substituída pela T-117 e T-119 (D-085) |
 | T-105 | Navegação: menu da conta e abas do Planejar | T-101 | blocked: substituída pela T-118 (D-085) |
@@ -192,7 +192,7 @@ flowchart LR
 | T-127 | Onboarding e marca | T-126 | todo |
 | T-128 | Specs sem restos do Aero | T-127 | todo |
 | T-129 | Nova auditoria de UX | T-128 | todo |
-| T-130 | Valor em dinheiro sem quebra (G4) | T-117 | blocked: aguarda dono — referência `tokens.png` do styleguide (needs-owner, D-088) |
+| T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
 
 ---
 
@@ -1351,7 +1351,9 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-090 — Parser da NFC-e com páginas reais
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda cliente — SETUP-14 (arquivos reais por canal privado) | S4 | M | US-54, US-56 | RN-82 | T-089 | sim — SETUP-14 |
+| todo | S4 | M | US-54, US-56 | RN-82 | T-089 | sim — SETUP-14 |
+
+**(12/11, D-095)** as 2 páginas reais já estão anonimizadas em `packages/nfce-parser/test/fixtures/real-anon-*.html` (ver o README da pasta, com os achados: `.txtTit2`, valor unitário sem casas fixas que hoje cai no cálculo total ÷ quantidade, unidade `BD` fracionária, item repetido, `#linhaTotal` repetido, desafio `/TSPD/`); desconto e duas formas viram variações montadas sobre essa marcação, marcadas como suposição.
 
 **Escopo:** 3 páginas reais viram fixtures anonimizadas (§6.2.3 item 7); seletores confirmados; validação Σ itens − desconto ≈ total; `receipt_items`; itens no T02 (US-56).
 
@@ -1485,7 +1487,9 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 ### T-102 — Início lê só o período necessário
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: precisa de decisão — o saldo nas contas da D-081 lê o histórico inteiro (D-092) | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+| done | — | M | US-30 | RN-46, RN-47, RN-51 | T-058, T-097 | não |
+
+**Encerrada em 12/11 sem mudança de código (D-093):** o dono escolheu a opção (b) da D-092; o Início continua com a leitura completa, dentro do RN-51. Reabrir só se o RN-51 voltar a falhar por volume (opção (a)).
 
 **Reaberta em 11/11 (issue #136):** a primeira entrega (PR #133) deixou o painel com 5.000 lançamentos em ~2,1 s no projeto `iphone` (limite de 1,5 s, RN-51) e o `e2e` vermelho em `main`. A correção devolveu a leitura completa ao Início, ao `BudgetAlerts` e ao `measureHome`; `loadHomePeriodRows`, `loadRecentRows` e `loadReviewRows` e a propriedade de `test/dashboard-period.test.ts` ficaram no código, sem uso nas telas. Para refazer: PR `[WIP]` cedo e medir o RN-51 no `iphone` do CI antes do resto (o WebKit não roda na sessão); evitar cursores (`filter`, `anyOf`, `orderBy().reverse()`) e várias transações em paralelo; ver HANDOFF §3.
 
@@ -1816,7 +1820,9 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-130 — Valor em dinheiro sem quebra (G4)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| blocked: aguarda dono — referência `tokens.png` do styleguide (needs-owner, D-088) | R | P | US-62 | RN-01 | T-117 | não |
+| todo | R | P | US-62 | RN-01 | T-117 | não |
+
+**Referência aprovada pelo dono (D-094):** atualize `tokens-*.png` só por esta mudança, ponha o rótulo `needs-owner` e as capturas antes e depois no corpo do PR e **não faça o merge**: o dono confere e faz. Depois de abrir o PR, siga para a próxima tarefa.
 
 **Escopo (saiu da T-117, D-088):** G4 da auditoria (UXA-002, UXB-004): `formatBRL` e `HIDDEN_AMOUNT` com espaço não separável U+00A0 entre "R$" e o número (linha no Apêndice A), com os testes que comparam o texto exato esperando o U+00A0; o valor `MoneyText` de tamanho `display` passa a caber em telas de 320–360 px sem rolagem horizontal (tamanho adaptável), já que deixa de quebrar. A referência `tokens.png` do projeto `iphone` muda (o bloco `tokens` mostra "−R$ 1.234,56" em `display`): o dono aprova a referência nova (`needs-owner`).
 
