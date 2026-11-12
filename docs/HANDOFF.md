@@ -110,6 +110,7 @@
 - Q01 e folhas (T-119, D-090): foco inicial no valor (`initialFocus` + `inputRef`); com ponteiro grosso o teclado sai do `AmountInput` (`showKeypad={false}`) e vai para o rodapé `sticky` `.quick-footer` com o Lançar; `.sheet-head` `sticky`; token `--selection-outline` no segmentado e nos chips (inclusive `aria-pressed`); trilho do segmentado em `--surface-inset`; "Mais" como chip; grupo "Categoria"; valor centrado. Testes em `test/quick-entry-layout.test.tsx`.
 - Início pelo gasto do mês (T-120, D-081/D-091): herói "Gasto em {mês}" (`data-spent`, GR da RN-47), "Saldo nas contas" (`home-balance`, `data-balance`, `accountsBalance` do domínio) → S03, "Ainda vai sair este mês" (`home-upcoming-month`) e card "Saúde do mês" (`HealthCard`, `home-health-<faixa>` com `data-health`); saíram o "Disponível", o valor por dia, o `PaceIndicator`, a linha do cartão futuro e a folha H01-S (`FormulaSheet.tsx` ficou no código, sem uso). Domínio: `home.ts` (`accountBalance`, `accountsBalance`, `bandHealth`); resumo semanal (RN-93) com "Gasto no mês" e a faixa mais crítica. Limiares fixos 80%/100% até a T-121.
 - Limiares configuráveis (T-121, D-082/D-092): `settings.alerts` no perfil (S06, card "Avisos do orçamento"); `resolveBudgetConfig(…, alertThresholdsBp(settings.alerts))` no app (`monthContext`) e no tick (`budgetOf`); `monthLimits`/`categoryLimitsOf` aplicam `categoryThresholdsBp`; nível "over" = maior limiar. Testes: `packages/domain/test/alerts.test.ts`, `tick-budget.test.ts` (RN-92 D-082), `calc-settings.test.tsx`.
+- Topo sem sobreposição (issue #150): na moldura (`.shell .topbar` em `app/shell.css`) as colunas laterais do TopBar medem pelo menos o próprio conteúdo (`minmax(max-content, 1fr)`); no Início o título sai um pouco do centro quando as 4 ações não cabem e encolhe com reticências. `e2e/topbar.spec.ts` confere, nas 4 abas principais a 320 e 360 px, que título e botões do topo não se cruzam e que cada alvo tem ≥ 48 px. O `ui.css` não mudou (snapshot do styleguide).
 
 ## 2. Estado do CI e do deploy
 
@@ -136,6 +137,7 @@
 
 ## 3. Próximos passos
 
+- **Triagem de 12/11:** a issue #150 entrou (topo sem sobreposição). Seguem, nesta ordem, a #151 (`fix(e2e):` E05 e E15 determinísticos, sem mexer em retries nem no `playwright.config.ts`) e a #152 (não salvar o perfil CSV quando a importação não gera lançamentos e preferir o preset detectado quando o perfil salvo lê 0 linhas). Depois, a cadeia segue pela T-122.
 - **T-102 bloqueada para decisão (D-092):** o "Saldo nas contas" do novo Início soma o histórico inteiro; a T-102 quer não ler o histórico. Opções na D-092: (a) agregado de saldo guardado no aparelho, (b) aceitar a leitura completa (hoje o RN-51 passa nos 3 projetos) e encerrar a T-102, (c) saldo numa leitura separada e assíncrona. A próxima tarefa liberada é a T-122.
 - **Sessão de 11/11 23h → 12/11 01h40 UTC:** entraram T-115 a T-120 (PRs #141 a #146). Parou às 01:40 UTC com ~50 min de janela: a próxima da fila é a T-102 (reaberta), que precisa de várias rodadas de CI para medir o RN-51 no `iphone` e agora também de um agregado do "Saldo nas contas"; não cabia na janela. A sessão seguinte começa por ela (ou, se ela bloquear, pela T-121).
 - **Decisões do dono em 11/11 (D-080 a D-084), leia antes de tudo:** Open Finance fica para a v2 e sai da tela (T-115, `OPEN_FINANCE_ENABLED = false`); o Início passa a mostrar o gasto do mês, o saldo nas contas e a saúde por faixa, sem o "Disponível para gastar" (T-120, D-081); limiares de aviso configuráveis (T-121, D-082); todos os achados da auditoria de UX viram as tarefas T-115 a T-129 (D-083, D-084). T-083 está adiada para a v2; T-085 e T-087 voltaram a `todo` porque os arquivos reais do BB (OFX) e do Nubank (CSV da conta e da fatura) já estão no canal privado do SETUP-14 (as NFC-e ainda não: T-090 continua bloqueada). Há uma issue `regressão:` sobre a importação do Nubank que falha sem aviso: ela vem antes de qualquer tarefa. O que a §4 diz sobre a T-076 (widget da Pluggy) e o SETUP-13 deixou de valer.
@@ -192,7 +194,7 @@
 
 ## 4. Bloqueios e pendências do cliente
 
-- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (`regressão:`, cabeçalho do Início sobreposto) vem antes da cadeia.
+- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (cabeçalho do Início sobreposto) corrigida no PR da sessão de 12/11 05h UTC; as issues #151 (E05/E15 instáveis) e #152 (perfil CSV antigo do Nubank salvo no cartão) vêm antes da cadeia.
 
 | Item | Quando é necessário | Desbloqueia |
 |---|---|---|
@@ -244,6 +246,7 @@
 
 ## 6. Checklist de aparelho real
 
+- **Issue #150 (topo do Início):** no Android e no iPhone instalado, o topo do Início mostra o título "Início" separado do olho, do sino, do ícone de sincronização e do avatar (nada por cima de nada); tocar em cada um abre o que deve. Conferir também Lançamentos, Cartões e Planejar.
 - **T-120 (novo Início):** o Início mostra "Gasto em {mês}", "Ainda vai sair este mês", "Saldo nas contas" (toque abre Contas e cartões) e o card "Saúde do mês" com as três faixas e o estado em texto; conferir o saldo nas contas contra o banco e se a compra no cartão não mexe no saldo.
 - **T-119 (Q01):** num celular de 360×640 e no iPhone, o + abre o lançamento com o cursor no valor; o teclado e "Lançar" ficam sempre visíveis no rodapé; o título e o X da folha não somem ao rolar; a opção escolhida (Despesa/Receita, Hoje/Ontem, chips) tem contorno, também no escuro. Conferir se o P1 (3 toques, < 5 s) vale.
 - **T-118 (navegação):** no celular, o avatar no topo do Início, Lançamentos, Cartões e Planejar abre "Sua conta" (Configurações, Importar extrato, Ler nota fiscal, Sair); toda subtela tem Voltar; o Planejar tem as abas Orçamento · Reserva · Futuro · Fechar o mês; toque longo no + mostra Receita, Guardar, Importar extrato e Ler nota; o toast não cobre a barra de abas.
@@ -419,3 +422,4 @@
 | 12/11/2026 | T-120 | PR #146 | done | Início pelo gasto do mês: herói "Gasto em {mês}", saldo nas contas, "Ainda vai sair" e "Saúde do mês"; resumo semanal com "Gasto no mês" (D-081, D-091) |
 | 12/11/2026 | T-121 | PR #148 | done | limiares de aviso configuráveis na S06 (D-082, D-092); T-102 bloqueada para decisão sobre o saldo nas contas |
 | 12/11/2026 | — | — | docs | decisões do dono: T-102 encerrada (D-093), T-130 liberada com merge do dono (D-094), T-090 liberada com 2 NFC-e anonimizadas (D-095) |
+| 12/11/2026 | T-118 (issue #150) | PR #NN | done | topo das abas principais sem sobreposição: colunas laterais do TopBar medem o próprio conteúdo; `e2e/topbar.spec.ts` a 320 e 360 px |
