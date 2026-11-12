@@ -32,9 +32,11 @@ const EMAIL = 'ux-audit@example.test';
 const VIEWPORTS = {
   small: { width: 360, height: 640, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
   phone: { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
+  // T-129: o quarto tamanho da auditoria (md)
+  tablet: { width: 768, height: 1024, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
   desktop: { width: 1280, height: 800, deviceScaleFactor: 1, isMobile: false, hasTouch: false },
 };
-const viewports = opt('viewports') ?? ['small', 'phone', 'desktop'];
+const viewports = opt('viewports') ?? ['small', 'phone', 'tablet', 'desktop'];
 const themes = opt('themes') ?? ['light', 'dark'];
 
 // ---------- Supabase simulado ----------
@@ -287,15 +289,29 @@ async function seed(page) {
       return d.toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' });
     };
     const expenseId = await h.addExpense(nubank, 18990, 'Mercado Bom Preço', day(0));
-    await h.addExpense(nubank, 4590, 'Padaria São José', day(0));
-    await h.addExpense(bb, 120000, 'Aluguel', day(2));
-    await h.addExpense(nubank, 3200, 'Uber', day(1));
-    await h.addExpense(nubank, 8750, 'Farmácia Drogasil', day(3));
-    await h.addExpense(bb, 21430, 'Conta de luz Copel', day(4));
+    // T-129: lançamentos de exemplo com categoria (a rodada de 11/11 ficou toda em "A classificar")
+    const categorized = [
+      [expenseId, 'mercado'],
+      [await h.addExpense(nubank, 4590, 'Padaria São José', day(0)), 'mercado'],
+      [await h.addExpense(bb, 120000, 'Aluguel', day(2)), 'moradia'],
+      [await h.addExpense(nubank, 3200, 'Uber', day(1)), 'transporte'],
+      [await h.addExpense(nubank, 8750, 'Farmácia Drogasil', day(3)), 'farmacia'],
+      [await h.addExpense(bb, 21430, 'Conta de luz Copel', day(4)), 'contas-da-casa'],
+    ];
     const card = await h.addCard('Cartão Nubank', 3, 10);
-    await h.addCardExpense(card, 5990, 'Spotify e Netflix');
-    await h.addCardExpense(card, 32500, 'Restaurante Madero');
+    categorized.push([await h.addCardExpense(card, 5990, 'Spotify e Netflix'), 'assinaturas']);
+    categorized.push([
+      await h.addCardExpense(card, 32500, 'Restaurante Madero'),
+      'restaurantes-delivery',
+    ]);
     await h.addCardInstallments(card, 359900, 6, 'Notebook');
+    for (const [id, slug] of categorized) {
+      await h.setCategory(id, slug);
+    }
+    // T-129: S05 com receitas e contas fixas
+    await h.addFixed('income', bb, 685000, 'Salário', 5);
+    await h.addFixed('expense', bb, 120000, 'Aluguel', 10);
+    await h.addFixed('expense', bb, 9990, 'Internet', 15);
     await h.addImported(nubank, 2790, 'PAG*IFOOD RESTAURANTE', 'suggested');
     await h.addImported(nubank, 15000, 'PIX ENVIADO JOAO P', 'new');
     await h.addNotice(
