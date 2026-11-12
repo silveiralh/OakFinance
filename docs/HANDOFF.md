@@ -228,6 +228,8 @@
 
 ## 5. Riscos conhecidos
 
+- **E04 instável no `iphone` (12/11, PR #161):** `e2e/invoices.spec.ts:96` ("compra à vista no cartão e Registrar pagamento") falhou uma vez e passou na repetição; o `getByTestId('tx-…')` não apareceu depois de "Ver fatura". Hipótese: o usuário `e2e-a` acumula cartões entre testes e o clique em "Ver fatura" acontece antes de o `selectCard` deixar o cartão certo selecionado, abrindo a fatura de outro. Correção sugerida (`fix:` com o teste): esperar o cartão selecionado (ou conferir o nome no `invoice-head`) antes de clicar, sem aumentar timeout nem `retries`.
+
 - **E04 (`invoices.spec.ts:75`) *flaky* no `iphone` (12/11, PR #160, run 43177955807):** depois de "Ver fatura", a compra à vista não apareceu na C02 em 5 s e passou na repetição. A T-123 mudou a seleção do cartão (`selectCard` só toca se não estiver selecionado), mas o passo que falhou é a lista da C02 (`useEnsureCardData` ainda gravando a fatura). Se repetir, esperar o `invoice-items` antes de procurar a linha, sem aumentar o tempo.
 - **`test/onboarding.test.tsx` ("US-08 Pular passos") instável:** falhou 1 em 4 rodadas locais também em `main` (sem relação com a T-124). Se derrubar o `unit`, investigar a espera do card "Complete a configuração" depois do último Pular.
 - **RN-51 no `iphone` (12/11, PR #156, run 43169936538):** o painel abriu em 1.541 ms (teto 1.500) e passou na repetição, o que reprova o shard; o Início não mudou no PR. É a oscilação já conhecida do painel no limite (D-093). Se repetir com frequência, reabrir a opção (a) da D-092. A T01 passou a ler as tabelas inteiras (como o Início) para o resumo pelo mês de impacto e o card de conferência; o US-15 (lista em < 1,5 s, gravação < 200 ms) passou nos 3 projetos.
