@@ -232,6 +232,10 @@ export function CalcSettingsScreen({ today: fixedToday }: { today?: ISODate }) {
         </fieldset>
       </GlassCard>
       <GlassCard level={2} className="calc-block">
+        {/* UXC-008: a pergunta fica visível (como na S08); sem ela as opções não fazem sentido */}
+        <p className="appearance-label" aria-hidden="true" data-testid="calc-card-month-label">
+          {t('calc.cardMonth')}
+        </p>
         <SegmentedControl
           label={t('calc.cardMonth')}
           value={draft.spendable.cardAttribution}
