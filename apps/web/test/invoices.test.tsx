@@ -264,6 +264,7 @@ describe('C01 e C02 (UX §3)', () => {
     expect(await screen.findByText('Nenhum cartão cadastrado')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Adicionar cartão' }));
     await waitFor(() => expect(router.state.location.pathname).toBe('/ajustes/contas'));
+    expect(router.state.location.search).toBe('?adicionar=cartao');
   });
 
   it('US-18: C01 mostra a fatura aberta, grava as faturas que faltam e leva à C02', async () => {

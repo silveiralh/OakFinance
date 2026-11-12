@@ -38,11 +38,20 @@ export function formatStamp(value: unknown): string {
   return `${get('day')}/${get('month')}/${get('year')} ${get('hour')}:${get('minute')}`;
 }
 
-/** "12,3 MB" (uma casa, vírgula decimal); abaixo de 1 MB, em KB. */
+const THOUSANDS = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
+
+/**
+ * "12,3 MB" (uma casa, vírgula decimal); abaixo de 1 MB, em KB; a partir de 1 GB, em GB; ponto de milhar
+ * (UXC-018: "2,0 GB", nunca "2048,2 MB").
+ */
 export function formatBytes(bytes: number): string {
-  const [value, unit] = bytes >= 1024 * 1024 ? [bytes / (1024 * 1024), 'MB'] : [bytes / 1024, 'KB'];
+  const KB = 1024;
+  const MB = KB * 1024;
+  const GB = MB * 1024;
+  const [value, unit] =
+    bytes >= GB ? [bytes / GB, 'GB'] : bytes >= MB ? [bytes / MB, 'MB'] : [bytes / KB, 'KB'];
   const tenths = Math.round(value * 10);
-  return `${Math.floor(tenths / 10)},${tenths % 10} ${unit}`;
+  return `${THOUSANDS.format(Math.floor(tenths / 10))},${tenths % 10} ${unit}`;
 }
 
 export type PushPermission = 'granted' | 'denied' | 'default' | 'unsupported';
@@ -271,7 +280,8 @@ export function DiagnosticsScreen() {
           <ol className="diag-list" data-testid="diag-events">
             {live.events.map((event: TelemetryEvent) => (
               <li key={`${event.at}-${event.code}-${event.level}`}>
-                <code>{event.code}</code> · {formatStamp(event.at)}
+                {/* UXC-018: a mesma família do resto da interface, com números tabulares */}
+                <span className="diag-code">{event.code}</span> · {formatStamp(event.at)}
               </li>
             ))}
           </ol>

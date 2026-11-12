@@ -1,9 +1,11 @@
 // S04 — Categorias (US-27, RN-39..RN-42): lista por faixa, criar e editar (nome, ícone, faixa obrigatória), trocar
 // faixa com aviso, arquivar, excluir pedindo destino quando há uso; categorias de sistema bloqueadas.
-import { Lock, Plus } from 'lucide-react';
+import { formatBRL } from '@oakfinance/domain';
+import { ChevronRight, Lock, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
+import { maskMoney, useValuesHidden } from '../../app/values';
 import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { categoryLimit, setCategoryLimit } from '../../data/repositories/budgets';
@@ -81,6 +83,18 @@ export function CategoriesScreen() {
   const showToast = useToast();
   const categories = useLive(user ? () => user.db.categories.toArray() : null, [user]);
   const budgets = useLive(user ? () => user.db.budgets.toArray() : null, [user]);
+  const limits = new Map(
+    (budgets ?? []).flatMap((b) =>
+      // o limite padrão (todos os meses), o mesmo que a folha de edição mostra
+      b.scope === 'category' &&
+      b.category_id &&
+      b.month === null &&
+      b.deleted_at === null &&
+      (b.limit_cents ?? 0) > 0
+        ? [[b.category_id, b.limit_cents ?? 0] as const]
+        : [],
+    ),
+  );
   const [draft, setDraft] = useState<Draft | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmBand, setConfirmBand] = useState(false);
@@ -231,6 +245,7 @@ export function CategoriesScreen() {
           title={BAND_LABEL[bucket]}
           rows={rows}
           onPick={open}
+          limits={limits}
           testId={`categories-${bucket}`}
         />
       ))}
@@ -239,6 +254,7 @@ export function CategoriesScreen() {
           title={t('categories.income')}
           rows={groups.income}
           onPick={open}
+          limits={limits}
           testId="categories-income"
         />
       )}
@@ -254,6 +270,7 @@ export function CategoriesScreen() {
           title={t('categories.archived')}
           rows={groups.archived}
           onPick={open}
+          limits={limits}
           testId="categories-archived"
         />
       )}
@@ -375,13 +392,17 @@ function CategoryGroup({
   title,
   rows,
   onPick,
+  limits,
   testId,
 }: {
   title: string;
   rows: readonly Category[];
   onPick?: (row: Category) => void;
+  /** Limite mensal por categoria (UXC-019: aparece na linha). */
+  limits?: ReadonlyMap<string, number>;
   testId: string;
 }) {
+  const hidden = useValuesHidden();
   return (
     <GlassCard level={1} title={title} headingLevel={2}>
       <ul className="cards-invoices" data-testid={testId}>
@@ -391,15 +412,30 @@ function CategoryGroup({
           return (
             <li key={row.id}>
               {locked ? (
-                <span className="cards-invoice">
+                <span className="cards-invoice category-row">
                   <Glyph size={20} aria-hidden="true" />
                   <span className="cards-invoice-month">{row.name}</span>
                   <Lock size={16} aria-label={t('categories.locked')} />
                 </span>
               ) : (
-                <button type="button" className="cards-invoice" onClick={() => onPick(row)}>
+                // UXC-019: o limite (quando houver) e a seta dizem que a linha abre a edição
+                <button
+                  type="button"
+                  className="cards-invoice category-row"
+                  onClick={() => onPick(row)}
+                >
                   <Glyph size={20} aria-hidden="true" />
                   <span className="cards-invoice-month">{row.name}</span>
+                  {(limits?.get(row.id) ?? 0) > 0 ? (
+                    <span className="category-limit">
+                      {t('categories.limitShort', {
+                        valor: maskMoney(formatBRL(limits?.get(row.id) ?? 0), hidden),
+                      })}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <ChevronRight size={20} aria-hidden="true" />
                 </button>
               )}
             </li>

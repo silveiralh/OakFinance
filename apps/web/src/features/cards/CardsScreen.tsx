@@ -2,7 +2,7 @@
 // status em texto e limite usado do cartão selecionado.
 import { formatBRL, type ISODate, monthLabel, todayIn } from '@oakfinance/domain';
 import { ChevronLeft, ChevronRight, CreditCard, Plus } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, maskMoney, useValuesHidden } from '../../app/values';
@@ -67,6 +67,14 @@ export function CardsScreen({
       })),
     [data, today],
   );
+  // a seleção implícita (primeiro cartão) vira explícita: se o sync trouxer um cartão que entra antes na ordem, a
+  // C01 continua no mesmo cartão e "Ver fatura" não abre a fatura de outro (E04 instável no iphone)
+  const firstId = overviews[0]?.row.id ?? null;
+  useEffect(() => {
+    if (selectedId === null && firstId !== null) {
+      setSelectedId(firstId);
+    }
+  }, [selectedId, firstId]);
 
   if (!data) {
     return (
@@ -84,7 +92,7 @@ export function CardsScreen({
           description={emptyStates.cards.text}
           primaryAction={{
             label: emptyStates.cards.actions[0],
-            onPress: () => void navigate('/ajustes/contas'),
+            onPress: () => void navigate('/ajustes/contas?adicionar=cartao'),
           }}
         />
       </section>
@@ -202,7 +210,11 @@ export function CardsScreen({
           />
         </GlassCard>
       )}
-      <Button variant="ghost" iconStart={Plus} onClick={() => void navigate('/ajustes/contas')}>
+      <Button
+        variant="ghost"
+        iconStart={Plus}
+        onClick={() => void navigate('/ajustes/contas?adicionar=cartao')}
+      >
         {t('cards.add')}
       </Button>
     </section>

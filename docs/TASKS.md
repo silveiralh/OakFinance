@@ -187,7 +187,7 @@ flowchart LR
 | T-122 | Lançamentos (T01/T02) | T-119 | done |
 | T-123 | Cartões (C01/C02) | T-122 | done |
 | T-124 | Planejar (P01–P04) | T-123 | done |
-| T-125 | Ajustes (S01–S11) | T-121 | todo |
+| T-125 | Ajustes (S01–S11) | T-121 | done |
 | T-126 | Importação, nota e conferência | T-125 | todo |
 | T-127 | Onboarding e marca | T-126 | todo |
 | T-128 | Specs sem restos do Aero | T-127 | todo |
@@ -1768,7 +1768,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-125 — Ajustes (S01–S11)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | G | US-57..US-61 | — | T-121 | não |
+| done | R | G | US-57..US-61 | — | T-121 | não |
 
 **Pedido do dono (12/11, D-096):** a S01 parece "amontoada, perdida e jogada na lista". Grupos com título, valor atual de cada opção à direita, as menos usadas no fim; capturas antes e depois no PR.
 

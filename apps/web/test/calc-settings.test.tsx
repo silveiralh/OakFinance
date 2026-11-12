@@ -70,6 +70,10 @@ describe('S06 — ajustes do cálculo (US-34)', () => {
     await waitFor(() =>
       expect(preview()).toHaveTextContent('Com estes ajustes: R$ 1.210,00 disponíveis em novembro'),
     );
+    // T-125 (UXC-008): a pergunta aparece acima das opções
+    expect(screen.getByTestId('calc-card-month-label')).toHaveTextContent(
+      'Compras no cartão contam no mês',
+    );
     fireEvent.click(screen.getByRole('radio', { name: 'da compra' }));
     expect(preview()).toHaveTextContent('R$ 2.260,00');
     fireEvent.click(screen.getByTestId('calc-save'));

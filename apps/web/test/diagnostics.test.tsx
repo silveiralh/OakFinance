@@ -211,6 +211,10 @@ describe('S11 — Diagnóstico (US-64)', () => {
     expect(formatStamp('ontem')).toBe('Nunca');
     expect(formatBytes(512)).toBe('0,5 KB');
     expect(formatBytes(12.34 * 1024 * 1024)).toBe('12,3 MB');
+    // T-125 (UXC-018): GB a partir de 1 GB e ponto de milhar
+    expect(formatBytes(2048.2 * 1024 * 1024)).toBe('2,0 GB');
+    expect(formatBytes(1500 * 1024 * 1024 * 1024)).toBe('1.500,0 GB');
+    expect(formatBytes(1023.95 * 1024 * 1024)).toBe('1.024,0 MB');
   });
 
   it('US-64: mostra versão, aparelho, sync, rejeitadas com as ações e os últimos eventos', async () => {

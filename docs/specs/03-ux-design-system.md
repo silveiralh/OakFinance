@@ -1932,6 +1932,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `onb.reserve.target` | Meta da reserva |
 | `onb.pending.cta` | Completar |
 | `onb.redo` | Refazer configuração inicial |
+| `settings.group.money` / `.alerts` / `.data` / `.device` / `.help` | Dinheiro e orçamento / Avisos / Dados e importação / Conta e aparelho / Ajuda e sobre |
 | `common.skip` | Pular |
 | `common.continue` | Continuar |
 
@@ -2102,6 +2103,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `budget.toast.bucket` | {faixa} atingiu {p}% do planejado |
 | `budget.toast.over` | {nome} acima do planejado |
 | `categories.limit` | Limite mensal (opcional) |
+| `categories.limitShort` | Limite {valor} |
 | `reserve.goalHint` | Meta sugerida: 6× a média mensal de Necessidades ({valor}). |
 | `reserve.goalNoData` | Estimativa provisória, recalculada com seus gastos. |
 | `reserve.goalProvisional` | Meta sugerida: 6× a meta de Necessidades do mês ({valor}), estimativa provisória, recalculada com seus gastos. |
@@ -2234,12 +2236,15 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `sync.remoteEdited.one` | 1 lançamento foi atualizado a partir de outro aparelho. |
 | `sync.remoteEdited.many` | {n} lançamentos foram atualizados a partir de outro aparelho. |
 | `home.recent` / `.seeAll` | Últimos lançamentos / Ver todos |
-| `accounts.methods` | Formas: {formas} |
+| `accounts.methods` | Meios: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |
 | `accounts.archive` / `.unarchive` / `.delete` | Arquivar / Desarquivar / Excluir |
 | `accounts.archived` | Contas arquivadas |
 | `accounts.empty` | Nenhuma conta cadastrada |
+| `accounts.emptyHint` | Cadastre a conta corrente, a carteira ou o VR para lançar despesas e receitas. |
+| `accounts.listTitle` | Contas |
+| `accounts.editTitle` | Editar conta |
 | `accounts.duplicate` | Você já tem uma conta com esse nome |
 | `accounts.nameRequired` | Informe o nome da conta. |
 | `accounts.nameTooLong` | Use até 40 caracteres. |
@@ -2260,6 +2265,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `cards.sameDay` | Fechamento e vencimento no mesmo dia. Confira na sua fatura. |
 | `cards.closesDue` | Fecha dia {f} · vence dia {v} |
 | `cards.empty` | Nenhum cartão cadastrado |
+| `cards.listTitle` | Cartões |
 | `cards.duplicate` | Você já tem um cartão com esse nome |
 | `cards.emptyHint` | Cadastre um cartão para acompanhar faturas e parcelas. |
 | `invoice.closesIn` | Fecha em {data} ({n} dias) |
@@ -2319,6 +2325,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `categories.rules` | Regras |
 | `fixed.list` | Receitas fixas |
 | `fixed.new` | Nova receita fixa |
+| `fixed.incomes` | Receitas fixas |
 | `fixed.description` | Descrição |
 | `fixed.amount` | Valor |
 | `fixed.day` | Dia do mês |

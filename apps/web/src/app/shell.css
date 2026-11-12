@@ -2005,3 +2005,70 @@ body:has(.screen-welcome) .backdrop {
   font-size: var(--font-size-heading);
   font-weight: var(--font-weight-bold);
 }
+
+/* ---------- Configurações (T-125, UXC-004, D-096) ---------- */
+.settings {
+  display: grid;
+  gap: var(--space-5);
+}
+.settings-group {
+  display: grid;
+  gap: var(--space-2);
+}
+.settings-group-title {
+  margin: 0;
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-secondary);
+}
+.settings-list {
+  display: grid;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.settings-row:last-child {
+  border-bottom: 0;
+}
+.settings-row-value {
+  color: var(--text-secondary);
+}
+.settings-row > svg {
+  color: var(--text-secondary);
+}
+.settings-signout {
+  display: grid;
+  justify-items: start;
+}
+/* UXC-018: códigos de evento na fonte do app, com números tabulares */
+.diag-code {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+}
+/* UXC-019: ícone | nome | limite | seta (a linha de categoria tem a sua grade, não a das faturas) */
+.cards-invoice.category-row {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+.category-limit {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.category-row > svg:last-child {
+  color: var(--text-secondary);
+}
