@@ -1753,7 +1753,7 @@ body:has(.screen-welcome) .backdrop {
   padding: 0;
   list-style: none;
 }
-.home-health-bands li {
+.home-health-band {
   display: grid;
   gap: var(--space-1);
 }
