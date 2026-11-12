@@ -180,7 +180,7 @@ flowchart LR
 | T-115 | Open Finance fora do MVP | T-100 | done |
 | T-116 | Dinheiro mostrado errado | T-115 | done |
 | T-117 | Base visual: CSS, tokens e componentes | T-116 | done |
-| T-118 | Navegação no celular | T-117 | todo |
+| T-118 | Navegação no celular | T-117 | done |
 | T-119 | Lançamento rápido (Q01) e folhas | T-117 | todo |
 | T-120 | Início pelo gasto do mês | T-118 | todo |
 | T-121 | Limiares de aviso configuráveis | T-120 | todo |
@@ -1684,7 +1684,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-118 — Navegação no celular
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-58, US-62 | — | T-117 | não |
+| done | R | M | US-58, US-62 | — | T-117 | não |
 
 **Escopo (D-076, escolhida pelo dono):** UXA-001 e UXC-002 — avatar com as iniciais no topo das 4 abas principais (Início, Lançamentos, Cartões, Planejar) abrindo o menu da conta com Configurações, Importar extrato, Ler nota fiscal e **Sair** (o Sair do S02 com o aviso de pendências da RN-100; "Conexões" só volta com o Open Finance, D-080); toque longo no FAB com Receita, Guardar, Importar extrato e Ler nota, com alternativa por botão (WCAG 2.5.1); atalho "Importar extrato" no vazio de Lançamentos; no `lg` a barra lateral continua, com o mesmo menu; atualiza a UX §2.1 e §3.0; UXB-002 (abas internas do Planejar da UX §5.9 e entrada para Fechar o mês); UXA-012 (Voltar no TopBar das subtelas); UXA-019 (título do TopBar centrado); UXC-021 (título da S06 sem quebrar a 360 px); UXA-020 (SyncBadge no mesmo estilo dos ícones vizinhos); UXA-028 (toast nunca cobre a barra de abas).
 

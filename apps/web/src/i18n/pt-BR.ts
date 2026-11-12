@@ -887,6 +887,18 @@ export const ptBR = {
   'detail.duplicateOf': 'Duplicada de: {descricao}',
   'detail.notDuplicate': 'Não é duplicada',
   'review.separated': 'Lançamento separado.',
+  // Navegação no celular (T-118, D-076, D-089)
+  'account.open': 'Abrir menu da conta',
+  'account.title': 'Sua conta',
+  'account.settings': 'Configurações',
+  'account.import': 'Importar extrato',
+  'account.readNote': 'Ler nota fiscal',
+  'account.connections': 'Conexões e importação',
+  'plan.tabs': 'Seções do Planejar',
+  'plan.tab.budget': 'Orçamento',
+  'plan.tab.reserve': 'Reserva',
+  'plan.tab.future': 'Futuro',
+  'plan.tab.close': 'Fechar o mês',
 } as const;
 
 export type MessageKey = keyof typeof ptBR;
@@ -1049,6 +1061,10 @@ export const shellText = {
     S11: 'Diagnóstico',
     I06: 'Regras',
   },
+  /** Títulos curtos da TopBar quando o nome da tela não cabe a 360 px (UXC-021, D-089); o `<title>` e a S01 usam o nome inteiro. */
+  shortTitles: {
+    S06: 'Cálculo e orçamento',
+  },
 } as const;
 
 export type ScreenId = keyof typeof shellText.screens;
@@ -1098,7 +1114,7 @@ export const emptyStates = {
   listMonth: {
     title: 'Nenhum lançamento em {mês}',
     text: 'Despesas e receitas do mês aparecem aqui.',
-    actions: ['Novo lançamento'],
+    actions: ['Novo lançamento', 'Importar extrato'],
   },
   listFilter: {
     title: 'Nenhum lançamento com este filtro',

@@ -236,7 +236,7 @@ describe('Q01 tela (US-12, US-17)', () => {
     await waitFor(() => expect(screen.getByRole('radio', { name: /Moradia/ })).toBeChecked());
   });
 
-  it('host abre o Q01 com ?novo=despesa (e não com um modo desconhecido); menu do toque longo tem Despesa, Receita, Guardar e Ler nota', async () => {
+  it('host abre o Q01 com ?novo=despesa (e não com um modo desconhecido); menu do toque longo tem Receita, Guardar, Importar extrato e Ler nota', async () => {
     const auth = await setup();
     const router = createMemoryRouter(
       [
@@ -261,11 +261,15 @@ describe('Q01 tela (US-12, US-17)', () => {
     expect(await screen.findByTestId('quick-entry')).toBeInTheDocument();
     const onPick = vi.fn();
     render(<FabMenu open onClose={vi.fn()} onPick={onPick} />);
-    for (const label of ['Despesa', 'Receita', 'Guardar', 'Ler nota']) {
+    // D-076 (T-118): o toque simples já abre a despesa; o menu traz Receita, Guardar, Importar extrato e Ler nota
+    for (const label of ['Receita', 'Guardar', 'Importar extrato', 'Ler nota']) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     }
+    expect(screen.queryByRole('button', { name: 'Despesa' })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Ler nota' }));
     expect(onPick).toHaveBeenCalledWith('/nota');
+    fireEvent.click(screen.getByRole('button', { name: 'Importar extrato' }));
+    expect(onPick).toHaveBeenCalledWith('/importar');
   });
 });
 
