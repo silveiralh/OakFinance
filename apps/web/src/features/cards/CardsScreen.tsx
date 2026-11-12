@@ -98,7 +98,7 @@ export function CardsScreen({
     return null;
   }
   const { row, overview } = active;
-  const go = (view: InvoiceView) => void navigate(invoiceHref(row.id, view));
+  const go = (view: InvoiceView, cardId = row.id) => void navigate(invoiceHref(cardId, view));
   return (
     <section className="screen" data-screen="C01" data-testid="screen-C01">
       <div className="cards-carousel" data-testid="cards-carousel">
@@ -133,7 +133,8 @@ export function CardsScreen({
               {...(o.limitCents !== null && o.usedCents !== null
                 ? { limitCents: o.limitCents, usedCents: Math.max(0, o.usedCents) }
                 : {})}
-              onPress={() => select(i)}
+              // UXB-025: tocar no cartão já selecionado abre a fatura atual dele
+              onPress={() => (i === index ? go(o.current, card.id) : select(i))}
               data-testid={`card-${card.id}`}
             />
           </section>
@@ -153,13 +154,13 @@ export function CardsScreen({
           />
         </div>
       )}
-      <GlassCard level={1} title={row.name} headingLevel={2}>
+      {/* UXB-011: nome e total já estão no cartão acima; aqui ficam o estado, o limite e "Ver fatura" */}
+      <GlassCard
+        level={1}
+        title={t('invoice.title', { mês: monthLabel(overview.current.period.referenceMonth) })}
+        headingLevel={2}
+      >
         <div className="cards-current" data-testid="cards-current">
-          <p className="cards-line">
-            {t('invoice.title', { mês: monthLabel(overview.current.period.referenceMonth) })}
-            {' · '}
-            <Amount text={formatBRL(overview.current.totalCents)} hidden={hidden} />
-          </p>
           <p className="cards-line" data-testid="cards-state">
             {invoiceStateLine(overview.current, hidden)}
           </p>

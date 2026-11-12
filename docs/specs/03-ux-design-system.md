@@ -2064,6 +2064,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `card.status.overdue` | Venceu {quando} |
 | `card.markPaid` | Marcar como paga |
 | `card.pay.cta` | Registrar pagamento |
+| `card.pay.other` | Pagar a fatura de {mês} |
 | `card.paid.toast` | Pagamento da fatura de {mês} registrado. |
 | `card.future.note` | Fatura futura: mostra parcelas e contas fixas já previstas. |
 | `budget.within` | Dentro do planejado |
@@ -2263,6 +2264,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `invoice.closesIn` | Fecha em {data} ({n} dias) |
 | `invoice.closesToday` | Fecha hoje |
 | `invoice.closesDue` | Fecha em {fecha} · Vence em {vence} |
+| `invoice.dueOn` | Vence em {data} |
 | `invoice.remaining` | {valor} em aberto |
 | `invoice.noBalance` | Sem valor a pagar |
 | `invoice.empty` | Nenhuma compra nesta fatura. |

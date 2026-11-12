@@ -347,14 +347,25 @@ body:has(.screen-welcome) .backdrop {
   gap: var(--space-3);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding-bottom: var(--space-1);
+  /* UXB-010: espaço para o contorno de seleção não ser cortado pela rolagem */
+  padding: 6px 6px var(--space-1);
+}
+/* UXB-010: cartão sólido, sem o degradê e o reflexo do Aero (UX §4.0) */
+.shell .invoice-card {
+  background: var(--surface-dark);
+}
+.shell .invoice-card::before {
+  content: none;
 }
 .cards-slide {
   flex: 0 0 min(320px, 85%);
   scroll-snap-align: start;
 }
-.cards-slide[data-selected="true"] .invoice-card {
-  outline: 3px solid var(--accent);
+/* UXB-010: contorno de seleção na cor da seleção (preto no claro) e só quando há mais de um cartão */
+.cards-carousel:has(> .cards-slide + .cards-slide)
+  .cards-slide[data-selected="true"]
+  .invoice-card {
+  outline: 3px solid var(--selection-outline);
   outline-offset: 2px;
 }
 .cards-nav {
@@ -377,8 +388,9 @@ body:has(.screen-welcome) .backdrop {
   list-style: none;
 }
 .cards-invoice {
-  display: flex;
-  flex-wrap: wrap;
+  /* UXB-012: três colunas fixas (mês | selo | valor), sem quebrar em posições diferentes a cada linha */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: var(--space-2);
   width: 100%;
@@ -393,7 +405,24 @@ body:has(.screen-welcome) .backdrop {
   cursor: pointer;
 }
 .cards-invoice-month {
-  flex: 1 1 auto;
+  min-width: 0;
+}
+.cards-invoice-total {
+  text-align: end;
+  white-space: nowrap;
+}
+/* D-084 item 10: "Registrar pagamento" fixo acima da barra de abas flutuante; o espaço da barra já fica no fim
+   da rolagem (padding do .shell-main) */
+.invoice-pay {
+  position: sticky;
+  bottom: calc(64px + var(--space-3) + var(--space-3) + env(safe-area-inset-bottom));
+  z-index: 1;
+  padding: var(--space-2) 0;
+}
+@media (min-width: 1024px) {
+  .invoice-pay {
+    bottom: var(--space-4);
+  }
 }
 .cards-invoice-total {
   font-weight: var(--font-weight-semibold);

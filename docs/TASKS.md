@@ -185,7 +185,7 @@ flowchart LR
 | T-120 | Início pelo gasto do mês | T-118 | done |
 | T-121 | Limiares de aviso configuráveis | T-120 | done |
 | T-122 | Lançamentos (T01/T02) | T-119 | done |
-| T-123 | Cartões (C01/C02) | T-122 | todo |
+| T-123 | Cartões (C01/C02) | T-122 | done |
 | T-124 | Planejar (P01–P04) | T-123 | todo |
 | T-125 | Ajustes (S01–S11) | T-121 | todo |
 | T-126 | Importação, nota e conferência | T-125 | todo |
@@ -1743,7 +1743,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-123 — Cartões (C01/C02)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-25, US-26 | — | T-122 | não |
+| done | R | M | US-25, US-26 | — | T-122 | não |
 
 **Escopo:** UXB-010 (cartão da fatura sem gradiente e reflexo do Aero, contorno inteiro); UXB-011 (datas com rótulo, sem repetir nome e total); UXB-012 (linhas de "Próximas faturas" alinhadas; a parte do P03 fica na T-124); UXB-013 ("Registrar pagamento" não é primário numa fatura futura nem paga outra fatura); UXB-021 (fechamento numa linha só); UXB-025 (tocar no cartão abre a fatura mesmo com um só cartão). D-084 item 10: rodapé fixo da C02 acima da barra de abas, com espaço reservado no fim da rolagem.
 
