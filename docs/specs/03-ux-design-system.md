@@ -695,7 +695,7 @@ Botão primário: pílula preta com texto branco (no escuro, pílula lima com te
 
 **Forma e tipografia.** Fonte única arredondada: **Nunito** variável (auto-hospedada, latin e latin-ext), pesos 500–800. Botões, chips, campos de busca e barra de abas em pílula (`--radius-md: 999px`); cards com raio 20 px; campos com raio 16 px e borda 1 px `--border-strong`. Sombras discretas (`--shadow-1/2`); sem brilho especular, sem vidro.
 
-**Moldura.** Barra de abas flutuante: pílula preta centrada a 12 px do fundo (mais a área segura), itens em círculo com rótulo de 11 px, aba ativa em lima, FAB lima de 52 px no meio. A zona segura do conteúdo passa a `64px + env(safe-area-inset-bottom) + var(--space-12)`. TopBar sem fundo próprio (fundo menta) e título centralizado em 17 px negrito. No `lg`, barra lateral branca com o item ativo em pílula lima. Sheets e diálogos com fundo menta e cards brancos por cima.
+**Moldura.** Barra de abas flutuante: pílula preta centrada a 12 px do fundo (mais a área segura), itens em círculo com rótulo de 13 px (D-084 item 3), aba ativa em lima, FAB lima de 52 px no meio. A zona segura do conteúdo passa a `64px + env(safe-area-inset-bottom) + var(--space-12)`. TopBar sem fundo próprio (fundo menta) e título centralizado em 17 px negrito. No `lg`, barra lateral branca com o item ativo em pílula lima. Sheets e diálogos com fundo menta e cards brancos por cima.
 
 **Telas de referência.** ON01: tela lima inteira, logo monocromática, frase de abertura em 30–40 px negrito, benefícios com ícone em círculo preto e, embaixo, "Já uso em outro aparelho" à esquerda e "Começar" em pílula preta com seta à direita. H01 (até a T-058 trazer o Disponível para gastar): cartão preto com o mês, botão lima "Novo lançamento", Saídas em destaque e Entradas e Guardado abaixo; quatro atalhos em pílula (Despesa, Receita, Lançamentos, Contas e cartões, o último em lima); "Últimos lançamentos" com "Ver todos". Linha de lançamento: ícone branco em círculo preto com anel na cor da faixa, divisória de 1 px entre linhas, cards brancos. T01: chips em uma linha com rolagem horizontal.
 
@@ -705,6 +705,8 @@ Botão primário: pílula preta com texto branco (no escuro, pílula lima com te
 
 **Contraste.** Verificado em `test/tokens.test.ts` a partir do `tokens.css`: todo texto ≥ 4,5:1 sobre o card branco **e** direto sobre a menta (ex.: primário 19,51:1 no branco e 18,36:1 na menta; terciário 7,61:1; preto sobre lima 13,47:1); elementos não textuais ≥ 3:1. A lima não serve de texto nem de borda sobre branco (1,4:1): seleção sempre leva o contorno preto.
 
+
+**Base visual (T-117, D-084 itens 3 e 4, D-088).** Escuro: o cartão do mês (`--surface-dark`) é uma superfície elevada `#2A2D27` (`--ink-800`), não `#000`, e a seleção (chip selecionado) ganha contorno na cor do texto (`--text-primary`) quando não há cor de faixa. Preenchimento e faixa "info" (barra de progresso, faixa do banner e do toast, controle deslizante) usam `--status-info-fill`: preto no claro, lima no escuro. Títulos `h1`–`h3` em Nunito 800 com entrelinha 1,3 (o `h2` solto em 17 px); o corpo do card empilha os filhos com 12 px de espaço; listas de seleção com seta (`ChevronDown`); passos de instalação numerados; "Conferir" como selo em pílula (fundo lima, texto preto); pílulas de categoria em linhas que fluem, com o nome inteiro e o ícone sem encolher.
 
 ### 4.1 Arquitetura de tokens
 

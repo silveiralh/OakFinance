@@ -1,4 +1,4 @@
-import { Check, CircleAlert, X } from 'lucide-react';
+import { Check, ChevronDown, CircleAlert, X } from 'lucide-react';
 import { type ChangeEvent, type ReactNode, useId } from 'react';
 import { uiText } from '../i18n/pt-BR';
 import { type AppIcon, type BaseProps, cx } from './types';
@@ -152,6 +152,8 @@ export function Select({
             </option>
           ))}
         </select>
+        {/* UXB-007: sem a seta, a lista parecia um campo de texto */}
+        <ChevronDown className="field-chevron" size={20} strokeWidth={2} aria-hidden="true" />
       </div>
     </Frame>
   );

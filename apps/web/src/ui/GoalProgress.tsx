@@ -98,17 +98,20 @@ export function GoalProgress({
             strokeWidth={stroke}
             strokeDasharray={hasGoal ? undefined : '6 6'}
           />
-          <circle
-            className="ring-arc"
-            cx={px / 2}
-            cy={px / 2}
-            r={r}
-            fill="none"
-            stroke="var(--band-savings)"
-            strokeWidth={stroke}
-            strokeLinecap="round"
-            strokeDasharray={`${(pct / 100) * c} ${c}`}
-          />
+          {/* UXB-019: sem valor guardado, só o trilho (a ponta redonda desenharia um ponto) */}
+          {pct > 0 && (
+            <circle
+              className="budget-ring-arc"
+              cx={px / 2}
+              cy={px / 2}
+              r={r}
+              fill="none"
+              stroke="var(--band-savings)"
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={`${(pct / 100) * c} ${c}`}
+            />
+          )}
           {ticks.map((tick) => {
             const a = tick * 2 * Math.PI;
             const x = px / 2 + r * Math.cos(a);

@@ -179,7 +179,7 @@ flowchart LR
 | T-114 | Revalidação de UX com o agente | T-103, T-104, T-105, T-106, T-107, T-108, T-109, T-110, T-111, T-112, T-113 | blocked: substituída pela T-129 (D-085) |
 | T-115 | Open Finance fora do MVP | T-100 | done |
 | T-116 | Dinheiro mostrado errado | T-115 | done |
-| T-117 | Base visual: CSS, tokens e componentes | T-116 | todo |
+| T-117 | Base visual: CSS, tokens e componentes | T-116 | done |
 | T-118 | Navegação no celular | T-117 | todo |
 | T-119 | Lançamento rápido (Q01) e folhas | T-117 | todo |
 | T-120 | Início pelo gasto do mês | T-118 | todo |
@@ -192,6 +192,7 @@ flowchart LR
 | T-127 | Onboarding e marca | T-126 | todo |
 | T-128 | Specs sem restos do Aero | T-127 | todo |
 | T-129 | Nova auditoria de UX | T-128 | todo |
+| T-130 | Valor em dinheiro sem quebra (G4) | T-117 | blocked: aguarda dono — referência `tokens.png` do styleguide (needs-owner, D-088) |
 
 ---
 
@@ -1672,7 +1673,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-117 — Base visual: CSS, tokens e componentes
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-62 | — | T-116 | não |
+| done | R | M | US-62 | — | T-116 | não |
 
 **Escopo:** grupos sistêmicos da auditoria: G1 títulos sem peso (UXA-007, UXB-008, UXC-005, UXA-030 entrelinha dos títulos); G2 classes com nome de utilitário do Tailwind (UXA-005, UXB-014; procure também `.shadow`, `.table`, `.hidden`, `.grid`, `.flex`) e arco de 0% como ponto (UXB-019); G3 listas e selects sem forma (UXA-015, UXB-007); G4 valor partido: `formatBRL` com espaço não separável U+00A0 no domínio (UXA-002, UXB-004; com linha no Apêndice A se a API mudar); G6 tokens do Aero que faltam no escuro (`--aqua-700`, `--status-info-fg`: UXA-006, UXC-009); G8 selo "Conferir" com forma de selo (UXA-024); espaço interno dos cards (UXC-006, UXD-006); **pílulas de categoria** (pedido do dono em 11/11, D-085): o `CategoryPicker` deixa o grid fixo de 4 colunas (`.chip-grid` em `ui.css`) e as pílulas fluem conforme o espaço da tela (`flex-wrap`), cada uma com o nome inteiro numa linha e o ícone com tamanho fixo (`flex-shrink: 0`; hoje o ícone é espremido até sumir em quase todas), e o campo de busca do seletor sem contorno duplo; captura `Q01-categorias` do roteiro antes e depois; regressão do seletor quebrado no `shell.css` (UXD-012). Também aplica a D-084 itens 3 e 4: rótulo das abas com 13 px e superfície elevada (não `#000`) com contorno de seleção na cor do texto no escuro.
 
@@ -1811,3 +1812,15 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 **Pronto quando:** zero S1; os S2 restantes têm tarefa; o resumo vai para o HANDOFF.
 
 **Verificar:** relatório novo em `docs/ux-audit/` e capturas no PR.
+
+### T-130 — Valor em dinheiro sem quebra (G4)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| blocked: aguarda dono — referência `tokens.png` do styleguide (needs-owner, D-088) | R | P | US-62 | RN-01 | T-117 | não |
+
+**Escopo (saiu da T-117, D-088):** G4 da auditoria (UXA-002, UXB-004): `formatBRL` e `HIDDEN_AMOUNT` com espaço não separável U+00A0 entre "R$" e o número (linha no Apêndice A), com os testes que comparam o texto exato esperando o U+00A0; o valor `MoneyText` de tamanho `display` passa a caber em telas de 320–360 px sem rolagem horizontal (tamanho adaptável), já que deixa de quebrar. A referência `tokens.png` do projeto `iphone` muda (o bloco `tokens` mostra "−R$ 1.234,56" em `display`): o dono aprova a referência nova (`needs-owner`).
+
+**Pronto quando:** nenhum valor quebra entre "R$" e o número; nenhuma tela rola na horizontal a 320 px; referência do styleguide aprovada pelo dono; CI verde.
+
+**Verificar:** `pnpm ci:local`; capturas do roteiro a 360 px.
+

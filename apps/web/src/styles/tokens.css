@@ -101,6 +101,8 @@
   /* Status (seleção usa o par info: lima com texto preto) */
   --status-info-fg: var(--ink-950);
   --status-info-bg: var(--lime-400);
+  /* preenchimento e faixa "info" (barra, banner, controle): preto no claro, lima no escuro (UXA-006) */
+  --status-info-fill: var(--ink-950);
   --status-success-fg: var(--lime-800);
   --status-success-bg: #e6f7cf;
   --status-warning-fg: var(--amber-700);
@@ -271,8 +273,9 @@
   --accent-pressed: var(--lime-300);
   --accent-soft: #2c3a10;
   --on-accent: var(--ink-950);
-  --surface-dark: #000000;
-  --surface-dark-raised: var(--ink-800);
+  /* D-084 item 4: no escuro o cartão do mês é uma superfície elevada, não #000 */
+  --surface-dark: var(--ink-800);
+  --surface-dark-raised: var(--ink-700);
   --on-dark: var(--white);
   --on-dark-muted: var(--mist-300);
 
@@ -292,6 +295,7 @@
 
   --status-info-fg: var(--ink-950);
   --status-info-bg: var(--lime-400);
+  --status-info-fill: var(--lime-400);
   --status-success-fg: var(--lime-300);
   --status-success-bg: #24320c;
   --status-warning-fg: var(--amber-300);
