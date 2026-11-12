@@ -1,10 +1,19 @@
 // Cards do H01 abaixo do herói (UX §3 H01, itens 3–6): Próximos 7 dias, 50/30/20, Reserva e Conferir.
 import { diffDays, formatBRL, type ISODate } from '@oakfinance/domain';
-import { CalendarClock, ChevronRight, CreditCard, Inbox, Repeat } from 'lucide-react';
+import {
+  CalendarClock,
+  ChevronRight,
+  CircleAlert,
+  CircleCheck,
+  CreditCard,
+  Inbox,
+  Repeat,
+  TriangleAlert,
+} from 'lucide-react';
 import { Link } from 'react-router';
 import { Amount } from '../../app/values';
 import { t, uiText } from '../../i18n/pt-BR';
-import { BudgetRing, GoalProgress } from '../../ui';
+import { BudgetRing, GoalProgress, ProgressBar } from '../../ui';
 import type { HomeModel, Outflow } from './model';
 
 /** "Hoje", "Amanhã" ou "Em {n} dias". */
@@ -125,6 +134,80 @@ export function BudgetCard({ model, hidden }: { model: HomeModel; hidden: boolea
           ))}
         </dl>
       </Link>
+    </section>
+  );
+}
+
+const HEALTH_ICON = { on_track: CircleCheck, attention: TriangleAlert, over: CircleAlert } as const;
+
+/**
+ * "Saúde do mês" (D-081): uma barra por faixa do 50/30/20 sobre a renda; Necessidades e Desejos comparam o gasto
+ * efetivado com a meta (teto), Poupança compara os aportes com a meta (mínimo). O estado vai em texto e ícone.
+ */
+export function HealthCard({ model, hidden }: { model: HomeModel; hidden: boolean }) {
+  const noIncome = model.spendable.income.totalCents <= 0;
+  return (
+    <section className="home-block" aria-labelledby="home-health" data-testid="home-health">
+      <SectionHead
+        id="home-health"
+        title={t('home.health.title')}
+        href="/planejar/orcamento"
+        link={t('home.health.adjust')}
+      />
+      <div className="glass home-list home-health">
+        {noIncome ? (
+          <div className="home-health-empty" data-testid="home-health-no-income">
+            <p>{t('home.health.noIncome')}</p>
+            <Link to="/ajustes/renda" className="home-pill-link" data-tone="accent">
+              {t('home.hero.noIncomeCta')}
+            </Link>
+          </div>
+        ) : (
+          <ul className="home-health-bands">
+            {BANDS.map(([key, name]) => {
+              const b = model.buckets[key];
+              const state = model.health[key];
+              const Glyph = HEALTH_ICON[state];
+              return (
+                <li
+                  key={key}
+                  data-band={key}
+                  data-health={state}
+                  data-testid={`home-health-${key}`}
+                >
+                  <div className="home-health-head">
+                    <span className="home-health-name">{name}</span>
+                    <span className="home-health-state" data-health={state}>
+                      <Glyph size={16} aria-hidden="true" />
+                      {t(`home.health.${state}`)}
+                    </span>
+                  </div>
+                  <ProgressBar
+                    label={name}
+                    valueCents={b.spentCents}
+                    maxCents={Math.max(1, b.targetCents)}
+                    tone={`band-${key}`}
+                    size="xs"
+                  />
+                  <p className="home-health-line money">
+                    <Amount
+                      text={t('home.health.line', {
+                        gasto: formatBRL(b.spentCents),
+                        meta: formatBRL(b.targetCents),
+                      })}
+                      hidden={hidden}
+                    />
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        <Link to="/planejar/orcamento" className="home-card-link home-health-adjust">
+          {t('home.health.adjust')}
+          <ChevronRight size={16} aria-hidden="true" />
+        </Link>
+      </div>
     </section>
   );
 }

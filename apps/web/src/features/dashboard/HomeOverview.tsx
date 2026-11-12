@@ -1,9 +1,9 @@
-// H01 — Início (UX §3 H01, US-30): herói "Disponível para gastar" (RN-47..RN-50) no cartão preto da D-023, atalhos,
-// Próximos 7 dias, 50/30/20, Reserva, Conferir e os últimos lançamentos. Tudo calculado com os dados locais a cada
+// H01 — Início (UX §3 H01, US-30, D-081): herói "Gasto em {mês}" no cartão preto da D-023 com o saldo nas contas e o
+// que ainda vai sair, atalhos, Próximos 7 dias, Saúde do mês, Reserva, Conferir e os últimos lançamentos. Tudo calculado com os dados locais a cada
 // mudança (RN-51); à meia-noite de São Paulo o dia (e na virada, o mês) muda sem recarregar (RN-48).
 import { formatBRL, type ISODate, reserveProgress, type YearMonth } from '@oakfinance/domain';
 import { ArrowDownLeft, ArrowUpRight, ChevronRight, Landmark, List, Plus } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { Amount, useValuesHidden } from '../../app/values';
@@ -12,12 +12,11 @@ import { useLive } from '../../data/live';
 import { txFromRow } from '../../data/mappers';
 import { emptyStates, fill, shellText, t, uiText } from '../../i18n/pt-BR';
 import { useToday } from '../../lib/useToday';
-import { EmptyState, PaceIndicator, TransactionRow } from '../../ui';
+import { EmptyState, TransactionRow } from '../../ui';
 import { MONTH_NAMES, monthTitle } from '../transactions/list';
 import { toRow } from '../transactions/TransactionsScreen';
-import { FormulaSheet } from './FormulaSheet';
 import {
-  BudgetCard,
+  HealthCard,
   ReserveCard,
   type ReserveSummary,
   ReviewCard,
@@ -31,18 +30,11 @@ function monthName(month: YearMonth): string {
   return MONTH_NAMES[Number(month.slice(5, 7)) - 1] ?? '';
 }
 
-/** "R$ 75,62 por dia até 30/11". */
-function lastDayLabel(month: YearMonth, daysLeft: number, today: ISODate): string {
-  const day = Number(today.slice(8, 10)) + daysLeft - 1;
-  return `${String(day).padStart(2, '0')}/${month.slice(5, 7)}`;
-}
-
 export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?: Date }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const hidden = useValuesHidden();
   const today = useToday(fixedToday);
-  const [formulaOpen, setFormulaOpen] = useState(false);
   const data = useLive(
     user
       ? async () => {
@@ -132,9 +124,8 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
     { key: 'list', label: shellText.screens.T01, icon: List, href: '/lancamentos' },
     { key: 'accounts', label: shellText.screens.S03, icon: Landmark, href: '/ajustes/contas' },
   ] as const;
-  const s = model?.spendable;
-  const noIncome = s?.status === 'no_income';
-  const available = s?.availableCents ?? 0;
+  // D-081: o herói é o gasto do mês (GR da RN-47: efetivadas pelo mês de impacto, menos estornos)
+  const spent = model?.spendable.spentCents ?? 0;
   return (
     <div className="home" data-testid="home-overview">
       {greeting && <p className="home-greeting">{greeting}</p>}
@@ -143,16 +134,16 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
         data-tone="dark"
         aria-labelledby="home-hero"
         data-testid="home-hero"
-        data-status={s?.status}
-        data-available={s && !noIncome ? available : undefined}
+        data-spent={model ? spent : undefined}
       >
         <h2 id="home-hero" className="sr-only">
-          {s && !noIncome
-            ? t('home.hero.heading', { valor: formatBRL(available, { hidden }) })
-            : t('home.formula.total')}
+          {t('home.spent.heading', {
+            mês: monthName(month),
+            valor: formatBRL(spent, { hidden }),
+          })}
         </h2>
         <div className="home-card-head">
-          <p className="home-card-month">{t('home.hero.label', { mês: monthName(month) })}</p>
+          <p className="home-card-month">{t('home.spent.label', { mês: monthName(month) })}</p>
           <button
             type="button"
             className="home-card-new"
@@ -164,66 +155,29 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
             {uiText.newEntry}
           </button>
         </div>
-        {s && noIncome && (
-          <>
-            <p className="home-card-empty">{t('home.hero.noIncome')}</p>
-            <div className="home-card-ctas">
-              <Link to="/ajustes/renda" className="home-pill-link" data-tone="accent">
-                {t('home.hero.noIncomeCta')}
-              </Link>
-              <Link to="?novo=receita" className="home-pill-link">
-                {t('home.hero.noIncomeAlt')}
-              </Link>
-            </div>
-            <p className="home-card-label money" data-testid="home-hero-money">
-              {t('home.hero.noIncomeSpent', {
-                valor: formatBRL(model?.spentAndUpcomingCents ?? 0, { hidden }),
-              })}
-            </p>
-          </>
-        )}
-        {s && !noIncome && (
+        {model && (
           <>
             <p className="home-card-value money" data-testid="home-hero-money">
-              <Amount text={formatBRL(available)} hidden={hidden} />
+              <Amount text={formatBRL(spent)} hidden={hidden} />
             </p>
-            {available > 0 && s.daysLeft > 0 && (
-              <p className="home-card-label money" data-testid="home-per-day">
-                {t('home.hero.perDay', {
-                  valor: formatBRL(s.perDayCents, { hidden }),
-                  data: lastDayLabel(month, s.daysLeft, today),
-                })}
-              </p>
-            )}
-            <PaceIndicator
-              className="home-pace"
-              state={s.status}
-              amountCents={Math.abs(available)}
-              data-testid="home-pace"
-            />
-            {s.status === 'over' && (
-              <Link to="/planejar/orcamento" className="home-card-link">
-                {t('home.hero.adjust')}
-                <ChevronRight size={16} aria-hidden="true" />
-              </Link>
-            )}
+            <p className="home-card-label money" data-testid="home-upcoming-month">
+              {t('home.upcomingMonth', {
+                valor: formatBRL(model.spendable.upcoming.totalCents, { hidden }),
+              })}
+            </p>
+            <Link
+              to="/ajustes/contas"
+              className="home-card-link home-balance"
+              data-testid="home-balance"
+              data-balance={model.balanceCents}
+            >
+              <span>{t('home.balance')}</span>
+              <span className="money">
+                <Amount text={formatBRL(model.balanceCents)} hidden={hidden} />
+              </span>
+              <ChevronRight size={16} aria-hidden="true" />
+            </Link>
           </>
-        )}
-        {s && model?.config.cardAttribution === 'invoice_due_month' && (
-          <Link to="/planejar/futuro" className="home-card-link" data-testid="home-future-card">
-            {t('home.futureCard', { valor: formatBRL(s.futureCardCents, { hidden }) })}
-            <ChevronRight size={16} aria-hidden="true" />
-          </Link>
-        )}
-        {s && (
-          <button
-            type="button"
-            className="home-card-link"
-            onClick={() => setFormulaOpen(true)}
-            data-testid="home-how"
-          >
-            {t('home.hero.how')}
-          </button>
         )}
       </section>
       <nav className="home-actions" aria-label={uiText.actions}>
@@ -254,7 +208,7 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
       )}
       {extras && <ReviewCard pending={extras.review} />}
       {model && <UpcomingCard model={model} hidden={hidden} />}
-      {model && <BudgetCard model={model} hidden={hidden} />}
+      {model && <HealthCard model={model} hidden={hidden} />}
       {extras && (
         <ReserveCard
           reserve={extras.reserve ?? { savedCents: 0, targetCents: null }}
@@ -287,14 +241,6 @@ export function HomeOverview({ today: fixedToday, now }: { today?: ISODate; now?
             ))}
           </div>
         </section>
-      )}
-      {model && (
-        <FormulaSheet
-          model={model}
-          hidden={hidden}
-          open={formulaOpen}
-          onClose={() => setFormulaOpen(false)}
-        />
       )}
     </div>
   );
