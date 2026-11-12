@@ -55,7 +55,7 @@
 .shell .shell-tabbar .tab-center {
   margin: 0 var(--space-1);
 }
-/* Issue #150: no Início as ações da direita (olho, sino, sincronização e avatar) passam de 48 px; com
+/* Issue 150 (regressão): no Início as ações da direita (olho, sino, sincronização e avatar) passam de 48 px; com
    `minmax(48px, 1fr)` a coluna ficava menor que o conteúdo e os botões cobriam o título. Cada lado agora mede pelo
    menos o próprio conteúdo: o título continua centrado quando cabe e, quando não cabe, encolhe com reticências. */
 .shell .topbar {
