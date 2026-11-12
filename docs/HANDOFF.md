@@ -192,7 +192,7 @@
 
 ## 4. Bloqueios e pendências do cliente
 
-- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095).
+- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (`regressão:`, cabeçalho do Início sobreposto) vem antes da cadeia.
 
 | Item | Quando é necessário | Desbloqueia |
 |---|---|---|
@@ -202,7 +202,7 @@
 | SETUP-10 allowlist, Vault, hook, secrets das funções | feito em 06/11 (comentário na issue #2; a caixa ainda está desmarcada) | M1 (login real) |
 | SETUP-11 VAPID | feito em 11/11 (comentário na issue #2) | M2 (push real) |
 | SETUP-13 Pluggy e Meu Pluggy | adiado para a v2 (D-080) | T-083, M3 |
-| SETUP-14 arquivos reais (canal privado) | encerrado em 12/11 (D-095): BB e Nubank anonimizados em `packages/domain/test/fixtures/*-real-anon.*`; 2 NFC-e anonimizadas em `packages/nfce-parser/test/fixtures/real-anon-*.html` | T-085, T-087, T-090 |
+| SETUP-14 arquivos reais (canal privado) | encerrado em 12/11 (D-095): BB e Nubank anonimizados em `packages/domain/test/fixtures/*-real-anon.*`; 2 NFC-e anonimizadas em `packages/nfce-parser/test/fixtures/real-anon-*.html.txt` | T-085, T-087, T-090 |
 | Dono: opção (a) da T-076 no `scripts/check-build.ts` | adiada para a v2 com o Open Finance (D-080) | widget Pluggy Connect |
 | Acesso das sessões ao canal privado | dispensado: as fixtures anonimizadas dos arquivos do BB e do Nubank já estão no repositório (11/11) | T-085, T-087, issue #128 |
 | Dono: conferir as capturas e fazer o merge do PR da T-130 (referência `tokens-*.png` aprovada na D-094) | quando a sessão abrir o PR com `needs-owner` | T-130 |

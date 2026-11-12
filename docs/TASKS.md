@@ -1353,7 +1353,7 @@ Depois desta tarefa, qualquer mudança em caminho protegido exige o rótulo `nee
 |---|---|---|---|---|---|---|
 | todo | S4 | M | US-54, US-56 | RN-82 | T-089 | sim — SETUP-14 |
 
-**(12/11, D-095)** as 2 páginas reais já estão anonimizadas em `packages/nfce-parser/test/fixtures/real-anon-*.html` (ver o README da pasta, com os achados: `.txtTit2`, valor unitário sem casas fixas que hoje cai no cálculo total ÷ quantidade, unidade `BD` fracionária, item repetido, `#linhaTotal` repetido, desafio `/TSPD/`); desconto e duas formas viram variações montadas sobre essa marcação, marcadas como suposição.
+**(12/11, D-095)** as 2 páginas reais já estão anonimizadas em `packages/nfce-parser/test/fixtures/real-anon-*.html.txt` (ver o README da pasta, com os achados: `.txtTit2`, valor unitário sem casas fixas que hoje cai no cálculo total ÷ quantidade, unidade `BD` fracionária, item repetido, `#linhaTotal` repetido, desafio `/TSPD/`); desconto e duas formas viram variações montadas sobre essa marcação, marcadas como suposição.
 
 **Escopo:** 3 páginas reais viram fixtures anonimizadas (§6.2.3 item 7); seletores confirmados; validação Σ itens − desconto ≈ total; `receipt_items`; itens no T02 (US-56).
 
@@ -1767,6 +1767,8 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 |---|---|---|---|---|---|---|
 | todo | R | G | US-57..US-61 | — | T-121 | não |
 
+**Pedido do dono (12/11, D-096):** a S01 parece "amontoada, perdida e jogada na lista". Grupos com título, valor atual de cada opção à direita, as menos usadas no fim; capturas antes e depois no PR.
+
 **Escopo:** UXC-004 (S01 em grupos, com o valor atual de cada opção, completa); UXC-007 (formulários da S03 fechados até tocar, sem dois teclados embutidos); UXC-010 (editar uma conta; se a T-051 da branch `task/T-051-editar-contas-cartoes` tiver algo aproveitável, use); UXC-015 (vazio de contas próprio); UXC-016 (título da seção de receitas; "Nova…" abaixo do vazio); UXC-017 (erro só depois de digitar; listas com título); UXC-018 (diagnóstico: "2,0 GB", eventos legíveis, versão real do app); UXC-019 (linha de categoria mostra o limite e indica que abre a edição); UXC-008 (S06 com rótulo). D-084 itens 6 ("Meios:"), 7 (sai a opção "Transparência" da S08) e 8 (vazios da S03 e S05).
 
 **Pronto quando:** os achados somem nas capturas; E2E de Ajustes verde.
@@ -1777,6 +1779,8 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
 | todo | R | M | US-49, US-52..US-56 | RN-74, RN-78 | T-125 | não |
+
+**Pedido do dono (12/11, D-096):** opção "Ler nota" (QR) dentro do Q01, visível sem toque longo; sem internet, avisar antes da câmera que a nota fica guardada e os itens entram quando a conexão voltar (não lança na hora). Texto no UX §6 e teste E2E offline.
 
 **Escopo:** UXD-001 (I01 sem "Importar extrato" repetido); UXD-005 parte de importação ("Desfazer importação" na I01, RN-78); UXD-007 e UXD-008 (botão de arquivo abre o seletor, texto sem quebrar a 360 px, dica do BB igual nas telas); UXD-009 (plural certo: "1 nova", "2 novas"); UXC-011 (categoria sugerida aparece; botões com espaço); UXC-012 (card sem candidato pela D-084 item 9: uma coluna, "Manter como novo" e "Ignorar", pergunta própria para pagamento de fatura); UXC-013 (regras da I06 com hierarquia); UXC-014 (botões da nota sem quebrar a 360 px); UXC-020 (dica de arrastar o arquivo no computador). D-084 itens 6 ("OK" da I05 vira "Revisado") e 9 (card simples sem candidato; a regra da D-060/D-061 não muda; corrige a UX §3 I05 e a §6.4). Se a issue `regressão:` da importação do Nubank ainda estiver aberta, ela vem antes desta tarefa.
 

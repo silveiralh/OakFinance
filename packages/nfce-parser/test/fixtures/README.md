@@ -19,10 +19,12 @@ endereço, itens, códigos, quantidades, valores, número, série, protocolo, da
 de acesso segue o layout de 44 dígitos com o CNPJ fictício e o **dígito verificador trocado** (inválido de
 propósito). Σ itens = total nas duas, sem desconto. Os originais não entram no repositório.
 
+A extensão é `.html.txt` porque o Biome não aceita a marcação real (`<br></br>`, `</img>`, `<html>` sem `lang`): ela é erro de parse, não regra suprimível, e o `biome.json` é caminho protegido. O parser precisa ler a página como o portal entrega, então o arquivo fica intacto e o teste o lê como texto.
+
 | Arquivo | Itens | Total | Pagamento | Cobre |
 |---|---|---|---|---|
-| `real-anon-mercado-kg.html` | 9 | 85,64 | Crédito | itens por `KG`, unidade `BD` com quantidade fracionária, mesmo produto em linhas separadas |
-| `real-anon-lanchonete-1-item.html` | 1 | 38,50 | Crédito | nota mínima, Simples Nacional |
+| `real-anon-mercado-kg.html.txt` | 9 | 85,64 | Crédito | itens por `KG`, unidade `BD` com quantidade fracionária, mesmo produto em linhas separadas |
+| `real-anon-lanchonete-1-item.html.txt` | 1 | 38,50 | Crédito | nota mínima, Simples Nacional |
 
 Achados para a T-090:
 
