@@ -376,25 +376,24 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ---
 
-### H01 — Início · "Disponível para gastar" · `/` · S1–2
+### H01 — Início · "Gasto em {mês}" · `/` · S1–2
 
-- **Objetivo:** responder em uma olhada quanto ainda dá para gastar no mês e o que vence em breve.
+- **Objetivo (D-081):** responder em uma olhada quanto já foi gasto no mês, como está a conta e o que vence em breve.
 - **Conteúdo e hierarquia (de cima para baixo, celular):**
   1. `TopBar`: saudação curta ("Boa tarde, {nome}", primeiro nome do Google; período do dia pelo fuso `America/Sao_Paulo`), botão olho (`Eye`/`EyeSlash`, ocultar valores), sino (`Bell` com `Badge` de não lidos → `H02`), `SyncBadge`, avatar (→ `/ajustes`).
-  2. **Herói "Disponível para gastar"** em `GlassCard level=2 padding="lg"`:
-     - Rótulo: "Disponível para gastar em novembro" (`--font-size-label`, `--text-secondary`).
-     - Valor: `MoneyText size="hero"` (`--font-size-hero`, Manrope 700).
-     - Linha de apoio: "R$ 42,00 por dia até 30/11" (`floor(D ÷ dias restantes)`, incluindo hoje; oculta se D ≤ 0).
-     - `PaceIndicator` (selo de status do mês, ícone + texto, ver regra abaixo).
-     - Linha informativa (fora da conta, só no padrão "mês do vencimento"): "No cartão para os próximos meses: R$ 980,00" → `P03` (RN-49).
-     - Botão texto "Ver cálculo" → abre sheet `H01-S` com a fórmula linha a linha.
+  2. **Herói "Gasto em {mês}"** (D-081, T-120) no cartão escuro:
+     - Rótulo: "Gasto em novembro"; valor: `MoneyText` grande = GR da RN-47 (efetivadas pelo mês de impacto, menos estornos).
+     - Linha de apoio: "Ainda vai sair este mês: R$ 280,00" (previstas, só informativa).
+     - Linha "Saldo nas contas R$ 2.450,00" com chevron → lista de contas (`S03`).
+     - Botão **Novo lançamento**. Saíram (D-081): o "Disponível para gastar", o valor por dia, o `PaceIndicator`, a linha "No cartão para os próximos meses" e o "Ver cálculo" (`H01-S`).
   3. **Card "Próximos 7 dias"** (GlassCard nível 2): até 4 itens (faturas, contas fixas, parcelas) com data relativa, valor e ícone; link "Ver tudo" → `P03`.
-  4. **Card 50/30/20:** `BudgetRing size="sm"` + 3 linhas "Necessidades R$ 1.200 de R$ 2.250" → `P01`.
+  4. **Card "Saúde do mês"** (D-081): uma barra por faixa (Necessidades, Desejos, Poupança) com "R$ 1.200,00 de R$ 2.250,00" e o estado em texto e ícone — "No caminho" (`CircleCheck`), "Atenção" (`TriangleAlert`, ≥ 80%) ou "Passou do planejado" (`CircleAlert`, ≥ 100%; Poupança é mínimo e nunca passa) — e o atalho **Ajustar percentuais** → `P01`. Sem renda: "Cadastre sua renda para acompanhar as faixas do mês." + **Cadastrar renda**.
   5. **Card Reserva:** `GoalProgress variant="bar"` + "R$ 3.400 de R$ 13.500 · 25%" + botão **Guardar** → Q01 em modo Guardar.
   6. **Card "Conferir"** (só se houver pendências em I05): "3 lançamentos do Nubank para conferir" → `I05`.
   7. **Últimos lançamentos:** 3 `TransactionRow` + "Ver todos".
   8. Cards de configuração pendente (instalar, renda, cartões) acima dos demais cards, dispensáveis.
 - **Layout `lg`:** grade de 12 colunas: herói (5 col) e cards (7 col); gráfico de barras de gastos por dia do mês (12 col) abaixo.
+- **`H01-S` removida (D-081):** a sheet "Como o valor é calculado" saiu com o "Disponível para gastar"; o texto abaixo fica como registro da fórmula da RN-47, que continua no domínio.
 - **Cálculo exibido (`H01-S`, sheet "Como o valor é calculado"):**
   ```
   Receita fixa do mês           + R$ 4.500,00

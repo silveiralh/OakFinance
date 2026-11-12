@@ -182,7 +182,7 @@ flowchart LR
 | T-117 | Base visual: CSS, tokens e componentes | T-116 | done |
 | T-118 | Navegação no celular | T-117 | done |
 | T-119 | Lançamento rápido (Q01) e folhas | T-117 | done |
-| T-120 | Início pelo gasto do mês | T-118 | todo |
+| T-120 | Início pelo gasto do mês | T-118 | done |
 | T-121 | Limiares de aviso configuráveis | T-120 | todo |
 | T-122 | Lançamentos (T01/T02) | T-119 | todo |
 | T-123 | Cartões (C01/C02) | T-122 | todo |
@@ -1706,7 +1706,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-120 — Início pelo gasto do mês
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | G | US-30..US-33 | RN-43..RN-50, RN-93 | T-118 | não |
+| done | R | G | US-30..US-33 | RN-43..RN-50, RN-93 | T-118 | não |
 
 **Escopo (D-081):** novo H01: herói "Gasto em {mês}" (efetivadas do mês de impacto, menos estornos), "Saldo nas contas" (contas que não são cartão, toque abre a lista de contas), linha "Ainda vai sair este mês" (previstas, informativa), card "Saúde do mês" com uma barra por faixa do 50/30/20 e estados "No caminho" / "Atenção" / "Passou do planejado" (texto e ícone) e atalho "Ajustar percentuais"; saem o número "Disponível para gastar", o selo RN-50 e a folha H01-S (a rota redireciona para o Início). `spendable.ts` e os testes ficam. Resumo semanal (RN-93) com "Gasto no mês". Achados do H01 que continuam valendo: UXA-004, UXA-017, UXA-018, UXA-021, UXA-022, UXA-023, UXA-026 (e UXA-025 some com a H01-S). Se a T-102 (Início lê só o período necessário) já estiver na `main`, mantenha o ganho dela. Atualiza no mesmo PR: PRD RN-49, RN-50, RN-93 e as histórias do H01 (cenários novos em Gherkin), UX §3 H01 e §6, CLAUDE.md §1 item 3. Os limiares começam fixos em 80%/100% e passam a configuráveis na T-121.
 

@@ -158,6 +158,20 @@ describe('H01 — gasto do mês e saldo nas contas (US-30, D-081)', () => {
     await waitFor(() => expect(hero()).toHaveTextContent('R$ 3.360,00'));
   });
 
+  it('US-30 (D-081): estorno de R$ 30,00 efetivado em novembro diminui o "Gasto em novembro"', () => {
+    const before = homeModel(rows(referenceTxs()), TODAY).spendable.spentCents;
+    const refund = tx('estorno-10', {
+      ...base,
+      kind: 'refund',
+      category_id: 'mercado',
+      amount_cents: 3000,
+      occurred_on: '2026-11-10',
+    });
+    const after = homeModel(rows([...referenceTxs(), refund]), TODAY);
+    expect(before).toBe(335000);
+    expect(after.spendable.spentCents).toBe(335000 - 3000);
+  });
+
   it('US-30: "Contar antes de receber" no freela de R$ 300,00 → Base R$ 6.100,00 e o valor sobe R$ 240,00', async () => {
     const txs = referenceTxs().map((r) =>
       r.id === 'freela-25' ? { ...r, count_before_received: true } : r,
