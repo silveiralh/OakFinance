@@ -77,11 +77,11 @@ describe('ocultar valores (US-57, RN-103)', () => {
   });
 
   it('RN-103: "R$ ••••" na tela e "Valor oculto" para o leitor de tela', () => {
-    expect(maskMoney('R$ 10,00', true)).toBe('R$ ••••');
-    expect(maskMoney('R$ 10,00', false)).toBe('R$ 10,00');
-    const { container, rerender } = render(<Amount text="R$ 10,00" hidden={false} />);
+    expect(maskMoney('R$\u00A010,00', true)).toBe('R$\u00A0••••');
+    expect(maskMoney('R$\u00A010,00', false)).toBe('R$\u00A010,00');
+    const { container, rerender } = render(<Amount text={'R$\u00A010,00'} hidden={false} />);
     expect(container).toHaveTextContent('R$ 10,00');
-    rerender(<Amount text="R$ 10,00" hidden />);
+    rerender(<Amount text={'R$\u00A010,00'} hidden />);
     expect(container).toHaveTextContent('R$ ••••Valor oculto');
     expect(container.querySelector('[aria-hidden="true"]')).toHaveTextContent('R$ ••••');
   });
@@ -113,7 +113,7 @@ describe('ocultar valores (US-57, RN-103)', () => {
       hidden: true,
     };
     expect(describeChanges({ amount_cents: 4590 }, { amount_cents: 4950 }, names)).toEqual([
-      'Valor alterado de R$ •••• para R$ ••••',
+      'Valor alterado de R$\u00A0•••• para R$\u00A0••••',
     ]);
   });
 });

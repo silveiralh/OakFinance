@@ -28,16 +28,16 @@ describe('MoneyText (UX §5.7, RN-103)', () => {
   it('despesa com o sinal de menos U+2212, nunca o hífen', () => {
     render(<MoneyText value={98000} kind="expense" data-testid="m" />);
     const text = screen.getByTestId('m').textContent ?? '';
-    expect(text).toContain('−R$ 980,00');
+    expect(text).toContain('−R$\u00A0980,00');
     expect(text).not.toContain('-');
   });
 
   it('neutro mostra o próprio sinal; guardado e transferência sem sinal', () => {
-    expect(moneyLabel(-150, 'neutral', false, false)).toBe('−R$ 1,50');
-    expect(moneyLabel(150, 'saving', true, false)).toBe('R$ 1,50');
-    expect(moneyLabel(150, 'transfer', true, false)).toBe('R$ 1,50');
-    expect(moneyLabel(150, 'income', false, false)).toBe('R$ 1,50');
-    expect(moneyLabel(-150, 'expense', true, false)).toBe('−R$ 1,50');
+    expect(moneyLabel(-150, 'neutral', false, false)).toBe('−R$\u00A01,50');
+    expect(moneyLabel(150, 'saving', true, false)).toBe('R$\u00A01,50');
+    expect(moneyLabel(150, 'transfer', true, false)).toBe('R$\u00A01,50');
+    expect(moneyLabel(150, 'income', false, false)).toBe('R$\u00A01,50');
+    expect(moneyLabel(-150, 'expense', true, false)).toBe('−R$\u00A01,50');
   });
 
   it('RN-103: com data-values="hidden" vira "R$ ••••" e lê "Valor oculto"', () => {

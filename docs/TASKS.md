@@ -192,7 +192,7 @@ flowchart LR
 | T-127 | Onboarding e marca | T-126 | done |
 | T-128 | Specs sem restos do Aero | T-127 | done |
 | T-129 | Nova auditoria de UX | T-128 | done |
-| T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
+| T-130 | Valor em dinheiro sem quebra (G4) | T-117 | done |
 | T-131 | Impeccable no projeto | T-101 | done |
 | T-132 | Q01 no celular pequeno (auditoria 12/11) | T-129 | done |
 | T-133 | Renda do mês sem soma dupla (auditoria 12/11) | T-129 | blocked: aguarda dono — decisão do salário manual × receita fixa (D-107) |
@@ -1832,7 +1832,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-130 — Valor em dinheiro sem quebra (G4)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | P | US-62 | RN-01 | T-117 | não |
+| done | R | P | US-62 | RN-01 | T-117 | não |
 
 **Referência aprovada pelo dono (D-094):** atualize `tokens-*.png` só por esta mudança, ponha o rótulo `needs-owner` e as capturas antes e depois no corpo do PR e **não faça o merge**: o dono confere e faz. Depois de abrir o PR, siga para a próxima tarefa.
 
@@ -1841,6 +1841,8 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 **Pronto quando:** nenhum valor quebra entre "R$" e o número; nenhuma tela rola na horizontal a 320 px; referência do styleguide aprovada pelo dono; CI verde.
 
 **Verificar:** `pnpm ci:local`; capturas do roteiro a 360 px.
+
+**Logo novo no mesmo PR (D-108, pedido do dono):** o dono recusou a primeira referência (logo pequeno e fonte) e escolheu, no laboratório de marca, o nome em linha em Sora 600/200, preto e oliva, monograma "OF" em Sora; o logo vai em contornos e a referência `tokens-*.png` é refeita uma vez só com o valor sem quebra e o logo novo.
 
 ### T-131 — Impeccable no projeto
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |

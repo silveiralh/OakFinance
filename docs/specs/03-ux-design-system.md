@@ -701,7 +701,7 @@ Botão primário: pílula preta com texto branco (no escuro, pílula lima com te
 
 **Ícones.** Biblioteca **Lucide** (`lucide-react`), traço 2 (2,5 no estado ativo ou selecionado, no lugar do `fill` da Phosphor). As categorias continuam salvando o nome antigo (ex.: `ForkKnife`); `features/quick-entry/icons.ts` traduz o nome salvo para o ícone Lucide (`Utensils`), sem migração de dados. "Entrar com Google" usa o ícone `LogIn` (a Lucide não tem logos de marca).
 
-**Marca.** Continua só tipográfica: "Oak" em `#0B0D0A` e "Finance" em `#4D7C0F` (escuro: `#F2F7EC` e `#C0E45C`), em Nunito 800. Ícone do app: quadrado preto com o monograma "OF" em lima. `theme-color`: `#EEFDE0` (claro) e `#0B0D0A` (escuro).
+**Marca.** Continua só tipográfica: "Oak" em `#0B0D0A` e "Finance" em `#4D7C0F` (escuro: `#F2F7EC` e `#C0E45C`). Desde a D-108, o nome em linha é desenhado em **Sora** ("Oak" 600, "Finance" 200, espaçamento −0,035 em) e entra no app em contornos (`apps/web/src/ui/brand-paths.ts`), sem depender de fonte carregada; o desenho ocupa a altura toda do `BrandLogo` e não tem brilho. Ícone do app: quadrado preto com o monograma "OF" em Sora 600, lima. `theme-color`: `#EEFDE0` (claro) e `#0B0D0A` (escuro).
 
 **Contraste.** Verificado em `test/tokens.test.ts` a partir do `tokens.css`: todo texto ≥ 4,5:1 sobre o card branco **e** direto sobre a menta (ex.: primário 19,51:1 no branco e 18,36:1 na menta; terciário 7,61:1; preto sobre lima 13,47:1); elementos não textuais ≥ 3:1. A lima não serve de texto nem de borda sobre branco (1,4:1): seleção sempre leva o contorno preto.
 
@@ -722,6 +722,8 @@ Resolução do tema: script inline bloqueante no `<head>` do `index.html` lê a 
 
 ### 4.2 Tokens CSS (copiar como está)
 
+> **Logo atual (D-108):** wordmark e monograma em Sora, em contornos, conforme a §4.0 "Marca"; os SVG de `src/brand/` são gerados de `src/ui/brand-paths.ts`. As fontes, cores e o brilho descritos abaixo não valem mais.
+>
 > **Substituída (D-023, T-128).** O visual Aero descrito abaixo (vidro, desfoque, céu azul, aqua, Manrope, Phosphor) não vale mais; fica como registro. A regra vigente é a §4.0 e a fonte da verdade dos valores é `apps/web/src/styles/tokens.css`.
 
 ```css

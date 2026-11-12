@@ -252,10 +252,10 @@ Deno.test('US-40: vencimento — lembretes em 07/12 e 10/12 às 09:00 com "R$ 98
   await tick(w, brt('2026-12-10', '09:00'));
   const [d3, d0] = pushed(w);
   assert.equal(d3?.title, 'Fatura Nubank vence em 3 dias');
-  assert.equal(d3?.body, 'R$ 980,00 com vencimento em 10/12.');
+  assert.equal(d3?.body, 'R$\u00A0980,00 com vencimento em 10/12.');
   assert.equal(d3?.navigate, `https://app.example.test/cartoes/${CARD}/fatura/2026-12`);
   assert.equal(d0?.title, 'Fatura Nubank vence hoje');
-  assert.equal(d0?.body, 'R$ 980,00. Após pagar, registre o pagamento no app.');
+  assert.equal(d0?.body, 'R$\u00A0980,00. Após pagar, registre o pagamento no app.');
   assert.deepEqual(
     w.pushes.map((p) => [p.topic, p.urgency]),
     [
@@ -312,7 +312,7 @@ Deno.test('RN-89: pagamento parcial avisa com o valor restante', async () => {
     reviewState: 'ok',
   });
   await tick(w, brt('2026-12-07', '09:00'));
-  assert.equal(pushed(w)[0]?.body, 'R$ 480,00 com vencimento em 10/12.');
+  assert.equal(pushed(w)[0]?.body, 'R$\u00A0480,00 com vencimento em 10/12.');
 });
 
 Deno.test('US-40: fechamento — 03/12/2026 às 09:00 "Fatura Nubank de dez/2026 fechou"', async () => {
@@ -320,7 +320,7 @@ Deno.test('US-40: fechamento — 03/12/2026 às 09:00 "Fatura Nubank de dez/2026
   await tick(w, brt('2026-12-03', '09:00'));
   const [closed] = pushed(w);
   assert.equal(closed?.title, 'Fatura Nubank de dez/2026 fechou');
-  assert.equal(closed?.body, 'Total de R$ 980,00, com vencimento em 10/12.');
+  assert.equal(closed?.body, 'Total de R$\u00A0980,00, com vencimento em 10/12.');
   assert.equal(closed?.tag, `invoice_closed:${INVOICE}`);
 });
 
@@ -328,7 +328,7 @@ Deno.test('US-40: valores ocultos — o push e o aviso não mostram o valor', as
   const w = world({ settings: { hideValues: true } });
   await tick(w, brt('2026-12-07', '09:00'));
   const [d3] = pushed(w);
-  assert.equal(d3?.body, 'R$ •••• com vencimento em 10/12.');
+  assert.equal(d3?.body, 'R$\u00A0•••• com vencimento em 10/12.');
   assert.ok(!JSON.stringify([...w.notices.values()]).includes('980'));
 });
 

@@ -205,11 +205,11 @@ describe('G17: rascunho por 24 h (US-64)', () => {
     mount(auth);
     expect(await screen.findByText('Rascunho recuperado.')).toBeInTheDocument();
     await waitFor(() =>
-      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 32,90'),
+      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00A032,90'),
     );
     fireEvent.click(screen.getByRole('button', { name: 'Descartar' }));
     await waitFor(() =>
-      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 0,00'),
+      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00A00,00'),
     );
     expect(await loadDraft(db, DRAFT_KEY)).toBeUndefined();
     expect(usableDraft({ savedAt: 0, amount: 100 }, 25 * 60 * 60 * 1000)).toBeNull();
