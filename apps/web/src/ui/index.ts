@@ -1,6 +1,12 @@
 // Componentes de base (UX §5). Importe daqui.
 
-export { AmountInput, type AmountInputProps, appendDigits, parsePastedAmount } from './AmountInput';
+export {
+  AmountInput,
+  type AmountInputProps,
+  appendDigits,
+  parsePastedAmount,
+  preferredKeypad,
+} from './AmountInput';
 export { AppBackdrop } from './AppBackdrop';
 export { Badge, type BadgeProps } from './Badge';
 export { Banner, type BannerProps } from './Banner';

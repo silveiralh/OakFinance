@@ -1,11 +1,12 @@
 import {
   dayMonth,
   invoiceForPurchase,
+  MAX_TX_CENTS,
   monthLabel,
   todayIn,
   type YearMonth,
 } from '@oakfinance/domain';
-import { ReceiptText } from 'lucide-react';
+import { ChevronDown, ReceiptText } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
@@ -22,6 +23,7 @@ import { formatDateBR } from '../../lib/format';
 import { track, trackUsage } from '../../lib/telemetry';
 import {
   AmountInput,
+  appendDigits,
   Badge,
   BottomSheet,
   Button,
@@ -31,7 +33,9 @@ import {
   DateChip,
   Dialog,
   InstallmentStepper,
+  NumericKeypad,
   PaymentMethodPicker,
+  preferredKeypad,
   SegmentedControl,
   Select,
   Switch,
@@ -141,6 +145,9 @@ export function QuickEntrySheet({
   }, [user, editId, nfce]);
   const [mode, setMode] = useState<QuickKind>(initialMode);
   const [amount, setAmount] = useState(nfce?.draft.amountCents ?? 0);
+  // UXA-008: a folha abre com o foco no valor; UXA-003: o teclado próprio vai para o rodapé fixo, junto do Lançar
+  const amountRef = useRef<HTMLInputElement>(null);
+  const [keypad] = useState(preferredKeypad);
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [categoryByRule, setCategoryByRule] = useState(false);
   const [methodId, setMethodId] = useState<string | null>(null);
@@ -540,6 +547,7 @@ export function QuickEntrySheet({
       open
       title={editing ? t('quick.edit.title') : t('quick.title')}
       onClose={onClose}
+      initialFocus={() => amountRef.current}
       confirmClose={() =>
         amount === 0 || saved || editing
           ? true
@@ -570,7 +578,14 @@ export function QuickEntrySheet({
             ]}
           />
         )}
-        <AmountInput value={amount} onChange={setAmount} autoFocus />
+        <AmountInput
+          value={amount}
+          onChange={setAmount}
+          autoFocus
+          keypad={keypad}
+          showKeypad={false}
+          inputRef={amountRef}
+        />
         {(transfer || refund) && (
           <div className="quick-other">
             <p className="account-name">{transfer ? t('quick.transfer') : t('quick.refund')}</p>
@@ -606,7 +621,7 @@ export function QuickEntrySheet({
           </>
         )}
         {!transfer && (
-          <div className="quick-chips" role="radiogroup" aria-label={t('quick.type.expense')}>
+          <div className="quick-chips" role="radiogroup" aria-label={uiText.category}>
             {suggestions.map((c) => (
               <CategoryChip
                 key={c.id}
@@ -626,9 +641,16 @@ export function QuickEntrySheet({
                 onPress={() => setPickerOpen(true)}
               />
             )}
-            <Button variant="ghost" size="sm" onClick={() => setPickerOpen(true)}>
-              {uiText.more}
-            </Button>
+            {/* UXA-027: "Mais" com forma de chip */}
+            <button
+              type="button"
+              className="chip glass quick-more"
+              data-level="1"
+              onClick={() => setPickerOpen(true)}
+            >
+              <span>{uiText.more}</span>
+              <ChevronDown size={16} aria-hidden="true" />
+            </button>
           </div>
         )}
         {!transfer && method && (
@@ -724,17 +746,26 @@ export function QuickEntrySheet({
             {t('accounts.add')}
           </Button>
         )}
-        <Button
-          size="lg"
-          fullWidth
-          confirmed={saved}
-          disabled={missing !== null}
-          disabledReason={missing ?? ''}
-          onClick={() => submit()}
-          data-testid="quick-submit"
-        >
-          {editing ? t('quick.edit.save') : t('quick.cta')}
-        </Button>
+        <div className="quick-footer" data-testid="quick-footer">
+          {keypad === 'custom' && (
+            <NumericKeypad
+              onDigit={(d) => setAmount((v) => appendDigits(v, d, MAX_TX_CENTS))}
+              onBackspace={() => setAmount((v) => Math.floor(v / 10))}
+              onClear={() => setAmount(0)}
+            />
+          )}
+          <Button
+            size="lg"
+            fullWidth
+            confirmed={saved}
+            disabled={missing !== null}
+            disabledReason={missing ?? ''}
+            onClick={() => submit()}
+            data-testid="quick-submit"
+          >
+            {editing ? t('quick.edit.save') : t('quick.cta')}
+          </Button>
+        </div>
       </div>
       <CategoryPicker
         open={pickerOpen}

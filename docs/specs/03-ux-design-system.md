@@ -451,6 +451,7 @@ Template de cada tela abaixo: **Objetivo · Conteúdo e hierarquia · Componente
 
 ### Q01 — Lançamento rápido · sheet `?novo=despesa|receita|guardar` · S1–2
 
+- **Celular (T-119, D-090):** a folha abre com o foco no valor; com ponteiro grosso, o teclado numérico e **Lançar** ficam num rodapé fixo da folha (o resto rola acima); o cabeçalho da folha (título e Fechar) fica fixo; o valor é centrado; **Mais** tem forma de chip (com `ChevronDown`) e o grupo de categorias se chama "Categoria". A opção escolhida no segmentado e nos chips tem contorno de 2 px no token `--selection-outline` (preto no claro, claro no escuro), não só a cor.
 - **Objetivo:** registrar valor + categoria + meio de pagamento em ≤ 5 s, com uma mão, com ou sem internet.
 - **Conteúdo e hierarquia (sheet de 88% da altura no celular):**
   1. Alça de arrasto + `SegmentedControl` **Despesa | Receita | Guardar** (padrão: Despesa; "Guardar" = aporte na faixa Poupança/Reserva).

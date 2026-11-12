@@ -103,6 +103,8 @@
   --status-info-bg: var(--lime-400);
   /* preenchimento e faixa "info" (barra, banner, controle): preto no claro, lima no escuro (UXA-006) */
   --status-info-fill: var(--ink-950);
+  /* contorno da opção escolhida (chip, segmento): preto no claro, claro no escuro (G5, UXB-023) */
+  --selection-outline: var(--ink-950);
   --status-success-fg: var(--lime-800);
   --status-success-bg: #e6f7cf;
   --status-warning-fg: var(--amber-700);
@@ -296,6 +298,7 @@
   --status-info-fg: var(--ink-950);
   --status-info-bg: var(--lime-400);
   --status-info-fill: var(--lime-400);
+  --selection-outline: var(--mist-50);
   --status-success-fg: var(--lime-300);
   --status-success-bg: #24320c;
   --status-warning-fg: var(--amber-300);
