@@ -1923,6 +1923,8 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `onb.accounts.balance` | Saldo atual (opcional) |
 | `onb.cards.addAnother` | Adicionar outro cartão |
 | `onb.cards.limit` | Limite (opcional) |
+| `onb.cards.ourocard` | Ourocard |
+| `onb.cards.suggestions` | Sugestões de nome |
 | `onb.reserve.title` | Reserva de emergência |
 | `onb.reserve.saved` | Quanto você já tem guardado |
 | `onb.reserve.suggested` | Meta sugerida: {valor} |

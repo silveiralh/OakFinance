@@ -189,7 +189,7 @@ flowchart LR
 | T-124 | Planejar (P01–P04) | T-123 | done |
 | T-125 | Ajustes (S01–S11) | T-121 | done |
 | T-126 | Importação, nota e conferência | T-125 | done |
-| T-127 | Onboarding e marca | T-126 | todo |
+| T-127 | Onboarding e marca | T-126 | done |
 | T-128 | Specs sem restos do Aero | T-127 | todo |
 | T-129 | Nova auditoria de UX | T-128 | todo |
 | T-130 | Valor em dinheiro sem quebra (G4) | T-117 | todo |
@@ -1794,7 +1794,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-127 — Onboarding e marca
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-01..US-05 | — | T-126 | não |
+| done | R | M | US-01..US-05 | — | T-126 | não |
 
 **Escopo:** UXA-006 (passos do onboarding visíveis no escuro); UXA-013 (wordmark na fonte da §4.0; monograma e favicon sem as cores do Aero); UXA-014 ("Começar" legível no ON01 escuro); UXA-016 (campo de valor com moldura no ON05–ON07b); UXA-029 (cabeçalho do onboarding sempre no mesmo lugar); UXA-031 (placeholder que não parece valor; "Não uso cartão" e "Pular" sem redundância); UXA-032 ("Já uso em outro aparelho" numa linha). Mudança de ícone ou favicon que mexa em baseline protegida fica com o rótulo `needs-owner`.
 
