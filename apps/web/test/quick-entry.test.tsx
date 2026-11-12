@@ -1,5 +1,5 @@
 import { invoiceForPurchase } from '@oakfinance/domain';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthContext } from '../src/app/auth';
@@ -261,15 +261,45 @@ describe('Q01 tela (US-12, US-17)', () => {
     expect(await screen.findByTestId('quick-entry')).toBeInTheDocument();
     const onPick = vi.fn();
     render(<FabMenu open onClose={vi.fn()} onPick={onPick} />);
+    // T-126: o Q01 aberto também tem "Ler nota" (D-096); o menu é conferido dentro dele
+    const menu = within(screen.getByTestId('fab-menu'));
     // D-076 (T-118): o toque simples já abre a despesa; o menu traz Receita, Guardar, Importar extrato e Ler nota
     for (const label of ['Receita', 'Guardar', 'Importar extrato', 'Ler nota']) {
-      expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
+      expect(menu.getByRole('button', { name: label })).toBeInTheDocument();
     }
-    expect(screen.queryByRole('button', { name: 'Despesa' })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Ler nota' }));
+    expect(menu.queryByRole('button', { name: 'Despesa' })).toBeNull();
+    fireEvent.click(menu.getByRole('button', { name: 'Ler nota' }));
     expect(onPick).toHaveBeenCalledWith('/nota');
-    fireEvent.click(screen.getByRole('button', { name: 'Importar extrato' }));
+    fireEvent.click(menu.getByRole('button', { name: 'Importar extrato' }));
     expect(onPick).toHaveBeenCalledWith('/importar');
+  });
+});
+
+describe('T-126: "Ler nota" no Q01 (D-096)', () => {
+  it('US-54 (D-096): o Q01 de despesa mostra "Ler nota", que leva à I04; na receita some', async () => {
+    const auth = fakeAuth('signedIn');
+    const router = createMemoryRouter(
+      [
+        {
+          path: '*',
+          element: (
+            <ToastProvider>
+              <QuickEntrySheet onClose={vi.fn()} today={TODAY} />
+            </ToastProvider>
+          ),
+        },
+      ],
+      { initialEntries: ['/?novo=despesa'] },
+    );
+    render(
+      <AuthContext.Provider value={auth}>
+        <RouterProvider router={router} />
+      </AuthContext.Provider>,
+    );
+    const button = await screen.findByTestId('quick-read-note');
+    expect(button).toHaveTextContent('Ler nota');
+    fireEvent.click(button);
+    await waitFor(() => expect(router.state.location.pathname).toBe('/nota'));
   });
 });
 

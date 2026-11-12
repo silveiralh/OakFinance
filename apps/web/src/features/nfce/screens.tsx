@@ -9,6 +9,7 @@ import type { LocalRow } from '../../data/db';
 import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
+import { useOnline } from '../../lib/online';
 import { useToday } from '../../lib/useToday';
 import { Banner, Button, GlassCard, MoneyText } from '../../ui';
 import type { QuickEntryNfce } from '../quick-entry/QuickEntrySheet';
@@ -154,6 +155,7 @@ export function NfceScreen() {
   const [busy, setBusy] = useState(false);
   const [outcome, setOutcome] = useState<NfceOutcome | null>(null);
   const [sheet, setSheet] = useState<QuickEntryNfce | null>(null);
+  const online = useOnline();
   if (!user) {
     return <section className="screen" data-screen="I04" data-testid="screen-I04" />;
   }
@@ -196,6 +198,14 @@ export function NfceScreen() {
   };
   return (
     <section className="screen nfce" data-screen="I04" data-testid="screen-I04">
+      {/* D-096: sem internet, avisa antes da câmera que a nota fica guardada e os itens entram depois */}
+      {!online && !outcome && (
+        <Banner
+          icon={CloudOff}
+          message={t('nfce.offlineBefore')}
+          data-testid="nfce-offline-before"
+        />
+      )}
       <QrScanner
         onResult={(raw) => void read(raw)}
         onManualKey={(key) => void read(key)}

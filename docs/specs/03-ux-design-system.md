@@ -2674,6 +2674,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `nfce.use` | Usar estes dados |
 | `nfce.noCamera` | Sem acesso à câmera. Escolha uma foto da nota ou digite a chave de acesso. |
 | `nfce.offline` | Nota salva. Os itens serão buscados quando a conexão voltar. |
+| `nfce.offlineBefore` | Sem internet. A nota fica guardada e os itens entram no lançamento quando a conexão voltar. |
 | `nfce.sefazDown` | Não foi possível carregar os detalhes da nota. Complete o valor para continuar. |
 | `nfce.invalid` | Este QR code não é de uma nota fiscal (NFC-e). Digite a chave de acesso ou tente outra nota. |
 | `nfce.repeated` | Essa nota já foi lida em {data}. |

@@ -163,3 +163,20 @@ describe('I04 — câmera e foto (US-54, UX §5.31)', () => {
     expect(screen.getByDisplayValue('SUPERMERCADO EXEMPLO')).toBeDefined();
   });
 });
+
+describe('T-126: nota sem internet (D-096)', () => {
+  it('US-55 (D-096): sem internet, a I04 avisa antes da câmera que a nota fica guardada', () => {
+    vi.stubGlobal('navigator', { ...navigator, onLine: false });
+    renderScreen(fakeAuth());
+    expect(screen.getByTestId('nfce-offline-before').textContent).toContain(
+      'Sem internet. A nota fica guardada e os itens entram no lançamento quando a conexão voltar.',
+    );
+    expect(screen.getByRole('button', { name: 'Abrir câmera' })).toBeDefined();
+  });
+
+  it('US-54 (D-096): com internet, sem o aviso', () => {
+    vi.stubGlobal('navigator', { ...navigator, onLine: true });
+    renderScreen(fakeAuth());
+    expect(screen.queryByTestId('nfce-offline-before')).toBeNull();
+  });
+});

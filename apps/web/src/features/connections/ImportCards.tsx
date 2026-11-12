@@ -4,14 +4,12 @@ import { FileUp, QrCode } from 'lucide-react';
 import { useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 import { t } from '../../i18n/pt-BR';
-import { useOnline } from '../../lib/online';
 import { Button, GlassCard } from '../../ui';
 import { IMPORT_ACCEPT } from '../imports/accept';
 import { RecentImports } from '../imports/RecentImports';
 
 /** Importar extrato (funciona sem rede) e ler a nota fiscal (precisa de internet). */
 export function ImportCards() {
-  const online = useOnline();
   const navigate = useNavigate();
   const input = useRef<HTMLInputElement>(null);
   return (
@@ -45,12 +43,11 @@ export function ImportCards() {
       {/* UXD-005: "Desfazer importação" também aqui, nas importações das últimas 24 h */}
       <RecentImports />
       <GlassCard level={2} title={t('conn.section.nfce')} data-testid="connections-nfce">
+        {/* D-096: sem internet a leitura também abre; a I04 avisa que os itens entram quando a conexão voltar */}
         <Button
           variant="secondary"
           iconStart={QrCode}
           fullWidth
-          disabled={!online}
-          disabledReason={t('conn.needsInternet')}
           onClick={() => void navigate('/nota')}
         >
           {t('conn.nfce.read')}
