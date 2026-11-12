@@ -20,6 +20,8 @@ export interface RowTx {
   method: string;
   /** Texto de data/hora já formatado ("hoje 14:32"). */
   when: string;
+  /** Não mostra a data na linha (lista agrupada por dia); o rótulo acessível continua com ela. */
+  hideWhen?: boolean;
   installment?: { n: number; total: number };
   syncState: 'synced' | 'pending' | 'error';
   state?: TxState;
@@ -88,7 +90,7 @@ export function TransactionRow({
   const meta = [
     tx.method,
     tx.installment ? `${tx.installment.n}/${tx.installment.total}` : '',
-    tx.when,
+    tx.hideWhen ? '' : tx.when,
   ]
     .filter(Boolean)
     .join(' · ');

@@ -184,7 +184,7 @@ flowchart LR
 | T-119 | Lançamento rápido (Q01) e folhas | T-117 | done |
 | T-120 | Início pelo gasto do mês | T-118 | done |
 | T-121 | Limiares de aviso configuráveis | T-120 | done |
-| T-122 | Lançamentos (T01/T02) | T-119 | todo |
+| T-122 | Lançamentos (T01/T02) | T-119 | done |
 | T-123 | Cartões (C01/C02) | T-122 | todo |
 | T-124 | Planejar (P01–P04) | T-123 | todo |
 | T-125 | Ajustes (S01–S11) | T-121 | todo |
@@ -1732,7 +1732,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-122 — Lançamentos (T01/T02)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-20..US-24 | RN-22, RN-46 | T-119 | não |
+| done | R | M | US-20..US-24 | RN-22, RN-46 | T-119 | não |
 
 **Escopo:** UXB-003 (linha espremida, descrição quebrando no meio da palavra); UXB-005 (card "Conferir" na T01); UXB-006 (Filtros fora da fileira de chips, busca sem ocupar a dobra); UXB-009 (T02 de parcela com "1 de 6", lista das parcelas e descrição no herói); UXB-022 ("Excluir" igual e na mesma posição em avulso e parcela, sem vermelho cheio); UXB-024 ("Status: Todos"). D-084 itens 1 e 2: "Hoje", "Ontem" e "Amanhã" nas listas e `dd/mm/aaaa` em todas as outras datas; resumo do mês da T01 pelo mês de impacto (RN-46), batendo com Início e P01.
 

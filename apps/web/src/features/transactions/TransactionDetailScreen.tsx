@@ -87,6 +87,12 @@ export function TransactionDetailScreen({
                   (r) => r.card_id === tx.card_id || r.counterpart_card_id === tx.card_id,
                 )
               : [],
+            // UXB-009: as parcelas da mesma compra, para a lista "1/6 dez · 2/6 jan…"
+            seriesTxs: tx?.series_id
+              ? (await user.db.transactions.toArray()).filter(
+                  (r) => r.series_id === tx.series_id && r.deleted_at === null,
+                )
+              : [],
           };
         }
       : null,
@@ -258,9 +264,27 @@ export function TransactionDetailScreen({
     history.kind === 'ready' ? describeHistory(history.entries, tx, device, names, today) : [];
   const empty = t('detail.empty');
 
+  const installment =
+    tx.installment_number && tx.installment_count
+      ? t('detail.installmentOf', { n: tx.installment_number, total: tx.installment_count })
+      : null;
+  const invoiceMonths = new Map(
+    data.cardInvoices.map((i) => [i.id, i.reference_month.slice(0, 7) as YearMonth]),
+  );
+  const series = [...data.seriesTxs]
+    .filter((r) => r.installment_number !== null)
+    .sort((a, b) => (a.installment_number ?? 0) - (b.installment_number ?? 0))
+    .map((r) => ({
+      id: r.id,
+      label: `${r.installment_number}/${r.installment_count} · ${monthLabel(
+        (r.invoice_id ? invoiceMonths.get(r.invoice_id) : undefined) ??
+          (r.occurred_on.slice(0, 7) as YearMonth),
+      )}`,
+    }));
+
+  // UXB-009: tipo e status ficam no herói; observação vazia não ocupa linha
   const pairs: [MessageKey, string][] = [
-    ['detail.field.kind', kindLabel(tx.kind)],
-    ['detail.field.status', status],
+    ...(installment ? ([['detail.field.installment', installment]] as [MessageKey, string][]) : []),
     ['detail.field.category', category?.name ?? empty],
     ['detail.field.method', methodLabel(tx.payment_method) || empty],
     ...(account ? ([['detail.field.account', account]] as [MessageKey, string][]) : []),
@@ -279,7 +303,7 @@ export function TransactionDetailScreen({
       : []),
     ['detail.field.date', row.when],
     ['detail.field.description', tx.description || empty],
-    ['detail.field.notes', tx.notes || empty],
+    ...(tx.notes ? ([['detail.field.notes', tx.notes]] as [MessageKey, string][]) : []),
     ['detail.field.origin', origin ? t(origin) : empty],
   ];
 
@@ -287,6 +311,9 @@ export function TransactionDetailScreen({
     <section className="screen" data-screen="T02" data-testid="screen-T02">
       <GlassCard level={1}>
         <div className="detail-hero">
+          <p className="detail-title" data-testid="detail-title">
+            {tx.description || category?.name || kindLabel(tx.kind)}
+          </p>
           <MoneyText
             value={tx.amount_cents}
             kind={row.kind}
@@ -295,7 +322,11 @@ export function TransactionDetailScreen({
             data-testid="detail-amount"
           />
           <p className="detail-sub">
-            {kindLabel(tx.kind)} · {status}
+            <span>{kindLabel(tx.kind)}</span>
+            <span className="tx-seal detail-status" data-seal={row.state ?? 'posted'}>
+              {status}
+            </span>
+            {installment && <span>{installment}</span>}
           </p>
         </div>
       </GlassCard>
@@ -309,6 +340,17 @@ export function TransactionDetailScreen({
           ))}
         </dl>
       </GlassCard>
+      {series.length > 1 && (
+        <GlassCard level={1} title={uiText.installments} headingLevel={2}>
+          <ol className="detail-series" data-testid="detail-series">
+            {series.map((item) => (
+              <li key={item.id} aria-current={item.id === tx.id ? 'true' : undefined}>
+                {item.label}
+              </li>
+            ))}
+          </ol>
+        </GlassCard>
+      )}
       {tx.nfce_receipt_id && <NfceTxStatus tx={tx} />}
       {occurrence?.tx && (
         <OccurrenceActions
@@ -326,6 +368,7 @@ export function TransactionDetailScreen({
             tx={tx}
             categories={data.categories}
             today={today as ISODate}
+            part="edit"
           />
         ) : (
           <Button
@@ -344,8 +387,23 @@ export function TransactionDetailScreen({
             {t('tx.move')}
           </Button>
         )}
+        {/* UXB-022: Excluir sempre por último e sem vermelho cheio (o vermelho fica na confirmação) */}
+        {tx.series_id && (
+          <SeriesActions
+            user={user}
+            tx={tx}
+            categories={data.categories}
+            today={today as ISODate}
+            part="delete"
+          />
+        )}
         {isStandalone(tx) && (
-          <Button variant="danger" iconStart={Trash2} onClick={() => void remove()}>
+          <Button
+            variant="secondary"
+            iconStart={Trash2}
+            className="detail-delete"
+            onClick={() => void remove()}
+          >
             {t('list.delete')}
           </Button>
         )}

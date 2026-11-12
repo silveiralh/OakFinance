@@ -513,6 +513,41 @@ body:has(.screen-welcome) .backdrop {
   flex-wrap: wrap;
   gap: var(--space-2);
 }
+/* T-122 (UXB-009): o que identifica o lançamento vem acima do valor; status como selo */
+.detail-title {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-heading);
+}
+.detail-hero .detail-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+.detail-status {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--surface-inset);
+  color: var(--text-primary);
+}
+.detail-series {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-secondary);
+}
+.detail-series [aria-current="true"] {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-bold);
+}
+/* T-122 (UXB-022): Excluir como secundário com o texto em perigo */
+.shell .detail-delete {
+  color: var(--status-danger-fg);
+}
 .detail-history-list {
   display: grid;
   gap: var(--space-3);
@@ -560,6 +595,75 @@ body:has(.screen-welcome) .backdrop {
   overflow-x: auto;
   padding: 2px var(--gutter) var(--space-2);
   scrollbar-width: none;
+}
+
+/* T-122 (UXB-006): busca compacta e Filtros fixo numa linha só, acima dos chips */
+.list-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.list-tools .list-search {
+  flex: 1;
+  min-width: 0;
+}
+/* o input tem largura intrínseca (~20 caracteres): sem isto a linha passava de 360 px */
+.list-tools .list-search .field-box,
+.list-tools .list-search input {
+  min-width: 0;
+  width: 100%;
+}
+.list-tools .list-filters {
+  flex: none;
+}
+.list-search .field-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.list-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--touch-min);
+}
+.list-filters-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--surface-dark);
+  color: var(--on-dark);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-bold);
+}
+/* T-122 (UXB-005): card "{n} para conferir" acima da lista */
+.list-review {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.list-review p {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+/* T-122 (UXB-003): título e meta da linha numa linha só, com reticências, sem partir palavra no meio */
+.shell .tx-text > * {
+  min-width: 0;
+}
+.shell .tx-title,
+.shell .tx-meta {
+  overflow: hidden;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* ---------- Início (D-023) ---------- */
