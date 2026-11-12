@@ -3,6 +3,20 @@
 @import "./tokens.css";
 @import "../ui/ui.css";
 
+/* G1 (UXA-007, UXB-008, UXC-005, T-117): o preflight do Tailwind zera peso e tamanho dos títulos; sem esta base,
+   todo h2 solto (estados vazios, folhas, cards de Ajustes) sai com o peso do texto. As classes de cada título
+   continuam valendo (seletor de elemento tem a menor especificidade). */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-snug);
+}
+h2 {
+  font-size: var(--font-size-heading);
+}
+
 /* Superfície de card (UX §4.2, D-023): branca e lisa, sem desfoque. A classe continua `.glass` por
    compatibilidade com os componentes; o nível muda só a sombra. */
 .glass {

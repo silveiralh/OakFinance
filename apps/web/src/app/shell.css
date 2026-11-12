@@ -132,6 +132,8 @@
   font-family: var(--font-display);
   font-size: var(--font-size-title);
   font-weight: var(--font-weight-bold);
+  /* UXA-030: entrelinha de título, não a do corpo */
+  line-height: var(--line-height-snug);
 }
 /* ON01 na referência D-023: tela lima inteira, título grande e ação em pílula preta */
 .onboarding:has(.screen-welcome) {
@@ -308,6 +310,7 @@ body:has(.screen-welcome) .backdrop {
 .list-month-title {
   margin: 0;
   font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
 }
 .list-summary {
   display: grid;
@@ -1138,7 +1141,6 @@ body:has(.screen-welcome) .backdrop {
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.reconcile-diffs,
 /* I01/I02 — conexões (T-076, T-077) */
 .bank-connections,
 .connect-mapping {
@@ -1168,6 +1170,7 @@ body:has(.screen-welcome) .backdrop {
   margin-top: var(--space-2);
 }
 
+.reconcile-diffs,
 .inbox-list {
   display: grid;
   gap: var(--space-3);
@@ -1256,7 +1259,8 @@ body:has(.screen-welcome) .backdrop {
 .calc-pct input[type="range"] {
   width: 100%;
   min-height: var(--touch-min);
-  accent-color: var(--surface-dark);
+  /* UXC-009: no escuro o preto sumia no grafite; o preenchimento "info" é lima lá */
+  accent-color: var(--status-info-fill);
 }
 .calc-pct output {
   font-weight: var(--font-weight-bold);

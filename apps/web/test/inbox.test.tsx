@@ -140,7 +140,7 @@ describe('I05 — grupos (US-49)', () => {
       ),
     ).toEqual([
       'Data diferente: 03/11 × 04/11',
-      'Valor diferente: R$ 50,00 × R$ 51,50',
+      'Valor diferente: R$\u00a050,00 × R$\u00a051,50',
       'Meio diferente: Débito × Pix',
     ]);
   });

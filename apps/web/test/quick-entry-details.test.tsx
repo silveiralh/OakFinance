@@ -156,7 +156,7 @@ describe('US-13: lançamento completo', () => {
     const onClose = mount(auth, { editId: 't1' });
     expect(await screen.findByText('Editar lançamento')).toBeInTheDocument();
     await waitFor(() =>
-      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 45,90'),
+      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00a045,90'),
     );
     const input = screen.getByRole('textbox', { name: 'Valor' });
     for (let i = 0; i < 4; i += 1) {

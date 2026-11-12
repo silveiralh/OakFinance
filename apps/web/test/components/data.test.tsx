@@ -32,15 +32,15 @@ afterEach(() => {
 describe('PaceIndicator (UX §5.6, RN-50)', () => {
   it.each([
     ['on_track', 0, 'No ritmo do mês'],
-    ['attention', 30000, 'Atenção: restam R$ 300,00'],
+    ['attention', 30000, 'Atenção: restam R$\u00a0300,00'],
     ['attention', 0, 'No limite do planejado'],
-    ['over', 4500, 'Acima do planejado em R$ 45,00'],
+    ['over', 4500, 'Acima do planejado em R$\u00a045,00'],
     ['no_income', 0, 'Cadastre a renda para calcular'],
   ] as const)('RN-50: %s (%i) → "%s"', (state, cents, text) => {
     expect(paceText(state, cents, false)).toBe(text);
     render(<PaceIndicator state={state} amountCents={cents} data-testid="p" />);
     const el = screen.getByRole('status');
-    expect(el).toHaveTextContent(`Status do mês: ${text}`);
+    expect(el).toHaveTextContent(`Status do mês: ${text.replace(/\u00a0/g, ' ')}`);
     expect(el.querySelector('svg[aria-hidden="true"]')).not.toBeNull();
   });
 
@@ -76,13 +76,13 @@ describe('ProgressBar, BudgetRing e GoalProgress (UX §5.15–5.17)', () => {
     ] as const;
     const { container } = render(<BudgetRing bands={bands} incomeCents={480000} />);
     expect(screen.getByRole('img')).toHaveAccessibleName(
-      'Necessidades 53% de R$ 2.400,00; Desejos 103% de R$ 1.440,00; Poupança 25% de R$ 960,00',
+      'Necessidades 53% de R$\u00a02.400,00; Desejos 103% de R$\u00a01.440,00; Poupança 25% de R$\u00a0960,00',
     );
     expect(screen.getByRole('table')).toHaveTextContent('R$ 45,00 acima do planejado');
     expect(container.querySelectorAll('[data-excess="true"]')).toHaveLength(1);
     expect(screen.getByRole('rowheader', { name: 'Desejos' }).querySelector('svg')).not.toBeNull();
     expect(ringLabel([{ key: 'needs', spentCents: 1, plannedCents: 0 }], true)).toBe(
-      'Necessidades 0% de R$ ••••',
+      'Necessidades 0% de R$\u00a0••••',
     );
   });
 
@@ -95,7 +95,7 @@ describe('ProgressBar, BudgetRing e GoalProgress (UX §5.15–5.17)', () => {
     const { rerender } = render(<GoalProgress savedCents={720000} goalCents={1440000} />);
     const ring = screen.getByRole('progressbar', { name: 'Poupança' });
     expect(ring).toHaveAttribute('aria-valuenow', '50');
-    expect(ring).toHaveAttribute('aria-valuetext', '50%, R$ 7.200,00 de R$ 14.400,00');
+    expect(ring).toHaveAttribute('aria-valuetext', '50%, R$\u00a07.200,00 de R$\u00a014.400,00');
     rerender(<GoalProgress savedCents={1500000} goalCents={1440000} size="sm" />);
     expect(screen.getByRole('progressbar')).toHaveAttribute(
       'aria-valuetext',
@@ -203,7 +203,7 @@ describe('TransactionRow (UX §5.19)', () => {
       />,
     );
     const main = screen.getByRole('button', {
-      name: 'Despesa de −R$ 32,90, Padaria, Mercado, Nubank crédito, parcela 3 de 10, hoje 14:32, Prevista, Conferir, Vinculado, não sincronizado',
+      name: 'Despesa de −R$\u00a032,90, Padaria, Mercado, Nubank crédito, parcela 3 de 10, hoje 14:32, Prevista, Conferir, Vinculado, não sincronizado',
     });
     expect(main).toHaveTextContent('Prevista');
     expect(main).toHaveTextContent('Não sincronizado');
@@ -222,11 +222,11 @@ describe('TransactionRow (UX §5.19)', () => {
     delete (income as Partial<RowTx>).installment;
     rerender(<TransactionRow tx={income} />);
     expect(screen.getByRole('button')).toHaveAccessibleName(
-      'Receita de +R$ 32,90, Mercado, Nubank crédito, hoje 14:32',
+      'Receita de +R$\u00a032,90, Mercado, Nubank crédito, hoje 14:32',
     );
-    expect(rowLabel({ ...TX, kind: 'saving' }, true)).toContain('Guardado R$ ••••');
+    expect(rowLabel({ ...TX, kind: 'saving' }, true)).toContain('Guardado R$\u00a0••••');
     expect(rowLabel({ ...TX, kind: 'transfer', syncState: 'synced' }, false)).toContain(
-      'Transferência de R$ 32,90',
+      'Transferência de R$\u00a032,90',
     );
   });
 });

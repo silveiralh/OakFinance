@@ -51,26 +51,33 @@ describe('parseBRL (RN-01)', () => {
 
 describe('formatBRL (RN-01)', () => {
   it('RN-01: formato pt-BR com milhar e vírgula', () => {
-    expect(formatBRL(123456)).toBe('R$ 1.234,56');
-    expect(formatBRL(0)).toBe('R$ 0,00');
-    expect(formatBRL(5)).toBe('R$ 0,05');
-    expect(formatBRL(100000000)).toBe('R$ 1.000.000,00');
+    expect(formatBRL(123456)).toBe('R$\u00a01.234,56');
+    expect(formatBRL(0)).toBe('R$\u00a00,00');
+    expect(formatBRL(5)).toBe('R$\u00a00,05');
+    expect(formatBRL(100000000)).toBe('R$\u00a01.000.000,00');
   });
 
   it('RN-01: negativo usa o sinal de menos U+2212', () => {
-    expect(formatBRL(-12000)).toBe(`${MINUS_SIGN}R$ 120,00`);
+    expect(formatBRL(-12000)).toBe(`${MINUS_SIGN}R$\u00a0120,00`);
     expect(formatBRL(-12000).charCodeAt(0)).toBe(0x2212);
   });
 
   it('signed mostra "+" só nos positivos', () => {
-    expect(formatBRL(100, { signed: true })).toBe('+R$ 1,00');
-    expect(formatBRL(0, { signed: true })).toBe('R$ 0,00');
-    expect(formatBRL(-100, { signed: true })).toBe(`${MINUS_SIGN}R$ 1,00`);
+    expect(formatBRL(100, { signed: true })).toBe('+R$\u00a01,00');
+    expect(formatBRL(0, { signed: true })).toBe('R$\u00a00,00');
+    expect(formatBRL(-100, { signed: true })).toBe(`${MINUS_SIGN}R$\u00a01,00`);
+  });
+
+  it('UXB-004: o espaço depois de "R$" é não separável (U+00A0) e o parse aceita os dois espaços', () => {
+    expect(formatBRL(727000)).toBe('R$\u00a07.270,00');
+    expect(formatBRL(727000)).not.toContain('R$ ');
+    expect(parseBRL(formatBRL(727000))).toBe(727000);
+    expect(parseBRL('R$ 7.270,00')).toBe(727000);
   });
 
   it('valores ocultos viram "R$ ••••"', () => {
     expect(formatBRL(123456, { hidden: true })).toBe(HIDDEN_AMOUNT);
-    expect(HIDDEN_AMOUNT).toBe('R$ ••••');
+    expect(HIDDEN_AMOUNT).toBe('R$\u00a0••••');
   });
 
   it('recusa valor que não é inteiro seguro', () => {

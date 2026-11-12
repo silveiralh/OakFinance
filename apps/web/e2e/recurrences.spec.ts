@@ -34,11 +34,11 @@ test('E05: recurrences — o aluguel aparece a vencer e sai do "a vencer" ao ser
     .locator('xpath=ancestor::*[.//*[@data-testid="expense-current"]][1]');
   const current = card.getByTestId('expense-current');
   await expect(current).toHaveText(
-    /^(Prevista para|Atrasada desde) 28\/\d{2}\/\d{4} · R\$ 1\.100,00$/,
+    /^(Prevista para|Atrasada desde) 28\/\d{2}\/\d{4} · R\$\s1\.100,00$/,
   );
   await card.getByRole('button', { name: 'Confirmar' }).click();
   const confirm = page.getByTestId('expense-confirm-sheet');
   await confirm.getByRole('button', { name: 'Confirmar' }).click();
-  await expect(current).toHaveText(/^Paga em 28\/\d{2}\/\d{4} · R\$ 1\.100,00$/);
+  await expect(current).toHaveText(/^Paga em 28\/\d{2}\/\d{4} · R\$\s1\.100,00$/);
   await expect(card.getByRole('button', { name: 'Confirmar' })).toHaveCount(0);
 });

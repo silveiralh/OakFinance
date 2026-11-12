@@ -165,12 +165,14 @@ describe('recurrences — receita fixa (US-23, RN-26..RN-28, RN-32)', () => {
       throw new Error('sem ocorrência');
     }
     expect(occurrenceText(nov, undefined, TODAY, false)).toBe(
-      'Prevista para 05/11/2026 · R$ 5.000,00',
+      'Prevista para 05/11/2026 · R$\u00a05.000,00',
     );
     expect(occurrenceText(nov, undefined, '2026-11-06', false)).toBe(
-      'Atrasada desde 05/11/2026 · R$ 5.000,00',
+      'Atrasada desde 05/11/2026 · R$\u00a05.000,00',
     );
-    expect(occurrenceText(nov, undefined, TODAY, true)).toBe('Prevista para 05/11/2026 · R$ ••••');
+    expect(occurrenceText(nov, undefined, TODAY, true)).toBe(
+      'Prevista para 05/11/2026 · R$\u00a0••••',
+    );
     const draft = {
       description: 'Salário',
       amount: 500_000,

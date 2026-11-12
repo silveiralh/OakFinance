@@ -99,7 +99,7 @@ describe('pagamento de fatura (US-19, RN-14..RN-16)', () => {
     const partial = view([purchase('c', 120_000), payment(50_000)]);
     expect(partial.status).toBe('partial');
     expect(partial.remainingCents).toBe(70_000);
-    expect(invoiceStateLine(partial, false)).toBe('R$ 700,00 em aberto');
+    expect(invoiceStateLine(partial, false)).toBe('R$\u00a0700,00 em aberto');
     // depois do vencimento, sem pagar o resto: vencida, com o mesmo valor em aberto (nenhum juro)
     const late = view([purchase('c', 120_000), payment(50_000)], '2026-11-20');
     expect(late.status).toBe('overdue');
@@ -205,14 +205,14 @@ describe('C02 — Registrar pagamento (UX §3 C02)', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Registrar pagamento' }));
     const sheet = await screen.findByTestId('pay-sheet');
     const amount = within(sheet).getByLabelText('Valor do pagamento');
-    await waitFor(() => expect(amount).toHaveValue('R$ 1.200,00'));
+    await waitFor(() => expect(amount).toHaveValue('R$\u00a01.200,00'));
     expect(within(sheet).getByLabelText('Conta de origem')).toHaveValue('bb');
     expect(within(sheet).getByLabelText('Fatura')).toHaveValue(NOV.id);
     fireEvent.keyDown(amount, { key: 'Delete' });
     for (const digit of '50000') {
       fireEvent.keyDown(amount, { key: digit });
     }
-    expect(amount).toHaveValue('R$ 500,00');
+    expect(amount).toHaveValue('R$\u00a0500,00');
     fireEvent.click(within(sheet).getByRole('button', { name: 'Registrar pagamento' }));
     expect(
       await screen.findByText('Pagamento da fatura de nov/2026 registrado.'),

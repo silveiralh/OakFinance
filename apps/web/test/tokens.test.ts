@@ -72,6 +72,8 @@ const NON_TEXT = [
   'status-danger-fill',
   'border-strong',
   'focus-ring-color',
+  // UXA-006: preenchimento "info" (barra, faixa do banner, controle) precisa aparecer nos dois temas
+  'status-info-fill',
 ] as const;
 
 describe('US-62: contraste do tema claro (UX §4.3)', () => {
@@ -181,6 +183,19 @@ describe('US-62: contraste do tema escuro (UX §4.3)', () => {
     for (const token of [...NON_TEXT, 'accent']) {
       expect(contrastRatio(color(dark, token), c3), token).toBeGreaterThanOrEqual(3);
     }
+  });
+
+  it('D-084 item 4: o cartão do mês usa superfície elevada (não #000) e o texto dele passa', () => {
+    expect(value(dark, 'surface-dark').toLowerCase()).not.toBe('#000000');
+    const c2 = surfaces[1]?.[1] as Rgba;
+    expect(contrastRatio(color(dark, 'surface-dark'), c2)).toBeGreaterThan(1);
+    expect(color(dark, 'surface-dark')).not.toEqual(c2);
+    expect(
+      contrastRatio(color(dark, 'on-dark'), color(dark, 'surface-dark')),
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      contrastRatio(color(dark, 'on-dark-muted'), color(dark, 'surface-dark')),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 });
 

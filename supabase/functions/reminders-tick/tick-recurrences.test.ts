@@ -107,7 +107,7 @@ Deno.test('US-41 Véspera: "Luz vence amanhã" / "≈ R$ 180,00 em 20/11." às 0
   assert.equal(due.length, 1);
   assert.equal(due[0]?.kind, 'bill_due');
   assert.equal(due[0]?.title, 'Luz vence amanhã');
-  assert.equal(due[0]?.body, '≈ R$ 180,00 em 20/11.');
+  assert.equal(due[0]?.body, '≈ R$\u00a0180,00 em 20/11.');
   assert.equal(due[0]?.navigate, `/lancamentos/${recurrenceTxId(LUZ.id, '2026-11-20')}`);
   // fora da janela das 09:00 e em outro dia, nada
   assert.equal(bills(snap(), brt('2026-11-19', '10:00')).length, 0);
@@ -117,7 +117,7 @@ Deno.test('US-41 Véspera: "Luz vence amanhã" / "≈ R$ 180,00 em 20/11." às 0
 Deno.test('RN-90: valor fixo sai sem o "≈"', () => {
   const fixed = { ...LUZ, isVariableAmount: false, description: 'Aluguel', amountCents: 150000 };
   const due = bills(snap({ recurrences: [fixed] }), brt('2026-11-19', '09:00'));
-  assert.equal(due[0]?.body, 'R$ 1.500,00 em 20/11.');
+  assert.equal(due[0]?.body, 'R$\u00a01.500,00 em 20/11.');
 });
 
 Deno.test('US-41 Atrasada: em 21/11 a Luz ainda prevista gera "Confirmar Luz" com ação na T02 (RN-91, UX #19)', () => {
