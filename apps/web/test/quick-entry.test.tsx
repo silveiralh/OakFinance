@@ -155,7 +155,7 @@ describe('Q01 tela (US-12, US-17)', () => {
     expect(submit).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getAllByText('Informe o valor').length).toBeGreaterThan(0);
     type('4590');
-    expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00a045,90');
+    expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 45,90');
     expect(screen.getAllByText('Escolha a categoria').length).toBeGreaterThan(0);
     markQuickEntryStart(performance.now() - 2_000);
     fireEvent.click(await screen.findByRole('radio', { name: /Mercado/ }));

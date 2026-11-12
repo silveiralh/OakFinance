@@ -134,10 +134,10 @@ describe('regras dos passos', () => {
   it('RN-52: meta sugerida provisória, definitiva e sem renda', () => {
     expect(suggestionText(null)).toBe('A meta é sugerida depois que você cadastrar a renda.');
     expect(suggestionText({ targetCents: 1_740_000, provisional: true })).toBe(
-      'Meta sugerida: R$\u00a017.400,00 · estimativa provisória, recalculada com seus gastos',
+      'Meta sugerida: R$ 17.400,00 · estimativa provisória, recalculada com seus gastos',
     );
     expect(suggestionText({ targetCents: 1_740_000, provisional: false })).toBe(
-      'Meta sugerida: R$\u00a017.400,00',
+      'Meta sugerida: R$ 17.400,00',
     );
   });
 });

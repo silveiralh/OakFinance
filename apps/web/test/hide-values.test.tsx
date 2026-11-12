@@ -77,7 +77,7 @@ describe('ocultar valores (US-57, RN-103)', () => {
   });
 
   it('RN-103: "R$ ••••" na tela e "Valor oculto" para o leitor de tela', () => {
-    expect(maskMoney('R$\u00a010,00', true)).toBe('R$\u00a0••••');
+    expect(maskMoney('R$ 10,00', true)).toBe('R$ ••••');
     expect(maskMoney('R$ 10,00', false)).toBe('R$ 10,00');
     const { container, rerender } = render(<Amount text="R$ 10,00" hidden={false} />);
     expect(container).toHaveTextContent('R$ 10,00');
@@ -113,7 +113,7 @@ describe('ocultar valores (US-57, RN-103)', () => {
       hidden: true,
     };
     expect(describeChanges({ amount_cents: 4590 }, { amount_cents: 4950 }, names)).toEqual([
-      'Valor alterado de R$\u00a0•••• para R$\u00a0••••',
+      'Valor alterado de R$ •••• para R$ ••••',
     ]);
   });
 });

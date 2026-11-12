@@ -84,7 +84,7 @@ test('E17: sem renda, o painel pede a renda e mostra quanto já foi gasto, que s
   await expect(hero.getByText('Cadastre sua renda para ver quanto pode gastar')).toBeVisible();
   await expect(hero).not.toHaveAttribute('data-available', /.+/);
   const money = page.getByTestId('home-hero-money');
-  await expect(money).toHaveText(/^Você já gastou R\$\s[\d.]+,\d{2} este mês$/);
+  await expect(money).toHaveText(/^Você já gastou R\$ [\d.]+,\d{2} este mês$/);
   const before = spentCents((await money.textContent()) ?? '');
   await page.evaluate((a) => window.__oakE2E?.addExpense(a, 4590, 'Sem renda'), account);
   await expect.poll(async () => spentCents((await money.textContent()) ?? '')).toBe(before + 4590);

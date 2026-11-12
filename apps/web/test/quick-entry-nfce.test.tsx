@@ -60,7 +60,7 @@ describe('US-54: Q01 pela nota', () => {
     });
     expect(await screen.findByText('Dados da nota fiscal')).toBeInTheDocument();
     expect(screen.getByDisplayValue('SUPERMERCADO EXEMPLO')).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00a0187,45');
+    expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 187,45');
     fireEvent.click(await screen.findByRole('radio', { name: /Mercado/ }));
     fireEvent.click(screen.getByTestId('quick-submit'));
     await waitFor(async () => expect(await auth.user?.db.transactions.count()).toBe(1));
@@ -86,6 +86,6 @@ describe('US-54: Q01 pela nota', () => {
     });
     expect(await screen.findByText('Dados da nota fiscal')).toBeInTheDocument();
     expect(screen.getByDisplayValue('12.345.678/0001-00')).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00a00,00');
+    expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 0,00');
   });
 });

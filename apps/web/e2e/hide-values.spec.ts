@@ -73,7 +73,7 @@ test('E13: hide-values — o olho esconde todo "R$ <dígito>" nas telas principa
   for (const digit of ['1', '2', '3']) {
     await amount.press(digit);
   }
-  await expect(amount).toHaveValue('R$\u00a01,23');
+  await expect(amount).toHaveValue('R$ 1,23');
 
   // volta a mostrar para não afetar os outros testes deste usuário
   await page.goto('/');

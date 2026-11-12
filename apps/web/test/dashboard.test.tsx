@@ -65,7 +65,7 @@ describe('H01 — Disponível para gastar (US-30)', () => {
     expect(screen.getByTestId('home-pace')).toHaveTextContent('No ritmo do mês');
     expect(screen.getByTestId('home-hero')).toHaveAttribute('data-status', 'on_track');
     expect(
-      screen.getByRole('heading', { name: 'Disponível para gastar: R$\u00a01.210,00' }),
+      screen.getByRole('heading', { name: 'Disponível para gastar: R$ 1.210,00' }),
     ).toBeInTheDocument();
   });
 

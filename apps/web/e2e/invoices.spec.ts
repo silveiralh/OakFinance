@@ -88,7 +88,7 @@ test('E04: invoices — compra à vista no cartão e "Registrar pagamento" deixa
   await expect(page.getByTestId(`tx-${id}`)).toBeVisible();
   await page.getByRole('button', { name: 'Registrar pagamento' }).click();
   const sheet = page.getByTestId('pay-sheet');
-  await expect(sheet.getByLabel('Valor do pagamento')).toHaveValue('R$\u00a0120,00');
+  await expect(sheet.getByLabel('Valor do pagamento')).toHaveValue('R$ 120,00');
   await sheet.getByLabel('Conta de origem').selectOption({ label: accountName });
   await sheet.getByRole('button', { name: 'Registrar pagamento' }).click();
   await expect(page.getByText(/^Pagamento da fatura de .+ registrado\.$/)).toBeVisible();

@@ -258,7 +258,7 @@ describe('US-36: fechar, reabrir e editar mês fechado', () => {
     );
     expect(await screen.findByText('Editar lançamento')).toBeDefined();
     await waitFor(() =>
-      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$\u00a045,90'),
+      expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveValue('R$ 45,90'),
     );
     fireEvent.click(screen.getByTestId('quick-submit'));
     const dialog = await screen.findByTestId('closed-month-dialog');

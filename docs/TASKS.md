@@ -192,6 +192,7 @@ flowchart LR
 | T-127 | Onboarding e marca | T-126 | todo |
 | T-128 | Specs sem restos do Aero | T-127 | todo |
 | T-129 | Nova auditoria de UX | T-128 | todo |
+| T-130 | Valor em dinheiro sem quebra (G4) | T-117 | blocked: aguarda dono — referência `tokens.png` do styleguide (needs-owner, D-088) |
 
 ---
 
@@ -1811,3 +1812,15 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 **Pronto quando:** zero S1; os S2 restantes têm tarefa; o resumo vai para o HANDOFF.
 
 **Verificar:** relatório novo em `docs/ux-audit/` e capturas no PR.
+
+### T-130 — Valor em dinheiro sem quebra (G4)
+| Status | Semana | Tam. | US | RN | Depende de | Cliente |
+|---|---|---|---|---|---|---|
+| blocked: aguarda dono — referência `tokens.png` do styleguide (needs-owner, D-088) | R | P | US-62 | RN-01 | T-117 | não |
+
+**Escopo (saiu da T-117, D-088):** G4 da auditoria (UXA-002, UXB-004): `formatBRL` e `HIDDEN_AMOUNT` com espaço não separável U+00A0 entre "R$" e o número (linha no Apêndice A), com os testes que comparam o texto exato esperando o U+00A0; o valor `MoneyText` de tamanho `display` passa a caber em telas de 320–360 px sem rolagem horizontal (tamanho adaptável), já que deixa de quebrar. A referência `tokens.png` do projeto `iphone` muda (o bloco `tokens` mostra "−R$ 1.234,56" em `display`): o dono aprova a referência nova (`needs-owner`).
+
+**Pronto quando:** nenhum valor quebra entre "R$" e o número; nenhuma tela rola na horizontal a 320 px; referência do styleguide aprovada pelo dono; CI verde.
+
+**Verificar:** `pnpm ci:local`; capturas do roteiro a 360 px.
+

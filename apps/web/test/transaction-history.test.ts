@@ -52,7 +52,7 @@ describe('histórico do lançamento (RN-97, RN-98)', () => {
     ]);
     const [item] = describeHistory(entries, current, 'este', NAMES, TODAY);
     expect(item).toMatchObject({
-      title: 'Valor alterado de R$\u00a045,90 para R$\u00a049,50',
+      title: 'Valor alterado de R$ 45,90 para R$ 49,50',
       when: 'Hoje 18:02',
       device: 'neste aparelho',
       conflict: false,
@@ -83,14 +83,14 @@ describe('histórico do lançamento (RN-97, RN-98)', () => {
     const items = describeHistory(entries, current, 'computador', NAMES, TODAY);
     expect(items[0]).toMatchObject({
       title: 'Versão perdida em conflito',
-      lines: ['Valor alterado de R$\u00a060,00 para R$\u00a050,00'],
+      lines: ['Valor alterado de R$ 60,00 para R$ 50,00'],
       device: 'em outro aparelho',
       conflict: true,
     });
     expect(items[0]?.version).toMatchObject({ amount_cents: 5000 });
     // o conflito não muda a linha: a edição anterior compara com a atual
     expect(items[1]).toMatchObject({
-      title: 'Valor alterado de R$\u00a045,90 para R$\u00a060,00',
+      title: 'Valor alterado de R$ 45,90 para R$ 60,00',
       device: 'neste aparelho',
     });
   });
@@ -127,7 +127,7 @@ describe('histórico do lançamento (RN-97, RN-98)', () => {
     expect(describeChanges(row(), row({ tags: ['x'] }), NAMES)).toEqual(['Outros dados alterados']);
     expect(
       describeChanges(row({ _pending: 0 }), row({ amount_cents: 100, _pending: 1 }), NAMES),
-    ).toEqual(['Valor alterado de R$\u00a045,90 para R$\u00a01,00']);
+    ).toEqual(['Valor alterado de R$ 45,90 para R$ 1,00']);
     expect(describeChanges(row(), row({ server_version: 9 }), NAMES)).toEqual([
       'Outros dados alterados',
     ]);
