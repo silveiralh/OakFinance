@@ -607,6 +607,15 @@ body:has(.screen-welcome) .backdrop {
   flex: 1;
   min-width: 0;
 }
+/* o input tem largura intrínseca (~20 caracteres): sem isto a linha passava de 360 px */
+.list-tools .list-search .field-box,
+.list-tools .list-search input {
+  min-width: 0;
+  width: 100%;
+}
+.list-tools .list-filters {
+  flex: none;
+}
 .list-search .field-label {
   position: absolute;
   width: 1px;
