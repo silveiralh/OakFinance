@@ -148,6 +148,10 @@ export function QuickEntrySheet({
   // UXA-008: a folha abre com o foco no valor; UXA-003: o teclado próprio vai para o rodapé fixo, junto do Lançar
   const amountRef = useRef<HTMLInputElement>(null);
   const [keypad] = useState(preferredKeypad);
+  // UX2A-008: com um campo de texto em foco (descrição, observação), o teclado numérico sai da frente
+  const [typingText, setTypingText] = useState(false);
+  // UX2A-001: com o teclado próprio, o valor fica no rodapé fixo, logo acima do teclado, sempre à vista
+  const amountInFooter = keypad === 'custom';
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [categoryByRule, setCategoryByRule] = useState(false);
   const [methodId, setMethodId] = useState<string | null>(null);
@@ -203,7 +207,8 @@ export function QuickEntrySheet({
     draftChecked.current = true;
     void loadDraft(user.db, DRAFT_KEY).then((value) => {
       const draft = usableDraft(value, Date.now());
-      if (!draft) {
+      // UX2A-002: o rascunho só volta no modo pedido (`?novo=receita` não abre a despesa guardada)
+      if (!draft || draft.mode !== initialMode) {
         return;
       }
       setMode(draft.mode);
@@ -228,7 +233,7 @@ export function QuickEntrySheet({
         },
       });
     });
-  }, [user, editId, toast, today, nfce]);
+  }, [user, editId, toast, today, nfce, initialMode]);
 
   useEffect(() => {
     if (!user || editId || saved || !draftChecked.current || amount === 0) {
@@ -542,12 +547,25 @@ export function QuickEntrySheet({
     void save();
   };
 
+  const amountField = (
+    <AmountInput
+      value={amount}
+      onChange={setAmount}
+      autoFocus
+      keypad={keypad}
+      showKeypad={false}
+      inputRef={amountRef}
+    />
+  );
+
   return (
     <BottomSheet
       open
       title={editing ? t('quick.edit.title') : t('quick.title')}
       onClose={onClose}
       initialFocus={() => amountRef.current}
+      // UX2A-001: quase a tela toda, para o valor, as categorias e o Lançar caberem juntos a 360×640
+      snapPoints={[0.96]}
       confirmClose={() =>
         amount === 0 || saved || editing
           ? true
@@ -567,37 +585,33 @@ export function QuickEntrySheet({
             data-testid="quick-from-note"
           />
         )}
+        {/* UX2A-001: tipo e "Ler nota" na mesma linha, sem uma linha só para o botão */}
         {!editing && (mode === 'expense' || mode === 'income') && (
-          <SegmentedControl
-            label={t('quick.title')}
-            value={mode}
-            onChange={changeMode}
-            options={[
-              { value: 'expense', label: t('quick.type.expense') },
-              { value: 'income', label: t('quick.type.income') },
-            ]}
-          />
+          <div className="quick-head">
+            <SegmentedControl
+              label={t('quick.title')}
+              value={mode}
+              onChange={changeMode}
+              options={[
+                { value: 'expense', label: t('quick.type.expense') },
+                { value: 'income', label: t('quick.type.income') },
+              ]}
+            />
+            {/* D-096 (T-126): "Ler nota" à vista no Q01, sem depender do toque longo no FAB */}
+            {!nfce && mode === 'expense' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                iconStart={QrCode}
+                onClick={() => void navigate('/nota')}
+                data-testid="quick-read-note"
+              >
+                <span className="quick-read-note-text">{t('quick.readNote')}</span>
+              </Button>
+            )}
+          </div>
         )}
-        {/* D-096 (T-126): "Ler nota" à vista no Q01, sem depender do toque longo no FAB */}
-        {!editing && !nfce && mode === 'expense' && (
-          <Button
-            variant="ghost"
-            size="sm"
-            iconStart={QrCode}
-            onClick={() => void navigate('/nota')}
-            data-testid="quick-read-note"
-          >
-            {t('quick.readNote')}
-          </Button>
-        )}
-        <AmountInput
-          value={amount}
-          onChange={setAmount}
-          autoFocus
-          keypad={keypad}
-          showKeypad={false}
-          inputRef={amountRef}
-        />
+        {!amountInFooter && amountField}
         {(transfer || refund) && (
           <div className="quick-other">
             <p className="account-name">{transfer ? t('quick.transfer') : t('quick.refund')}</p>
@@ -721,7 +735,16 @@ export function QuickEntrySheet({
             {t('quick.more')}
           </Button>
         ) : (
-          <div className="quick-details">
+          // biome-ignore lint/a11y/noStaticElementInteractions: só observa o foco dos campos de dentro para tirar o teclado numérico da frente (UX2A-008); não é um controle
+          <div
+            className="quick-details"
+            onFocus={(event) =>
+              setTypingText(
+                event.target instanceof HTMLInputElement && event.target.type !== 'checkbox',
+              )
+            }
+            onBlur={() => setTypingText(false)}
+          >
             <TextField
               label={t('quick.description')}
               value={description}
@@ -759,7 +782,8 @@ export function QuickEntrySheet({
           </Button>
         )}
         <div className="quick-footer" data-testid="quick-footer">
-          {keypad === 'custom' && (
+          {amountInFooter && amountField}
+          {keypad === 'custom' && !typingText && (
             <NumericKeypad
               onDigit={(d) => setAmount((v) => appendDigits(v, d, MAX_TX_CENTS))}
               onBackspace={() => setAmount((v) => Math.floor(v / 10))}
