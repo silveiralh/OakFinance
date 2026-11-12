@@ -34,7 +34,7 @@ describe('S03 contas (US-09)', () => {
     expect(await screen.findByText('Nenhuma conta cadastrada')).toBeInTheDocument();
     await add('BB');
     expect(await screen.findByText('BB', { selector: '.account-name' })).toBeInTheDocument();
-    expect(screen.getByText('Formas: Pix, Débito, Boleto, TED/DOC, Outro')).toBeInTheDocument();
+    expect(screen.getByText('Meios: Pix, Débito, Boleto, TED/DOC, Outro')).toBeInTheDocument();
     await add('bb');
     expect(await screen.findByText('Você já tem uma conta com esse nome')).toBeInTheDocument();
   });
@@ -43,7 +43,7 @@ describe('S03 contas (US-09)', () => {
     mount();
     await add('VR', 'meal_voucher');
     expect(await screen.findByText('Meio imediato, sem formas')).toBeInTheDocument();
-    expect(methodsLabel('cash')).toBe('Formas: Dinheiro');
+    expect(methodsLabel('cash')).toBe('Meios: Dinheiro');
   });
 
   it('RN-07: com lançamentos, excluir orienta a arquivar; arquivar e desarquivar', async () => {

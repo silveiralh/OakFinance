@@ -545,7 +545,7 @@ export const ptBR = {
   'sync.remoteEdited.many': '{n} lançamentos foram atualizados a partir de outro aparelho.',
   'home.recent': 'Últimos lançamentos',
   'home.seeAll': 'Ver todos',
-  'accounts.methods': 'Formas: {formas}',
+  'accounts.methods': 'Meios: {formas}',
   'accounts.immediate': 'Meio imediato, sem formas',
   'accounts.save': 'Salvar',
   'accounts.archive': 'Arquivar',

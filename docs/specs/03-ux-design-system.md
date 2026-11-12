@@ -2235,7 +2235,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `sync.remoteEdited.one` | 1 lançamento foi atualizado a partir de outro aparelho. |
 | `sync.remoteEdited.many` | {n} lançamentos foram atualizados a partir de outro aparelho. |
 | `home.recent` / `.seeAll` | Últimos lançamentos / Ver todos |
-| `accounts.methods` | Formas: {formas} |
+| `accounts.methods` | Meios: {formas} |
 | `accounts.immediate` | Meio imediato, sem formas |
 | `accounts.save` | Salvar |
 | `accounts.archive` / `.unarchive` / `.delete` | Arquivar / Desarquivar / Excluir |

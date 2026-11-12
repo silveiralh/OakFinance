@@ -95,19 +95,7 @@ export function AppearanceScreen() {
           ]}
           data-testid="appearance-theme"
         />
-        <p className="appearance-label" aria-hidden="true">
-          {t('appearance.glass')}
-        </p>
-        <SegmentedControl
-          label={t('appearance.glass')}
-          value={current.glass}
-          onChange={(glass: GlassPref) => change({ glass })}
-          options={[
-            { value: 'auto', label: t('appearance.glass.auto') },
-            { value: 'solid', label: t('appearance.glass.solid') },
-          ]}
-          data-testid="appearance-glass"
-        />
+        {/* D-084 item 7: a opção "Transparência" saiu (o visual da §4.0 não usa vidro) */}
         <p className="appearance-label" aria-hidden="true">
           {t('appearance.motion')}
         </p>

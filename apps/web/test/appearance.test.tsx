@@ -80,15 +80,14 @@ describe('S08 — Aparência (US-58)', () => {
     expect((await settings(auth)).spendable).toEqual({ savingsMode: 'target' });
   });
 
-  it('US-58 "Reduzir movimento": Reduzido marca data-motion e "Sempre sólida" tira a transparência', async () => {
+  it('US-58 "Reduzir movimento": Reduzido marca data-motion; a opção "Transparência" não aparece mais (D-084)', async () => {
     const auth = await mount();
     fireEvent.click(screen.getByRole('radio', { name: 'Reduzido' }));
     expect(document.documentElement).toHaveAttribute('data-motion', 'reduced');
-    fireEvent.click(screen.getByRole('radio', { name: 'Sempre sólida' }));
-    expect(document.documentElement).toHaveAttribute('data-glass', 'solid');
-    await waitFor(async () =>
-      expect(await settings(auth)).toMatchObject({ reduceMotion: 'on', glass: 'solid' }),
-    );
+    await waitFor(async () => expect(await settings(auth)).toMatchObject({ reduceMotion: 'on' }));
+    // T-125 (D-084 item 7): sem a escolha de transparência na S08
+    expect(screen.queryByRole('radio', { name: 'Sempre sólida' })).toBeNull();
+    expect(screen.queryByText('Transparência')).toBeNull();
   });
 
   it('"Abrir com valores ocultos" vale para a conta', async () => {
