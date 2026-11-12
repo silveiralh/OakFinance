@@ -18,8 +18,16 @@ test('E05: recurrences — o aluguel aparece a vencer e sai do "a vencer" ao ser
   const name = `Aluguel ${stamp % 100_000}`;
 
   await page.goto('/ajustes/renda');
-  await page.getByRole('button', { name: 'Nova conta fixa' }).click();
   const sheet = page.getByTestId('expense-sheet');
+  // Issue #151: no WebKit o toque em "Nova conta fixa" logo depois do carregamento às vezes não abria a folha
+  // (a tela ainda montava as seções de cima e o botão mudava de lugar) e o teste esperava 90 s pelo campo.
+  // Toca de novo enquanto a folha não estiver aberta, e só segue com ela aberta.
+  await expect(async () => {
+    if (!(await sheet.isVisible())) {
+      await page.getByRole('button', { name: 'Nova conta fixa' }).click({ timeout: 5_000 });
+    }
+    await expect(sheet.getByLabel('Descrição')).toBeVisible({ timeout: 3_000 });
+  }).toPass({ timeout: 30_000 });
   await sheet.getByLabel('Descrição').fill(name);
   const amount = sheet.getByLabel('Valor', { exact: true });
   for (const d of '110000') {
