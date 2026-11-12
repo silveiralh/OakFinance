@@ -138,7 +138,7 @@
 
 ## 3. Próximos passos
 
-- **Triagem de 12/11:** as issues #150 (PR #153) e #152 (PR #NN) entraram. A #152 veio antes da #151 porque a #151 pede rodar E05 e E15 20× localmente, e o ambiente da sessão não sobe o Supabase local (Docker bloqueado) nem tem WebKit: a #151 precisa de outro caminho de verificação (ver §5). Depois, a cadeia segue pela T-122.
+- **Triagem de 12/11:** as issues #150 (PR #153) e #152 (PR #154) entraram. A #152 veio antes da #151 porque a #151 pede rodar E05 e E15 20× localmente, e o ambiente da sessão não sobe o Supabase local (Docker bloqueado) nem tem WebKit: a #151 precisa de outro caminho de verificação (ver §5). Depois, a cadeia segue pela T-122.
 - **T-102 bloqueada para decisão (D-092):** o "Saldo nas contas" do novo Início soma o histórico inteiro; a T-102 quer não ler o histórico. Opções na D-092: (a) agregado de saldo guardado no aparelho, (b) aceitar a leitura completa (hoje o RN-51 passa nos 3 projetos) e encerrar a T-102, (c) saldo numa leitura separada e assíncrona. A próxima tarefa liberada é a T-122.
 - **Sessão de 11/11 23h → 12/11 01h40 UTC:** entraram T-115 a T-120 (PRs #141 a #146). Parou às 01:40 UTC com ~50 min de janela: a próxima da fila é a T-102 (reaberta), que precisa de várias rodadas de CI para medir o RN-51 no `iphone` e agora também de um agregado do "Saldo nas contas"; não cabia na janela. A sessão seguinte começa por ela (ou, se ela bloquear, pela T-121).
 - **Decisões do dono em 11/11 (D-080 a D-084), leia antes de tudo:** Open Finance fica para a v2 e sai da tela (T-115, `OPEN_FINANCE_ENABLED = false`); o Início passa a mostrar o gasto do mês, o saldo nas contas e a saúde por faixa, sem o "Disponível para gastar" (T-120, D-081); limiares de aviso configuráveis (T-121, D-082); todos os achados da auditoria de UX viram as tarefas T-115 a T-129 (D-083, D-084). T-083 está adiada para a v2; T-085 e T-087 voltaram a `todo` porque os arquivos reais do BB (OFX) e do Nubank (CSV da conta e da fatura) já estão no canal privado do SETUP-14 (as NFC-e ainda não: T-090 continua bloqueada). Há uma issue `regressão:` sobre a importação do Nubank que falha sem aviso: ela vem antes de qualquer tarefa. O que a §4 diz sobre a T-076 (widget da Pluggy) e o SETUP-13 deixou de valer.
@@ -195,7 +195,7 @@
 
 ## 4. Bloqueios e pendências do cliente
 
-- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (cabeçalho do Início sobreposto) corrigida no PR #153; a issue #152 (perfil CSV antigo do Nubank salvo no cartão) foi corrigida no PR #NN; a issue #151 (E05/E15 instáveis) vem antes da cadeia.
+- **Decisões do dono em 12/11:** T-102 encerrada sem mudança (D-093); referência do styleguide da T-130 aprovada, merge pelo dono (D-094); T-090 liberada com as 2 NFC-e anonimizadas (D-095); "Ler nota" dentro do Q01 com aviso sem internet (T-126) e Ajustes em grupos (T-125) (D-096). Issue #150 (cabeçalho do Início sobreposto) corrigida no PR #153; a issue #152 (perfil CSV antigo do Nubank salvo no cartão) foi corrigida no PR #154; a issue #151 (E05/E15 instáveis) vem antes da cadeia.
 
 | Item | Quando é necessário | Desbloqueia |
 |---|---|---|
@@ -425,4 +425,4 @@
 | 12/11/2026 | T-121 | PR #148 | done | limiares de aviso configuráveis na S06 (D-082, D-092); T-102 bloqueada para decisão sobre o saldo nas contas |
 | 12/11/2026 | — | — | docs | decisões do dono: T-102 encerrada (D-093), T-130 liberada com merge do dono (D-094), T-090 liberada com 2 NFC-e anonimizadas (D-095) |
 | 12/11/2026 | T-118 (issue #150) | PR #153 | done | topo das abas principais sem sobreposição: colunas laterais do TopBar medem o próprio conteúdo; `e2e/topbar.spec.ts` a 320 e 360 px |
-| 12/11/2026 | T-087 (issue #152) | PR #NN | done | perfil CSV salvo só vale se ler o arquivo (senão o preset detectado); importação sem lançamentos não grava o perfil |
+| 12/11/2026 | T-087 (issue #152) | PR #154 | done | perfil CSV salvo só vale se ler o arquivo (senão o preset detectado); importação sem lançamentos não grava o perfil |
