@@ -30,7 +30,14 @@ import { groupByDay } from '../transactions/list';
 import { dayLabel, toRow } from '../transactions/TransactionsScreen';
 import { invoiceStateLine } from './CardsScreen';
 import { useCardsData, useEnsureCardData } from './data';
-import { cardOverview, invoiceView, overridesOf, payableInvoices } from './model';
+import {
+  cardOverview,
+  defaultPaymentTarget,
+  type InvoiceView,
+  invoiceView,
+  overridesOf,
+  payableInvoices,
+} from './model';
 import { PaymentSheet } from './PaymentSheet';
 
 const dm = (d: string) => `${d.slice(8, 10)}/${d.slice(5, 7)}`;
@@ -136,41 +143,30 @@ export function InvoiceScreen({
           <p className="invoice-head-total" data-testid="invoice-total">
             <Amount text={formatBRL(view.totalCents)} hidden={hidden} />
           </p>
-          <p className="detail-note">
-            {t('invoice.closesDue', {
-              fecha: dm(view.period.closingDate),
-              vence: dm(view.period.dueDate),
-            })}
-          </p>
-          {state && (
+          {/* UXB-021: aberta e futura numa linha só ("Fecha em 03/01 (53 dias) · Vence em 10/01") */}
+          {view.status === 'open' || view.status === 'future' ? (
             <p className="detail-note" data-testid="invoice-state">
-              {state}
+              {`${state} · ${t('invoice.dueOn', { data: dm(view.period.dueDate) })}`}
             </p>
+          ) : (
+            <>
+              <p className="detail-note">
+                {t('invoice.closesDue', {
+                  fecha: dm(view.period.closingDate),
+                  vence: dm(view.period.dueDate),
+                })}
+              </p>
+              {state && (
+                <p className="detail-note" data-testid="invoice-state">
+                  {state}
+                </p>
+              )}
+            </>
           )}
           {view.status === 'future' && <p className="detail-note">{t('card.future.note')}</p>}
         </div>
       </GlassCard>
-      {payable.length > 0 && user && (
-        <>
-          <div className="invoice-pay">
-            <Button fullWidth iconStart={Wallet} onClick={() => setPaying(true)}>
-              {t('card.pay.cta')}
-            </Button>
-          </div>
-          <PaymentSheet
-            open={paying}
-            onClose={() => setPaying(false)}
-            user={user}
-            card={cardRow}
-            accounts={data.accounts}
-            categories={data.categories}
-            invoices={data.invoices}
-            views={payViews}
-            today={today}
-            hidden={hidden}
-          />
-        </>
-      )}
+
       {rows.length === 0 ? (
         <EmptyState
           icon={Receipt}
@@ -195,6 +191,8 @@ export function InvoiceScreen({
                     row,
                     row.category_id ? categories.get(row.category_id) : undefined,
                     today,
+                    false,
+                    true,
                   )}
                   onPress={() => void navigate(`/lancamentos/${row.id}`)}
                 />
@@ -202,6 +200,40 @@ export function InvoiceScreen({
             </div>
           ))}
         </div>
+      )}
+      {/* UXB-013: o primário só quando a fatura da tela tem saldo a pagar e não é futura; nas outras, um link
+          secundário para a fatura que a RN-16 pagaria. Rodapé fixo acima da barra de abas (D-084 item 10). */}
+      {payable.length > 0 && user && (
+        <>
+          <div className="invoice-pay" data-testid="invoice-pay">
+            {payable.some((v) => v.period.id === view.period.id) ? (
+              <Button fullWidth iconStart={Wallet} onClick={() => setPaying(true)}>
+                {t('card.pay.cta')}
+              </Button>
+            ) : (
+              <Button variant="secondary" fullWidth onClick={() => setPaying(true)}>
+                {t('card.pay.other', {
+                  mês: monthLabel(
+                    (defaultPaymentTarget(payViews) ?? (payable[0] as InvoiceView)).period
+                      .referenceMonth,
+                  ),
+                })}
+              </Button>
+            )}
+          </div>
+          <PaymentSheet
+            open={paying}
+            onClose={() => setPaying(false)}
+            user={user}
+            card={cardRow}
+            accounts={data.accounts}
+            categories={data.categories}
+            invoices={data.invoices}
+            views={payViews}
+            today={today}
+            hidden={hidden}
+          />
+        </>
       )}
     </section>
   );

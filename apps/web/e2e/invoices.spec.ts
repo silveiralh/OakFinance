@@ -8,6 +8,19 @@ async function hooks(page: Page) {
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
 }
 
+/**
+ * Seleciona o cartão no carrossel da C01. T-123 (UXB-025): tocar no cartão já selecionado abre a fatura, então só
+ * toca quando ele ainda não é o selecionado.
+ */
+async function selectCard(page: Page, name: string) {
+  const slide = page.locator('[aria-roledescription="cartão"]', { hasText: name });
+  await expect(slide).toBeVisible();
+  if ((await slide.getAttribute('data-selected')) !== 'true') {
+    await slide.getByRole('button').click();
+  }
+  await expect(slide).toHaveAttribute('data-selected', 'true');
+}
+
 test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o item muda de fatura', async ({
   page,
 }) => {
@@ -26,10 +39,7 @@ test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o 
   ] as [string, string]);
 
   await page.goto('/cartoes');
-  const slide = page.locator('[aria-roledescription="cartão"]', { hasText: name });
-  await expect(slide).toBeVisible();
-  await slide.getByRole('button').click();
-  await expect(page.getByRole('heading', { name, level: 2 })).toBeVisible();
+  await selectCard(page, name);
   await expect(page.getByTestId('cards-state')).toHaveText(
     /^(Fecha em \d{2}\/\d{2} \(\d+ dias\)|Fecha hoje)$/,
   );
@@ -37,8 +47,9 @@ test('US-18: invoices — a C01 mostra a fatura atual, a C02 lista a compra e o 
 
   await page.getByRole('button', { name: 'Ver fatura' }).click();
   await expect(page).toHaveURL(new RegExp(`/cartoes/${card}/fatura/\\d{4}-\\d{2}$`));
+  // T-123 (UXB-021): aberta numa linha só
   await expect(page.getByTestId('invoice-head')).toContainText(
-    /Fecha em \d{2}\/\d{2} · Vence em 10\/\d{2}/,
+    /(Fecha em \d{2}\/\d{2} \(\d+ dias\)|Fecha hoje) · Vence em 10\/\d{2}/,
   );
   await expect(page.getByTestId(`tx-${id}`)).toBeVisible();
   await expect(page.getByTestId('invoice-total')).toHaveText('R$ 45,90');
@@ -80,10 +91,7 @@ test('E04: invoices — compra à vista no cartão e "Registrar pagamento" deixa
   ] as [string, string]);
 
   await page.goto('/cartoes');
-  await page
-    .locator('[aria-roledescription="cartão"]', { hasText: name })
-    .getByRole('button')
-    .click();
+  await selectCard(page, name);
   await page.getByRole('button', { name: 'Ver fatura' }).click();
   await expect(page.getByTestId(`tx-${id}`)).toBeVisible();
   await page.getByRole('button', { name: 'Registrar pagamento' }).click();
@@ -114,10 +122,7 @@ test('E04: installments — compra em 3x no cartão "fecha 3 / vence 10" aparece
   ] as [string, string]);
 
   await page.goto('/cartoes');
-  await page
-    .locator('[aria-roledescription="cartão"]', { hasText: name })
-    .getByRole('button')
-    .click();
+  await selectCard(page, name);
   await page.getByRole('button', { name: 'Ver fatura' }).click();
   for (const k of [1, 2, 3]) {
     const items = page.getByTestId('invoice-items');

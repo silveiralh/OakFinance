@@ -151,7 +151,8 @@ describe('InvoiceCard (UX §5.18)', () => {
     expect(card.tagName).toBe('ARTICLE');
     expect(card).toHaveTextContent('Vence em 2 dias');
     expect(card).toHaveTextContent('R$ 980,00');
-    expect(card).toHaveTextContent('03/12 · 10/12');
+    // T-123 (UXB-011): as datas com rótulo
+    expect(card).toHaveTextContent('Fecha em 03/12 · Vence em 10/12');
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     rerender(
       <InvoiceCard

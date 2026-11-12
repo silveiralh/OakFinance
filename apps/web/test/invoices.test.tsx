@@ -277,20 +277,31 @@ describe('C01 e C02 (UX §3)', () => {
     await db.transactions.put(cardTx('c1', CARD, '2026-12', 12_000));
     const router = mount(auth, '/cartoes');
     expect(await screen.findByTestId('cards-state')).toHaveTextContent('Fecha em 03/12 (18 dias)');
-    expect(screen.getByTestId('cards-current')).toHaveTextContent('Fatura de dez/2026 · R$ 120,00');
+    // T-123 (UXB-011): o card de baixo tem o mês como título; nome e total ficam só no cartão
+    expect(
+      screen.getByRole('heading', { name: 'Fatura de dez/2026', level: 2 }),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId('card-a')).toHaveTextContent('Fecha em 03/12 · Vence em 10/12');
     expect(
       screen.getByLabelText('Cartão A, fatura de dez/2026, R$ 120,00, vence em 10/12'),
     ).toHaveAttribute('aria-roledescription', 'cartão');
     expect(screen.getByTestId('cards-upcoming')).toHaveTextContent('jan/2027 · vence 10/01/2027');
     await waitFor(async () => expect(await db.invoices.count()).toBe(8));
     fireEvent.click(screen.getByRole('button', { name: 'Próximo cartão' }));
-    expect(await screen.findByRole('heading', { name: 'Cartão B' })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByTestId('card-b').closest('[aria-roledescription="cartão"]'),
+      ).toHaveAttribute('data-selected', 'true'),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Cartão anterior' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Ver fatura' }));
     await waitFor(() => expect(router.state.location.pathname).toBe('/cartoes/a/fatura/2026-12'));
     expect(await screen.findByTestId('invoice-items')).toBeInTheDocument();
-    expect(screen.getByTestId('invoice-head')).toHaveTextContent('Fecha em 03/12 · Vence em 10/12');
-    expect(screen.getByTestId('invoice-state')).toHaveTextContent('Fecha em 03/12 (18 dias)');
+    // T-123 (UXB-021): aberta numa linha só
+    expect(screen.getByTestId('invoice-state')).toHaveTextContent(
+      'Fecha em 03/12 (18 dias) · Vence em 10/12',
+    );
+    expect(screen.getByTestId('invoice-head')).not.toHaveTextContent('Fecha em 03/12 · Vence');
     fireEvent.click(screen.getByRole('button', { name: 'Próximo mês' }));
     expect(await screen.findByText('Nenhuma compra nesta fatura')).toBeInTheDocument(); // US-63, UX §6.5
     expect(

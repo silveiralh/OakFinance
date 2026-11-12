@@ -103,7 +103,10 @@ export function InvoiceCard({
       {limitCents !== undefined && usedCents !== undefined && (
         <ProgressBar label={card.name} valueCents={usedCents} maxCents={limitCents} size="xs" />
       )}
-      <span className="invoice-dates">{`${dm(invoice.closesOn)} · ${dm(invoice.dueOn)}`}</span>
+      {/* UXB-011: as datas dizem o que são */}
+      <span className="invoice-dates">
+        {t('invoice.closesDue', { fecha: dm(invoice.closesOn), vence: dm(invoice.dueOn) })}
+      </span>
     </>
   );
   return onPress ? (
