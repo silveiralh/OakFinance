@@ -209,9 +209,12 @@ export function outflowsBetween(
   );
 }
 
-/** Mês de hoje, preferências do cálculo (S06), percentuais do orçamento e a entrada do domínio. */
-export function monthContext(rows: HomeRows, today: ISODate) {
-  const month = today.slice(0, 7) as YearMonth;
+/** Mês (o de hoje, por padrão), preferências do cálculo (S06), percentuais do orçamento e a entrada do domínio. */
+export function monthContext(
+  rows: HomeRows,
+  today: ISODate,
+  month: YearMonth = today.slice(0, 7) as YearMonth,
+) {
   const settings = resolveProfileSettings(rows.profile?.settings ?? {});
   const config = settings.spendable;
   const budget = resolveBudgetConfig(
@@ -234,6 +237,21 @@ export function monthContext(rows: HomeRows, today: ISODate) {
     config.includeRestrictedAccounts,
   );
   return { month, settings, config, budget, input };
+}
+
+/**
+ * Gasto realizado do mês pelo mês de impacto (RN-46), o mesmo número do herói do Início ("Gasto em {mês}") e das
+ * faixas da P01: compra no cartão conta no mês da fatura (ou da compra, em competência). `savingsCents` é a parte
+ * que foi para categorias de poupança (T-122, D-084 item 2).
+ */
+export function monthSpent(
+  rows: HomeRows,
+  month: YearMonth,
+  today: ISODate,
+): { spentCents: number; savingsCents: number } {
+  const { config, budget, input } = monthContext(rows, today, month);
+  const spendable = spendableThisMonth(input, budget, config);
+  return { spentCents: spendable.spentCents, savingsCents: spendable.savingsDoneCents };
 }
 
 export function homeModel(rows: HomeRows, today: ISODate): HomeModel {

@@ -28,6 +28,8 @@ import {
   TransactionRow,
   useToast,
 } from '../../ui';
+import { loadHomeRows } from '../dashboard/data';
+import { monthSpent } from '../dashboard/model';
 import { categoryIcon } from '../quick-entry/icons';
 import {
   CHIPS,
@@ -199,6 +201,21 @@ export function toRow(
   };
 }
 
+/** Resumo da T01: entradas pela data; saídas e guardado pelo mês de impacto quando a leitura completa chegou. */
+export function impactSummary(
+  byDate: ReturnType<typeof monthSummary>,
+  byImpact: { spentCents: number; savingsCents: number } | null,
+): ReturnType<typeof monthSummary> {
+  if (!byImpact) {
+    return byDate;
+  }
+  return {
+    inCents: byDate.inCents,
+    outCents: byImpact.spentCents - byImpact.savingsCents,
+    savedCents: byImpact.savingsCents,
+  };
+}
+
 type Entry = { type: 'day'; group: DayGroup } | { type: 'row'; tx: Tx };
 
 function flatten(groups: readonly DayGroup[]): Entry[] {
@@ -270,7 +287,13 @@ export function TransactionsScreen({
     [live, filters, categories, today, planned],
   );
   const entries = useMemo(() => flatten(groupByDay(filtered, planned)), [filtered, planned]);
-  const summary = monthSummary(live, categories, planned);
+  // D-084 item 2 (RN-46): saídas e guardado pelo mês de impacto, como o Início e a P01; entradas pela data
+  const homeRows = useLive(user ? () => loadHomeRows(user.db) : null, [user]);
+  const byImpact = useMemo(
+    () => (homeRows ? monthSpent(homeRows, month, today) : null),
+    [homeRows, month, today],
+  );
+  const summary = impactSummary(monthSummary(live, categories, planned), byImpact);
   const narrowed = filters !== NO_FILTERS && JSON.stringify(filters) !== JSON.stringify(NO_FILTERS);
   const set = (patch: Partial<ListFilters>) => setFilters((f) => ({ ...f, ...patch }));
   const windowed = visibleWindow(entries.length, scrollTop, VIEWPORT, ROW_HEIGHT);
