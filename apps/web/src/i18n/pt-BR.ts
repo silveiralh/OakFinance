@@ -899,6 +899,18 @@ export const ptBR = {
   'plan.tab.reserve': 'Reserva',
   'plan.tab.future': 'Futuro',
   'plan.tab.close': 'Fechar o mês',
+  // Início pelo gasto do mês (T-120, D-081)
+  'home.spent.label': 'Gasto em {mês}',
+  'home.spent.heading': 'Gasto em {mês}: {valor}',
+  'home.balance': 'Saldo nas contas',
+  'home.upcomingMonth': 'Ainda vai sair este mês: {valor}',
+  'home.health.title': 'Saúde do mês',
+  'home.health.on_track': 'No caminho',
+  'home.health.attention': 'Atenção',
+  'home.health.over': 'Passou do planejado',
+  'home.health.line': '{gasto} de {meta}',
+  'home.health.adjust': 'Ajustar percentuais',
+  'home.health.noIncome': 'Cadastre sua renda para acompanhar as faixas do mês.',
 } as const;
 
 export type MessageKey = keyof typeof ptBR;

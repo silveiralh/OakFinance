@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
 import { expect, login, test } from './fixtures/base';
 
-// T-065: E01 completo (US-08) — login → seeds → ON04 a ON08 → Início com "Disponível para gastar"; o passo pulado
+// T-065: E01 completo (US-08) — login → seeds → ON04 a ON08 → Início com "Gasto em {mês}" (D-081); o passo pulado
 // vira o card "Complete a configuração"; "Refazer configuração inicial" e a retomada no passo em que parou.
 // Cada projeto usa um usuário novo (seed.sql), porque o progresso fica na conta.
 
@@ -52,7 +52,7 @@ test('E01: onboarding completo, Pular, retomar e refazer sem duplicar', async ({
   await page.getByTestId('onb-done-home').click();
   await expect(page).toHaveURL('/');
   await expect(page.getByTestId('home-hero')).toBeVisible();
-  await expect(page.getByTestId('home-hero')).toContainText('Disponível para gastar');
+  await expect(page.getByTestId('home-hero')).toContainText('Gasto em');
   await expect(page.getByTestId('onb-pending')).toContainText('Complete a configuração: lembretes');
   await expect
     .poll(() => page.evaluate(() => window.__oakE2E?.accountNames()))

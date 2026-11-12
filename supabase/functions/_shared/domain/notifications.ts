@@ -3,6 +3,7 @@
 import { type BudgetConfig, bucketBudget, categoryBudgets, type MonthInput } from './budget.ts';
 import { addDays, diffDays, parseISODate, parseYearMonth, weekday } from './dates.ts';
 import { DEFAULT_REMINDERS, type DefaultReminder } from './defaults.ts';
+import { bandHealth } from './home.ts';
 import { recurrenceTxId } from './ids.ts';
 import type { InvoicePeriod, InvoiceTotals } from './invoices.ts';
 import { countsForTotals } from './invoices.ts';
@@ -514,6 +515,30 @@ function budgetNotes(input: DueNotificationsInput): DueNotification[] {
   return out;
 }
 
+const BAND_NAME: Readonly<Record<Bucket, string>> = {
+  needs: 'Necessidades',
+  wants: 'Desejos',
+  savings: 'Poupança',
+};
+
+/** " Necessidades: passou do planejado." / " Desejos: atenção." — vazio sem renda ou com tudo no caminho. */
+function criticalBand(input: DueNotificationsInput, incomeCents: Cents, day: ISODate): string {
+  if (incomeCents <= 0) {
+    return '';
+  }
+  const buckets = bucketBudget(input.month, input.budget, incomeCents);
+  const states = (['needs', 'wants', 'savings'] as const).map((b) => ({
+    b,
+    health: bandHealth(buckets[b], day),
+  }));
+  const worst =
+    states.find((s) => s.health === 'over') ?? states.find((s) => s.health === 'attention');
+  if (!worst) {
+    return '';
+  }
+  return ` ${BAND_NAME[worst.b]}: ${worst.health === 'over' ? 'passou do planejado' : 'atenção'}.`;
+}
+
 function weeklyNote(
   input: DueNotificationsInput,
   day: ISODate,
@@ -557,8 +582,13 @@ function weeklyNote(
     .sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1))
     .slice(0, 3)
     .map(([id]) => names[id] as string);
-  const available = spendableThisMonth(input.month, input.budget, input.spendable).availableCents;
-  const tail = `Dias com lançamento: ${days}/7. Disponível: ${money(available, hide)}.`;
+  // RN-93 (D-081): "Gasto no mês" (GR da RN-47) e o estado da faixa mais crítica, no lugar do "Disponível"
+  const month = spendableThisMonth(input.month, input.budget, input.spendable);
+  const tail = `Dias com lançamento: ${days}/7. Gasto no mês: ${money(month.spentCents, hide)}.${criticalBand(
+    input,
+    month.income.totalCents,
+    day,
+  )}`;
   // corta categorias se o corpo passar de 120 caracteres
   const bodyWith = (n: number) =>
     `${money(total, hide)} em gastos${n > 0 ? `, maiores: ${top.slice(0, n).join(', ')}` : ''}. ${tail}`;

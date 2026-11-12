@@ -81,7 +81,8 @@ const examples: ReadonlyArray<{
   {
     tela: 'Painel sem renda',
     path: '/',
-    mensagem: 'Cadastre sua renda para ver quanto pode gastar',
+    // D-081: a Saúde do mês pede a renda (o herói mostra o gasto)
+    mensagem: 'Cadastre sua renda para acompanhar as faixas do mês.',
     acao: 'Cadastrar renda',
   },
   {

@@ -264,7 +264,7 @@ Deno.test('US-43 Domingo à noite: total, 3 maiores categorias, disponível e "D
   assert.equal(due[0]?.title, 'Resumo da semana');
   assert.match(
     due[0]?.body ?? '',
-    /^R\$ 545,00 em gastos, maiores: Mercado, Lazer, Farmácia\. Dias com lançamento: 6\/7\. Disponível: R\$ [\d.]+,\d{2}\.$/,
+    /^R\$ 545,00 em gastos, maiores: Mercado, Lazer, Farmácia\. Dias com lançamento: 6\/7\. Gasto no mês: R\$ [\d.]+,\d{2}\.( \S+: (passou do planejado|atenção)\.)?$/,
   );
   assert.equal(due[0]?.dedupeKey, 'weekly:2026-W46');
   assert.equal(due[0]?.navigate, '/');

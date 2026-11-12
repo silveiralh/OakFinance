@@ -389,18 +389,9 @@ Disponível(M) = RF(M) + RV(M) + Resgates(M)
 - **Virada do mês**: à 00:00 do dia 1 o painel passa a calcular o novo mês. Sobras ou déficits do mês anterior **não** são transportados (o painel é de fluxo mensal, não saldo bancário).
 - **Ocultar valores ligado**: o número é mascarado (RN-103), mas o rótulo de estado (no planejado / acima) continua visível.
 
-**RN-49 — Detalhamento do painel.** Abaixo do número, o painel lista em uma folha expansível (tela `H01-S` do UX): Receitas (fixa, variáveis recebidas, previstas), Resgates da reserva (só se houver), Já gasto (GR), Ainda vai sair (CP, com as 3 próximas saídas por data), Poupança reservada (AporteRestante). Linha informativa (fora da conta, no modo `caixa`): **"No cartão para os próximos meses: R$ Y"** = soma dos itens em faturas com vencimento após M. Cada linha abre a lista filtrada correspondente.
+**RN-49 — Início pelo gasto do mês (D-081).** O H01 mostra: (1) herói **"Gasto em {mês}"** = GR(M) da RN-47 (despesas efetivadas não canceladas cujo mês de impacto, RN-46, é M, menos os estornos); (2) **"Saldo nas contas"** = soma dos saldos atuais das contas (saldo inicial na data dele + entradas − saídas efetivadas até hoje; cartões não são contas), com toque para a lista de contas; (3) linha informativa **"Ainda vai sair este mês: R$ X"** = CP(M) (previstas, fora do herói); (4) card **"Saúde do mês"** com uma barra por faixa do 50/30/20 sobre a renda (RN-43, RN-44): Necessidades e Desejos comparam o gasto com a meta (teto) e ficam "No caminho", "Atenção" (≥ 80%) ou "Passou do planejado" (≥ 100%) pelos limiares da D-082; Poupança compara os aportes com a meta (mínimo), nunca "passa do planejado" e só fica em "Atenção" nos últimos 5 dias do mês abaixo da meta; estado em texto e ícone, e o atalho "Ajustar percentuais". Sem renda (RN-48), o card pede a renda ("Cadastre sua renda para acompanhar as faixas do mês." + "Cadastrar renda") e o herói continua mostrando o gasto. A folha `H01-S` e a linha "No cartão para os próximos meses" saíram do Início (D-081); a fórmula da RN-47 continua no domínio.
 
-**RN-50 — Indicador de status do mês (selo).** Estados e textos (componente `PaceIndicator` do UX; enum `MonthStatus` da técnica):
-
-| Estado | Condição | Texto do selo |
-|---|---|---|
-| `on_track` | Disponível ≥ 20% da Base | "No ritmo do mês" |
-| `attention` | 0 ≤ Disponível < 20% da Base | "Atenção: restam {valor}" (com Disponível = 0: "No limite do planejado") |
-| `over` | Disponível < 0 | "Acima do planejado em {valor}" |
-| `no_income` | Base(M) = 0 (RN-48) | "Cadastre a renda para calcular" |
-
-O limite de 20% usa centavos inteiros: `Disponível × 100 ≥ Base × 20`. Exibido como selo com texto, ícone e cor (nunca só cor); com "Ocultar valores", `{valor}` vira `R$ ••••` e o estado continua visível. O fundo do tema é estático e não muda com o status (decisão do cliente: visual sóbrio, sem elementos lúdicos).
+**RN-50 — Indicador de status do mês (selo). Substituída pela D-081:** o selo "No ritmo do mês" saiu do Início; o estado do mês passa a ser o de cada faixa no card "Saúde do mês" (RN-49). O cálculo `monthStatus` (Disponível ≥ 20% da Base → `on_track`; 0 ≤ Disponível < 20% → `attention`; Disponível < 0 → `over`; Base = 0 → `no_income`) continua no domínio, com os testes, sem uso na tela.
 
 **RN-51 — Recalcular sempre localmente.** O painel é recalculado no aparelho a cada mudança de dados (inclusive offline) em < 200 ms para até 5.000 lançamentos; não depende de rede.
 
@@ -518,7 +509,7 @@ Parcelas futuras projetadas pelo app e confirmadas depois pelo banco são concil
 
 **RN-92 — Limite perto/estourado.** Depois de qualquer mudança que altere o consumo, se `consumo/meta` de **Necessidades** ou **Desejos**, ou `consumo/limite` de uma categoria com limite, cruzar **80%** ou **100%** pela primeira vez no mês → aviso. Máximo 1 por (faixa ou categoria, limiar, mês). No aparelho onde a mudança ocorreu, aparece na hora como toast; o push é enviado pelo job seguinte. Não se aplica a Poupança nem quando Base(M) = 0.
 
-**RN-93 — Resumo semanal.** Padrão **domingo às 19:00** (dia e hora configuráveis). Conteúdo: total gasto na semana (segunda a domingo da semana corrente, despesas efetivadas por data), 3 categorias com maior gasto, "Quanto ainda posso gastar" atual, dias com lançamento na semana (x/7). Se não houve nenhum lançamento na semana, o resumo completo **não** é enviado; no lugar dele vai a versão curta "Nenhum lançamento nesta semana. Registre seus gastos para manter o mês em dia."
+**RN-93 — Resumo semanal.** Padrão **domingo às 19:00** (dia e hora configuráveis). Conteúdo: total gasto na semana (segunda a domingo da semana corrente, despesas efetivadas por data), 3 categorias com maior gasto, dias com lançamento na semana (x/7), **"Gasto no mês: R$ X"** (GR da RN-47) e, se houver, o estado da faixa mais crítica ("Necessidades: passou do planejado." / "Desejos: atenção."; D-081). Se não houve nenhum lançamento na semana, o resumo completo **não** é enviado; no lugar dele vai a versão curta "Nenhum lançamento nesta semana. Registre seus gastos para manter o mês em dia."
 
 **RN-94 — Conexão bancária.** Ao entrar em `expirada`/`erro_login` (uma vez por mudança de estado) e quando o consentimento vencer em ≤ 7 dias (uma vez). Texto com ação "Reconectar".
 
@@ -1403,53 +1394,55 @@ Cenário: Apagar
 
 ### E08 — Orçamento, painel e reserva
 
-#### US-30 — Painel "Quanto ainda posso gastar"
-**Como** usuário, **quero** abrir o app e ver na hora quanto ainda posso gastar no mês **para** decidir uma compra sem fazer conta.
+#### US-30 — Início: quanto já gastei e como está minha conta
+**Como** usuário, **quero** abrir o app e ver na hora quanto já gastei no mês e quanto tenho nas contas **para** acompanhar o mês sem fazer conta (D-081).
 
 | Prioridade | Estimativa | Camada | Depende de | Regras |
 |---|---|---|---|---|
 | Must | G | N2 · S2 | US-12, US-17, US-23, US-24, US-25, US-27 | RN-44, RN-46 a RN-51 |
 
 ```gherkin
-Cenário: Caso de referência (RN-47)
+Cenário: Caso de referência (RN-47, D-081)
   Dado os dados do caso de teste de referência da RN-47 e hoje 15/11/2026
   Quando abro o app
-  Então vejo "R$ 1.210,00" com o rótulo "Disponível para gastar em novembro" (a resposta à pergunta "quanto ainda posso gastar")
-  E "R$ 75,62 por dia até 30/11"
-  E o selo "No ritmo do mês" (1.210,00 ≥ 20% de 5.800,00 = 1.160,00)
-  E o detalhamento: Receitas R$ 5.800,00 · Já gasto R$ 3.350,00 · Ainda vai sair R$ 280,00 · Poupança reservada R$ 960,00
+  Então vejo "R$ 3.350,00" com o rótulo "Gasto em novembro"
+  E "Ainda vai sair este mês: R$ 280,00"
+  E "Saldo nas contas" com R$ 2.450,00, que abre a lista de contas
+  E não vejo "Disponível para gastar" nem o selo "No ritmo do mês"
 
-Cenário: Compra no cartão que vence no mês seguinte (modo caixa)
-  Quando lanço R$ 150,00 no cartão A em 15/11/2026
-  Então o valor principal continua R$ 1.210,00
-  E a linha "No cartão para os próximos meses" aumenta R$ 150,00
+Cenário: Compra no cartão que vence no mês seguinte
+  Quando lanço R$ 150,00 no cartão A em 15/11/2026 (fatura dez/2026)
+  Então o "Gasto em novembro" continua R$ 3.350,00 (o mês de impacto é dezembro, RN-46)
+  E o "Saldo nas contas" não muda
 
 Cenário: Compra no débito
   Quando lanço R$ 50,00 no débito BB em 15/11/2026
-  Então o valor principal passa a R$ 1.160,00 imediatamente, mesmo offline
+  Então o gasto passa a R$ 3.400,00 e o saldo a R$ 2.400,00 imediatamente, mesmo offline
 
-Cenário: Receita prevista
-  Quando ligo "Contar antes de receber" no freela de R$ 300,00 de 25/11
-  Então a Base vai a R$ 6.100,00, a meta de poupança a R$ 1.220,00, o aporte restante a R$ 1.020,00
-  E o valor principal sobe R$ 240,00
+Cenário: Estorno
+  Dado um estorno de R$ 30,00 efetivado em novembro
+  Então o "Gasto em novembro" diminui R$ 30,00
+
+Cenário: Previstas fora do herói
+  Dado a conta de luz de R$ 280,00 prevista para 20/11
+  Então ela aparece em "Ainda vai sair este mês" e não soma no "Gasto em novembro"
 
 Cenário: Mês sem renda
   Dado nenhum salário cadastrado e nenhuma receita em novembro
-  Então não vejo o valor "Disponível para gastar"
-  E vejo "Cadastre sua renda para ver quanto pode gastar" com "Cadastrar renda" e "Lançar receita", e "Você já gastou R$ X este mês"
+  Então vejo o gasto do mês no herói
+  E a "Saúde do mês" mostra "Cadastre sua renda para acompanhar as faixas do mês." com "Cadastrar renda"
 
-Cenário: Negativo
-  Dado Disponível = -R$ 120,00
-  Então vejo "-R$ 120,00", o selo "Acima do planejado em R$ 120,00" e o atalho "Ver onde ajustar"
-  E não vejo valor por dia
+Cenário: Faixa em atenção
+  Dado renda de R$ 1.000,00 e R$ 450,00 em Necessidades (meta R$ 500,00)
+  Então Necessidades mostra "Atenção" com ícone e "R$ 450,00 de R$ 500,00"
 
-Cenário: Zero
-  Dado Disponível = R$ 0,00 e Base > 0
-  Então vejo o selo "No limite do planejado" (estado attention) e não vejo valor por dia
+Cenário: Faixa acima do planejado
+  Dado renda de R$ 1.000,00 e R$ 920,00 em Necessidades
+  Então Necessidades mostra "Passou do planejado" com ícone, e o card tem "Ajustar percentuais"
 
 Cenário: Virada do mês
   Quando o relógio passa para 01/12/2026 00:00
-  Então o painel calcula dezembro sem carregar sobra ou déficit de novembro
+  Então o Início mostra "Gasto em dezembro" sem carregar o gasto de novembro
 
 Cenário: Desempenho
   Dado 5.000 lançamentos locais

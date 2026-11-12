@@ -145,8 +145,9 @@ describe('categories (US-27, RN-39..RN-42)', () => {
       within(await screen.findByTestId('category-sheet')).getByRole('button', { name: 'Excluir' }),
     );
     const sheet = await screen.findByTestId('delete-sheet');
+    // o <dialog> entra no DOM antes do showModal(): espera o botão ficar acessível (mesmo padrão do cards-edit)
+    const confirm = await within(sheet).findByRole('button', { name: 'Mover e excluir' });
     expect(sheet).toHaveTextContent('6 itens usam esta categoria. Escolha para onde movê-los.');
-    const confirm = within(sheet).getByRole('button', { name: 'Mover e excluir' });
     expect(confirm).toHaveAttribute('aria-disabled', 'true');
     fireEvent.change(within(sheet).getByLabelText('Mover para'), { target: { value: lazer.id } });
     fireEvent.click(confirm);

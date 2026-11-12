@@ -1730,3 +1730,65 @@ body:has(.screen-welcome) .backdrop {
 .quick-more {
   gap: var(--space-1);
 }
+
+/* Início pelo gasto do mês (T-120, D-081) */
+.home-balance {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.home-balance .money {
+  margin-left: auto;
+  font-weight: var(--font-weight-bold);
+}
+.home-health {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+.home-health-bands {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-health-band {
+  display: grid;
+  gap: var(--space-1);
+}
+.home-health-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.home-health-name {
+  font-weight: var(--font-weight-semibold);
+}
+.home-health-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-semibold);
+}
+.home-health-state[data-health="attention"] {
+  color: var(--status-warning-fg);
+}
+.home-health-state[data-health="over"] {
+  color: var(--status-danger-fg);
+}
+.home-health-line {
+  margin: 0;
+  font-size: var(--font-size-label);
+  color: var(--text-secondary);
+}
+.home-health-empty {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+.home-health-empty p {
+  margin: 0;
+}
