@@ -2623,7 +2623,9 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `conn.reconnectSteps` | Precisa reconectar: abra o Meu Pluggy, autorize o {banco} de novo e copie o novo Item ID. Depois toque em Renovar. |
 | `conn.importShortcut` | Importar extrato (OFX/CSV) |
 | `conn.banner` | Sua conexão com o {banco} precisa ser renovada |
-| `import.choose` | Escolher arquivo OFX ou CSV |
+| `import.choose` | Escolher arquivo |
+| `import.formats` | OFX ou CSV, exportado pelo banco. |
+| `import.drag` | Ou arraste o arquivo para cá. |
 | `import.bbHint` | Banco do Brasil: exporte o extrato em OFX (Money 2000+). |
 | `import.local` | O arquivo é lido no seu aparelho e não é enviado ao servidor. |
 | `import.preview` | {n} lançamentos · {d} já existem (serão ignorados) · {s} parecidos com lançamentos seus (vão para conferência) |

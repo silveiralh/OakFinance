@@ -1222,6 +1222,24 @@ body:has(.screen-welcome) .backdrop {
   display: grid;
   gap: var(--space-3);
 }
+/* T-126 (UXC-020): "ou arraste o arquivo para cá" só no computador e contorno ao arrastar por cima */
+.import-drag-hint {
+  display: none;
+}
+@media (min-width: 1024px) and (pointer: fine) {
+  .import-drag-hint {
+    display: block;
+  }
+}
+.import-drop-zone[data-dragging="true"] .import-drop {
+  outline: 2px dashed var(--border-strong);
+  outline-offset: 4px;
+}
+/* UXD-007: o rótulo curto "Escolher arquivo" fica em uma linha também a 360 px */
+.import-drop .btn,
+.connections .btn {
+  white-space: nowrap;
+}
 .csv-preview {
   width: 100%;
   border-collapse: collapse;
@@ -1594,8 +1612,10 @@ body:has(.screen-welcome) .backdrop {
   flex-wrap: wrap;
   gap: var(--space-2, 8px);
 }
+/* UXC-014: a 360 px os dois botões empilham em vez de quebrar o rótulo em duas linhas */
 .qr-actions > * {
-  flex: 1 1 140px;
+  flex: 1 1 180px;
+  white-space: nowrap;
 }
 .nfce-items ul {
   margin: 8px 0 16px;

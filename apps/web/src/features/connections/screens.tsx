@@ -57,12 +57,12 @@ export function ConnectionsScreen() {
   return (
     <section className="screen connections" data-screen="I01" data-testid="screen-I01">
       <GlassCard level={2} title={t('conn.section.banks')} data-testid="connections-banks">
+        {/* UXD-001: no vazio, "Conectar banco" é a ação do próprio vazio; importar fica no card abaixo */}
         {active.length === 0 ? (
           <EmptyState
             icon={Landmark}
             title={empty.title}
             description={empty.text}
-            secondaryAction={{ label: empty.actions[1], onPress: () => void navigate('/importar') }}
             data-testid="connections-empty"
           />
         ) : (

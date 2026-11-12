@@ -3,12 +3,14 @@
 // e gravado no aparelho e sincroniza depois. As importações das últimas 24 h podem ser desfeitas.
 import { type CsvProfile, type ISODate, mapCsvRows, type OfxStatement } from '@oakfinance/domain';
 import { FileUp } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
 import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
 import { formatDateBR } from '../../lib/format';
 import { Button, GlassCard, Select, useToast } from '../../ui';
+import { IMPORT_ACCEPT } from './accept';
 import { ColumnMapper } from './ColumnMapper';
 import { tokenizeCsv } from './csv-parse';
 import {
@@ -27,10 +29,10 @@ import {
   previousImport,
   rememberedDestination,
   sha256Hex,
-  undoable,
   undoImport,
 } from './ofx-import';
 import { looksLikeOfx, parseCsvFile, parseFile } from './parse-file';
+import { RecentImports } from './RecentImports';
 
 interface Loaded {
   fileName: string;
@@ -59,6 +61,13 @@ export function ImportScreen() {
   const [dest, setDest] = useState('');
   const [anyway, setAnyway] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  // UXD-008: a I01 abre o seletor e manda o arquivo escolhido para cá, já carregado
+  const location = useLocation();
+  const navigate = useNavigate();
+  const chooseRef = useRef<((file: File) => Promise<void>) | null>(null);
+  const handoff = (location.state as { file?: unknown } | null)?.file;
+  const pendingFile = handoff instanceof File ? handoff : null;
   const data = useLive(
     user
       ? async () => ({
@@ -74,6 +83,13 @@ export function ImportScreen() {
       : null,
     [user],
   );
+  const ready = Boolean(user && data);
+  useEffect(() => {
+    if (ready && pendingFile && chooseRef.current) {
+      void chooseRef.current(pendingFile);
+      void navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [ready, pendingFile, navigate, location.pathname]);
   if (!user || !data) {
     return <section className="screen" data-screen="I03" data-testid="screen-I03" />;
   }
@@ -158,6 +174,8 @@ export function ImportScreen() {
     setDest(chosen ? encode(chosen) : '');
     setLoaded({ fileName: file.name, sha, statement, csv: null, already });
   };
+
+  chooseRef.current = choose;
 
   /** Trocar o destino de um CSV usa o mapeamento salvo para ele, se houver (RN-76). */
   const changeDest = (value: string) => {
@@ -249,32 +267,40 @@ export function ImportScreen() {
     }
   };
 
-  const recent = undoable(data.imports, Date.now());
-
   return (
     <section className="screen import" data-screen="I03" data-testid="screen-I03">
       {/* biome-ignore lint/a11y/noStaticElementInteractions: arrastar é atalho no computador; o botão abaixo é o caminho acessível */}
       <div
         className="import-drop-zone"
-        onDragOver={(event) => event.preventDefault()}
+        data-dragging={dragging ? 'true' : undefined}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
         onDrop={(event) => {
           event.preventDefault();
+          setDragging(false);
           void choose(event.dataTransfer.files[0]);
         }}
       >
         <GlassCard level={2} className="import-drop" data-testid="import-drop">
-          <p>{t('import.bbHint')}</p>
           <input
             ref={input}
             type="file"
-            accept=".ofx,.csv,text/csv,text/comma-separated-values,application/csv,application/vnd.ms-excel,text/plain,application/x-ofx"
+            accept={IMPORT_ACCEPT}
             hidden
             onChange={(event) => void choose(event.target.files?.[0])}
             data-testid="import-file"
           />
+          {/* UXD-007/UXD-008: rótulo curto e as dicas abaixo do botão, no mesmo estilo da I01 */}
           <Button iconStart={FileUp} fullWidth onClick={() => input.current?.click()}>
             {t('import.choose')}
           </Button>
+          {/* UXC-020: no computador, avisa que dá para arrastar */}
+          <p className="account-meta import-drag-hint">{t('import.drag')}</p>
+          <p className="account-meta">{t('import.formats')}</p>
+          <p className="account-meta">{t('import.bbHint')}</p>
           <p className="account-meta">{t('import.local')}</p>
           {error && (
             <p role="alert" data-testid="import-error">
@@ -300,41 +326,7 @@ export function ImportScreen() {
         />
       )}
 
-      {recent.length > 0 && (
-        <GlassCard
-          level={1}
-          title={t('import.recent')}
-          headingLevel={2}
-          data-testid="import-recent"
-        >
-          <ul className="inbox-list">
-            {recent.map((row) => (
-              <li key={row.id}>
-                <p>
-                  {t('import.recentItem', {
-                    arquivo: row.file_name ?? '',
-                    n: Number((row.stats as { total?: number } | null)?.total ?? 0),
-                    data: formatDateBR(row.created_at.slice(0, 10) as ISODate),
-                  })}
-                </p>
-                <Button
-                  variant="ghost"
-                  onClick={() =>
-                    void undoImport(user.db, row.id).then((r) => {
-                      if (r.ok) {
-                        user.engine.notifyWrite();
-                        showToast({ message: t('import.undone') });
-                      }
-                    })
-                  }
-                >
-                  {t('import.undo')}
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </GlassCard>
-      )}
+      <RecentImports />
     </section>
   );
 }

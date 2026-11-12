@@ -95,9 +95,7 @@ describe('T-115: Open Finance fora do MVP (D-080)', () => {
     const screenI01 = await screen.findByTestId('screen-I01');
     expect(await within(screenI01).findByText('Importar extrato')).toBeInTheDocument();
     expect(within(screenI01).getByText('Nota fiscal (NFC-e)')).toBeInTheDocument();
-    expect(
-      within(screenI01).getByRole('button', { name: 'Escolher arquivo OFX ou CSV' }),
-    ).toBeInTheDocument();
+    expect(within(screenI01).getByRole('button', { name: 'Escolher arquivo' })).toBeInTheDocument();
     expect(
       within(screenI01).getByRole('button', { name: 'Ler QR code da nota' }),
     ).toBeInTheDocument();

@@ -295,7 +295,11 @@ describe('US-45: conectar banco', () => {
     fireEvent.click(button);
     expect(router.state.location.pathname).toBe('/ajustes/conexoes');
     // importar extrato funciona sem rede (lido no aparelho)
-    fireEvent.click(screen.getByRole('button', { name: 'Escolher arquivo OFX ou CSV' }));
+    // UXD-008: o botão abre o seletor; o arquivo escolhido leva à I03
+    expect(screen.getByRole('button', { name: 'Escolher arquivo' })).toBeInTheDocument();
+    fireEvent.change(screen.getByTestId('connections-import-file'), {
+      target: { files: [new File(['OFXHEADER:100'], 'extrato.ofx')] },
+    });
     await waitFor(() => expect(router.state.location.pathname).toBe('/importar'));
   });
 
