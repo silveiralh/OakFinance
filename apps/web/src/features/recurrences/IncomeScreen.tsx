@@ -227,13 +227,15 @@ export function IncomeScreen({
 
   return (
     <section className="screen" data-screen="S05" data-testid="screen-S05">
-      <div className="detail-actions">
-        <Button iconStart={Plus} onClick={openNew}>
-          {t('fixed.new')}
-        </Button>
-      </div>
+      {/* UXC-016: as duas metades com título paralelo; no vazio, a ação fica no próprio vazio */}
+      <h2 className="list-month-title">{t('fixed.incomes')}</h2>
       {recs.length === 0 ? (
-        <EmptyState icon={Briefcase} title={t('fixed.empty')} description={t('fixed.emptyHint')} />
+        <EmptyState
+          icon={Briefcase}
+          title={t('fixed.empty')}
+          description={t('fixed.emptyHint')}
+          primaryAction={{ label: t('fixed.new'), onPress: openNew }}
+        />
       ) : (
         recs.map((rec) => {
           const mine = projected.filter((o) => o.recurrenceId === rec.id);
@@ -307,6 +309,13 @@ export function IncomeScreen({
             </GlassCard>
           );
         })
+      )}
+      {recs.length > 0 && (
+        <div className="detail-actions">
+          <Button iconStart={Plus} variant="secondary" onClick={openNew}>
+            {t('fixed.new')}
+          </Button>
+        </div>
       )}
       <ExpensesSection user={user} today={today} />
       <BottomSheet

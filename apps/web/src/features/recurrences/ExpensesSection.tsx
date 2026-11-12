@@ -216,16 +216,12 @@ export function ExpensesSection({ user, today }: { user: UserSession; today: ISO
   return (
     <>
       <h2 className="list-month-title">{t('fixed.expenses')}</h2>
-      <div className="detail-actions">
-        <Button iconStart={Plus} onClick={openNew}>
-          {t('fixed.newExpense')}
-        </Button>
-      </div>
       {recs.length === 0 ? (
         <EmptyState
           icon={Repeat}
           title={t('fixed.expensesEmpty')}
           description={t('fixed.expensesEmptyHint')}
+          primaryAction={{ label: t('fixed.newExpense'), onPress: openNew }}
         />
       ) : (
         recs.map((rec) => {
@@ -295,6 +291,13 @@ export function ExpensesSection({ user, today }: { user: UserSession; today: ISO
             </GlassCard>
           );
         })
+      )}
+      {recs.length > 0 && (
+        <div className="detail-actions">
+          <Button iconStart={Plus} variant="secondary" onClick={openNew}>
+            {t('fixed.newExpense')}
+          </Button>
+        </div>
       )}
       <BottomSheet
         open={draft !== null}

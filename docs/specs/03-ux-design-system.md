@@ -2321,6 +2321,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `categories.rules` | Regras |
 | `fixed.list` | Receitas fixas |
 | `fixed.new` | Nova receita fixa |
+| `fixed.incomes` | Receitas fixas |
 | `fixed.description` | Descrição |
 | `fixed.amount` | Valor |
 | `fixed.day` | Dia do mês |
