@@ -3,6 +3,7 @@
 // pagas (a não ser que o saldo em aberto tenha sido confirmado). Fechar grava `month_closings` (id v5 por mês)
 // com o snapshot dos totais; editar um lançamento de um mês fechado o reabre para revisão.
 import {
+  bucketBudget,
   budgetMonthOf,
   type ISODate,
   invoicePeriod,
@@ -152,6 +153,34 @@ export function closingSnapshot(
     upcomingCents: s.upcoming.totalCents,
     savingsDoneCents: s.savingsDoneCents,
     status: s.status,
+  };
+}
+
+/**
+ * Resumo da P04 antes de fechar (UXB-018, UX §3 P04): renda, gasto por faixa e guardado, com os mesmos números do
+ * snapshot (RN-77).
+ */
+export function closingSummary(
+  rows: HomeRows,
+  month: YearMonth,
+  today: ISODate,
+): {
+  incomeCents: number;
+  spentCents: number;
+  savingsDoneCents: number;
+  bands: { bucket: 'needs' | 'wants'; spentCents: number }[];
+} {
+  const { config, budget, input } = monthContext(rows, referenceDay(month, today));
+  const s = spendableThisMonth(input, budget, config);
+  const statuses = bucketBudget(input, budget, s.income.totalCents);
+  return {
+    incomeCents: s.income.totalCents,
+    spentCents: s.spentCents,
+    savingsDoneCents: s.savingsDoneCents,
+    bands: (['needs', 'wants'] as const).map((bucket) => ({
+      bucket,
+      spentCents: statuses[bucket].spentCents,
+    })),
   };
 }
 

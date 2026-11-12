@@ -170,6 +170,17 @@ describe('US-36: fechar, reabrir e editar mês fechado', () => {
     );
     renderScreen(auth);
     expect(await screen.findByText('Nenhuma pendência. O mês pode ser fechado.')).toBeDefined();
+    // T-124 (UXB-018): o resumo do mês vem antes do botão, com os números do snapshot
+    const summary = screen.getByTestId('close-summary');
+    expect(screen.getByRole('heading', { name: 'Resumo de outubro', level: 3 })).toBeDefined();
+    expect(summary).toHaveTextContent('Renda do mês');
+    expect(summary).toHaveTextContent('Necessidades');
+    expect(summary).toHaveTextContent('R$ 15,00');
+    expect(summary).toHaveTextContent('Guardado');
+    expect(
+      summary.compareDocumentPosition(screen.getByTestId('close-run')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     fireEvent.click(screen.getByTestId('close-run'));
     expect(await screen.findByText('Outubro fechado.')).toBeDefined();
     const closing = await db.month_closings.get(monthClosingId(userId, '2026-10'));

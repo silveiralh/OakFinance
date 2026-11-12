@@ -148,7 +148,13 @@ export function ReserveScreen({ today: fixedToday }: { today?: ISODate }) {
             </p>
           )}
           <div className="reserve-actions">
-            <Button onClick={() => open('save')}>{t('reserve.save')}</Button>
+            {/* UXB-017: sem meta, o primário é "Definir meta" (no vazio acima); Guardar fica secundário */}
+            <Button
+              variant={target !== null && target > 0 ? 'primary' : 'secondary'}
+              onClick={() => open('save')}
+            >
+              {t('reserve.save')}
+            </Button>
             <Button variant="secondary" onClick={() => open('withdraw')}>
               {t('reserve.withdraw')}
             </Button>
@@ -161,8 +167,9 @@ export function ReserveScreen({ today: fixedToday }: { today?: ISODate }) {
           {view.suggestion === null ? (
             <p className="reserve-hint">{t('reserve.noIncome')}</p>
           ) : view.suggestion.provisional ? (
-            <p className="reserve-hint">
-              <strong>{t('reserve.provisional')}</strong> {t('reserve.goalNoData')}
+            // UXB-016: uma frase só, que diz a base da estimativa
+            <p className="reserve-hint money" data-testid="reserve-provisional">
+              {t('reserve.goalProvisional', { valor: money(view.suggestion.avgNeedsCents) })}
             </p>
           ) : (
             <p className="reserve-hint money">
@@ -195,14 +202,12 @@ export function ReserveScreen({ today: fixedToday }: { today?: ISODate }) {
       )}
 
       {view && view.moves.length === 0 ? (
+        // UXB-017: o vazio do histórico é só texto; "Guardar" já está no card de cima
         <EmptyState
           icon={ShieldCheck}
           title={emptyStates.reserveNoMoves.title}
           description={emptyStates.reserveNoMoves.text}
-          primaryAction={{
-            label: emptyStates.reserveNoMoves.actions[0],
-            onPress: () => open('save'),
-          }}
+          data-testid="reserve-no-moves"
         />
       ) : (
         view && (

@@ -124,7 +124,8 @@ async function renderBudget(data: HomeRows) {
       </ToastProvider>
     </AuthContext.Provider>,
   );
-  await screen.findByTestId('budget-needs');
+  // T-124 (UXB-015): sem renda não há cards de faixa; a tela pronta tem a faixa ou o vazio
+  await screen.findByTestId(/^(budget-needs|budget-no-income)$/);
   return auth;
 }
 
@@ -139,6 +140,11 @@ describe('P01 — Orçamento 50/30/20 (US-31)', () => {
       ]),
     );
     expect(screen.getByTestId('budget-income')).toHaveTextContent('R$ 5.800,00');
+    // T-124 (UXB-015): a renda aparece uma vez só, no centro do anel, com o rótulo
+    expect(screen.getAllByText('R$ 5.800,00')).toHaveLength(1);
+    expect(screen.getByTestId('budget-income').previousElementSibling).toHaveTextContent(
+      'Renda do mês',
+    );
     const needs = screen.getByTestId('budget-needs');
     expect(needs).toHaveTextContent('Necessidades');
     expect(needs).toHaveTextContent('R$ 600,00 de R$ 2.900,00 · 20%');
@@ -215,7 +221,10 @@ describe('P01 — Orçamento 50/30/20 (US-31)', () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Cadastrar renda' })).toBeInTheDocument();
-    expect(screen.getByTestId('budget-needs')).not.toHaveTextContent('Dentro do planejado');
+    // T-124 (UXB-015): sem renda, as faixas zeradas somem e o vazio é a única chamada; o anel fica sem centro
+    expect(screen.queryByTestId('budget-needs')).toBeNull();
+    expect(screen.queryByText('Dentro do planejado')).toBeNull();
+    expect(screen.queryByTestId('budget-income')).toBeNull();
   });
 });
 

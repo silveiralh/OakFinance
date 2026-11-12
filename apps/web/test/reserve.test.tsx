@@ -191,7 +191,13 @@ describe('P02 — Reserva de emergência (US-33)', () => {
       provisional: true,
     });
     await renderReserve(data, goal());
-    expect(screen.getByTestId('reserve-goal')).toHaveTextContent('Estimativa provisória');
+    // T-124 (UXB-016): uma frase só, com a base da estimativa (6× a meta de Necessidades do mês)
+    expect(screen.getByTestId('reserve-goal')).toHaveTextContent(
+      'Meta sugerida: 6× a meta de Necessidades do mês (R$ 2.900,00), estimativa provisória, recalculada com seus gastos.',
+    );
+    expect(screen.getByTestId('reserve-goal')).not.toHaveTextContent(
+      'Estimativa provisória Estimativa provisória',
+    );
     expect(screen.getByTestId('reserve-saved')).toHaveTextContent('de R$ 17.400,00');
   });
 
@@ -312,6 +318,24 @@ describe('P02 — Reserva de emergência (US-33)', () => {
     const notice = await db?.notices.get(noticeId(auth.user?.userId ?? '', key));
     expect(notice).toMatchObject({ title: 'Reserva de emergência completa', dedupe_key: key });
     expect(await db?.notices.count()).toBe(1);
+  });
+});
+
+describe('T-124: P02 sem meta (UXB-017)', () => {
+  it('US-33 (UXB-017): sem meta, "Definir meta" é o único primário e o vazio do histórico é só texto', async () => {
+    await renderReserve(rows([]), goal());
+    const summary = screen.getByTestId('reserve-summary');
+    expect(within(summary).getByRole('button', { name: 'Definir meta' })).toHaveAttribute(
+      'data-variant',
+      'primary',
+    );
+    expect(within(summary).getByRole('button', { name: 'Guardar' })).toHaveAttribute(
+      'data-variant',
+      'secondary',
+    );
+    const noMoves = screen.getByTestId('reserve-no-moves');
+    expect(within(noMoves).queryByRole('button')).toBeNull();
+    expect(screen.getAllByRole('button', { name: 'Guardar' })).toHaveLength(1);
   });
 });
 

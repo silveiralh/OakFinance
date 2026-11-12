@@ -473,7 +473,8 @@ body:has(.screen-welcome) .backdrop {
 }
 .future-bars > li {
   display: grid;
-  grid-template-columns: 72px 1fr;
+  /* UXB-020: mês | barra | valor do mês */
+  grid-template-columns: 72px 1fr 6.5em;
   align-items: center;
   gap: var(--space-2);
 }
@@ -1933,4 +1934,74 @@ body:has(.screen-welcome) .backdrop {
 }
 .home-health-empty p {
   margin: 0;
+}
+
+/* ---------- Planejar (T-124) ---------- */
+/* UXB-020: valor do mês no fim da barra e legenda das duas séries */
+.future-bar-value {
+  font-size: var(--font-size-label);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: end;
+}
+.future-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--font-size-label);
+}
+.future-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.future-legend .future-seg {
+  display: inline-block;
+  width: 16px;
+  height: 12px;
+  border-radius: var(--radius-xs);
+}
+/* UXB-012 (P03): ícone | texto em 2 linhas | valor à direita */
+.cards-invoice.future-item {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.future-item-text {
+  display: grid;
+  min-width: 0;
+}
+.future-item-title {
+  font-weight: var(--font-weight-semibold);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.future-item-meta {
+  font-size: var(--font-size-caption);
+  color: var(--text-secondary);
+}
+/* UXB-015: rótulo pequeno sobre a renda no centro do anel */
+.budget-ring-label {
+  font-size: var(--font-size-label);
+  color: var(--text-secondary);
+}
+.shell .budget-ring-center {
+  align-content: center;
+  gap: var(--space-1);
+}
+/* UXB-017: sem meta, o centro do anel fica vazio (o vazio logo abaixo já diz "Defina uma meta") */
+.shell .reserve .goal-ring[data-state="no-goal"] .goal-center {
+  display: none;
+}
+/* UXB-018: resumo do mês antes do "Fechar mês" */
+.close-summary {
+  display: grid;
+  gap: var(--space-2);
+}
+.close-summary h3 {
+  margin: 0;
+  font-size: var(--font-size-heading);
+  font-weight: var(--font-weight-bold);
 }

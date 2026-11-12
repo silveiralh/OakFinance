@@ -5,7 +5,7 @@ import { ChartPie, ChevronDown, TriangleAlert } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../app/auth';
-import { Amount, maskMoney, useValuesHidden } from '../../app/values';
+import { maskMoney, useValuesHidden } from '../../app/values';
 import { useLive } from '../../data/live';
 import { emptyStates, t } from '../../i18n/pt-BR';
 import { useToday } from '../../lib/useToday';
@@ -176,13 +176,16 @@ export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
   return (
     <section className="screen budget" data-screen="P01" data-testid="screen-P01">
       <GlassCard level={2} className="budget-summary">
-        <p className="budget-income">
-          {t('budget.income')}{' '}
-          <span className="money" data-testid="budget-income">
-            <Amount text={formatBRL(view.incomeCents)} hidden={hidden} />
-          </span>
-        </p>
-        <BudgetRing bands={ring} incomeCents={view.incomeCents} size="lg" showLegend={false} />
+        {/* UXB-015: a renda só no centro do anel, com rótulo; sem renda, o centro fica vazio */}
+        <BudgetRing
+          bands={ring}
+          incomeCents={view.incomeCents}
+          size="lg"
+          showLegend={false}
+          centerLabel={t('budget.income')}
+          showCenter={view.incomeCents > 0}
+          amountTestId="budget-income"
+        />
         {view.incomeCents <= 0 && (
           <EmptyState
             icon={ChartPie}
@@ -196,15 +199,17 @@ export function BudgetScreen({ today: fixedToday }: { today?: ISODate }) {
           />
         )}
       </GlassCard>
-      {view.bands.map((band) => (
-        <BandCard
-          key={band.bucket}
-          band={band}
-          hidden={hidden}
-          open={open.has(band.bucket)}
-          onToggle={() => toggle(band.bucket)}
-        />
-      ))}
+      {/* UXB-015: sem renda, o vazio é a única chamada (as faixas zeradas não dizem nada) */}
+      {view.incomeCents > 0 &&
+        view.bands.map((band) => (
+          <BandCard
+            key={band.bucket}
+            band={band}
+            hidden={hidden}
+            open={open.has(band.bucket)}
+            onToggle={() => toggle(band.bucket)}
+          />
+        ))}
       {view.unbucketed.count > 0 && (
         <GlassCard level={2} className="budget-band" data-testid="budget-unbucketed">
           <p className="budget-band-name">{t('budget.unbucketed.title')}</p>
