@@ -40,7 +40,7 @@ test('E02: dashboard — uma despesa lançada sem rede soma no "Gasto em {mês}"
   await hooks(page);
   const hero = page.getByTestId('home-hero');
   await expect(hero).toHaveAttribute('data-spent', /^-?\d+$/);
-  await expect(page.getByText(/^Gasto em /)).toBeVisible();
+  await expect(page.getByText(/^Gasto em [a-zç]+$/)).toBeVisible();
   await expect(page.getByTestId('home-upcoming-month')).toContainText('Ainda vai sair este mês');
   await expect(page.getByText(/Disponível para gastar/)).toHaveCount(0);
 
