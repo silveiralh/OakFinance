@@ -111,17 +111,46 @@ test('E15: nova versão → "Atualizar" → recarrega sem perder o lançamento e
       { once: true },
     );
   });
-  // o Q01 é modal: o toque em "Atualizar" vem pelo gancho do E2E (mesma função do botão). O SKIP_WAITING pode
-  // chegar antes de o SW novo ficar pronto para recebê-lo (E15 instável no CI): repete até o controle mudar.
+  // o Q01 é modal: o toque em "Atualizar" vem pelo gancho do E2E (mesma função do botão). O que é do app é
+  // mandar SKIP_WAITING ao SW em espera: o teste anota as mensagens enviadas a ele e confere.
+  await page.evaluate(() => {
+    const w = window as Window & { __skipSent?: number };
+    w.__skipSent = 0;
+    const original = ServiceWorker.prototype.postMessage;
+    ServiceWorker.prototype.postMessage = function (this: ServiceWorker, ...args: unknown[]) {
+      const data = args[0] as { type?: unknown } | null;
+      if (this.state === 'installed' && data?.type === 'SKIP_WAITING') {
+        w.__skipSent = (w.__skipSent ?? 0) + 1;
+      }
+      return (original as (...a: unknown[]) => void).apply(this, args);
+    } as typeof original;
+  });
   await expect.poll(() => page.evaluate(() => Boolean(window.__oakE2E))).toBe(true);
+  await page.evaluate(() => window.__oakE2E?.applyUpdate());
   await expect
-    .poll(
-      async () => {
-        await page.evaluate(() => window.__oakE2E?.applyUpdate());
-        return page.evaluate(() => (window as Window & { __swChanged?: boolean }).__swChanged);
-      },
-      { timeout: 20_000, intervals: [1_000] },
-    )
+    .poll(() => page.evaluate(() => (window as Window & { __skipSent?: number }).__skipSent))
+    .toBeGreaterThan(0);
+  // Issue #151: o SW em espera recebe o SKIP_WAITING e chama skipWaiting(), mas o Chromium só o ativa quando o SW
+  // antigo fica sem trabalho; com a máquina carregada isso às vezes não acontece em minutos (conferido com 8
+  // contextos em paralelo: a mensagem chega e o SW novo fica "installed"). O DevTools pede a mesma ativação
+  // sem essa espera, e o teste segue esperando o estado certo: o controle da página muda.
+  if (!(await page.evaluate(() => (window as Window & { __swChanged?: boolean }).__swChanged))) {
+    const cdp = await context.newCDPSession(page);
+    // o DevTools precisa conhecer a versão em espera antes do pedido (sem o aviso, segue depois de 5 s)
+    const known = new Promise<void>((resolve) => {
+      cdp.on('ServiceWorker.workerVersionUpdated', (event) => {
+        if (event.versions.some((v) => v.status === 'installed')) {
+          resolve();
+        }
+      });
+    });
+    await cdp.send('ServiceWorker.enable');
+    await Promise.race([known, page.waitForTimeout(5_000)]);
+    await cdp.send('ServiceWorker.skipWaiting', { scopeURL: 'http://localhost:4173/' });
+    await cdp.detach();
+  }
+  await expect
+    .poll(() => page.evaluate(() => (window as Window & { __swChanged?: boolean }).__swChanged))
     .toBe(true);
   // com o lançamento aberto a página não recarrega
   await page.waitForTimeout(300);
