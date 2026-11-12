@@ -194,8 +194,8 @@ flowchart LR
 | T-129 | Nova auditoria de UX | T-128 | done |
 | T-130 | Valor em dinheiro sem quebra (G4) | T-117 | done |
 | T-131 | Impeccable no projeto | T-101 | done |
-| T-132 | Q01 no celular pequeno (auditoria 12/11) | T-129 | todo |
-| T-133 | Renda do mês sem soma dupla (auditoria 12/11) | T-129 | todo |
+| T-132 | Q01 no celular pequeno (auditoria 12/11) | T-129 | done |
+| T-133 | Renda do mês sem soma dupla (auditoria 12/11) | T-129 | blocked: aguarda dono — decisão do salário manual × receita fixa (D-107) |
 | T-134 | Início e textos depois da D-081 (auditoria 12/11) | T-129 | todo |
 | T-135 | Lançamentos, Cartões e Planejar: cortes e totais (auditoria 12/11) | T-129 | todo |
 | T-136 | S05, segmentado e foco dos campos (auditoria 12/11) | T-129 | todo |
@@ -1856,7 +1856,7 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-132 — Q01 no celular pequeno (auditoria 12/11)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | M | US-12, US-13, US-33 | RN-01 | T-129 | não |
+| done | R | M | US-12, US-13, US-33 | RN-01 | T-129 | não |
 
 **Escopo (D-105, `docs/ux-audit/2026-11-12.md`):** UX2A-001 (S1: a 360×640 o rodapé fixo cobre o valor; a 390 px esconde a 5ª categoria, o "Mais", o meio e "Mais detalhes" — levar o valor para dentro do rodapé, logo acima do teclado, e "Ler nota" sem linha própria); UX2A-002 (`?novo=receita` respeita o modo pedido mesmo com rascunho guardado); UX2A-005 (folha do Guardar com o mesmo rodapé fixo do Q01); UX2A-008 (teclado numérico some enquanto a descrição está em foco). Impeccable: `adapt` e `polish`.
 
@@ -1867,9 +1867,11 @@ Ordem pensada para execução em sequência. Os achados citados (`UXA-…`, `UXB
 ### T-133 — Renda do mês sem soma dupla (auditoria 12/11)
 | Status | Semana | Tam. | US | RN | Depende de | Cliente |
 |---|---|---|---|---|---|---|
-| todo | R | P | US-23, US-30 | RN-27, RN-32 | T-129 | não |
+| blocked: aguarda dono — decisão do salário manual × receita fixa (D-107) | R | P | US-23, US-30 | RN-27, RN-32 | T-129 | não |
 
 **Escopo (D-105):** UX2B-001 (S1, causa a confirmar): `monthlyIncome` (`packages/domain/src/budget.ts`) soma a receita fixa não realizada e um lançamento de receita manual do mesmo mês, não ligado a ela, e a P01 mostra a renda em dobro (metas das faixas e da Reserva infladas). Conferir a RN-27/RN-32 e a T-076/US-23; se a spec não prevê a soma, a ocorrência da receita fixa do mês conta como realizada quando há receita manual equivalente (mesma conta, valor e mês, ±dias da RN), com teste de domínio e linha no Apêndice A. Se a spec for ambígua, registrar a dúvida para o dono no HANDOFF e manter só o teste que documenta o caso.
+
+**Situação (12/11, D-107):** a RN-27/RN-32 são literais — o previsto só sai da Base quando a ocorrência é confirmada, pulada ou conciliada, e um salário lançado à mão sem ligação conta à parte. Não há regra que ligue os dois, então a mudança é decisão do dono. O teste `RN-32 (T-133, UX2B-001)` em `packages/domain/test/budget.test.ts` documenta o comportamento atual. Opções para o dono: (a) o Q01 de receita sugere "É o salário de {mês}?" quando há receita fixa do mês ainda não recebida na mesma conta e valor próximo, e confirmar liga o lançamento à ocorrência; (b) o domínio considera realizada a ocorrência com receita manual equivalente (mesma conta e categoria, mês igual, valor ±10%); (c) manter como está.
 
 **Pronto quando:** P01, P02 e o Início mostram a mesma renda do mês; testes `RN-27`/`RN-32` do caso verdes.
 

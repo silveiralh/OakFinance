@@ -196,6 +196,28 @@ describe('monthlyIncome: Base(M) (RN-32, RN-33, RN-35, RN-36, RN-38)', () => {
     expect(monthlyIncome(input({ recurrences: [salary()], txs: [skipped] })).fixedCents).toBe(0);
   });
 
+  it('RN-32 (T-133, UX2B-001): receita manual não ligada à receita fixa soma à parte — comportamento atual, aguarda o dono', () => {
+    // A RN-27/RN-32 só tiram o previsto da Base quando a ocorrência é confirmada, pulada ou conciliada; um
+    // salário lançado à mão (sem `recurrenceId`) conta como receita variável e o previsto continua. A auditoria
+    // de 12/11 viu a renda em dobro por isso. Se o dono decidir ligar (ou sugerir ligar) o lançamento manual à
+    // receita fixa, este teste muda junto (HANDOFF §4, D-107).
+    const manual = tx({
+      id: 'salario-manual',
+      kind: 'income',
+      amountCents: 500000,
+      occurredOn: '2026-11-05',
+      categoryId: 'salario',
+      accountId: 'conta',
+      cardId: null,
+      invoiceId: null,
+      paymentMethod: 'transfer',
+    });
+    const income = monthlyIncome(input({ recurrences: [salary()], txs: [manual] }));
+    expect(income.fixedCents).toBe(500000);
+    expect(income.variableReceivedCents).toBe(500000);
+    expect(income.totalCents).toBe(1000000);
+  });
+
   it('RN-33: Recebida conta, A receber não conta, Prevista conta só com o switch ligado', () => {
     const txs = [
       tx({ kind: 'income', categoryId: 'renda-extra', amountCents: 30000 }),

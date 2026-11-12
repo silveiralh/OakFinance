@@ -1,11 +1,20 @@
 // Guardar (Q01 em modo Guardar, `?novo=guardar`, RN-54) e Registrar uso da reserva (resgate, RN-36): valor e conta;
 // grava o lançamento com o `goal_id` da reserva e confirma com o toast da US-65.
-import { formatBRL, type ISODate, todayIn } from '@oakfinance/domain';
+import { formatBRL, type ISODate, MAX_TX_CENTS, todayIn } from '@oakfinance/domain';
 import { useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { useLive } from '../../data/live';
 import { t } from '../../i18n/pt-BR';
-import { AmountInput, BottomSheet, Button, Select, useToast } from '../../ui';
+import {
+  AmountInput,
+  appendDigits,
+  BottomSheet,
+  Button,
+  NumericKeypad,
+  preferredKeypad,
+  Select,
+  useToast,
+} from '../../ui';
 import { loadHomeRows } from '../dashboard/data';
 import { percentAfter, reserveView, saveReserveMove } from './reserve';
 
@@ -21,6 +30,7 @@ export function ReserveMoveSheet({
   const { user } = useAuth();
   const showToast = useToast();
   const [amount, setAmount] = useState(0);
+  const [keypad] = useState(preferredKeypad);
   const [accountId, setAccountId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const data = useLive(
@@ -84,14 +94,8 @@ export function ReserveMoveSheet({
 
   return (
     <BottomSheet open onClose={onClose} title={title} data-testid="reserve-move">
-      <div className="account-form">
-        <AmountInput
-          size="compact"
-          label={t('reserve.amount')}
-          value={amount}
-          onChange={setAmount}
-          autoFocus
-        />
+      {/* UX2A-005: o mesmo arranjo do Q01 — conta em cima e valor, teclado e botão num rodapé fixo */}
+      <div className="quick-entry">
         {accounts.length > 0 && (
           <Select
             label={kind === 'save' ? t('reserve.fromAccount') : t('reserve.toAccount')}
@@ -105,14 +109,32 @@ export function ReserveMoveSheet({
             {missing}
           </p>
         )}
-        <Button
-          fullWidth
-          disabled={Boolean(missing) || busy}
-          onClick={() => void submit()}
-          data-testid="reserve-move-submit"
-        >
-          {kind === 'save' ? t('reserve.save') : t('reserve.confirm')}
-        </Button>
+        <div className="quick-footer" data-testid="reserve-move-footer">
+          <AmountInput
+            label={t('reserve.amount')}
+            value={amount}
+            onChange={setAmount}
+            autoFocus
+            keypad={keypad}
+            showKeypad={false}
+          />
+          {keypad === 'custom' && (
+            <NumericKeypad
+              onDigit={(d) => setAmount((v) => appendDigits(v, d, MAX_TX_CENTS))}
+              onBackspace={() => setAmount((v) => Math.floor(v / 10))}
+              onClear={() => setAmount(0)}
+            />
+          )}
+          <Button
+            size="lg"
+            fullWidth
+            disabled={Boolean(missing) || busy}
+            onClick={() => void submit()}
+            data-testid="reserve-move-submit"
+          >
+            {kind === 'save' ? t('reserve.save') : t('reserve.confirm')}
+          </Button>
+        </div>
       </div>
     </BottomSheet>
   );
