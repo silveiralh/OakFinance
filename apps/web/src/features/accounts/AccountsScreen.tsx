@@ -1,5 +1,5 @@
 import { todayIn } from '@oakfinance/domain';
-import { Archive, Landmark, Plus, RotateCcw, Trash2 } from 'lucide-react';
+import { Archive, Landmark, Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import type { LocalRow } from '../../data/db';
@@ -14,9 +14,18 @@ import {
   isActive,
   type NameProblem,
   unarchiveAccount,
+  updateAccount,
 } from '../../data/repositories/accounts';
 import { type MessageKey, t } from '../../i18n/pt-BR';
-import { AmountInput, Button, EmptyState, GlassCard, Select, TextField } from '../../ui';
+import {
+  AmountInput,
+  BottomSheet,
+  Button,
+  EmptyState,
+  GlassCard,
+  Select,
+  TextField,
+} from '../../ui';
 import { CardsSection } from './CardsSection';
 
 const TYPE_LABEL: Record<AccountType, MessageKey> = {
@@ -58,6 +67,7 @@ function typeLabel(type: string): string {
 
 function AccountRow({
   account,
+  onEdit,
   onArchive,
   onUnarchive,
   onDelete,
@@ -65,6 +75,7 @@ function AccountRow({
   error,
 }: {
   account: LocalRow<'accounts'>;
+  onEdit: () => void;
   onArchive: () => void;
   onUnarchive: () => void;
   onDelete: () => void;
@@ -95,6 +106,10 @@ function AccountRow({
           </Button>
         ) : (
           <>
+            {/* UXC-010: a conta pode ser corrigida (nome e banco) sem arquivar e criar outra */}
+            <Button variant="ghost" size="sm" iconStart={Pencil} onClick={onEdit}>
+              {t('cards.edit')}
+            </Button>
             <Button variant="ghost" size="sm" iconStart={Archive} onClick={onArchive}>
               {t('accounts.archive')}
             </Button>
@@ -149,6 +164,12 @@ export function AccountsScreen() {
   const [balance, setBalance] = useState(0);
   const [nameError, setNameError] = useState<string | null>(null);
   const [rowError, setRowError] = useState<{ id: string; message: string } | null>(null);
+  const [editing, setEditing] = useState<{
+    id: string;
+    name: string;
+    institution: string;
+    error: string | null;
+  } | null>(null);
 
   if (!user) {
     return null;
@@ -184,6 +205,28 @@ export function AccountsScreen() {
     after(true);
   };
 
+  const saveEdit = async () => {
+    if (!editing) {
+      return;
+    }
+    const result = await updateAccount(user.db, editing.id, {
+      name: editing.name,
+      institution: editing.institution.trim() === '' ? null : editing.institution.trim(),
+    });
+    if (!result.ok) {
+      setEditing({
+        ...editing,
+        error:
+          result.error.code === 'ACCOUNT_NAME' && 'problem' in result.error
+            ? t(NAME_ERROR[result.error.problem as NameProblem])
+            : null,
+      });
+      return;
+    }
+    setEditing(null);
+    after(true);
+  };
+
   const act = async (id: string, run: () => ReturnType<typeof archiveAccount>) => {
     const result = await run();
     if (result.ok) {
@@ -207,6 +250,14 @@ export function AccountsScreen() {
       key={account.id}
       account={account}
       error={rowError?.id === account.id ? rowError.message : null}
+      onEdit={() =>
+        setEditing({
+          id: account.id,
+          name: account.name,
+          institution: account.institution ?? '',
+          error: null,
+        })
+      }
       onArchive={() => void act(account.id, () => archiveAccount(user.db, account.id))}
       onUnarchive={() => void act(account.id, () => unarchiveAccount(user.db, account.id))}
       onDelete={() => void act(account.id, () => deleteAccount(user.db, account.id))}
@@ -265,6 +316,31 @@ export function AccountsScreen() {
         </details>
       )}
       <CardsSection />
+      <BottomSheet
+        open={editing !== null}
+        onClose={() => setEditing(null)}
+        title={t('accounts.editTitle')}
+        data-testid="account-edit-sheet"
+      >
+        {editing && (
+          <div className="account-form">
+            <TextField
+              label={t('accounts.name')}
+              value={editing.name}
+              onChange={(name) => setEditing({ ...editing, name })}
+              {...(editing.error ? { error: editing.error } : {})}
+            />
+            <TextField
+              label={t('accounts.institution')}
+              value={editing.institution}
+              onChange={(institution) => setEditing({ ...editing, institution })}
+            />
+            <Button fullWidth onClick={() => void saveEdit()}>
+              {t('cards.saveChanges')}
+            </Button>
+          </div>
+        )}
+      </BottomSheet>
     </section>
   );
 }

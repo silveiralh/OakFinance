@@ -557,6 +557,7 @@ export const ptBR = {
   'accounts.emptyHint':
     'Cadastre a conta corrente, a carteira ou o VR para lançar despesas e receitas.',
   'accounts.listTitle': 'Contas',
+  'accounts.editTitle': 'Editar conta',
   'accounts.duplicate': 'Você já tem uma conta com esse nome',
   'accounts.nameRequired': 'Informe o nome da conta.',
   'accounts.nameTooLong': 'Use até 40 caracteres.',

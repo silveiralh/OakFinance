@@ -88,3 +88,31 @@ describe('T-125: S03 (UXC-015, UXC-017)', () => {
     expect(screen.queryByText('Escolha um dia entre 1 e 31.')).toBeNull();
   });
 });
+
+describe('T-125: editar conta (UXC-010)', () => {
+  it('US-09 (UXC-010, RN-07): "Editar" muda nome e banco da conta; nome repetido mostra o aviso', async () => {
+    mount();
+    await add('BB');
+    await add('Nubank');
+    const bb = (await screen.findByText('BB', { selector: '.account-name' })).closest('li');
+    if (!bb) {
+      throw new Error('sem linha');
+    }
+    fireEvent.click(within(bb).getByRole('button', { name: 'Editar' }));
+    const sheet = await screen.findByTestId('account-edit-sheet');
+    fireEvent.change(within(sheet).getByLabelText('Nome'), { target: { value: 'nubank' } });
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Salvar alterações' }));
+    expect(
+      await within(sheet).findByText('Você já tem uma conta com esse nome'),
+    ).toBeInTheDocument();
+    fireEvent.change(within(sheet).getByLabelText('Nome'), {
+      target: { value: 'Banco do Brasil' },
+    });
+    fireEvent.change(within(sheet).getByLabelText('Banco'), { target: { value: 'BB S.A.' } });
+    fireEvent.click(within(sheet).getByRole('button', { name: 'Salvar alterações' }));
+    expect(
+      await screen.findByText('Banco do Brasil', { selector: '.account-name' }),
+    ).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByTestId('account-edit-sheet')).toBeNull());
+  });
+});
