@@ -1932,6 +1932,7 @@ SVG inline (para herdar tokens), com ids prefixados por `useId()`. Em `data-glas
 | `onb.reserve.target` | Meta da reserva |
 | `onb.pending.cta` | Completar |
 | `onb.redo` | Refazer configuração inicial |
+| `settings.group.money` / `.alerts` / `.data` / `.device` / `.help` | Dinheiro e orçamento / Avisos / Dados e importação / Conta e aparelho / Ajuda e sobre |
 | `common.skip` | Pular |
 | `common.continue` | Continuar |
 
