@@ -17,14 +17,14 @@
   "dependencies": {
     "@fontsource-variable/nunito": "5.3.0",
     "@oakfinance/domain": "workspace:*",
-    "@supabase/supabase-js": "2.119.0",
-    "barcode-detector": "3.2.3",
+    "@supabase/supabase-js": "2.119.2",
+    "barcode-detector": "3.2.4",
     "dexie": "4.4.7",
-    "lucide-react": "1.70.0",
-    "papaparse": "5.5.3",
+    "lucide-react": "1.77.0",
+    "papaparse": "5.7.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "react-router": "8.5.1",
+    "react-router": "8.5.2",
     "uuid": "14.0.3",
     "workbox-core": "7.4.1",
     "workbox-precaching": "7.4.1",
@@ -32,7 +32,7 @@
     "workbox-strategies": "7.4.1",
     "workbox-window": "7.4.1",
     "zod": "4.6.7",
-    "zxing-wasm": "3.1.6"
+    "zxing-wasm": "3.1.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
